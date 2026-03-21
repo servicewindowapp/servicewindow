@@ -1,0 +1,3071 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServiceWindow — Where Events Find Their Truck</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --accent: #ff5c00;
+    --accent2: #ffb800;
+    --text: #f0ece4;
+    --muted: #6b6560;
+    --success: #2ecc71;
+    --warning: #f39c12;
+    --danger: #e74c3c;
+    --info: #3498db;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===================== VIEWS ===================== */
+  .view { display: none; min-height: 100vh; }
+  .view.active { display: block; }
+
+  /* ===================== PUBLIC LANDING ===================== */
+  #view-public {
+    background: var(--bg);
+  }
+
+  .pub-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .logo span { color: var(--accent); }
+
+  .pub-nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .pub-nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .pub-nav-links a:hover { color: var(--text); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #e04e00; transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost { background: transparent; color: var(--muted); }
+  .btn-ghost:hover { color: var(--text); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #27ae60; }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
+  .btn-lg { padding: 14px 32px; font-size: 15px; }
+
+  /* HERO */
+  .hero {
+    padding: 180px 48px 100px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,92,0,0.12);
+    border: 1px solid rgba(255,92,0,0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 8vw, 120px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 .line2 { 
+    color: var(--accent); 
+    -webkit-text-stroke: 0px;
+  }
+
+  .hero p {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 70px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* BOARDS GRID */
+  .section {
+    padding: 80px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+
+  .section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 1px;
+    margin-bottom: 48px;
+    line-height: 1;
+  }
+
+  .boards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .board-card {
+    background: var(--surface);
+    padding: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .board-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+
+  .board-card:hover { background: var(--surface2); }
+  .board-card:hover::before { transform: scaleX(1); }
+
+  .board-icon {
+    width: 44px; height: 44px;
+    background: rgba(255,92,0,0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .board-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .board-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .board-tag {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .price-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    transition: border-color 0.2s;
+  }
+
+  .price-card.featured {
+    border-color: var(--accent);
+    position: relative;
+  }
+
+  .price-badge {
+    position: absolute;
+    top: -10px; left: 50%; transform: translateX(-50%);
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 10px;
+  }
+
+  .price-tier {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--text);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .price-amount span { font-size: 18px; color: var(--muted); }
+  .price-strike { color: var(--muted); text-decoration: line-through; font-size: 13px; margin-bottom: 6px; }
+
+  .price-features {
+    list-style: none;
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .price-features li {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .price-features li::before {
+    content: '→';
+    color: var(--accent);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* CTA STRIP */
+  .cta-strip {
+    background: var(--accent);
+    padding: 64px 48px;
+    text-align: center;
+    margin-top: 80px;
+  }
+
+  .cta-strip h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .cta-strip p { color: rgba(255,255,255,0.8); margin-bottom: 32px; font-size: 16px; }
+
+  .btn-white { background: #fff; color: var(--accent); font-weight: 700; }
+  .btn-white:hover { background: #f0f0f0; }
+
+  /* ===================== APP SHELL (Dashboard) ===================== */
+  #view-truck, #view-planner {
+    display: none;
+    flex-direction: row;
+    min-height: 100vh;
+  }
+
+  #view-truck.active, #view-planner.active {
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+  .sidebar-logo span { color: var(--accent); }
+
+  .sidebar-section {
+    padding: 20px 12px 8px;
+  }
+
+  .sidebar-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .sidebar-item:hover { background: var(--surface2); color: var(--text); }
+  .sidebar-item.active { background: rgba(255,92,0,0.12); color: var(--accent); }
+  
+  .sidebar-icon { width: 16px; text-align: center; font-size: 14px; flex-shrink: 0; }
+
+  .sidebar-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    background: var(--surface2);
+    cursor: pointer;
+  }
+
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 10px; color: var(--muted); }
+
+  /* MAIN CONTENT */
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg);
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .topbar-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: text;
+    transition: border-color 0.2s;
+    min-width: 200px;
+  }
+
+  .search-box:hover { border-color: var(--accent); color: var(--text); }
+
+  .notif-bell {
+    width: 36px; height: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .notif-bell:hover { border-color: var(--accent); }
+  .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 1.5px solid var(--bg);
+  }
+
+  /* PANELS */
+  .panel { display: none; padding: 32px; }
+  .panel.active { display: block; }
+
+  /* DASHBOARD OVERVIEW */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 24px;
+    transition: border-color 0.2s;
+  }
+
+  .kpi-card:hover { border-color: rgba(255,92,0,0.3); }
+
+  .kpi-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    color: var(--text);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .kpi-delta {
+    font-size: 11px;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .kpi-delta.up { color: var(--success); }
+  .kpi-delta.neutral { color: var(--muted); }
+
+  /* TABLES */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .data-table th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(42,42,42,0.5);
+    vertical-align: middle;
+  }
+
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* TAGS / PILLS */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .tag-open { background: rgba(46,204,113,0.15); color: var(--success); }
+  .tag-pending { background: rgba(243,156,18,0.15); color: var(--warning); }
+  .tag-closed { background: rgba(107,101,96,0.15); color: var(--muted); }
+  .tag-new { background: rgba(255,92,0,0.15); color: var(--accent); }
+  .tag-booked { background: rgba(52,152,219,0.15); color: var(--info); }
+  .tag-available { background: rgba(46,204,113,0.12); color: var(--success); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 580px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+  }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+
+  .modal-close {
+    width: 30px; height: 30px;
+    border-radius: 4px;
+    background: var(--surface2);
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body { padding: 24px; }
+
+  .form-group { margin-bottom: 18px; }
+  
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .form-textarea { resize: vertical; min-height: 90px; }
+  .form-select option { background: var(--surface); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* MARKETPLACE CARDS */
+  .listing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  .listing-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .listing-card:hover {
+    border-color: rgba(255,92,0,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .listing-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .listing-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .listing-meta { font-size: 12px; color: var(--muted); }
+  .listing-payout {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .listing-payout .per { font-size: 12px; color: var(--muted); font-family: 'DM Sans', sans-serif; display: block; text-align: right; line-height: 1; }
+
+  .listing-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .detail-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface2);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .listing-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+
+  .spots-left {
+    font-size: 11px;
+    color: var(--warning);
+    font-weight: 600;
+  }
+
+  /* PROFILE FORM */
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+  }
+
+  .profile-pic-zone {
+    background: var(--surface2);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    font-size: 13px;
+    color: var(--muted);
+    gap: 8px;
+  }
+
+  .profile-pic-zone:hover { border-color: var(--accent); color: var(--accent); }
+  .profile-pic-zone .big-icon { font-size: 36px; }
+
+  /* VENUE CARDS */
+  .venue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .venue-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .venue-card:hover { border-color: rgba(255,92,0,0.4); }
+
+  .venue-img {
+    height: 140px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    position: relative;
+  }
+
+  .venue-body { padding: 16px; }
+  .venue-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .venue-addr { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+
+  .venue-specs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .venue-spec { font-size: 11px; color: var(--muted); }
+  .venue-spec strong { color: var(--text); display: block; font-size: 13px; }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toast {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 13px;
+    min-width: 280px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    animation: slideIn 0.25s ease;
+    cursor: pointer;
+  }
+
+  .toast.success { border-left-color: var(--success); }
+  .toast.warning { border-left-color: var(--warning); }
+
+  @keyframes slideIn {
+    from { transform: translateX(40px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .big { font-size: 48px; margin-bottom: 16px; }
+  .empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; max-width: 300px; margin: 0 auto 20px; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--surface);
+    padding: 4px;
+    border-radius: 6px;
+    width: fit-content;
+    margin-bottom: 24px;
+  }
+
+  .tab {
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .tab.active { background: var(--surface2); color: var(--text); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .filter-chip {
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .filter-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(255,92,0,0.08); }
+  .filter-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* VIEW SWITCHER DEMO BAR */
+  .demo-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 999;
+    background: rgba(20,20,20,0.97);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 24px;
+    backdrop-filter: blur(8px);
+  }
+
+  .demo-bar-label {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+
+  .demo-btn {
+    padding: 7px 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .demo-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .demo-btn:hover:not(.active) { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  /* page bottom padding for demo bar */
+  .view { padding-bottom: 56px; }
+  #view-truck, #view-planner { padding-bottom: 0; }
+  .main-content { padding-bottom: 56px; }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    .hero { padding: 140px 24px 80px; }
+    .section { padding: 60px 24px; }
+    .pub-nav { padding: 16px 24px; }
+    .profile-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+
+  /* ===================== PLANNER SPECIFIC ===================== */
+  .planner-accent { --accent: #ffb800; --accent2: #ff5c00; }
+  
+  .req-wizard {
+    max-width: 640px;
+  }
+
+  .wizard-steps {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .wizard-steps::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+    z-index: 0;
+  }
+
+  .wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-circle {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .wizard-step.done .step-circle { background: var(--success); border-color: var(--success); color: #fff; }
+  .wizard-step.active .step-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .step-label { font-size: 10px; color: var(--muted); text-align: center; white-space: nowrap; }
+  .wizard-step.active .step-label { color: var(--text); }
+
+  /* match cards in planner */
+  .match-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .match-card:hover { border-color: rgba(255,184,0,0.5); }
+  .match-card.selected { border-color: var(--accent2); background: rgba(255,92,0,0.06); }
+
+  .match-avatar {
+    width: 48px; height: 48px;
+    border-radius: 8px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .match-info { flex: 1; }
+  .match-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .match-desc { font-size: 12px; color: var(--muted); }
+  .match-rating { font-size: 12px; color: var(--accent2); font-weight: 600; }
+  
+</style>
+</head>
+<body>
+
+<!-- ========== DEMO BAR ========== -->
+<div class="demo-bar">
+  <span class="demo-bar-label">View As →</span>
+  <button class="demo-btn active" onclick="switchView('public')">🌐 Public</button>
+  <button class="demo-btn" onclick="switchView('truck')">🚚 Food Truck</button>
+  <button class="demo-btn" onclick="switchView('planner')">📋 Event Planner</button>
+</div>
+
+<!-- ========== TOAST CONTAINER ========== -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- ========================================
+     VIEW: PUBLIC LANDING
+======================================== -->
+<div id="view-public" class="view active">
+  <!-- NAV -->
+  <nav class="pub-nav">
+    <div class="logo">Service<span>Window</span></div>
+    <div class="pub-nav-links">
+      <a onclick="scrollTo(0,0)">Boards</a>
+      <a onclick="document.getElementById('pricing-section').scrollIntoView({behavior:'smooth'})">Pricing</a>
+      <a onclick="switchView('truck')">For Trucks</a>
+      <a onclick="switchView('planner')">For Planners</a>
+      <button class="btn btn-outline btn-sm" onclick="showModal('modal-waitlist')">Join Waitlist</button>
+      <button class="btn btn-primary btn-sm" onclick="switchView('truck')">Sign In</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">🔥 Fort Myers / Cape Coral — SWFL</div>
+    <h1>WHERE EVENTS<br><span class="line2">FIND THEIR TRUCK.</span></h1>
+    <p>The professional marketplace replacing chaotic Facebook groups. Seven specialized boards connecting food trucks, event planners, venues, and service providers across Southwest Florida.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary btn-lg" onclick="switchView('truck')">Truck Owner Portal →</button>
+      <button class="btn btn-outline btn-lg" onclick="switchView('planner')">Plan an Event</button>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">83+</div>
+        <div class="stat-label">Active Trucks</div>
+      </div>
+      <div>
+        <div class="stat-num">38K</div>
+        <div class="stat-label">SWFL Community</div>
+      </div>
+      <div>
+        <div class="stat-num">7</div>
+        <div class="stat-label">Specialized Boards</div>
+      </div>
+      <div>
+        <div class="stat-num">$29</div>
+        <div class="stat-label">Founding Rate / mo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOARDS -->
+  <div class="section">
+    <div class="section-label">The Platform</div>
+    <h2>Seven Boards.<br>One Marketplace.</h2>
+    <div class="boards-grid">
+      <div class="board-card" onclick="switchView('truck'); setTruckPanel('marketplace')">
+        <div class="board-icon">📋</div>
+        <h3>Request Marketplace</h3>
+        <p>Event planners post opportunities. Trucks browse, filter, and respond directly. No middleman. Funded events only.</p>
+        <div class="board-tag">→ Browse Open Requests</div>
+      </div>
+      <div class="board-card" onclick="switchView('truck'); setTruckPanel('shifts')">
+        <div class="board-icon">🔄</div>
+        <h3>Shift Marketplace</h3>
+        <p>Can't make a booking? Post your shift. Need a last-minute spot? Pick one up. Fully operator-to-operator.</p>
+        <div class="board-tag">→ View Open Shifts</div>
+      </div>
+      <div class="board-card" onclick="switchView('truck'); setTruckPanel('calendar')">
+        <div class="board-icon">📅</div>
+        <h3>Event Calendar</h3>
+        <p>Master view of all SWFL food truck events, markets, and pop-ups. Public and private listings.</p>
+        <div class="board-tag">→ See Upcoming Events</div>
+      </div>
+      <div class="board-card" onclick="switchView('planner')">
+        <div class="board-icon">🤝</div>
+        <h3>Venue Partnership</h3>
+        <p>Venues and breweries seeking regular food truck rotations. Long-term anchor spots, not one-offs.</p>
+        <div class="board-tag">→ Find Venue Partners</div>
+      </div>
+      <div class="board-card" onclick="switchView('truck'); setTruckPanel('venue')">
+        <div class="board-icon">🅿️</div>
+        <h3>Parking & Real Estate</h3>
+        <p>Premium parking spots, commissary access, and brick-and-mortar transitions. The spots others don't advertise.</p>
+        <div class="board-tag">→ Browse Locations</div>
+      </div>
+      <div class="board-card" onclick="showModal('modal-waitlist')">
+        <div class="board-icon">🔧</div>
+        <h3>Vendor Services</h3>
+        <p>Commissaries, wrap shops, equipment repair, food photography, bookkeeping. Service providers reach the whole market.</p>
+        <div class="board-tag">→ Find Service Providers</div>
+      </div>
+      <div class="board-card" onclick="showModal('modal-waitlist')">
+        <div class="board-icon">💼</div>
+        <h3>Jobs Board</h3>
+        <p>Hire crew. Find work. Drivers, prep staff, managers — the food truck workforce in one place.</p>
+        <div class="board-tag">→ View Listings</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section" style="padding-top:0">
+    <div class="section-label">How It Works</div>
+    <h2>Built for How<br>Operators Actually Work.</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;">
+      <div style="padding:28px;background:var(--surface);border-radius:6px;border:1px solid var(--border);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--border);line-height:1;margin-bottom:12px;">01</div>
+        <h3 style="margin-bottom:8px;font-size:15px;">List your truck</h3>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">Set your cuisine, capacity, service radius, and availability. Your public profile does the selling.</p>
+      </div>
+      <div style="padding:28px;background:var(--surface);border-radius:6px;border:1px solid var(--border);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--border);line-height:1;margin-bottom:12px;">02</div>
+        <h3 style="margin-bottom:8px;font-size:15px;">Browse the boards</h3>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">Filter by date, location, payout, and event type. Respond to the ones that fit your operation.</p>
+      </div>
+      <div style="padding:28px;background:var(--surface);border-radius:6px;border:1px solid var(--border);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--border);line-height:1;margin-bottom:12px;">03</div>
+        <h3 style="margin-bottom:8px;font-size:15px;">Book direct</h3>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">Communicate, negotiate, and confirm inside the platform. No group chats. No lost threads.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="section" id="pricing-section">
+    <div class="section-label">Pricing</div>
+    <h2>Operator-First.<br>Not a Money Grab.</h2>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Standard</div>
+        <div class="price-strike">$49/mo regular</div>
+        <div class="price-amount">$29<span>/mo</span></div>
+        <p style="font-size:12px;color:var(--accent);margin-top:6px;font-weight:600;">Founding rate — locked for life</p>
+        <ul class="price-features">
+          <li>Full board access</li>
+          <li>Public truck profile</li>
+          <li>Request Marketplace</li>
+          <li>Shift Marketplace</li>
+          <li>Event Calendar</li>
+        </ul>
+        <button class="btn btn-primary" style="width:100%" onclick="showModal('modal-waitlist')">Join Waitlist</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-tier">Pro</div>
+        <div class="price-strike">$79/mo regular</div>
+        <div class="price-amount">$49<span>/mo</span></div>
+        <p style="font-size:12px;color:var(--accent);margin-top:6px;font-weight:600;">Founding rate — locked for life</p>
+        <ul class="price-features">
+          <li>Everything in Standard</li>
+          <li>Featured placement</li>
+          <li>Analytics dashboard</li>
+          <li>Priority in planner searches</li>
+          <li>Multi-truck management</li>
+        </ul>
+        <button class="btn btn-primary" style="width:100%" onclick="showModal('modal-waitlist')">Join Waitlist</button>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">Service Provider</div>
+        <div class="price-amount">$39<span>/mo</span></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:6px;">Commissaries, wrap shops, equipment</p>
+        <ul class="price-features">
+          <li>Vendor Services board listing</li>
+          <li>Reach all 80+ trucks</li>
+          <li>Direct inquiry inbox</li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%" onclick="showModal('modal-waitlist')">Get Listed</button>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">Planner / Venue</div>
+        <div class="price-amount" style="font-size:36px;">Free<span></span></div>
+        <p style="font-size:12px;color:var(--success);margin-top:6px;font-weight:600;">Always free</p>
+        <ul class="price-features">
+          <li>Post event requests</li>
+          <li>Browse truck profiles</li>
+          <li>Venue Partnership board</li>
+          <li>Jobs Board posting</li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%" onclick="switchView('planner')">Post a Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA STRIP -->
+  <div class="cta-strip">
+    <h2>SWFL's Food Truck<br>Operating System.</h2>
+    <p>Join the founding cohort. Rates lock permanently on day one.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-white btn-lg" onclick="showModal('modal-waitlist')">Claim Founding Rate →</button>
+      <button class="btn btn-lg" style="background:transparent;border:1px solid rgba(255,255,255,0.3);color:#fff;" onclick="switchView('truck')">Preview Truck Portal</button>
+    </div>
+  </div>
+
+  <div style="padding:24px 48px;text-align:center;font-size:12px;color:var(--muted);">
+    © 2025 ServiceWindow · servicewindow.app · Fort Myers, FL
+  </div>
+</div>
+
+
+<!-- ========================================
+     VIEW: TRUCK DASHBOARD
+======================================== -->
+<div id="view-truck" class="view">
+  <nav class="sidebar">
+    <div class="sidebar-logo" onclick="switchView('public')">Service<span>Window</span></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Overview</div>
+      <div class="sidebar-item active" onclick="setTruckPanel('home');setSidebarActive(this)">
+        <span class="sidebar-icon">⬛</span> Dashboard
+      </div>
+      <div class="sidebar-item" onclick="setTruckPanel('calendar');setSidebarActive(this)">
+        <span class="sidebar-icon">📅</span> Calendar
+        <span class="sidebar-badge">3</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Boards</div>
+      <div class="sidebar-item" onclick="setTruckPanel('marketplace');setSidebarActive(this)">
+        <span class="sidebar-icon">📋</span> Request Marketplace
+        <span class="sidebar-badge">7</span>
+      </div>
+      <div class="sidebar-item" onclick="setTruckPanel('shifts');setSidebarActive(this)">
+        <span class="sidebar-icon">🔄</span> Shift Marketplace
+      </div>
+      <div class="sidebar-item" onclick="setTruckPanel('venue');setSidebarActive(this)">
+        <span class="sidebar-icon">🅿️</span> Venues & Parking
+      </div>
+      <div class="sidebar-item" onclick="showToast('Coming soon in next build.','warning')">
+        <span class="sidebar-icon">🔧</span> Vendor Services
+      </div>
+      <div class="sidebar-item" onclick="showToast('Jobs Board launches with full build.','warning')">
+        <span class="sidebar-icon">💼</span> Jobs Board
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Account</div>
+      <div class="sidebar-item" onclick="setTruckPanel('profile');setSidebarActive(this)">
+        <span class="sidebar-icon">🚚</span> My Truck Profile
+      </div>
+      <div class="sidebar-item" onclick="showToast('Messaging center launching with full build.','warning')">
+        <span class="sidebar-icon">💬</span> Messages
+        <span class="sidebar-badge">2</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip" onclick="setTruckPanel('profile');setSidebarActive(document.querySelectorAll('#view-truck .sidebar-item')[7])">
+        <div class="avatar">SR</div>
+        <div class="user-info">
+          <div class="user-name">Smoke Ring BBQ</div>
+          <div class="user-role">Standard Plan</div>
+        </div>
+        <span style="color:var(--muted);font-size:12px;">⚙</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title" id="truck-panel-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="search-box">🔍 Search boards...</div>
+        <div class="notif-bell" onclick="showToast('You have 2 new messages and 1 bid accepted.')">
+          🔔 <div class="notif-dot"></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showModal('modal-respond')">+ Post a Shift</button>
+      </div>
+    </div>
+
+    <!-- PANEL: HOME -->
+    <div class="panel active" id="panel-home">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">This Month Revenue</div>
+          <div class="kpi-value">$4,200</div>
+          <div class="kpi-delta up">↑ 18% vs last month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Bookings</div>
+          <div class="kpi-value">6</div>
+          <div class="kpi-delta up">↑ 2 new this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Open Bids</div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-delta neutral">Awaiting response</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Profile Views</div>
+          <div class="kpi-value">142</div>
+          <div class="kpi-delta up">↑ 34 this week</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Upcoming Bookings</div>
+            <div class="card-subtitle">Confirmed events on your calendar</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="setTruckPanel('calendar');setSidebarActive(document.querySelectorAll('#view-truck .sidebar-item')[1])">View Calendar</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Event</th><th>Date</th><th>Location</th><th>Payout</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Cape Coral Sunset Market</strong></td>
+              <td>Mar 15, 2025</td>
+              <td>Cape Coral Yacht Club</td>
+              <td style="color:var(--success);font-weight:600;">$450</td>
+              <td><span class="tag tag-booked">Confirmed</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="showToast('Event details loaded.')">View</button></td>
+            </tr>
+            <tr>
+              <td><strong>Graduation Party — 150 guests</strong></td>
+              <td>Mar 22, 2025</td>
+              <td>Fort Myers, FL</td>
+              <td style="color:var(--success);font-weight:600;">$800</td>
+              <td><span class="tag tag-booked">Confirmed</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="showToast('Event details loaded.')">View</button></td>
+            </tr>
+            <tr>
+              <td><strong>Brewery Rotation — Momentum Brewing</strong></td>
+              <td>Mar 28, 2025</td>
+              <td>Fort Myers, FL</td>
+              <td style="color:var(--success);font-weight:600;">$320</td>
+              <td><span class="tag tag-pending">Pending</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="showToast('Awaiting venue confirmation.')">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">New Marketplace Requests</div>
+          </div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--surface2);border-radius:4px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;">Corporate Lunch — 200 pax</div>
+                <div style="font-size:11px;color:var(--muted);">Apr 3 · Fort Myers</div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="setTruckPanel('marketplace');setSidebarActive(document.querySelectorAll('#view-truck .sidebar-item')[2])">Bid</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--surface2);border-radius:4px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;">Wedding Reception — 120 guests</div>
+                <div style="font-size:11px;color:var(--muted);">Apr 12 · Naples</div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="setTruckPanel('marketplace');setSidebarActive(document.querySelectorAll('#view-truck .sidebar-item')[2])">Bid</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--surface2);border-radius:4px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;">Farmers Market Weekly Spot</div>
+                <div style="font-size:11px;color:var(--muted);">Recurring · Cape Coral</div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="setTruckPanel('marketplace');setSidebarActive(document.querySelectorAll('#view-truck .sidebar-item')[2])">Bid</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Your Active Bids</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Request</th><th>Bid</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-size:12px;">Spring Festival · Mar 30</td>
+                <td style="font-size:12px;color:var(--accent);">$650</td>
+                <td><span class="tag tag-pending">Pending</span></td>
+              </tr>
+              <tr>
+                <td style="font-size:12px;">Art Walk · Apr 5</td>
+                <td style="font-size:12px;color:var(--accent);">$400</td>
+                <td><span class="tag tag-open">Viewed</span></td>
+              </tr>
+              <tr>
+                <td style="font-size:12px;">Kids Birthday · Apr 8</td>
+                <td style="font-size:12px;color:var(--accent);">$350</td>
+                <td><span class="tag tag-booked">Accepted</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: MARKETPLACE -->
+    <div class="panel" id="panel-marketplace">
+      <div class="filter-bar">
+        <button class="filter-chip active" onclick="setFilter(this)">All</button>
+        <button class="filter-chip" onclick="setFilter(this)">This Week</button>
+        <button class="filter-chip" onclick="setFilter(this)">This Month</button>
+        <button class="filter-chip" onclick="setFilter(this)">Private Events</button>
+        <button class="filter-chip" onclick="setFilter(this)">Markets & Festivals</button>
+        <button class="filter-chip" onclick="setFilter(this)">Recurring</button>
+        <button class="filter-chip" onclick="setFilter(this)">Cape Coral</button>
+        <button class="filter-chip" onclick="setFilter(this)">Fort Myers</button>
+        <div style="margin-left:auto;">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Saving filter preferences...')">Save Filter</button>
+        </div>
+      </div>
+      <div class="listing-grid">
+
+        <div class="listing-card" onclick="showModal('modal-request-detail')">
+          <div class="listing-card-top">
+            <div>
+              <div class="listing-title">Corporate Lunch — Lee Health</div>
+              <div class="listing-meta">📍 Fort Myers · Apr 3, 2025 · 11am–2pm</div>
+            </div>
+            <div>
+              <div class="listing-payout">$900<span class="per">guaranteed</span></div>
+            </div>
+          </div>
+          <div class="listing-details">
+            <div class="detail-chip">👥 200 guests</div>
+            <div class="detail-chip">🍖 Any cuisine</div>
+            <div class="detail-chip">⚡ 3h window</div>
+            <div class="detail-chip">🔌 Power provided</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">Employee appreciation lunch. Need 1 truck. Full commissary access on site. Easy setup.</p>
+          <div class="listing-footer">
+            <span class="tag tag-new">New · 4h ago</span>
+            <div style="display:flex;gap:8px;">
+              <span class="spots-left">2 trucks competing</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Bid Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showModal('modal-request-detail')">
+          <div class="listing-card-top">
+            <div>
+              <div class="listing-title">Wedding Reception — Sanibel</div>
+              <div class="listing-meta">📍 Sanibel Island · Apr 12, 2025 · 6pm–10pm</div>
+            </div>
+            <div>
+              <div class="listing-payout">$1,400<span class="per">guaranteed</span></div>
+            </div>
+          </div>
+          <div class="listing-details">
+            <div class="detail-chip">👥 120 guests</div>
+            <div class="detail-chip">🥗 Upscale preferred</div>
+            <div class="detail-chip">🌙 Evening service</div>
+            <div class="detail-chip">🅿️ Valet coord.</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">Upscale private wedding on the island. Looking for cuisine with presentation quality. Menu approval required.</p>
+          <div class="listing-footer">
+            <span class="tag tag-open">Open</span>
+            <div style="display:flex;gap:8px;">
+              <span class="spots-left">5 trucks competing</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Bid Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showModal('modal-request-detail')">
+          <div class="listing-card-top">
+            <div>
+              <div class="listing-title">Cape Coral Saturday Market</div>
+              <div class="listing-meta">📍 Cape Coral · Every Saturday · 8am–1pm</div>
+            </div>
+            <div>
+              <div class="listing-payout">$150<span class="per">spot fee</span></div>
+            </div>
+          </div>
+          <div class="listing-details">
+            <div class="detail-chip">♻️ Recurring weekly</div>
+            <div class="detail-chip">🏪 1 spot open</div>
+            <div class="detail-chip">☀️ Outdoor market</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">Established Saturday market. High foot traffic, 40+ vendors. Looking for savory food truck to replace departing vendor.</p>
+          <div class="listing-footer">
+            <span class="tag tag-open">Open</span>
+            <div style="display:flex;gap:8px;">
+              <span class="spots-left">1 spot left</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Bid Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showModal('modal-request-detail')">
+          <div class="listing-card-top">
+            <div>
+              <div class="listing-title">Graduation Party — 150 Guests</div>
+              <div class="listing-meta">📍 Fort Myers · Apr 20, 2025 · 3pm–7pm</div>
+            </div>
+            <div>
+              <div class="listing-payout">$750<span class="per">estimated</span></div>
+            </div>
+          </div>
+          <div class="listing-details">
+            <div class="detail-chip">👥 150 guests</div>
+            <div class="detail-chip">🎉 Party/celebration</div>
+            <div class="detail-chip">🔌 Power available</div>
+            <div class="detail-chip">🍔 Any cuisine</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">Private residence. High school graduation. Budget flexible for right truck. References preferred.</p>
+          <div class="listing-footer">
+            <span class="tag tag-new">New · 1d ago</span>
+            <div style="display:flex;gap:8px;">
+              <span class="spots-left">1 truck competing</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Bid Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showModal('modal-request-detail')">
+          <div class="listing-card-top">
+            <div>
+              <div class="listing-title">Art Walk — Downtown Fort Myers</div>
+              <div class="listing-meta">📍 Downtown FM · Monthly · 5pm–9pm</div>
+            </div>
+            <div>
+              <div class="listing-payout">$200<span class="per">spot fee</span></div>
+            </div>
+          </div>
+          <div class="listing-details">
+            <div class="detail-chip">♻️ Monthly</div>
+            <div class="detail-chip">🎨 2 spots open</div>
+            <div class="detail-chip">🌆 High traffic</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">Monthly First Friday Art Walk. Foot traffic averages 1,200+. Looking for diverse cuisine mix.</p>
+          <div class="listing-footer">
+            <span class="tag tag-open">Open</span>
+            <div style="display:flex;gap:8px;">
+              <span class="spots-left">2 spots left</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Bid Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showModal('modal-request-detail')">
+          <div class="listing-card-top">
+            <div>
+              <div class="listing-title">Brewery Rotation — Momentum Brewing</div>
+              <div class="listing-meta">📍 Fort Myers · Thursdays–Saturdays · 5pm–9pm</div>
+            </div>
+            <div>
+              <div class="listing-payout">$0<span class="per">keep revenue</span></div>
+            </div>
+          </div>
+          <div class="listing-details">
+            <div class="detail-chip">♻️ Recurring 3x/wk</div>
+            <div class="detail-chip">🍺 Brewery</div>
+            <div class="detail-chip">🔌 Full hookups</div>
+            <div class="detail-chip">🚰 Water access</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">Anchor spot at Momentum Brewing. Keep all revenue. 200+ built-in brewery patrons nightly. Strong recurring income potential.</p>
+          <div class="listing-footer">
+            <span class="tag tag-new">New · 6h ago</span>
+            <div style="display:flex;gap:8px;">
+              <span class="spots-left">4 trucks competing</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Bid Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showModal('modal-request-detail')">
+          <div class="listing-card-top">
+            <div>
+              <div class="listing-title">SWFL Food & Wine Festival</div>
+              <div class="listing-meta">📍 Naples, FL · May 10–11, 2025</div>
+            </div>
+            <div>
+              <div class="listing-payout">$300<span class="per">spot fee</span></div>
+            </div>
+          </div>
+          <div class="listing-details">
+            <div class="detail-chip">🎪 2-day festival</div>
+            <div class="detail-chip">👥 3,000+ expected</div>
+            <div class="detail-chip">🍷 Premium event</div>
+            <div class="detail-chip">📸 Media coverage</div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">Annual premier food festival in Naples. High exposure. Menu curation required. Applications close Apr 1.</p>
+          <div class="listing-footer">
+            <span class="tag tag-open">Open</span>
+            <div style="display:flex;gap:8px;">
+              <span class="spots-left">12 spots left</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Apply</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PANEL: SHIFTS -->
+    <div class="panel" id="panel-shifts">
+      <div class="tabs">
+        <button class="tab active" onclick="setTab(this,'shifts-available')">Available Shifts</button>
+        <button class="tab" onclick="setTab(this,'shifts-mine')">My Posted Shifts</button>
+      </div>
+
+      <div id="shifts-available">
+        <div class="filter-bar">
+          <button class="filter-chip active" onclick="setFilter(this)">All</button>
+          <button class="filter-chip" onclick="setFilter(this)">This Week</button>
+          <button class="filter-chip" onclick="setFilter(this)">Paid</button>
+          <button class="filter-chip" onclick="setFilter(this)">Revenue Split</button>
+          <button class="filter-chip" onclick="setFilter(this)">Full Transfer</button>
+        </div>
+        <div class="listing-grid">
+          <div class="listing-card" onclick="showModal('modal-shift-detail')">
+            <div class="listing-card-top">
+              <div>
+                <div class="listing-title">Cape Coral Bike Night</div>
+                <div class="listing-meta">📍 Cape Coral · Mar 18 · 5pm–9pm</div>
+              </div>
+              <div>
+                <div class="listing-payout" style="color:var(--accent2);">$600<span class="per">est. revenue</span></div>
+              </div>
+            </div>
+            <div class="listing-details">
+              <div class="detail-chip">🔄 Full transfer</div>
+              <div class="detail-chip">🍔 Any truck</div>
+              <div class="detail-chip">🔌 Power on site</div>
+            </div>
+            <p style="font-size:12px;color:var(--muted);line-height:1.5;">I have a family conflict. Spot is mine — full revenue goes to you. Must be able to handle 200+ crowd.</p>
+            <div class="listing-footer">
+              <div style="font-size:12px;color:var(--muted);">Posted by <strong style="color:var(--text);">Taco Loco</strong></div>
+              <button class="btn btn-success btn-sm" onclick="event.stopPropagation();showToast('Pickup request sent to Taco Loco.','success')">Pick Up Shift</button>
+            </div>
+          </div>
+
+          <div class="listing-card" onclick="showModal('modal-shift-detail')">
+            <div class="listing-card-top">
+              <div>
+                <div class="listing-title">Estero Corporate Park</div>
+                <div class="listing-meta">📍 Estero, FL · Mar 20 · 11am–2pm</div>
+              </div>
+              <div>
+                <div class="listing-payout" style="color:var(--accent2);">70/30<span class="per">revenue split</span></div>
+              </div>
+            </div>
+            <div class="listing-details">
+              <div class="detail-chip">🔄 Revenue split</div>
+              <div class="detail-chip">🏢 Corporate park</div>
+              <div class="detail-chip">👥 400 employees</div>
+            </div>
+            <p style="font-size:12px;color:var(--muted);line-height:1.5;">Equipment issue — need a sub for my anchor spot. Strong repeat customer base. Split 70 (you) / 30 (me) for spot fee I already paid.</p>
+            <div class="listing-footer">
+              <div style="font-size:12px;color:var(--muted);">Posted by <strong style="color:var(--text);">Gulf Coast Eats</strong></div>
+              <button class="btn btn-success btn-sm" onclick="event.stopPropagation();showToast('Pickup request sent to Gulf Coast Eats.','success')">Pick Up Shift</button>
+            </div>
+          </div>
+
+          <div class="listing-card" onclick="showModal('modal-shift-detail')">
+            <div class="listing-card-top">
+              <div>
+                <div class="listing-title">Bonita Springs Farmers Market</div>
+                <div class="listing-meta">📍 Bonita Springs · Mar 22 · 8am–1pm</div>
+              </div>
+              <div>
+                <div class="listing-payout" style="color:var(--accent2);">$250<span class="per">flat payout</span></div>
+              </div>
+            </div>
+            <div class="listing-details">
+              <div class="detail-chip">💵 Flat fee</div>
+              <div class="detail-chip">🥗 Healthy preferred</div>
+              <div class="detail-chip">🌿 Farmers market</div>
+            </div>
+            <p style="font-size:12px;color:var(--muted);line-height:1.5;">Paying $250 flat for the right truck to cover my spot. Event organizer approved the swap. Easy load-in.</p>
+            <div class="listing-footer">
+              <div style="font-size:12px;color:var(--muted);">Posted by <strong style="color:var(--text);">The Green Bowl</strong></div>
+              <button class="btn btn-success btn-sm" onclick="event.stopPropagation();showToast('Pickup request sent to The Green Bowl.','success')">Pick Up Shift</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="shifts-mine" style="display:none;">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:20px;">
+          <button class="btn btn-primary" onclick="showModal('modal-post-shift')">+ Post a Shift</button>
+        </div>
+        <div class="empty-state">
+          <div class="big">🔄</div>
+          <h3>No shifts posted yet</h3>
+          <p>Have a conflict? Post your shift and let another truck cover it.</p>
+          <button class="btn btn-primary" onclick="showModal('modal-post-shift')">Post My First Shift</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: CALENDAR -->
+    <div class="panel" id="panel-calendar">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <div class="tabs" style="margin:0">
+          <button class="tab active" onclick="setTab(this,'cal-month')">Month</button>
+          <button class="tab" onclick="setTab(this,'cal-list')">List</button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Add to your calendar — full feature in build.')">+ Add Event</button>
+      </div>
+
+      <div id="cal-month">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('← Previous month')">← Prev</button>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;">March 2025</span>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('→ Next month')">Next →</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);background:var(--border);gap:1px;">
+            <!-- Day headers -->
+            <div style="background:var(--surface2);padding:10px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;">SUN</div>
+            <div style="background:var(--surface2);padding:10px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;">MON</div>
+            <div style="background:var(--surface2);padding:10px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;">TUE</div>
+            <div style="background:var(--surface2);padding:10px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;">WED</div>
+            <div style="background:var(--surface2);padding:10px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;">THU</div>
+            <div style="background:var(--surface2);padding:10px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;">FRI</div>
+            <div style="background:var(--surface2);padding:10px;text-align:center;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;">SAT</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);background:var(--border);gap:1px;" id="cal-grid"></div>
+        </div>
+      </div>
+
+      <div id="cal-list" style="display:none;">
+        <div class="card">
+          <table class="data-table">
+            <thead><tr><th>Event</th><th>Date & Time</th><th>Location</th><th>Type</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr onclick="showToast('Event details loaded.')">
+                <td><strong>Cape Coral Sunset Market</strong></td>
+                <td>Mar 15 · 3pm–8pm</td>
+                <td>Cape Coral Yacht Club</td>
+                <td><span class="tag tag-open">Market</span></td>
+                <td><span class="tag tag-booked">Confirmed</span></td>
+                <td><button class="btn btn-ghost btn-sm">Details</button></td>
+              </tr>
+              <tr onclick="showToast('Event details loaded.')">
+                <td><strong>Cape Coral Bike Night</strong></td>
+                <td>Mar 18 · 5pm–9pm</td>
+                <td>Del Prado Blvd</td>
+                <td><span class="tag tag-new">Public</span></td>
+                <td><span class="tag tag-open">Open</span></td>
+                <td><button class="btn btn-ghost btn-sm">Details</button></td>
+              </tr>
+              <tr onclick="showToast('Event details loaded.')">
+                <td><strong>Art Walk Downtown FM</strong></td>
+                <td>Mar 21 · 5pm–9pm</td>
+                <td>Downtown Fort Myers</td>
+                <td><span class="tag tag-new">Public</span></td>
+                <td><span class="tag tag-open">Open</span></td>
+                <td><button class="btn btn-ghost btn-sm">Details</button></td>
+              </tr>
+              <tr onclick="showToast('Event details loaded.')">
+                <td><strong>Graduation Party</strong></td>
+                <td>Mar 22 · 3pm–7pm</td>
+                <td>Fort Myers (Private)</td>
+                <td><span class="tag tag-booked">Private</span></td>
+                <td><span class="tag tag-booked">Confirmed</span></td>
+                <td><button class="btn btn-ghost btn-sm">Details</button></td>
+              </tr>
+              <tr onclick="showToast('Event details loaded.')">
+                <td><strong>Momentum Brewing Thursday</strong></td>
+                <td>Mar 27 · 5pm–9pm</td>
+                <td>Fort Myers</td>
+                <td><span class="tag tag-available">Recurring</span></td>
+                <td><span class="tag tag-pending">Pending</span></td>
+                <td><button class="btn btn-ghost btn-sm">Details</button></td>
+              </tr>
+              <tr onclick="showToast('Event details loaded.')">
+                <td><strong>SWFL Food & Wine Festival</strong></td>
+                <td>May 10–11 · All day</td>
+                <td>Naples, FL</td>
+                <td><span class="tag tag-new">Festival</span></td>
+                <td><span class="tag tag-open">Open</span></td>
+                <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-respond')">Apply</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: VENUE & PARKING -->
+    <div class="panel" id="panel-venue">
+      <div class="tabs">
+        <button class="tab active" onclick="setTab(this,'venue-spots')">Parking Spots</button>
+        <button class="tab" onclick="setTab(this,'venue-partnerships')">Venue Partnerships</button>
+        <button class="tab" onclick="setTab(this,'venue-commissary')">Commissary Access</button>
+      </div>
+
+      <div id="venue-spots">
+        <div class="filter-bar">
+          <button class="filter-chip active" onclick="setFilter(this)">All Areas</button>
+          <button class="filter-chip" onclick="setFilter(this)">Cape Coral</button>
+          <button class="filter-chip" onclick="setFilter(this)">Fort Myers</button>
+          <button class="filter-chip" onclick="setFilter(this)">Bonita Springs</button>
+          <button class="filter-chip" onclick="setFilter(this)">Naples</button>
+          <button class="filter-chip" onclick="setFilter(this)">Available Now</button>
+        </div>
+        <div class="venue-grid">
+          <div class="venue-card">
+            <div class="venue-img">🏢</div>
+            <div class="venue-body">
+              <div class="venue-name">Pine Island Road Pad</div>
+              <div class="venue-addr">📍 Cape Coral, FL 33990</div>
+              <div class="venue-specs">
+                <div class="venue-spec"><strong>$400</strong>monthly</div>
+                <div class="venue-spec"><strong>1,200 sqft</strong>pad</div>
+                <div class="venue-spec"><strong>30A</strong>power</div>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+                <span class="tag tag-available">Available Now</span>
+                <div class="detail-chip">💧 Water</div>
+                <div class="detail-chip">🔌 Power</div>
+              </div>
+              <button class="btn btn-primary" style="width:100%" onclick="showModal('modal-venue-inquire')">Inquire</button>
+            </div>
+          </div>
+
+          <div class="venue-card">
+            <div class="venue-img">🍺</div>
+            <div class="venue-body">
+              <div class="venue-name">Momentum Brewing — Patio Spot</div>
+              <div class="venue-addr">📍 Fort Myers, FL 33907</div>
+              <div class="venue-specs">
+                <div class="venue-spec"><strong>Free</strong>spot fee</div>
+                <div class="venue-spec"><strong>Keep 100%</strong>revenue</div>
+                <div class="venue-spec"><strong>3x/wk</strong>schedule</div>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+                <span class="tag tag-new">Hot Lead</span>
+                <div class="detail-chip">🍺 200+ nightly</div>
+              </div>
+              <button class="btn btn-primary" style="width:100%" onclick="showModal('modal-venue-inquire')">Apply for Spot</button>
+            </div>
+          </div>
+
+          <div class="venue-card">
+            <div class="venue-img">🏬</div>
+            <div class="venue-body">
+              <div class="venue-name">McGregor Commons Lot</div>
+              <div class="venue-addr">📍 Fort Myers, FL 33919</div>
+              <div class="venue-specs">
+                <div class="venue-spec"><strong>$550</strong>monthly</div>
+                <div class="venue-spec"><strong>2,000 sqft</strong>pad</div>
+                <div class="venue-spec"><strong>50A</strong>power</div>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+                <span class="tag tag-available">Available Mar 1</span>
+                <div class="detail-chip">🔌 Full hookup</div>
+              </div>
+              <button class="btn btn-primary" style="width:100%" onclick="showModal('modal-venue-inquire')">Inquire</button>
+            </div>
+          </div>
+
+          <div class="venue-card">
+            <div class="venue-img">🌴</div>
+            <div class="venue-body">
+              <div class="venue-name">Bonita Beach Road Corner</div>
+              <div class="venue-addr">📍 Bonita Springs, FL 34134</div>
+              <div class="venue-specs">
+                <div class="venue-spec"><strong>$300</strong>monthly</div>
+                <div class="venue-spec"><strong>Tourist area</strong></div>
+                <div class="venue-spec"><strong>High traffic</strong></div>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+                <span class="tag tag-pending">Pending</span>
+                <div class="detail-chip">🏖️ Beach traffic</div>
+              </div>
+              <button class="btn btn-outline" style="width:100%" onclick="showToast('Added to watchlist. You will be notified when available.')">Watch Spot</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="venue-partnerships" style="display:none;">
+        <div class="listing-grid">
+          <div class="listing-card" onclick="showModal('modal-venue-inquire')">
+            <div class="listing-card-top">
+              <div>
+                <div class="listing-title">Pinchers Crab Shack — Overflow Patio</div>
+                <div class="listing-meta">📍 Fort Myers Beach · Year-round</div>
+              </div>
+              <div class="listing-payout" style="color:var(--accent2);">$0<span class="per">keep all</span></div>
+            </div>
+            <div class="listing-details">
+              <div class="detail-chip">🤝 Partnership</div>
+              <div class="detail-chip">🌊 Waterfront</div>
+              <div class="detail-chip">👥 600+ weekly</div>
+            </div>
+            <p style="font-size:12px;color:var(--muted);line-height:1.5;">Overflow food truck partner needed. Must complement (not compete with) existing menu. 3-month trial then rolling agreement.</p>
+            <div class="listing-footer">
+              <span class="tag tag-open">Accepting Apps</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-venue-inquire')">Apply</button>
+            </div>
+          </div>
+
+          <div class="listing-card" onclick="showModal('modal-venue-inquire')">
+            <div class="listing-card-top">
+              <div>
+                <div class="listing-title">Gather Brewing Co. — Weekly Rotation</div>
+                <div class="listing-meta">📍 Cape Coral · Fri–Sun</div>
+              </div>
+              <div class="listing-payout" style="color:var(--accent2);">$0<span class="per">keep all</span></div>
+            </div>
+            <div class="listing-details">
+              <div class="detail-chip">♻️ Weekly recurring</div>
+              <div class="detail-chip">🍺 Craft brewery</div>
+              <div class="detail-chip">🔌 Full hookups</div>
+            </div>
+            <p style="font-size:12px;color:var(--muted);line-height:1.5;">Cape Coral's fastest-growing brewery. Looking for 2 rotation trucks. High spend customers. Full utility hookups included.</p>
+            <div class="listing-footer">
+              <span class="tag tag-new">2 spots left</span>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showModal('modal-venue-inquire')">Apply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="venue-commissary" style="display:none;">
+        <div class="venue-grid">
+          <div class="venue-card">
+            <div class="venue-img">🏭</div>
+            <div class="venue-body">
+              <div class="venue-name">KitchenShare 239</div>
+              <div class="venue-addr">📍 Cape Coral, FL · Chef Robert Cardoos</div>
+              <div class="venue-specs">
+                <div class="venue-spec"><strong>$450</strong>monthly</div>
+                <div class="venue-spec"><strong>Full NSF</strong>equipment</div>
+                <div class="venue-spec"><strong>24/7</strong>access</div>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+                <span class="tag tag-available">Spots Open</span>
+                <div class="detail-chip">📋 Licensing help</div>
+                <div class="detail-chip">50yr experience</div>
+              </div>
+              <button class="btn btn-primary" style="width:100%" onclick="showModal('modal-venue-inquire')">Contact</button>
+            </div>
+          </div>
+          <div class="venue-card">
+            <div class="venue-img">🍳</div>
+            <div class="venue-body">
+              <div class="venue-name">SWFL Shared Kitchen</div>
+              <div class="venue-addr">📍 Fort Myers, FL</div>
+              <div class="venue-specs">
+                <div class="venue-spec"><strong>$375</strong>monthly</div>
+                <div class="venue-spec"><strong>Commercial</strong>grade</div>
+                <div class="venue-spec"><strong>Storage</strong>included</div>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+                <span class="tag tag-available">Available</span>
+                <div class="detail-chip">🧊 Cold storage</div>
+              </div>
+              <button class="btn btn-primary" style="width:100%" onclick="showModal('modal-venue-inquire')">Contact</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: PROFILE -->
+    <div class="panel" id="panel-profile">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <div>
+          <h2 style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;">Truck Profile</h2>
+          <p style="font-size:13px;color:var(--muted);">This is what planners and venues see when searching for trucks.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Preview opens in public view.')">Preview Public Profile</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Profile saved.','success')">Save Changes</button>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <div>
+          <div class="profile-pic-zone">
+            <div class="big-icon">🚚</div>
+            <span>Upload Truck Photo</span>
+            <span style="font-size:11px;">PNG, JPG up to 5MB</span>
+          </div>
+          <div style="margin-top:12px;">
+            <div class="profile-pic-zone" style="aspect-ratio:unset;padding:16px;gap:6px;">
+              <span style="font-size:14px;">🖼️</span>
+              <span>Upload Menu / Gallery</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;background:var(--surface2);border-radius:6px;padding:16px;">
+            <div class="kpi-label" style="margin-bottom:12px;">Profile Strength</div>
+            <div style="background:var(--border);border-radius:4px;height:6px;margin-bottom:6px;">
+              <div style="background:var(--accent);height:100%;width:60%;border-radius:4px;"></div>
+            </div>
+            <div style="font-size:12px;color:var(--muted);">60% — Add photos to reach 80%</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Basic Info</div></div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+              <div class="form-row">
+                <div class="form-group" style="margin:0">
+                  <label class="form-label">Truck Name</label>
+                  <input class="form-input" value="Smoke Ring BBQ">
+                </div>
+                <div class="form-group" style="margin:0">
+                  <label class="form-label">Cuisine Type</label>
+                  <select class="form-select">
+                    <option selected>BBQ / Smoked Meats</option>
+                    <option>Tacos / Mexican</option>
+                    <option>Burgers</option>
+                    <option>Seafood</option>
+                    <option>Asian Fusion</option>
+                    <option>Desserts</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group" style="margin:0">
+                <label class="form-label">Short Bio</label>
+                <textarea class="form-textarea">Award-winning Southern BBQ with Southern Pride smokers. Known for brisket and pulled pork. Serving SWFL since 2019.</textarea>
+              </div>
+              <div class="form-row">
+                <div class="form-group" style="margin:0">
+                  <label class="form-label">Service Radius</label>
+                  <select class="form-select">
+                    <option>25 miles</option>
+                    <option selected>50 miles</option>
+                    <option>75 miles</option>
+                    <option>Statewide</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin:0">
+                  <label class="form-label">Capacity (guests/hr)</label>
+                  <input class="form-input" value="150">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group" style="margin:0">
+                  <label class="form-label">Min. Event Payout ($)</label>
+                  <input class="form-input" value="300">
+                </div>
+                <div class="form-group" style="margin:0">
+                  <label class="form-label">Phone</label>
+                  <input class="form-input" value="(239) 555-0192">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px;">
+            <div class="card-header"><div class="card-title">Services & Requirements</div></div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:13px;">Requires power hookup</span>
+                <div class="toggle active" onclick="this.classList.toggle('active')" style="width:40px;height:22px;background:var(--accent);border-radius:11px;cursor:pointer;position:relative;transition:background 0.2s;">
+                  <div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:right 0.2s;"></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:13px;">Available for private events</span>
+                <div style="width:40px;height:22px;background:var(--accent);border-radius:11px;cursor:pointer;position:relative;">
+                  <div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;"></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:13px;">Available for catering / drop-off</span>
+                <div style="width:40px;height:22px;background:var(--border);border-radius:11px;cursor:pointer;position:relative;" onclick="this.style.background='var(--accent)'">
+                  <div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;"></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:13px;">Open to recurring spots</span>
+                <div style="width:40px;height:22px;background:var(--accent);border-radius:11px;cursor:pointer;position:relative;">
+                  <div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn btn-outline" onclick="showToast('Changes discarded.')">Discard</button>
+        <button class="btn btn-primary" onclick="showToast('Profile saved successfully.','success')">Save Changes</button>
+      </div>
+    </div>
+
+  </div><!-- end main-content -->
+</div><!-- end view-truck -->
+
+
+<!-- ========================================
+     VIEW: PLANNER PORTAL
+======================================== -->
+<div id="view-planner" class="view">
+  <nav class="sidebar">
+    <div class="sidebar-logo" onclick="switchView('public')">Service<span>Window</span></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">My Events</div>
+      <div class="sidebar-item active" onclick="setPlannerPanel('planner-home');setSidebarActive(this)">
+        <span class="sidebar-icon">⬛</span> Dashboard
+      </div>
+      <div class="sidebar-item" onclick="setPlannerPanel('planner-post');setSidebarActive(this)">
+        <span class="sidebar-icon">➕</span> Post a Request
+      </div>
+      <div class="sidebar-item" onclick="setPlannerPanel('planner-bids');setSidebarActive(this)">
+        <span class="sidebar-icon">📬</span> My Requests
+        <span class="sidebar-badge">3</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Find Trucks</div>
+      <div class="sidebar-item" onclick="setPlannerPanel('planner-browse');setSidebarActive(this)">
+        <span class="sidebar-icon">🔍</span> Browse Trucks
+      </div>
+      <div class="sidebar-item" onclick="showToast('Venue Partnership board launching soon.','warning')">
+        <span class="sidebar-icon">🤝</span> Venue Partners
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="avatar" style="background:var(--accent2)">SM</div>
+        <div class="user-info">
+          <div class="user-name">Sarah M.</div>
+          <div class="user-role">Planner · Free</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title" id="planner-panel-title">Event Dashboard</div>
+      <div class="topbar-right">
+        <div class="search-box">🔍 Search trucks by cuisine...</div>
+        <button class="btn btn-primary btn-sm" onclick="setPlannerPanel('planner-post');setSidebarActive(document.querySelectorAll('#view-planner .sidebar-item')[1])">+ New Request</button>
+      </div>
+    </div>
+
+    <!-- PLANNER: HOME -->
+    <div class="panel active" id="panel-planner-home">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Active Requests</div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-delta up">14 bids received</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Events Booked</div>
+          <div class="kpi-value">8</div>
+          <div class="kpi-delta neutral">All time</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Favorite Trucks</div>
+          <div class="kpi-value">5</div>
+          <div class="kpi-delta neutral">Saved</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Active Requests & Bids</div>
+            <div class="card-subtitle">Trucks are bidding on your events</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="setPlannerPanel('planner-post');setSidebarActive(document.querySelectorAll('#view-planner .sidebar-item')[1])">+ New Request</button>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Event</th><th>Date</th><th>Bids</th><th>Budget</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Company Picnic — 300 guests</strong></td>
+              <td>Apr 15, 2025</td>
+              <td><span style="color:var(--success);font-weight:700;">6 bids</span></td>
+              <td>$1,200</td>
+              <td><span class="tag tag-open">Active</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="setPlannerPanel('planner-bids');setSidebarActive(document.querySelectorAll('#view-planner .sidebar-item')[2])">Review Bids</button></td>
+            </tr>
+            <tr>
+              <td><strong>Retirement Party — 80 guests</strong></td>
+              <td>Apr 28, 2025</td>
+              <td><span style="color:var(--warning);font-weight:700;">3 bids</span></td>
+              <td>$600</td>
+              <td><span class="tag tag-open">Active</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="setPlannerPanel('planner-bids');setSidebarActive(document.querySelectorAll('#view-planner .sidebar-item')[2])">Review Bids</button></td>
+            </tr>
+            <tr>
+              <td><strong>HOA Summer Social</strong></td>
+              <td>May 10, 2025</td>
+              <td><span style="color:var(--accent);font-weight:700;">5 bids</span></td>
+              <td>$800</td>
+              <td><span class="tag tag-open">Active</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="setPlannerPanel('planner-bids');setSidebarActive(document.querySelectorAll('#view-planner .sidebar-item')[2])">Review Bids</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PLANNER: POST REQUEST -->
+    <div class="panel" id="panel-planner-post">
+      <div class="wizard-steps req-wizard">
+        <div class="wizard-step done" id="ws1">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Event Info</div>
+        </div>
+        <div class="wizard-step active" id="ws2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Requirements</div>
+        </div>
+        <div class="wizard-step" id="ws3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Review & Post</div>
+        </div>
+      </div>
+
+      <div class="card req-wizard">
+        <div class="card-header">
+          <div class="card-title">Event Requirements</div>
+          <div class="card-subtitle">Trucks see this when deciding to bid</div>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+          <div class="form-row">
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Event Name</label>
+              <input class="form-input" placeholder="Company Picnic, Wedding, etc.">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Event Type</label>
+              <select class="form-select">
+                <option value="">Select type...</option>
+                <option>Corporate / Company Event</option>
+                <option>Private Party</option>
+                <option>Wedding / Reception</option>
+                <option>Festival / Market</option>
+                <option>HOA / Neighborhood</option>
+                <option>Birthday / Celebration</option>
+                <option>School / University</option>
+                <option>Charity / Fundraiser</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Date</label>
+              <input class="form-input" type="date">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Time Window</label>
+              <input class="form-input" placeholder="e.g. 11am – 2pm">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Location / City</label>
+              <input class="form-input" placeholder="Cape Coral, Fort Myers...">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Expected Guests</label>
+              <input class="form-input" type="number" placeholder="100">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Budget / Payout ($)</label>
+              <input class="form-input" type="number" placeholder="500">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Cuisine Preference</label>
+              <select class="form-select">
+                <option value="">Any cuisine</option>
+                <option>BBQ / Smoked</option>
+                <option>Tacos / Mexican</option>
+                <option>Burgers / American</option>
+                <option>Seafood</option>
+                <option>Asian Fusion</option>
+                <option>Desserts</option>
+                <option>Vegetarian / Vegan</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Additional Details</label>
+            <textarea class="form-textarea" placeholder="Power available? Water hookup? Specific setup requirements, restrictions, or anything trucks should know..."></textarea>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:8px 12px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);">
+              <input type="checkbox" style="accent-color:var(--accent)"> Power provided
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:8px 12px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);">
+              <input type="checkbox" style="accent-color:var(--accent)"> Water access
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:8px 12px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);">
+              <input type="checkbox" style="accent-color:var(--accent)"> Easy load-in
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:8px 12px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);">
+              <input type="checkbox" style="accent-color:var(--accent)"> Outdoor event
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="showToast('Saved as draft.')">Save Draft</button>
+          <button class="btn btn-primary" onclick="showToast('Request posted! Trucks will start bidding within the hour.','success');setPlannerPanel('planner-bids');">Post Request →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANNER: REVIEW BIDS -->
+    <div class="panel" id="panel-planner-bids">
+      <div style="margin-bottom:20px;">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+          <select class="form-select" style="width:auto;min-width:200px;">
+            <option>Company Picnic — Apr 15</option>
+            <option>Retirement Party — Apr 28</option>
+            <option>HOA Summer Social — May 10</option>
+          </select>
+          <span style="font-size:13px;color:var(--muted);">6 bids received</span>
+        </div>
+      </div>
+
+      <div class="match-card selected">
+        <div class="match-avatar">🚚</div>
+        <div class="match-info">
+          <div class="match-name">Smoke Ring BBQ</div>
+          <div class="match-desc">BBQ / Smoked Meats · Cap. 150/hr · 50mi radius</div>
+          <div class="match-rating">★ 4.9 · 87 events · Member since 2023</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);">$950</div>
+          <div style="font-size:11px;color:var(--muted);">their bid</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-left:8px;">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Smoke Ring BBQ booking confirmed!','success')">Book</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast('Message sent to Smoke Ring BBQ.')">Message</button>
+        </div>
+      </div>
+
+      <div class="match-card">
+        <div class="match-avatar" style="background:#3a3a3a">🌮</div>
+        <div class="match-info">
+          <div class="match-name">Taco Loco</div>
+          <div class="match-desc">Tacos / Mexican · Cap. 200/hr · 25mi radius</div>
+          <div class="match-rating">★ 4.7 · 62 events · Member since 2022</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);">$800</div>
+          <div style="font-size:11px;color:var(--muted);">their bid</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-left:8px;">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Taco Loco booking confirmed!','success')">Book</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast('Message sent to Taco Loco.')">Message</button>
+        </div>
+      </div>
+
+      <div class="match-card">
+        <div class="match-avatar" style="background:#2a3a4a">🍔</div>
+        <div class="match-info">
+          <div class="match-name">Gulf Coast Eats</div>
+          <div class="match-desc">Burgers / Seafood · Cap. 180/hr · 50mi radius</div>
+          <div class="match-rating">★ 4.8 · 45 events · Member since 2023</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);">$1,100</div>
+          <div style="font-size:11px;color:var(--muted);">their bid</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-left:8px;">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Gulf Coast Eats booking confirmed!','success')">Book</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast('Message sent to Gulf Coast Eats.')">Message</button>
+        </div>
+      </div>
+
+      <div class="match-card">
+        <div class="match-avatar" style="background:#3a2a3a">🍜</div>
+        <div class="match-info">
+          <div class="match-name">Saigon Street</div>
+          <div class="match-desc">Asian Fusion / Vietnamese · Cap. 120/hr · 40mi radius</div>
+          <div class="match-rating">★ 4.6 · 31 events · Member since 2024</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);">$750</div>
+          <div style="font-size:11px;color:var(--muted);">their bid</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-left:8px;">
+          <button class="btn btn-primary btn-sm" onclick="showToast('Saigon Street booking confirmed!','success')">Book</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast('Message sent to Saigon Street.')">Message</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANNER: BROWSE TRUCKS -->
+    <div class="panel" id="panel-planner-browse">
+      <div class="filter-bar">
+        <button class="filter-chip active" onclick="setFilter(this)">All Cuisine</button>
+        <button class="filter-chip" onclick="setFilter(this)">BBQ</button>
+        <button class="filter-chip" onclick="setFilter(this)">Tacos</button>
+        <button class="filter-chip" onclick="setFilter(this)">Seafood</button>
+        <button class="filter-chip" onclick="setFilter(this)">Desserts</button>
+        <button class="filter-chip" onclick="setFilter(this)">Cape Coral</button>
+        <button class="filter-chip" onclick="setFilter(this)">Fort Myers</button>
+        <button class="filter-chip" onclick="setFilter(this)">Available Apr</button>
+      </div>
+      <div class="listing-grid">
+        <div class="listing-card" onclick="showToast('Truck profile loaded.')">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+            <div class="avatar" style="width:52px;height:52px;border-radius:10px;font-size:24px;">🚚</div>
+            <div>
+              <div class="listing-title">Smoke Ring BBQ</div>
+              <div class="listing-meta">📍 Cape Coral · BBQ / Smoked Meats</div>
+              <div style="color:var(--accent2);font-size:12px;font-weight:600;">★ 4.9 · 87 events</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">Award-winning Southern BBQ. Southern Pride smokers. Known for brisket and pulled pork.</p>
+          <div class="listing-details">
+            <div class="detail-chip">👥 Up to 150/hr</div>
+            <div class="detail-chip">📍 50mi radius</div>
+            <div class="detail-chip">💵 Min $300</div>
+          </div>
+          <div class="listing-footer">
+            <span class="tag tag-available">Available</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast('Saved to favorites.','success')">♡ Save</button>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();setPlannerPanel('planner-post')">Request Quote</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showToast('Truck profile loaded.')">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+            <div class="avatar" style="width:52px;height:52px;border-radius:10px;font-size:24px;background:#2a3a2a;">🌮</div>
+            <div>
+              <div class="listing-title">Taco Loco</div>
+              <div class="listing-meta">📍 Fort Myers · Tacos / Mexican</div>
+              <div style="color:var(--accent2);font-size:12px;font-weight:600;">★ 4.7 · 62 events</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">Street-style tacos and burritos. Fast service. High-volume capacity. Perfect for large groups.</p>
+          <div class="listing-details">
+            <div class="detail-chip">👥 Up to 200/hr</div>
+            <div class="detail-chip">📍 25mi radius</div>
+            <div class="detail-chip">💵 Min $250</div>
+          </div>
+          <div class="listing-footer">
+            <span class="tag tag-available">Available</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast('Saved to favorites.','success')">♡ Save</button>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();setPlannerPanel('planner-post')">Request Quote</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="listing-card" onclick="showToast('Truck profile loaded.')">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+            <div class="avatar" style="width:52px;height:52px;border-radius:10px;font-size:24px;background:#2a3040;">🦞</div>
+            <div>
+              <div class="listing-title">Gulf Coast Eats</div>
+              <div class="listing-meta">📍 Bonita Springs · Seafood / Burgers</div>
+              <div style="color:var(--accent2);font-size:12px;font-weight:600;">★ 4.8 · 45 events</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">Fresh Gulf seafood, lobster rolls, fish tacos. Premium presentation for upscale events.</p>
+          <div class="listing-details">
+            <div class="detail-chip">👥 Up to 180/hr</div>
+            <div class="detail-chip">📍 50mi radius</div>
+            <div class="detail-chip">💵 Min $500</div>
+          </div>
+          <div class="listing-footer">
+            <span class="tag tag-available">Available</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast('Saved to favorites.','success')">♡ Save</button>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();setPlannerPanel('planner-post')">Request Quote</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ========================================
+     MODALS
+======================================== -->
+
+<!-- Waitlist -->
+<div class="modal-overlay" id="modal-waitlist">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Claim Founding Rate</div>
+      <button class="modal-close" onclick="closeModal('modal-waitlist')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Founding rates lock permanently — $29/mo Standard, $49/mo Pro. These go away at launch. Add your info and we'll contact you directly.</p>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input class="form-input" type="tel" placeholder="(239) 555-0100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">I am a...</label>
+        <select class="form-select">
+          <option>Food Truck Owner/Operator</option>
+          <option>Event Planner</option>
+          <option>Venue / Brewery</option>
+          <option>Service Provider (commissary, repairs, etc.)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Truck/Business Name (optional)</label>
+        <input class="form-input" placeholder="Smoke Ring BBQ">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-waitlist')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-waitlist');showToast('You\'re on the list! We\'ll be in touch within 24 hours.','success')">Join Waitlist →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Request Detail -->
+<div class="modal-overlay" id="modal-request-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Corporate Lunch — Lee Health</div>
+      <button class="modal-close" onclick="closeModal('modal-request-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div style="background:var(--surface2);border-radius:4px;padding:14px;">
+          <div class="kpi-label">Payout</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);">$900</div>
+          <div style="font-size:11px;color:var(--muted);">Guaranteed flat rate</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:4px;padding:14px;">
+          <div class="kpi-label">Event</div>
+          <div style="font-size:14px;font-weight:600;margin-top:4px;">Apr 3, 2025</div>
+          <div style="font-size:12px;color:var(--muted);">11:00 AM – 2:00 PM</div>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div class="form-label">Location</div>
+        <p style="font-size:13px;">Lee Health Corporate Campus, Fort Myers, FL</p>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div class="form-label">Details</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">Employee appreciation lunch for approximately 200 staff. Full commissary access on site. Easy flat-surface parking lot setup. Power and water available at no charge. Need 1 truck. Any cuisine welcome — preference for high-volume service capability.</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+        <div class="detail-chip">🔌 Power included</div>
+        <div class="detail-chip">💧 Water included</div>
+        <div class="detail-chip">🚛 Easy load-in</div>
+        <div class="detail-chip">👥 ~200 guests</div>
+        <div class="detail-chip">⏱ 3hr window</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:4px;padding:14px;font-size:12px;color:var(--muted);">
+        <strong style="color:var(--text);">2 trucks</strong> have already submitted bids. This request closes <strong style="color:var(--warning);">Mar 28</strong>.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-request-detail')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-request-detail');showModal('modal-respond')">Submit Bid →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Respond / Bid Modal -->
+<div class="modal-overlay" id="modal-respond">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Submit Bid</div>
+      <button class="modal-close" onclick="closeModal('modal-respond')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Your Bid Amount ($)</label>
+        <input class="form-input" type="number" placeholder="900">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message to Planner</label>
+        <textarea class="form-textarea" placeholder="Introduce your truck, relevant experience, why you're the right fit for this event..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Availability Confirmed?</label>
+        <select class="form-select">
+          <option>Yes — confirmed available Apr 3, 11am–2pm</option>
+          <option>Tentative — need to confirm with team</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Special Notes / Requirements</label>
+        <textarea class="form-textarea" style="min-height:60px" placeholder="Any setup requirements, questions, or conditions..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-respond')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-respond');showToast('Bid submitted. You\'ll be notified when the planner responds.','success')">Submit Bid →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Post Shift Modal -->
+<div class="modal-overlay" id="modal-post-shift">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Post a Shift</div>
+      <button class="modal-close" onclick="closeModal('modal-post-shift')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Event / Spot Name</label>
+        <input class="form-input" placeholder="Cape Coral Bike Night, Brewery Rotation, etc.">
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Date</label>
+          <input class="form-input" type="date">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Time</label>
+          <input class="form-input" placeholder="5pm – 9pm">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input class="form-input" placeholder="Cape Coral, FL">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Compensation Type</label>
+        <select class="form-select">
+          <option>Full transfer (keep all revenue)</option>
+          <option>Revenue split (specify %)</option>
+          <option>Flat payout to covering truck</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estimated Revenue / Flat Amount ($)</label>
+        <input class="form-input" type="number" placeholder="500">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason / Notes</label>
+        <textarea class="form-textarea" placeholder="Family conflict, equipment issue, etc. The more context you give, the faster someone picks this up."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-post-shift')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-post-shift');showToast('Shift posted. Other operators can now see and pick it up.','success')">Post Shift →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Shift Detail -->
+<div class="modal-overlay" id="modal-shift-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Cape Coral Bike Night</div>
+      <button class="modal-close" onclick="closeModal('modal-shift-detail')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div style="background:var(--surface2);border-radius:4px;padding:14px;">
+          <div class="kpi-label">Est. Revenue</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent2);">$600</div>
+          <div style="font-size:11px;color:var(--muted);">Full transfer to you</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:4px;padding:14px;">
+          <div class="kpi-label">Date / Time</div>
+          <div style="font-size:14px;font-weight:600;margin-top:4px;">Mar 18, 2025</div>
+          <div style="font-size:12px;color:var(--muted);">5:00 PM – 9:00 PM</div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div class="form-label">Posted By</div>
+        <div style="font-size:13px;font-weight:600;">Taco Loco · 4.7 ★ · 62 events</div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div class="form-label">Reason</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">Family conflict — can't make it. Spot is fully mine (I have the contract with the organizer). Full revenue goes to covering truck.</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <div class="detail-chip">🔌 Power on site</div>
+        <div class="detail-chip">👥 200+ crowd</div>
+        <div class="detail-chip">🔄 Full transfer</div>
+        <div class="detail-chip">📋 Organizer approved swap</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-shift-detail')">Close</button>
+      <button class="btn btn-success" onclick="closeModal('modal-shift-detail');showToast('Pickup request sent to Taco Loco. They\'ll confirm within 2 hours.','success')">Pick Up Shift →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Venue Inquire -->
+<div class="modal-overlay" id="modal-venue-inquire">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Inquire About This Spot</div>
+      <button class="modal-close" onclick="closeModal('modal-venue-inquire')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Your Truck Name</label>
+        <input class="form-input" value="Smoke Ring BBQ">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cuisine Type</label>
+        <input class="form-input" value="BBQ / Smoked Meats">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Availability</label>
+        <input class="form-input" placeholder="When are you available? Any scheduling constraints?">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" placeholder="Tell the venue/landlord about your truck, why you're a good fit, and any questions you have..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-venue-inquire')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-venue-inquire');showToast('Inquiry sent. Expect a response within 24–48 hours.','success')">Send Inquiry →</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // ===================== VIEW SWITCHING =====================
+  function switchView(v) {
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.demo-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('view-' + v).classList.add('active');
+    const btns = document.querySelectorAll('.demo-btn');
+    const map = {public:0, truck:1, planner:2};
+    btns[map[v]].classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // ===================== TRUCK PANELS =====================
+  function setTruckPanel(id) {
+    document.querySelectorAll('#view-truck .panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('panel-' + id);
+    if (panel) panel.classList.add('active');
+    const titles = {
+      home: 'Dashboard',
+      marketplace: 'Request Marketplace',
+      shifts: 'Shift Marketplace',
+      calendar: 'Event Calendar',
+      venue: 'Venues & Parking',
+      profile: 'My Truck Profile'
+    };
+    document.getElementById('truck-panel-title').textContent = titles[id] || id;
+    // ensure truck view is active
+    if (!document.getElementById('view-truck').classList.contains('active')) {
+      switchView('truck');
+    }
+  }
+
+  // ===================== PLANNER PANELS =====================
+  function setPlannerPanel(id) {
+    document.querySelectorAll('#view-planner .panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('panel-' + id);
+    if (panel) panel.classList.add('active');
+    const titles = {
+      'planner-home': 'Event Dashboard',
+      'planner-post': 'Post a Request',
+      'planner-bids': 'Review Bids',
+      'planner-browse': 'Browse Trucks'
+    };
+    document.getElementById('planner-panel-title').textContent = titles[id] || id;
+  }
+
+  // ===================== SIDEBAR =====================
+  function setSidebarActive(el) {
+    const parentView = el.closest('.view');
+    parentView.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ===================== MODALS =====================
+  function showModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // ===================== TABS =====================
+  function setTab(btn, targetId) {
+    const parent = btn.closest('.panel');
+    parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    // hide all siblings of target
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    const siblings = target.parentElement.children;
+    Array.from(siblings).forEach(s => {
+      if (s.id && s.id !== targetId && !s.classList.contains('tabs') && !s.classList.contains('filter-bar')) {
+        s.style.display = 'none';
+      }
+    });
+    target.style.display = 'block';
+  }
+
+  // ===================== FILTERS =====================
+  function setFilter(el) {
+    const bar = el.closest('.filter-bar');
+    bar.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    showToast('Filter applied: ' + el.textContent.trim());
+  }
+
+  // ===================== TOAST =====================
+  function showToast(msg, type) {
+    const container = document.getElementById('toasts');
+    const toast = document.createElement('div');
+    toast.className = 'toast' + (type ? ' ' + type : '');
+    toast.textContent = msg;
+    toast.onclick = () => toast.remove();
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
+
+  // ===================== CALENDAR =====================
+  function buildCalendar() {
+    const grid = document.getElementById('cal-grid');
+    if (!grid) return;
+    
+    const events = {
+      15: [{label:'Sunset Market', type:'booked'}],
+      18: [{label:'Bike Night', type:'open'}],
+      20: [{label:'Estero Corp.', type:'shift'}],
+      21: [{label:'Art Walk', type:'open'}],
+      22: [{label:'Graduation', type:'booked'}],
+      27: [{label:'Momentum Thu', type:'pending'}],
+      28: [{label:'Momentum Fri', type:'pending'}],
+      29: [{label:'Momentum Sat', type:'pending'}],
+    };
+
+    // March 2025 starts on Saturday (day 6)
+    const startDay = 6;
+    const daysInMonth = 31;
+    
+    // Empty cells before
+    for (let i = 0; i < startDay; i++) {
+      const cell = document.createElement('div');
+      cell.style.cssText = 'background:var(--surface);padding:8px;min-height:80px;';
+      grid.appendChild(cell);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = document.createElement('div');
+      const isToday = d === 12;
+      cell.style.cssText = `background:${isToday ? 'rgba(255,92,0,0.08)' : 'var(--surface)'};padding:8px;min-height:80px;cursor:pointer;transition:background 0.15s;border:${isToday ? '1px solid var(--accent)' : '1px solid transparent'};`;
+      cell.onmouseenter = () => { cell.style.background = 'var(--surface2)'; };
+      cell.onmouseleave = () => { cell.style.background = isToday ? 'rgba(255,92,0,0.08)' : 'var(--surface)'; };
+      
+      const dayNum = document.createElement('div');
+      dayNum.style.cssText = `font-size:12px;font-weight:600;margin-bottom:4px;color:${isToday ? 'var(--accent)' : 'var(--muted)'}`;
+      dayNum.textContent = d;
+      cell.appendChild(dayNum);
+
+      if (events[d]) {
+        events[d].forEach(ev => {
+          const evEl = document.createElement('div');
+          const colors = {booked:'var(--info)', open:'var(--success)', shift:'var(--accent2)', pending:'var(--warning)'};
+          evEl.style.cssText = `background:${colors[ev.type] || 'var(--accent)'};color:#fff;font-size:9px;padding:2px 5px;border-radius:2px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;font-weight:600;`;
+          evEl.textContent = ev.label;
+          evEl.onclick = (e) => { e.stopPropagation(); showToast('Event: ' + ev.label); };
+          cell.appendChild(evEl);
+        });
+      }
+
+      cell.onclick = () => showToast('Mar ' + d + ' — click an event for details');
+      grid.appendChild(cell);
+    }
+  }
+
+  buildCalendar();
+</script>
+</body>
+</html>

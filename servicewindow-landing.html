@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServiceWindow — Where Events Find Their Truck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sun: #F47C2B;
+  --sun-light: #FDEBD0;
+  --sun-dark: #C95E0A;
+  --teal: #1A7F74;
+  --teal-light: #E6F4F2;
+  --teal-dark: #0F524A;
+  --night: #141210;
+  --dusk: #2C2420;
+  --warm-gray: #6B5E56;
+  --sand: #F7F0E8;
+  --cream: #FDFAF6;
+  --white: #FFFFFF;
+  --border: rgba(107,94,86,0.15);
+  --border-strong: rgba(107,94,86,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--night);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  background: rgba(253,250,246,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  text-decoration: none;
+}
+
+.nav-logo-main {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--night);
+  letter-spacing: -0.5px;
+}
+
+.nav-logo-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--sun);
+  border-radius: 50%;
+  margin: 0 1px 3px;
+  display: inline-block;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--warm-gray);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--night); }
+
+.nav-cta {
+  background: var(--sun);
+  color: var(--white) !important;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-weight: 600 !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--sun-dark) !important; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  padding: 68px 0 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 80% 20%, rgba(244,124,43,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(26,127,116,0.06) 0%, transparent 60%);
+}
+
+/* Wavy lines decoration */
+.hero-waves {
+  position: absolute;
+  right: -100px;
+  top: 100px;
+  width: 600px;
+  height: 600px;
+  opacity: 0.06;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  padding: 80px 80px 60px;
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--sun-light);
+  border: 1px solid rgba(244,124,43,0.2);
+  border-radius: 100px;
+  padding: 6px 14px 6px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sun-dark);
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.hero-badge-dot {
+  width: 8px; height: 8px;
+  background: var(--sun);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 5vw, 5.2rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: var(--night);
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.hero-title .highlight {
+  color: var(--sun);
+  position: relative;
+}
+
+.hero-title .highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 0; right: 0;
+  height: 3px;
+  background: var(--sun-light);
+  border-radius: 2px;
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  color: var(--warm-gray);
+  line-height: 1.75;
+  max-width: 500px;
+  margin-bottom: 40px;
+  font-weight: 300;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+
+.btn-primary {
+  background: var(--sun);
+  color: var(--white);
+  padding: 15px 32px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(244,124,43,0.3);
+}
+.btn-primary:hover {
+  background: var(--sun-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(244,124,43,0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--night);
+  padding: 15px 32px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--border-strong);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover {
+  border-color: var(--night);
+  background: var(--sand);
+}
+
+.hero-trust {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--warm-gray);
+  font-weight: 500;
+}
+
+.hero-trust-item .check {
+  color: var(--teal);
+  font-size: 0.9rem;
+}
+
+.hero-trust-divider {
+  width: 4px; height: 4px;
+  background: var(--border-strong);
+  border-radius: 50%;
+}
+
+/* Hero right — platform preview */
+.hero-right {
+  animation: fadeIn 0.8s 0.3s ease both;
+  position: relative;
+}
+
+.platform-preview {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(20,18,16,0.1), 0 0 0 1px rgba(244,124,43,0.08);
+}
+
+.preview-bar {
+  background: var(--sand);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-dots { display: flex; gap: 6px; }
+.preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+.pd-r { background: #FF6059; }
+.pd-y { background: #FFC130; }
+.pd-g { background: #29CC41; }
+
+.preview-url {
+  flex: 1;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--warm-gray);
+  margin-left: 8px;
+}
+
+.preview-body { padding: 20px; }
+
+.preview-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--sand);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.preview-tab {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--warm-gray);
+}
+
+.preview-tab.active {
+  background: var(--white);
+  color: var(--sun);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.preview-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sun);
+  margin-bottom: 10px;
+}
+
+.preview-cards { display: flex; flex-direction: column; gap: 8px; }
+
+.preview-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.3s;
+}
+
+.preview-card:hover { border-color: rgba(244,124,43,0.3); }
+
+.preview-card-icon {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.icon-orange { background: var(--sun-light); }
+.icon-teal { background: var(--teal-light); }
+.icon-sand { background: var(--sand); }
+
+.preview-card-info { flex: 1; min-width: 0; }
+
+.preview-card-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--night);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-card-sub {
+  font-size: 0.7rem;
+  color: var(--warm-gray);
+}
+
+.preview-pill {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pill-green { background: rgba(26,127,116,0.12); color: var(--teal); }
+.pill-orange { background: var(--sun-light); color: var(--sun-dark); }
+.pill-gray { background: var(--sand); color: var(--warm-gray); }
+
+.preview-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.preview-stat {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+.preview-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--sun);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.preview-stat-lbl {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+}
+
+/* Floating badge */
+.preview-float {
+  position: absolute;
+  bottom: -20px;
+  left: -24px;
+  background: var(--teal);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 24px rgba(26,127,116,0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.preview-float-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.preview-float-lbl {
+  font-size: 0.68rem;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* ── PROBLEM BANNER ── */
+.problem-banner {
+  background: var(--night);
+  padding: 18px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
+}
+
+.problem-scroll {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  animation: scroll 20s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.problem-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+}
+
+.problem-x { color: var(--sun); font-weight: 700; }
+
+.problem-sep {
+  width: 4px; height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── SECTIONS ── */
+.section {
+  padding: 96px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-full {
+  padding: 96px 80px;
+}
+
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--sun);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  color: var(--night);
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  font-size: 1.05rem;
+  color: var(--warm-gray);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 540px;
+}
+
+/* ── BOARDS GRID ── */
+.boards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 56px;
+}
+
+.board-card {
+  background: var(--white);
+  padding: 40px 36px;
+  position: relative;
+  transition: background 0.25s;
+  cursor: default;
+}
+
+.board-card:hover { background: var(--cream); }
+
+.board-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.25s;
+}
+
+.board-card:hover::before { background: var(--sun); }
+
+.board-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--border-strong);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.board-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+
+.board-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--night);
+  margin-bottom: 10px;
+}
+
+.board-desc {
+  font-size: 0.9rem;
+  color: var(--warm-gray);
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+.board-tag {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--teal);
+  background: var(--teal-light);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* ── WHO IT'S FOR ── */
+.audience-section {
+  background: var(--night);
+  padding: 96px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.audience-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(244,124,43,0.08) 0%, transparent 60%);
+}
+
+.audience-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 56px;
+  position: relative;
+  z-index: 1;
+}
+
+.audience-card {
+  background: rgba(255,255,255,0.03);
+  padding: 36px 28px;
+  transition: background 0.25s;
+}
+
+.audience-card:hover { background: rgba(255,255,255,0.06); }
+
+.audience-emoji {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.audience-type {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.audience-price {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--sun);
+  margin-bottom: 16px;
+  font-family: 'DM Mono', monospace;
+}
+
+.audience-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.audience-list li {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.audience-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--sun);
+  font-size: 0.75rem;
+}
+
+/* ── FOUNDING MEMBER ── */
+.founding-section {
+  background: var(--sun);
+  padding: 72px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.founding-section::before {
+  content: 'FOUNDING';
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: 18vw;
+  font-weight: 900;
+  color: rgba(255,255,255,0.06);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.founding-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.founding-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.founding-sub {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.7;
+  font-weight: 300;
+  margin-bottom: 32px;
+}
+
+.founding-prices {
+  display: flex;
+  gap: 20px;
+}
+
+.founding-price-card {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 24px;
+  flex: 1;
+  backdrop-filter: blur(10px);
+}
+
+.founding-price-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 8px;
+}
+
+.founding-price-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.founding-price-dollar {
+  font-size: 1rem;
+  color: var(--white);
+  font-weight: 600;
+}
+
+.founding-price-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+}
+
+.founding-price-period {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.founding-price-was {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  text-decoration: line-through;
+}
+
+.founding-cta {
+  background: var(--white);
+  color: var(--sun-dark);
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.founding-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.founding-right { display: flex; flex-direction: column; gap: 16px; }
+
+.founding-benefit {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.founding-benefit-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.founding-benefit-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 3px;
+}
+
+.founding-benefit-desc {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.5;
+}
+
+/* ── PRICING ── */
+.pricing-section {
+  padding: 96px 80px;
+  background: var(--sand);
+}
+
+.pricing-inner { max-width: 1400px; margin: 0 auto; }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 56px;
+}
+
+.pricing-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  position: relative;
+  transition: box-shadow 0.25s;
+}
+
+.pricing-card:hover {
+  box-shadow: 0 12px 40px rgba(20,18,16,0.08);
+}
+
+.pricing-card.featured {
+  background: var(--night);
+  border-color: var(--night);
+  transform: scale(1.02);
+  box-shadow: 0 20px 60px rgba(20,18,16,0.2);
+}
+
+.pricing-card.featured:hover {
+  box-shadow: 0 24px 70px rgba(20,18,16,0.25);
+}
+
+.pricing-featured-tag {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--sun);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.pricing-who {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sun);
+  margin-bottom: 8px;
+}
+
+.pricing-card.featured .pricing-who { color: rgba(244,124,43,0.8); }
+
+.pricing-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--night);
+  margin-bottom: 24px;
+}
+
+.pricing-card.featured .pricing-name { color: var(--white); }
+
+.pricing-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.price-sign {
+  font-size: 1.1rem;
+  color: var(--warm-gray);
+  font-weight: 600;
+}
+
+.price-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: var(--night);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.pricing-card.featured .price-sign,
+.pricing-card.featured .price-num { color: var(--white); }
+
+.price-period {
+  font-size: 0.85rem;
+  color: var(--warm-gray);
+  margin-bottom: 4px;
+}
+
+.pricing-card.featured .price-period { color: rgba(255,255,255,0.5); }
+
+.price-note {
+  font-size: 0.8rem;
+  color: var(--sun);
+  font-weight: 600;
+  margin-bottom: 28px;
+  font-style: italic;
+}
+
+.pricing-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 0;
+}
+
+.pricing-card.featured .pricing-divider { background: rgba(255,255,255,0.1); }
+
+.pricing-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-bottom: 32px;
+}
+
+.pricing-features li {
+  font-size: 0.88rem;
+  color: var(--warm-gray);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.pricing-card.featured .pricing-features li { color: rgba(255,255,255,0.65); }
+
+.pricing-features li .check-icon {
+  color: var(--teal);
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 0.85rem;
+}
+
+.pricing-features li.na { opacity: 0.4; }
+.pricing-features li.na .check-icon { color: var(--warm-gray); }
+
+/* ── PROMISE SECTION ── */
+.promise-section {
+  padding: 80px 80px;
+  background: var(--teal);
+  text-align: center;
+}
+
+.promise-inner { max-width: 700px; margin: 0 auto; }
+
+.promise-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 20px;
+  line-height: 1.1;
+}
+
+.promise-text {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+
+.promise-list {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.promise-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+.promise-item::before {
+  content: '✓';
+  background: rgba(255,255,255,0.15);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* ── TRUST / SCAM ── */
+.trust-section { background: var(--white); }
+
+.trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  margin-top: 56px;
+}
+
+.trust-items { display: flex; flex-direction: column; gap: 20px; }
+
+.trust-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.trust-item:hover {
+  border-color: rgba(244,124,43,0.3);
+  box-shadow: 0 4px 16px rgba(244,124,43,0.08);
+}
+
+.trust-icon {
+  width: 44px; height: 44px;
+  background: var(--sun-light);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.trust-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--night);
+  margin-bottom: 4px;
+}
+
+.trust-desc {
+  font-size: 0.85rem;
+  color: var(--warm-gray);
+  line-height: 1.6;
+}
+
+/* Scam example card */
+.scam-example {
+  background: var(--sand);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.scam-header {
+  background: var(--night);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scam-header-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  font-family: 'DM Mono', monospace;
+}
+
+.scam-warning {
+  background: rgba(244,124,43,0.2);
+  color: var(--sun);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.scam-body { padding: 20px; }
+
+.scam-post {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.scam-post-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.scam-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.scam-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--night);
+}
+
+.scam-time {
+  font-size: 0.7rem;
+  color: var(--warm-gray);
+}
+
+.scam-text {
+  font-size: 0.8rem;
+  color: var(--night);
+  line-height: 1.5;
+}
+
+.scam-comments { display: flex; flex-direction: column; gap: 6px; }
+
+.scam-comment {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  color: var(--warm-gray);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scam-comment-avatar {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--sun-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.scam-count {
+  text-align: center;
+  padding: 10px;
+  font-size: 0.75rem;
+  color: var(--sun-dark);
+  font-weight: 600;
+}
+
+/* ── CTA ── */
+.cta-section {
+  padding: 100px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(244,124,43,0.06) 0%, transparent 70%);
+}
+
+.cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+
+.cta-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 900;
+  color: var(--night);
+  letter-spacing: -1px;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.cta-sub {
+  font-size: 1.05rem;
+  color: var(--warm-gray);
+  line-height: 1.7;
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+
+.cta-form {
+  display: flex;
+  gap: 0;
+  max-width: 480px;
+  margin: 0 auto 12px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: 0 4px 20px rgba(20,18,16,0.06);
+}
+
+.cta-select {
+  background: var(--sand);
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--warm-gray);
+  padding: 0 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  min-width: 130px;
+}
+
+.cta-input {
+  flex: 1;
+  border: none;
+  color: var(--night);
+  padding: 16px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  background: transparent;
+}
+
+.cta-input::placeholder { color: var(--warm-gray); opacity: 0.6; }
+
+.cta-submit {
+  background: var(--sun);
+  border: none;
+  color: var(--white);
+  padding: 16px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.cta-submit:hover { background: var(--sun-dark); }
+
+.cta-fine {
+  font-size: 0.78rem;
+  color: var(--warm-gray);
+  opacity: 0.6;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--night);
+  padding: 56px 80px 36px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.footer-brand-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.footer-brand-desc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.65;
+  max-width: 240px;
+}
+
+.footer-col-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--sun); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-copy {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.25);
+}
+
+.footer-swfl {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer-swfl::before {
+  content: '🌴';
+  font-size: 0.9rem;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .hero-content { grid-template-columns: 1fr; padding: 60px 24px 40px; }
+  .hero-right { display: none; }
+  .section { padding: 64px 24px; }
+  .section-full { padding: 64px 24px; }
+  .boards-grid { grid-template-columns: 1fr; }
+  .audience-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .pricing-card.featured { transform: none; }
+  .trust-grid { grid-template-columns: 1fr; }
+  .founding-inner { grid-template-columns: 1fr; gap: 40px; }
+  .founding-section { padding: 64px 24px; }
+  .audience-section { padding: 64px 24px; }
+  .pricing-section { padding: 64px 24px; }
+  .promise-section { padding: 64px 24px; }
+  .cta-section { padding: 64px 24px; }
+  footer { padding: 48px 24px 24px; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .problem-banner { padding: 16px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-main">ServiceWindow</span>
+    <span class="nav-logo-dot"></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#boards">Platform</a></li>
+    <li><a href="#who">Who It's For</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#trust">Trust & Safety</a></li>
+    <li><a href="#join" class="nav-cta">Get Early Access</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <svg class="hero-waves" viewBox="0 0 400 400" fill="none">
+    <circle cx="200" cy="200" r="180" stroke="#F47C2B" stroke-width="1"/>
+    <circle cx="200" cy="200" r="140" stroke="#F47C2B" stroke-width="1"/>
+    <circle cx="200" cy="200" r="100" stroke="#F47C2B" stroke-width="1"/>
+    <circle cx="200" cy="200" r="60" stroke="#F47C2B" stroke-width="1"/>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Now building — Southwest Florida
+      </div>
+      <h1 class="hero-title">
+        Where Events<br>Find Their<br><span class="highlight">Truck.</span>
+      </h1>
+      <p class="hero-sub">
+        The verified food truck marketplace built for SWFL operators — not investors. Book gigs, find parking, hire staff, and connect with venues. All in one place. No chaos. No scams. No gouging.
+      </p>
+      <div class="hero-actions">
+        <a href="#join" class="btn-primary">Get Early Access →</a>
+        <a href="#boards" class="btn-secondary">See the Platform</a>
+      </div>
+      <div class="hero-trust">
+        <div class="hero-trust-item"><span class="check">✓</span> Free for event planners</div>
+        <div class="hero-trust-divider"></div>
+        <div class="hero-trust-item"><span class="check">✓</span> Free for job seekers</div>
+        <div class="hero-trust-divider"></div>
+        <div class="hero-trust-item"><span class="check">✓</span> Verified only</div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="platform-preview">
+        <div class="preview-bar">
+          <div class="preview-dots">
+            <div class="preview-dot pd-r"></div>
+            <div class="preview-dot pd-y"></div>
+            <div class="preview-dot pd-g"></div>
+          </div>
+          <div class="preview-url">servicewindow.app / requests</div>
+        </div>
+        <div class="preview-body">
+          <div class="preview-tabs">
+            <div class="preview-tab active">Requests</div>
+            <div class="preview-tab">Calendar</div>
+            <div class="preview-tab">Parking</div>
+            <div class="preview-tab">Jobs</div>
+          </div>
+          <div class="preview-label">🔥 Open Near You</div>
+          <div class="preview-cards">
+            <div class="preview-card">
+              <div class="preview-card-icon icon-orange">🎉</div>
+              <div class="preview-card-info">
+                <div class="preview-card-title">Corporate BBQ — 400 Guests</div>
+                <div class="preview-card-sub">Cape Coral · Apr 18 · Budget $2,400</div>
+              </div>
+              <div class="preview-pill pill-orange">Urgent</div>
+            </div>
+            <div class="preview-card">
+              <div class="preview-card-icon icon-teal">🏘️</div>
+              <div class="preview-card-info">
+                <div class="preview-card-title">Legacy Gateway — 6 Date Series</div>
+                <div class="preview-card-sub">N. Fort Myers · March–May · Recurring</div>
+              </div>
+              <div class="preview-pill pill-green">Open</div>
+            </div>
+            <div class="preview-card">
+              <div class="preview-card-icon icon-sand">🍺</div>
+              <div class="preview-card-info">
+                <div class="preview-card-title">Brewery Venue Partner — Tuesdays</div>
+                <div class="preview-card-sub">Downtown Fort Myers · Weekly slot</div>
+              </div>
+              <div class="preview-pill pill-green">Open</div>
+            </div>
+          </div>
+          <div class="preview-stats">
+            <div class="preview-stat">
+              <div class="preview-stat-num">66+</div>
+              <div class="preview-stat-lbl">Trucks</div>
+            </div>
+            <div class="preview-stat">
+              <div class="preview-stat-num">34K</div>
+              <div class="preview-stat-lbl">Community</div>
+            </div>
+            <div class="preview-stat">
+              <div class="preview-stat-num">100%</div>
+              <div class="preview-stat-lbl">Verified</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="preview-float">
+        <div class="preview-float-num">$49</div>
+        <div class="preview-float-lbl">/ month for trucks</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM BANNER -->
+<div class="problem-banner">
+  <div class="problem-scroll">
+    <div class="problem-item"><span class="problem-x">✕</span> 100 trucks commenting on one post</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Scammers collecting fake vendor fees</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Big events buried in the feed</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> No parking when you need it</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Posting phone numbers to 34,000 strangers</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Paid $550 for an event that changed terms</div>
+    <div class="problem-sep"></div>
+    <!-- duplicate for seamless loop -->
+    <div class="problem-item"><span class="problem-x">✕</span> 100 trucks commenting on one post</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Scammers collecting fake vendor fees</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Big events buried in the feed</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> No parking when you need it</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Posting phone numbers to 34,000 strangers</div>
+    <div class="problem-sep"></div>
+    <div class="problem-item"><span class="problem-x">✕</span> Paid $550 for an event that changed terms</div>
+    <div class="problem-sep"></div>
+  </div>
+</div>
+
+<!-- BOARDS / PLATFORM -->
+<div class="section" id="boards">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">The Platform</div>
+    <h2 class="section-title">Seven tools.<br>One subscription.</h2>
+    <p class="section-sub">Everything a food truck operator actually needs — built by someone who understands the hustle, not a VC looking for a cut of every booking.</p>
+  </div>
+
+  <div class="boards-grid">
+    <div class="board-card reveal">
+      <span class="board-num">01</span>
+      <div class="board-icon icon-orange">📋</div>
+      <div class="board-title">Request Marketplace</div>
+      <p class="board-desc">Verified event planners post catering jobs with dates, budgets, and guest counts. You submit interest privately. No comment pile-ons. No shouting into the void.</p>
+      <span class="board-tag">Core feature</span>
+    </div>
+    <div class="board-card reveal" style="transition-delay:0.08s">
+      <span class="board-num">02</span>
+      <div class="board-icon icon-teal">📅</div>
+      <div class="board-title">Event Calendar</div>
+      <p class="board-desc">Browse real events up to two years out — festivals, community gatherings, farmers markets, HOA events. Never miss a big one because it got buried in a feed.</p>
+      <span class="board-tag">Public access</span>
+    </div>
+    <div class="board-card reveal" style="transition-delay:0.16s">
+      <span class="board-num">03</span>
+      <div class="board-icon icon-sand">🅿️</div>
+      <div class="board-title">Parking & Real Estate</div>
+      <p class="board-desc">Property owners list available spots — daily, weekly, or permanent. Storage or active selling locations. Trucks post what they need. Simple match, no middleman.</p>
+      <span class="board-tag">Free to list</span>
+    </div>
+    <div class="board-card reveal" style="transition-delay:0.24s">
+      <span class="board-num">04</span>
+      <div class="board-icon icon-orange">🏢</div>
+      <div class="board-title">Venue Partnerships</div>
+      <p class="board-desc">Bars, breweries, coffee shops, and retail locations post recurring truck partnership slots. You find the steady Tuesday night spot without cold-calling anyone.</p>
+      <span class="board-tag">Free for venues</span>
+    </div>
+    <div class="board-card reveal" style="transition-delay:0.32s">
+      <span class="board-num">05</span>
+      <div class="board-icon icon-teal">🛠️</div>
+      <div class="board-title">Vendor Services</div>
+      <p class="board-desc">Verified insurance agents, equipment repair, license specialists, POS support, and supplies — all in one place. Stop hunting through Facebook comments for a hood repair referral.</p>
+      <span class="board-tag">Vetted providers</span>
+    </div>
+    <div class="board-card reveal" style="transition-delay:0.4s">
+      <span class="board-num">06</span>
+      <div class="board-icon icon-sand">💼</div>
+      <div class="board-title">Jobs Board</div>
+      <p class="board-desc">Post open positions — cooks, window operators, drivers, catering staff, managers. Job seekers browse and apply for free. Positions are tied to verified truck profiles so applicants know exactly who they're working for.</p>
+      <span class="board-tag">Free for job seekers</span>
+    </div>
+    <div class="board-card reveal" style="transition-delay:0.48s; grid-column: 1 / -1;">
+      <span class="board-num">07</span>
+      <div class="board-icon icon-orange">🔒</div>
+      <div class="board-title">Verified Deposit Protection</div>
+      <p class="board-desc">When an organizer collects vendor fees through ServiceWindow, funds are held in escrow until both parties confirm the event terms were honored. If an organizer changes terms after payment — like cutting a two-day event to one day and keeping your full fee — you have recourse. No more $550 lessons learned the hard way.</p>
+      <span class="board-tag">Coming soon</span>
+    </div>
+  </div>
+</div>
+
+<!-- WHO IT'S FOR -->
+<section class="audience-section" id="who">
+  <div style="max-width:1400px;margin:0 auto;position:relative;z-index:1;">
+    <div class="reveal">
+      <div class="section-eyebrow" style="color:rgba(244,124,43,0.8)">Who It's For</div>
+      <h2 class="section-title" style="color:var(--white)">Four sides.<br>One platform.</h2>
+    </div>
+    <div class="audience-grid">
+      <div class="audience-card reveal">
+        <span class="audience-emoji">🚚</span>
+        <div class="audience-type">Food Trucks</div>
+        <div class="audience-price">From $49 / month</div>
+        <ul class="audience-list">
+          <li>Browse verified catering requests with real budgets</li>
+          <li>Submit interest privately — no comment wars</li>
+          <li>Find parking and recurring venue slots</li>
+          <li>Post jobs and manage your verified profile</li>
+          <li>Get early alerts on events 2 years out</li>
+        </ul>
+      </div>
+      <div class="audience-card reveal" style="transition-delay:0.08s">
+        <span class="audience-emoji">🎪</span>
+        <div class="audience-type">Event Planners & HOAs</div>
+        <div class="audience-price">Free forever</div>
+        <ul class="audience-list">
+          <li>Post once — qualified trucks come to you</li>
+          <li>Filter by cuisine, capacity, school approval</li>
+          <li>All trucks verified before any contact</li>
+          <li>Manage multi-date recurring series easily</li>
+          <li>Review quotes in a dashboard, not 80 DMs</li>
+        </ul>
+      </div>
+      <div class="audience-card reveal" style="transition-delay:0.16s">
+        <span class="audience-emoji">🏗️</span>
+        <div class="audience-type">Property Owners</div>
+        <div class="audience-price">Free to list</div>
+        <ul class="audience-list">
+          <li>List spots for daily, weekly, or permanent use</li>
+          <li>Storage or active selling locations</li>
+          <li>Passive income from underutilized land</li>
+          <li>All truck renters verified before contact</li>
+          <li>Featured listings available for more visibility</li>
+        </ul>
+      </div>
+      <div class="audience-card reveal" style="transition-delay:0.24s">
+        <span class="audience-emoji">👷</span>
+        <div class="audience-type">Job Seekers</div>
+        <div class="audience-price">Free forever</div>
+        <ul class="audience-list">
+          <li>Browse food truck jobs across all of SWFL</li>
+          <li>See the truck's profile before you apply</li>
+          <li>Cooks, drivers, window staff, managers</li>
+          <li>Set your availability and get matched</li>
+          <li>No resume required — food truck hiring is real</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDING MEMBER -->
+<section class="founding-section">
+  <div class="founding-inner">
+    <div class="reveal">
+      <div class="section-eyebrow" style="color:rgba(255,255,255,0.6)">Limited Offer</div>
+      <h2 class="founding-title">Founding Member Pricing.<br>Locked In Forever.</h2>
+      <p class="founding-sub">The first operators who join ServiceWindow get a rate that never goes up. Not a trial. Not a discount code. A permanent founding member price as long as your subscription stays active.</p>
+      <div class="founding-prices">
+        <div class="founding-price-card">
+          <div class="founding-price-label">Standard</div>
+          <div class="founding-price-amount">
+            <span class="founding-price-dollar">$</span>
+            <span class="founding-price-num">29</span>
+            <span class="founding-price-period">/mo</span>
+          </div>
+          <div class="founding-price-was">Regular $49/mo</div>
+        </div>
+        <div class="founding-price-card">
+          <div class="founding-price-label">Pro</div>
+          <div class="founding-price-amount">
+            <span class="founding-price-dollar">$</span>
+            <span class="founding-price-num">49</span>
+            <span class="founding-price-period">/mo</span>
+          </div>
+          <div class="founding-price-was">Regular $79/mo</div>
+        </div>
+      </div>
+      <a href="#join" class="founding-cta">Claim Founding Rate →</a>
+    </div>
+    <div class="founding-right reveal" style="transition-delay:0.15s">
+      <div class="founding-benefit">
+        <div class="founding-benefit-icon">🔐</div>
+        <div>
+          <div class="founding-benefit-title">Rate locked for life</div>
+          <div class="founding-benefit-desc">Your founding price never increases as long as you stay subscribed. Early loyalty is rewarded permanently.</div>
+        </div>
+      </div>
+      <div class="founding-benefit">
+        <div class="founding-benefit-icon">🏅</div>
+        <div>
+          <div class="founding-benefit-title">Founding Member badge on your profile</div>
+          <div class="founding-benefit-desc">Visible to every event planner and requester who sees your truck. Early mover credibility that lasts.</div>
+        </div>
+      </div>
+      <div class="founding-benefit">
+        <div class="founding-benefit-icon">📣</div>
+        <div>
+          <div class="founding-benefit-title">Shape the platform</div>
+          <div class="founding-benefit-desc">Founding members get direct input on features. Built by an operator, shaped by operators.</div>
+        </div>
+      </div>
+      <div class="founding-benefit">
+        <div class="founding-benefit-icon">⏳</div>
+        <div>
+          <div class="founding-benefit-title">First 90 days only</div>
+          <div class="founding-benefit-desc">Founding pricing closes when we hit capacity or 90 days post-launch — whichever comes first.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Pricing</div>
+      <h2 class="section-title">Built for operators.<br>Not investors.</h2>
+      <p class="section-sub">One booking pays for months of ServiceWindow. No per-lead fees. No commissions. No surprises. Flat rate, full access.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <div class="pricing-who">For Requesters & Venues</div>
+        <div class="pricing-name">Event Planner</div>
+        <div class="pricing-amount">
+          <span class="price-sign">$</span>
+          <span class="price-num">0</span>
+        </div>
+        <div class="price-period">free forever</div>
+        <div class="price-note">Post requests. Trucks come to you.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="check-icon">✓</span> Post unlimited catering requests</li>
+          <li><span class="check-icon">✓</span> Receive bids from verified trucks</li>
+          <li><span class="check-icon">✓</span> Multi-date & recurring series requests</li>
+          <li><span class="check-icon">✓</span> Urgent request flag (48hr bookings)</li>
+          <li><span class="check-icon">✓</span> Full event calendar access</li>
+          <li><span class="check-icon">✓</span> Two-way verified reviews</li>
+        </ul>
+        <a href="#join" class="btn-secondary" style="display:block;text-align:center;border-radius:8px;">Create Free Account</a>
+      </div>
+
+      <div class="pricing-card featured reveal" style="transition-delay:0.1s">
+        <div class="pricing-featured-tag">Most Popular</div>
+        <div class="pricing-who">For Food Trucks</div>
+        <div class="pricing-name">Truck Standard</div>
+        <div class="pricing-amount">
+          <span class="price-sign">$</span>
+          <span class="price-num">49</span>
+        </div>
+        <div class="price-period">/ month</div>
+        <div class="price-note">Founding rate: $29/mo locked forever</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="check-icon">✓</span> Full Request Marketplace access</li>
+          <li><span class="check-icon">✓</span> Verified truck profile + badge</li>
+          <li><span class="check-icon">✓</span> Event calendar alerts (2yr window)</li>
+          <li><span class="check-icon">✓</span> Parking & real estate board</li>
+          <li><span class="check-icon">✓</span> Venue partnership board</li>
+          <li><span class="check-icon">✓</span> Jobs board — post & manage listings</li>
+          <li><span class="check-icon">✓</span> Vendor services directory</li>
+          <li><span class="check-icon">✓</span> Unlimited bid submissions</li>
+        </ul>
+        <a href="#join" class="btn-primary" style="display:block;text-align:center;border-radius:8px;justify-content:center;"><span>Start Free Trial</span></a>
+      </div>
+
+      <div class="pricing-card reveal" style="transition-delay:0.2s">
+        <div class="pricing-who">For Truck Pro & Services</div>
+        <div class="pricing-name">Pro & Providers</div>
+        <div class="pricing-amount">
+          <span class="price-sign">$</span>
+          <span class="price-num">79</span>
+        </div>
+        <div class="price-period">/ month (trucks)</div>
+        <div class="price-note">Service providers from $39/mo</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="check-icon">✓</span> Everything in Standard</li>
+          <li><span class="check-icon">✓</span> Featured placement in search</li>
+          <li><span class="check-icon">✓</span> Priority bid notifications</li>
+          <li><span class="check-icon">✓</span> Analytics dashboard</li>
+          <li><span class="check-icon">✓</span> Unlimited job posts</li>
+          <li><span class="check-icon">✓</span> Verified service provider listing</li>
+          <li><span class="check-icon">✓</span> Insurance, repair, licensing directory</li>
+          <li><span class="check-icon">✓</span> Square POS integration (coming soon)</li>
+        </ul>
+        <a href="#join" class="btn-secondary" style="display:block;text-align:center;border-radius:8px;">Get Pro Access</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMISE -->
+<section class="promise-section">
+  <div class="promise-inner reveal">
+    <h2 class="promise-title">What's always free.<br>No exceptions. No expiration.</h2>
+    <p class="promise-text">ServiceWindow succeeds when food trucks succeed. That means the people who bring demand to the platform — planners, job seekers, venues, property owners — never pay a dime. Their participation is what makes your subscription worth it.</p>
+    <div class="promise-list">
+      <div class="promise-item">Job seekers</div>
+      <div class="promise-item">Event planners</div>
+      <div class="promise-item">Venue partners</div>
+      <div class="promise-item">Public calendar</div>
+      <div class="promise-item">Truck directory browsing</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST / SAFETY -->
+<section class="section trust-section" id="trust">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Trust & Safety</div>
+    <h2 class="section-title">No scammers.<br>Structurally impossible.</h2>
+    <p class="section-sub">Facebook lets anyone post anything. ServiceWindow doesn't. Verification isn't a checkbox — it's the foundation every single interaction is built on.</p>
+  </div>
+
+  <div class="trust-grid">
+    <div class="trust-items reveal">
+      <div class="trust-item">
+        <div class="trust-icon">🪪</div>
+        <div>
+          <div class="trust-title">Business License Verification</div>
+          <div class="trust-desc">All food trucks submit their FL DBPR or business license number, verified before their profile goes live. No license, no listing.</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">📱</div>
+        <div>
+          <div class="trust-title">Dual-Channel Account Confirmation</div>
+          <div class="trust-desc">Every account confirms via phone and email before posting anything. No burner accounts. No anonymous requests allowed.</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">⭐</div>
+        <div>
+          <div class="trust-title">Two-Way Reviews After Every Job</div>
+          <div class="trust-desc">Trucks rate requesters. Requesters rate trucks. Bad actors are flagged and removed. Your reputation is your most valuable asset — we protect it.</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🔒</div>
+        <div>
+          <div class="trust-title">Contact Info Hidden Until Matched</div>
+          <div class="trust-desc">No phone numbers or emails exposed publicly. Pedro shouldn't have to post his cell to 34,000 strangers to get a catering gig. Now he doesn't.</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">💰</div>
+        <div>
+          <div class="trust-title">Deposit Escrow Protection</div>
+          <div class="trust-desc">Vendor fees held until event terms are confirmed by both parties. Organizers can't change the rules after you've paid. Your $550 is protected.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scam demo -->
+    <div class="scam-example reveal" style="transition-delay:0.15s">
+      <div class="scam-header">
+        <span class="scam-header-title">SWFL Food Truck Depot · Public Group</span>
+        <span class="scam-warning">⚠ This is what we replaced</span>
+      </div>
+      <div class="scam-body">
+        <div class="scam-post">
+          <div class="scam-post-header">
+            <div class="scam-avatar">👩</div>
+            <div>
+              <div class="scam-name">Mariah W. — Legacy Gateway Apts</div>
+              <div class="scam-time">4 hours ago · Public</div>
+            </div>
+          </div>
+          <div class="scam-text">Looking for food trucks March 19, April 2, April 28, May 14, May 19 & May 26! Also Saturday morning coffee trucks. Comment or DM!</div>
+        </div>
+        <div class="scam-comments">
+          <div class="scam-comment"><div class="scam-comment-avatar">🚚</div>La Bamba — available! Realtacotruck@gmail.com 239-425-5781</div>
+          <div class="scam-comment"><div class="scam-comment-avatar">🥞</div>DaChefs — available! 2397582143 Cakesandgrill@yahoo.com</div>
+          <div class="scam-comment"><div class="scam-comment-avatar">🍕</div>Loud Italian Pizza — interested! 239-778-7234</div>
+          <div class="scam-comment"><div class="scam-comment-avatar">🌮</div>Taqueria Rosita — hello! We are available...</div>
+          <div class="scam-comment"><div class="scam-comment-avatar">🍜</div>Umami Twist — Award-winning dishes, we'd love to...</div>
+        </div>
+        <div class="scam-count">+ 16 more comments · Mariah now has to DM every single one.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / WAITLIST -->
+<section class="cta-section" id="join">
+  <div class="cta-inner">
+    <div class="reveal">
+      <div class="section-eyebrow" style="justify-content:center">Early Access</div>
+      <h2 class="cta-title">Get in before<br>the price goes up.</h2>
+      <p class="cta-sub">ServiceWindow is launching in Fort Myers and Southwest Florida. Join now and lock in your founding member rate — $29/mo for trucks, free forever for everyone else.</p>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s">
+      <div class="cta-form">
+        <select class="cta-select">
+          <option>I am a...</option>
+          <option>Food Truck Owner</option>
+          <option>Event Planner / HOA</option>
+          <option>Property Owner</option>
+          <option>Venue / Bar / Brewery</option>
+          <option>Job Seeker</option>
+          <option>Service Provider</option>
+        </select>
+        <input type="email" class="cta-input" placeholder="your@email.com">
+        <button class="cta-submit" onclick="handleJoin()">Join →</button>
+      </div>
+      <p class="cta-fine">No spam. No credit card. Founding rate locked on signup.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-logo">
+        ServiceWindow<span class="nav-logo-dot" style="margin-left:3px;background:var(--sun)"></span>
+      </div>
+      <p class="footer-brand-desc">The verified food truck marketplace for Southwest Florida. Built for operators, not investors.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <ul class="footer-links">
+        <li><a href="#">Request Marketplace</a></li>
+        <li><a href="#">Event Calendar</a></li>
+        <li><a href="#">Parking Board</a></li>
+        <li><a href="#">Venue Partnerships</a></li>
+        <li><a href="#">Vendor Services</a></li>
+        <li><a href="#">Jobs Board</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">For</div>
+      <ul class="footer-links">
+        <li><a href="#">Food Trucks</a></li>
+        <li><a href="#">Event Planners</a></li>
+        <li><a href="#">Property Owners</a></li>
+        <li><a href="#">Venues & Bars</a></li>
+        <li><a href="#">Job Seekers</a></li>
+        <li><a href="#">Service Providers</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Trust & Safety</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 ServiceWindow. All rights reserved.</div>
+    <div class="footer-swfl">Serving Southwest Florida — Fort Myers, Cape Coral, Naples & beyond</div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+
+// Preview tabs
+document.querySelectorAll('.preview-tab').forEach((tab, i) => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// Join form
+function handleJoin() {
+  const email = document.querySelector('.cta-input').value;
+  const role = document.querySelector('.cta-select').value;
+  if (email && email.includes('@') && role !== "I am a...") {
+    document.querySelector('.cta-form').outerHTML = `
+      <div style="background:var(--white);border:1.5px solid rgba(26,127,116,0.3);border-radius:10px;padding:24px 32px;max-width:480px;margin:0 auto;box-shadow:0 4px 20px rgba(26,127,116,0.1);">
+        <div style="font-size:1.5rem;margin-bottom:8px;">✅</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--teal);margin-bottom:6px;">You're on the list.</div>
+        <div style="font-size:0.88rem;color:var(--warm-gray);">We'll reach out before launch with your founding member details. Check your inbox.</div>
+      </div>`;
+  } else {
+    const input = document.querySelector('.cta-input');
+    input.style.background = '#FFF0E8';
+    setTimeout(() => input.style.background = '', 1500);
+  }
+}
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  nav.style.boxShadow = window.scrollY > 20 
+    ? '0 1px 20px rgba(20,18,16,0.08)' 
+    : 'none';
+});
+</script>
+</body>
+</html>

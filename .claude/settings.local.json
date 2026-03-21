@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l *.html)",
+      "Bash(grep -l \"script\\\\|function\\\\|class\" *.html)",
+      "Bash(grep -o \"<script[^>]*src=[''''\"\"][^''''\"\"]*[''''\"\"]\" *.html)",
+      "Bash(grep -c \"<script>\" *.html)",
+      "Bash(grep -h \"<title>\" *.html)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/wesfi/OneDrive/Desktop/Food Truck App/**)",
+      "Bash(done)",
+      "Bash(ls -lh *.html)",
+      "Bash(start:*)",
+      "Bash(python3:*)",
+      "Bash(sed -n '590,660p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
+      "Bash(sed -n '990,1078p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
+      "Bash(gh --version)",
+      "Bash(gh auth:*)",
+      "WebFetch(domain:servicewindow.app)",
+      "Bash(git -C \"C:/Users/wesfi/OneDrive/Desktop/Food Truck App\" log --oneline -- venue-dashboard.html)",
+      "Bash(git -C \"C:/Users/wesfi/OneDrive/Desktop/Food Truck App\" log --oneline -- property-dashboard.html)"
+    ]
+  }
+}
