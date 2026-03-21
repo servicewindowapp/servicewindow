@@ -1376,7 +1376,8 @@ img,video{max-width:100%;height:auto;}
 <!-- ═══════════════════════════════════════
      JAVASCRIPT
 ═══════════════════════════════════════ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">function openMenu(){
+<script>
+function openMenu(){
   document.getElementById('swMenu').classList.add('open');
   document.getElementById('swOverlay').classList.add('open');
   document.getElementById('swHamburger').classList.add('open');
@@ -1390,7 +1391,6 @@ function closeMenu(){
   document.body.style.overflow='';
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
-
 </script><script>
 // ── Role selector tabs (hero form)
 function setRole(btn, fieldId) {
