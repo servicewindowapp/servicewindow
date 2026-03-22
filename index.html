@@ -565,9 +565,9 @@ footer{background:var(--charcoal);padding:40px 20px 32px;}
    SCROLL REVEAL  (JS adds .visible)
 ═══════════════════════════════════════ */
 .reveal{
-  opacity:0;transform:translateY(22px);
   transition:opacity .55s ease,transform .55s ease;
 }
+.reveal.will-animate{opacity:0;transform:translateY(22px);}
 .reveal.visible{opacity:1;transform:none;}
 .d1{transition-delay:.1s;}
 .d2{transition-delay:.2s;}
@@ -1447,12 +1447,13 @@ submitForm(
   </div>`
 );
 
-// ── Scroll reveal
+// ── Scroll reveal (progressive enhancement — content visible without JS)
+document.querySelectorAll('.reveal').forEach(el => el.classList.add('will-animate'));
 const observer = new IntersectionObserver(
-    entries => entries.forEach(e => {
+  entries => entries.forEach(e => {
     if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }
   }),
-  {threshold:0.12}
+  {threshold:0.1}
 );
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
