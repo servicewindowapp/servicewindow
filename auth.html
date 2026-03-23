@@ -237,7 +237,7 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
   <div class="sw-menu-section">
     <div class="sw-menu-label">Dashboards</div>
     <a class="sw-menu-item" href="truck-dashboard.html"><span class="sw-menu-icon">&#128666;</span>Truck Dashboard</a>
-    <a class="sw-menu-item" href="planner-dashboard.html"><span class="sw-menu-icon">&#128203;</span>Planner Dashboard</a>
+    <a class="sw-menu-item" href="planner-dashboard.html"><span class="sw-menu-icon">&#128203;</span>Organizer Dashboard</a>
     <a class="sw-menu-item" href="venue-dashboard.html"><span class="sw-menu-icon">&#127977;</span>Venue Dashboard</a>
     <a class="sw-menu-item" href="property-dashboard.html"><span class="sw-menu-icon">&#127968;</span>Property Dashboard</a>
     <a class="sw-menu-item" href="service-provider-dashboard.html"><span class="sw-menu-icon">&#128295;</span>Provider Dashboard</a>
@@ -275,9 +275,9 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
             <span class="role-option-icon">&#127977;</span>
             <span class="role-option-label">Venue</span>
           </div>
-          <div class="role-option" data-role="planner" onclick="selectRole(this)">
+          <div class="role-option" data-role="organizer" onclick="selectRole(this)">
             <span class="role-option-icon">&#127881;</span>
-            <span class="role-option-label">Event Planner</span>
+            <span class="role-option-label">Organizer</span>
           </div>
           <div class="role-option" data-role="property" onclick="selectRole(this)">
             <span class="role-option-icon">&#128663;</span>
@@ -293,6 +293,20 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
           </div>
         </div>
         <input type="hidden" id="selectedRole" value="truck">
+      </div>
+
+      <div class="form-group hidden" id="organizerTypeGroup">
+        <label class="form-label">What type of events do you organize?</label>
+        <select class="form-control" id="organizerType">
+          <option value="">Select event type…</option>
+          <option value="private_party">Private Party</option>
+          <option value="wedding">Wedding</option>
+          <option value="corporate">Corporate</option>
+          <option value="community_hoa">Community / HOA</option>
+          <option value="school">School</option>
+          <option value="venue">Venue</option>
+          <option value="other">Other</option>
+        </select>
       </div>
 
       <div class="form-group hidden" id="nameGroup">
@@ -335,7 +349,7 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
     <a class="sw-footer-link" href="about.html">About</a>
     <a class="sw-footer-link" href="contact.html">Contact</a>
     <a class="sw-footer-link" href="truck-dashboard.html">Truck Dashboard</a>
-    <a class="sw-footer-link" href="planner-dashboard.html">Planner Dashboard</a>
+    <a class="sw-footer-link" href="planner-dashboard.html">Organizer Dashboard</a>
     <a class="sw-footer-link" href="venue-dashboard.html">Venue Dashboard</a>
     <a class="sw-footer-link" href="auth.html">Sign In</a>
     <a class="sw-footer-link" href="mailto:hello@servicewindow.app">Contact</a>
@@ -405,7 +419,9 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); })
 function selectRole(el){
   document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
-  document.getElementById('selectedRole').value = el.dataset.role;
+  const role = el.dataset.role;
+  document.getElementById('selectedRole').value = role;
+  document.getElementById('organizerTypeGroup').classList.toggle('hidden', role !== 'organizer');
 }
 
 // ── Mode toggle ───────────────────────────────────────────────────────────
@@ -453,7 +469,7 @@ function setLoading(on){
 const ROLE_DASHBOARDS = {
   truck:            'truck-dashboard.html',
   venue:            'venue-dashboard.html',
-  planner:          'planner-dashboard.html',
+  organizer:          'planner-dashboard.html',
   property:         'property-dashboard.html',
   service_provider: 'service-provider-dashboard.html',
   job_seeker:       'jobs-dashboard.html',
@@ -483,6 +499,9 @@ async function handleAuth(){
   if(currentMode === 'signup'){
     const name = document.getElementById('authName').value.trim();
     const role = document.getElementById('selectedRole').value;
+    const organizerType = role === 'organizer'
+      ? (document.getElementById('organizerType').value || null)
+      : null;
     if(!name){ showError('Please enter your full name.'); return; }
 
     setLoading(true);
@@ -498,10 +517,12 @@ async function handleAuth(){
     // Create profile row
     if(data.user){
       await window.supabase.from('profiles').upsert({
-        id:        data.user.id,
-        full_name: name,
+        id:                  data.user.id,
+        full_name:           name,
         role,
         email,
+        organizer_type:      organizerType,
+        verification_status: 'unverified',
       });
       await redirectByRole(data.user.id);
     } else {
