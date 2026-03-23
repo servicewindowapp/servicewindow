@@ -1065,34 +1065,34 @@ input:focus,textarea:focus,select:focus{
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label">Business Name</label>
-              <input type="text" class="form-input" value="Marco's Truck Solutions">
+              <input type="text" class="form-input" id="p-business-name" value="Marco's Truck Solutions">
             </div>
             <div class="form-group">
               <label class="form-label">Owner / Contact Name</label>
-              <input type="text" class="form-input" value="Marco Delgado">
+              <input type="text" class="form-input" id="p-full-name" value="Marco Delgado">
             </div>
           </div>
           <div class="form-grid two" style="margin-top:12px;">
             <div class="form-group">
               <label class="form-label">Phone</label>
-              <input type="tel" class="form-input" value="(239) 555-0192">
+              <input type="tel" class="form-input" id="p-phone" value="(239) 555-0192">
             </div>
             <div class="form-group">
               <label class="form-label">Email</label>
-              <input type="email" class="form-input" value="marco@trucksolsfl.com">
+              <input type="email" class="form-input" id="p-email" value="marco@trucksolsfl.com">
             </div>
           </div>
           <div class="form-grid" style="margin-top:12px;">
             <div class="form-group">
               <label class="form-label">Service Area</label>
-              <input type="text" class="form-input" value="Southwest Florida — Collier, Lee, Charlotte Counties">
+              <input type="text" class="form-input" id="p-city" value="Southwest Florida — Collier, Lee, Charlotte Counties">
             </div>
             <div class="form-group">
               <label class="form-label">About Your Business</label>
-              <textarea class="form-input" rows="3">POS setup, truck wraps, health permit consulting, and supply sourcing for food trucks in SWFL. Family-owned, 8 years serving the local truck community.</textarea>
+              <textarea class="form-input" id="p-bio" rows="3">POS setup, truck wraps, health permit consulting, and supply sourcing for food trucks in SWFL. Family-owned, 8 years serving the local truck community.</textarea>
             </div>
           </div>
-          <button class="form-save" onclick="showToast('Profile saved!','success')">Save Profile</button>
+          <button class="form-save" id="profileSaveBtn" onclick="saveProfile(event)">Save Profile</button>
         </div>
 
         <!-- Plan & Billing -->
@@ -1622,6 +1622,60 @@ async function initNavAuth(){
 }
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
+</script>
+<script>
+// ── PROFILE LOAD / SAVE ──────────────────────────────────────────────────────
+async function loadProfile() {
+  if (!window.supabase) return;
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await window.supabase
+    .from('profiles').select('full_name,business_name,phone,city,bio').eq('id', user.id).single();
+  if (profile) {
+    if (profile.full_name)     { const el = document.getElementById('p-full-name');     if (el) el.value = profile.full_name; }
+    if (profile.business_name) { const el = document.getElementById('p-business-name'); if (el) el.value = profile.business_name; }
+    if (profile.phone)         { const el = document.getElementById('p-phone');         if (el) el.value = profile.phone; }
+    if (profile.city)          { const el = document.getElementById('p-city');          if (el) el.value = profile.city; }
+    if (profile.bio)           { const el = document.getElementById('p-bio');           if (el) el.value = profile.bio; }
+  }
+}
+
+async function saveProfile(e) {
+  if (!window.supabase) { showToast('Not connected','error'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { showToast('Please sign in first.','error'); return; }
+
+  const btn = e.currentTarget;
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  try {
+    const { error } = await window.supabase.from('profiles').upsert({
+      id:            user.id,
+      full_name:     document.getElementById('p-full-name').value.trim(),
+      business_name: document.getElementById('p-business-name').value.trim(),
+      phone:         document.getElementById('p-phone').value.trim(),
+      city:          document.getElementById('p-city').value.trim(),
+      bio:           document.getElementById('p-bio').value.trim()
+    });
+    if (error) throw error;
+    showToast('Profile saved!', 'success');
+  } catch (err) {
+    showToast('Save failed: ' + (err.message || 'error'), 'error');
+  } finally {
+    btn.textContent = 'Save Profile';
+    btn.disabled = false;
+  }
+}
+
+if (window.supabase) {
+  window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+} else {
+  document.addEventListener('supabase-ready', () => {
+    window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+  });
+}
 </script>
 </body>
 </html>

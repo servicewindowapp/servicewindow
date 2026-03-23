@@ -512,6 +512,9 @@ tr:hover td{background:var(--bg);}
         <span class="sidebar-item-icon">&#128172;</span> Messages
         <span class="sidebar-item-badge">2</span>
       </div>
+      <div class="sidebar-item" onclick="setPanel('profile',this)" id="nav-profile">
+        <span class="sidebar-item-icon">&#128100;</span> My Profile
+      </div>
     </nav>
     <div class="sidebar-section" style="border-top:1px solid var(--border);padding-top:6px;margin-top:4px;">
     <div class="sidebar-section-label" style="padding-top:10px;">Explore Demos</div>
@@ -1428,6 +1431,39 @@ tr:hover td{background:var(--bg);}
         </div>
       </div><!-- /panel-messages -->
 
+      <!-- PANEL: PROFILE -->
+      <div class="panel" id="panel-profile">
+        <div class="box">
+          <div class="box-title">My Profile</div>
+          <div style="font-size:.78rem;color:var(--warm-gray);margin-bottom:14px;">This information is shown when food trucks view your requests.</div>
+          <div class="form-grid two">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-input" id="p-full-name" value="Sarah M.">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business Name</label>
+              <input type="text" class="form-input" id="p-business-name" value="Gulf Coast Events LLC">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-input" id="p-phone" value="(239) 555-0161">
+            </div>
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input type="text" class="form-input" id="p-city" value="Naples, FL">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:12px;">
+            <label class="form-label">Bio</label>
+            <textarea class="form-input" id="p-bio" rows="3" placeholder="Tell trucks a bit about the events you typically plan...">Corporate and social event planner covering Southwest Florida. Specializing in company picnics, galas, and outdoor festivals. 200+ events planned.</textarea>
+          </div>
+          <div style="margin-top:14px;">
+            <button id="profileSaveBtn" onclick="saveProfile(event)" style="height:44px;padding:0 24px;font-size:.86rem;font-weight:700;background:var(--fire);color:#fff;border:none;border-radius:var(--r-sm);cursor:pointer;font-family:'Sora',sans-serif;">Save Profile</button>
+          </div>
+        </div>
+      </div><!-- /panel-profile -->
+
     </div><!-- /panels -->
   </div><!-- /main -->
 </div><!-- /app -->
@@ -1884,6 +1920,60 @@ async function initNavAuth(){
 }
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
+</script>
+<script>
+// ── PROFILE LOAD / SAVE ──────────────────────────────────────────────────────
+async function loadProfile() {
+  if (!window.supabase) return;
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await window.supabase
+    .from('profiles').select('full_name,business_name,phone,city,bio').eq('id', user.id).single();
+  if (profile) {
+    if (profile.full_name)     { const el = document.getElementById('p-full-name');     if (el) el.value = profile.full_name; }
+    if (profile.business_name) { const el = document.getElementById('p-business-name'); if (el) el.value = profile.business_name; }
+    if (profile.phone)         { const el = document.getElementById('p-phone');         if (el) el.value = profile.phone; }
+    if (profile.city)          { const el = document.getElementById('p-city');          if (el) el.value = profile.city; }
+    if (profile.bio)           { const el = document.getElementById('p-bio');           if (el) el.value = profile.bio; }
+  }
+}
+
+async function saveProfile(e) {
+  if (!window.supabase) { showToast('Not connected','error'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { showToast('Please sign in first.','error'); return; }
+
+  const btn = e.currentTarget;
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  try {
+    const { error } = await window.supabase.from('profiles').upsert({
+      id:            user.id,
+      full_name:     document.getElementById('p-full-name').value.trim(),
+      business_name: document.getElementById('p-business-name').value.trim(),
+      phone:         document.getElementById('p-phone').value.trim(),
+      city:          document.getElementById('p-city').value.trim(),
+      bio:           document.getElementById('p-bio').value.trim()
+    });
+    if (error) throw error;
+    showToast('Profile saved!', 'success');
+  } catch (err) {
+    showToast('Save failed: ' + (err.message || 'error'), 'error');
+  } finally {
+    btn.textContent = 'Save Profile';
+    btn.disabled = false;
+  }
+}
+
+if (window.supabase) {
+  window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+} else {
+  document.addEventListener('supabase-ready', () => {
+    window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+  });
+}
 </script>
 </body>
 </html>

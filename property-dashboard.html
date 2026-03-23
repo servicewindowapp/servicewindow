@@ -1322,19 +1322,19 @@ tr:hover td{background:var(--bg);}
           <div class="form-grid">
             <div class="form-group">
               <label class="form-label">Full Name</label>
-              <input type="text" class="form-input" value="Carlos V.">
+              <input type="text" class="form-input" id="p-full-name" value="Carlos V.">
             </div>
             <div class="form-group">
               <label class="form-label">Business Name</label>
-              <input type="text" class="form-input" value="CV Property Group LLC">
+              <input type="text" class="form-input" id="p-business-name" value="CV Property Group LLC">
             </div>
             <div class="form-group">
               <label class="form-label">Phone</label>
-              <input type="tel" class="form-input" value="(239) 555-0189">
+              <input type="tel" class="form-input" id="p-phone" value="(239) 555-0189">
             </div>
             <div class="form-group">
               <label class="form-label">Email</label>
-              <input type="email" class="form-input" value="carlos@cvproperty.com">
+              <input type="email" class="form-input" id="p-email" value="carlos@cvproperty.com">
             </div>
             <div class="form-group full">
               <label class="form-label">Preferred Contact Method</label>
@@ -1346,7 +1346,7 @@ tr:hover td{background:var(--bg);}
             </div>
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">
-            <button class="btn btn-md btn-fire" onclick="showToast('Settings saved!','success')">Save Changes</button>
+            <button class="btn btn-md btn-fire" id="profileSaveBtn" onclick="saveProfile(event)">Save Changes</button>
           </div>
         </div>
 
@@ -1425,11 +1425,11 @@ tr:hover td{background:var(--bg);}
       <div class="form-grid">
         <div class="form-group full">
           <label class="form-label">Listing Title</label>
-          <input type="text" class="form-input" placeholder="e.g. Secure Food Truck Parking — 8 Spaces">
+          <input type="text" class="form-input" id="np-name" placeholder="e.g. Secure Food Truck Parking — 8 Spaces">
         </div>
         <div class="form-group">
           <label class="form-label">Property Type</label>
-          <select class="form-select">
+          <select class="form-select" id="np-property-type">
             <option>Parking Lot / Spaces</option>
             <option>Commissary Kitchen</option>
             <option>Storage Units</option>
@@ -1450,19 +1450,19 @@ tr:hover td{background:var(--bg);}
         </div>
         <div class="form-group">
           <label class="form-label">Monthly Rate ($)</label>
-          <input type="number" class="form-input" placeholder="e.g. 350">
+          <input type="number" class="form-input" id="np-price-per-month" placeholder="e.g. 350">
         </div>
         <div class="form-group">
           <label class="form-label">Spaces / Units Available</label>
-          <input type="number" class="form-input" placeholder="e.g. 4">
+          <input type="number" class="form-input" id="np-available-spaces" placeholder="e.g. 4">
         </div>
         <div class="form-group full">
           <label class="form-label">Address</label>
-          <input type="text" class="form-input" placeholder="Street address, city, state, zip">
+          <input type="text" class="form-input" id="np-address" placeholder="Street address, city, state, zip">
         </div>
         <div class="form-group full">
           <label class="form-label">Description</label>
-          <textarea class="form-textarea" placeholder="Describe the space, power, water, security, access hours..."></textarea>
+          <textarea class="form-textarea" id="np-description" placeholder="Describe the space, power, water, security, access hours..."></textarea>
         </div>
         <div class="form-group full">
           <label class="form-label">Key Features</label>
@@ -1651,7 +1651,24 @@ function declineInquiry(btn) {
 }
 
 // ═══ ADD PROPERTY ═══
-function submitProperty() {
+async function submitProperty() {
+  if (window.supabase) {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (user) {
+      const propData = {
+        owner_id:         user.id,
+        name:             document.getElementById('np-name')?.value.trim() || '',
+        property_type:    document.getElementById('np-property-type')?.value || '',
+        description:      document.getElementById('np-description')?.value.trim() || '',
+        address:          document.getElementById('np-address')?.value.trim() || '',
+        available_spaces: parseInt(document.getElementById('np-available-spaces')?.value) || null,
+        price_per_month:  parseFloat(document.getElementById('np-price-per-month')?.value) || null
+      };
+      await window.supabase.from('properties').insert(propData).then(({ error }) => {
+        if (error) console.warn('Property insert error:', error.message);
+      });
+    }
+  }
   document.getElementById('add-prop-form').style.display = 'none';
   document.getElementById('add-prop-footer').style.display = 'none';
   document.getElementById('add-prop-success').style.display = 'block';
@@ -1856,6 +1873,54 @@ async function initNavAuth(){
 }
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
+</script>
+<script>
+// ── PROFILE LOAD / SAVE ──────────────────────────────────────────────────────
+async function loadProfile() {
+  if (!window.supabase) return;
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await window.supabase
+    .from('profiles').select('full_name,phone').eq('id', user.id).single();
+  if (profile) {
+    if (profile.full_name) { const el = document.getElementById('p-full-name'); if (el) el.value = profile.full_name; }
+    if (profile.phone)     { const el = document.getElementById('p-phone');     if (el) el.value = profile.phone; }
+  }
+}
+
+async function saveProfile(e) {
+  if (!window.supabase) { showToast('Not connected','error'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { showToast('Please sign in first.','error'); return; }
+
+  const btn = e.currentTarget;
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  try {
+    const { error } = await window.supabase.from('profiles').upsert({
+      id:        user.id,
+      full_name: document.getElementById('p-full-name').value.trim(),
+      phone:     document.getElementById('p-phone').value.trim()
+    });
+    if (error) throw error;
+    showToast('Settings saved!', 'success');
+  } catch (err) {
+    showToast('Save failed: ' + (err.message || 'error'), 'error');
+  } finally {
+    btn.textContent = 'Save Changes';
+    btn.disabled = false;
+  }
+}
+
+if (window.supabase) {
+  window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+} else {
+  document.addEventListener('supabase-ready', () => {
+    window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+  });
+}
 </script>
 </body>
 </html>

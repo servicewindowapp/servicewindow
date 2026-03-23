@@ -1157,21 +1157,21 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--indigo) 
           <div class="form-grid two">
             <div class="form-group">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-input" value="Jordan">
+              <input type="text" class="form-input" id="p-first-name" value="Jordan">
             </div>
             <div class="form-group">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-input" value="Rivera">
+              <input type="text" class="form-input" id="p-last-name" value="Rivera">
             </div>
           </div>
           <div class="form-grid two" style="margin-top:12px;">
             <div class="form-group">
               <label class="form-label">Phone</label>
-              <input type="tel" class="form-input" value="(239) 555-0147">
+              <input type="tel" class="form-input" id="p-phone" value="(239) 555-0147">
             </div>
             <div class="form-group">
               <label class="form-label">City</label>
-              <input type="text" class="form-input" value="Naples, FL">
+              <input type="text" class="form-input" id="p-city" value="Naples, FL">
             </div>
           </div>
           <div class="form-grid" style="margin-top:12px;">
@@ -1186,10 +1186,10 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--indigo) 
             </div>
             <div class="form-group">
               <label class="form-label">Short Bio</label>
-              <textarea class="form-input" rows="3">Experienced line cook with 5 years in food truck and restaurant kitchens. ServSafe certified. Reliable, fast-paced, and passionate about great food.</textarea>
+              <textarea class="form-input" id="p-bio" rows="3">Experienced line cook with 5 years in food truck and restaurant kitchens. ServSafe certified. Reliable, fast-paced, and passionate about great food.</textarea>
             </div>
           </div>
-          <button class="form-save" onclick="showToast('Profile saved!','success')">Save Changes</button>
+          <button class="form-save" id="profileSaveBtn" onclick="saveProfile(event)">Save Changes</button>
         </div>
 
         <!-- Experience -->
@@ -1736,6 +1736,68 @@ async function initNavAuth(){
 }
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
+</script>
+<script>
+// ── PROFILE LOAD / SAVE ──────────────────────────────────────────────────────
+async function loadProfile() {
+  if (!window.supabase) return;
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await window.supabase
+    .from('profiles').select('full_name,phone,city,bio').eq('id', user.id).single();
+  if (profile) {
+    if (profile.phone) { const el = document.getElementById('p-phone'); if (el) el.value = profile.phone; }
+    if (profile.city)  { const el = document.getElementById('p-city');  if (el) el.value = profile.city; }
+    if (profile.bio)   { const el = document.getElementById('p-bio');   if (el) el.value = profile.bio; }
+    if (profile.full_name) {
+      const parts = profile.full_name.split(' ');
+      const first = document.getElementById('p-first-name');
+      const last  = document.getElementById('p-last-name');
+      if (first) first.value = parts[0] || '';
+      if (last)  last.value  = parts.slice(1).join(' ') || '';
+    }
+  }
+}
+
+async function saveProfile(e) {
+  if (!window.supabase) { showToast('Not connected','error'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { showToast('Please sign in first.','error'); return; }
+
+  const btn = e.currentTarget;
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  try {
+    const firstName = (document.getElementById('p-first-name')?.value || '').trim();
+    const lastName  = (document.getElementById('p-last-name')?.value  || '').trim();
+    const fullName  = [firstName, lastName].filter(Boolean).join(' ');
+
+    const { error } = await window.supabase.from('profiles').upsert({
+      id:        user.id,
+      full_name: fullName,
+      phone:     document.getElementById('p-phone').value.trim(),
+      city:      document.getElementById('p-city').value.trim(),
+      bio:       document.getElementById('p-bio').value.trim()
+    });
+    if (error) throw error;
+    showToast('Profile saved!', 'success');
+  } catch (err) {
+    showToast('Save failed: ' + (err.message || 'error'), 'error');
+  } finally {
+    btn.textContent = 'Save Changes';
+    btn.disabled = false;
+  }
+}
+
+if (window.supabase) {
+  window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+} else {
+  document.addEventListener('supabase-ready', () => {
+    window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+  });
+}
 </script>
 </body>
 </html>

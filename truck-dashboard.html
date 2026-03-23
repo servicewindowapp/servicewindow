@@ -1298,37 +1298,37 @@ img,video{max-width:100%;height:auto;}
         <div class="form-grid two">
           <div class="form-group">
             <label class="form-label">Truck Name</label>
-            <input class="form-control" type="text" value="Smoke Ring BBQ">
+            <input class="form-control" type="text" id="p-truck-name" value="Smoke Ring BBQ">
           </div>
           <div class="form-group">
             <label class="form-label">Owner Name</label>
-            <input class="form-control" type="text" value="Sam Rivera">
+            <input class="form-control" type="text" id="p-full-name" value="Sam Rivera">
           </div>
           <div class="form-group">
             <label class="form-label">Phone</label>
-            <input class="form-control" type="tel" value="(239) 555-0182">
+            <input class="form-control" type="tel" id="p-phone" value="(239) 555-0182">
           </div>
           <div class="form-group">
             <label class="form-label">Email</label>
-            <input class="form-control" type="email" value="sam@smokeringbbq.com">
+            <input class="form-control" type="email" id="p-email" value="sam@smokeringbbq.com">
           </div>
           <div class="form-group">
             <label class="form-label">City</label>
-            <input class="form-control" type="text" value="Fort Myers">
+            <input class="form-control" type="text" id="p-city" value="Fort Myers">
           </div>
           <div class="form-group">
             <label class="form-label">Service Radius</label>
-            <select class="form-control">
-              <option>25 miles</option>
-              <option selected>40 miles</option>
-              <option>60 miles</option>
-              <option>All of SWFL</option>
+            <select class="form-control" id="p-service-radius">
+              <option value="25">25 miles</option>
+              <option value="40" selected>40 miles</option>
+              <option value="60">60 miles</option>
+              <option value="100">All of SWFL</option>
             </select>
           </div>
         </div>
         <div class="form-group" style="margin-top:12px;">
           <label class="form-label">Bio / Truck Description</label>
-          <textarea class="form-control" style="height:90px;">Award-winning slow-smoked BBQ from a custom-built 24ft trailer. Brisket, ribs, pulled pork &amp; all the fixins. Serving SWFL since 2019. Veteran-owned and operated.</textarea>
+          <textarea class="form-control" id="p-bio" style="height:90px;">Award-winning slow-smoked BBQ from a custom-built 24ft trailer. Brisket, ribs, pulled pork &amp; all the fixins. Serving SWFL since 2019. Veteran-owned and operated.</textarea>
         </div>
       </div>
 
@@ -1356,11 +1356,11 @@ img,video{max-width:100%;height:auto;}
           </div>
           <div class="form-group">
             <label class="form-label">Max. Guests / Hour</label>
-            <input class="form-control" type="number" value="200">
+            <input class="form-control" type="number" id="p-serves-per-hour" value="200">
           </div>
           <div class="form-group">
             <label class="form-label">Minimum Event Fee</label>
-            <input class="form-control" type="text" value="$350">
+            <input class="form-control" type="text" id="p-flat-rate" value="$350">
           </div>
           <div class="form-group">
             <label class="form-label">Truck Length</label>
@@ -1400,7 +1400,7 @@ img,video{max-width:100%;height:auto;}
 
       <div style="display:flex;gap:10px;justify-content:flex-end;padding-bottom:32px;">
         <button class="btn btn-outline" onclick="showToast('Changes discarded.')">Discard</button>
-        <button class="btn btn-primary" onclick="showToast('Profile saved successfully.','success')">Save Changes</button>
+        <button class="btn btn-primary" id="profileSaveBtn" onclick="saveProfile(event)">Save Changes</button>
       </div>
     </div>
 
@@ -2210,6 +2210,86 @@ async function initNavAuth(){
 }
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
+</script>
+<script>
+// ── PROFILE LOAD / SAVE ──────────────────────────────────────────────────────
+async function loadProfile() {
+  if (!window.supabase) return;
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await window.supabase
+    .from('profiles').select('full_name,phone,city,bio').eq('id', user.id).single();
+  if (profile) {
+    if (profile.full_name) document.getElementById('p-full-name').value = profile.full_name;
+    if (profile.phone)     document.getElementById('p-phone').value     = profile.phone;
+    if (profile.city)      document.getElementById('p-city').value      = profile.city;
+    if (profile.bio)       document.getElementById('p-bio').value       = profile.bio;
+  }
+
+  const { data: truck } = await window.supabase
+    .from('trucks').select('name,serves_per_hour,flat_event_rate,service_radius_miles')
+    .eq('owner_id', user.id).single();
+  if (truck) {
+    if (truck.name)                document.getElementById('p-truck-name').value    = truck.name;
+    if (truck.serves_per_hour)     document.getElementById('p-serves-per-hour').value = truck.serves_per_hour;
+    if (truck.flat_event_rate)     document.getElementById('p-flat-rate').value     = truck.flat_event_rate;
+    if (truck.service_radius_miles) document.getElementById('p-service-radius').value = truck.service_radius_miles;
+  }
+}
+
+async function saveProfile(e) {
+  if (!window.supabase) { showToast('Not connected','error'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { showToast('Please sign in first.','error'); return; }
+
+  const btn = e.currentTarget;
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  try {
+    const { error: pe } = await window.supabase.from('profiles').upsert({
+      id: user.id,
+      full_name: document.getElementById('p-full-name').value.trim(),
+      phone:     document.getElementById('p-phone').value.trim(),
+      city:      document.getElementById('p-city').value.trim(),
+      bio:       document.getElementById('p-bio').value.trim()
+    });
+    if (pe) throw pe;
+
+    const truckData = {
+      name:                 document.getElementById('p-truck-name').value.trim(),
+      serves_per_hour:      parseInt(document.getElementById('p-serves-per-hour').value) || null,
+      flat_event_rate:      document.getElementById('p-flat-rate').value.trim(),
+      service_radius_miles: parseInt(document.getElementById('p-service-radius').value) || null
+    };
+
+    const { data: existing } = await window.supabase
+      .from('trucks').select('id').eq('owner_id', user.id).single();
+    if (existing) {
+      const { error: te } = await window.supabase.from('trucks').update(truckData).eq('id', existing.id);
+      if (te) throw te;
+    } else {
+      const { error: te } = await window.supabase.from('trucks').insert({ ...truckData, owner_id: user.id });
+      if (te) throw te;
+    }
+
+    showToast('Profile saved!', 'success');
+  } catch (err) {
+    showToast('Save failed: ' + (err.message || 'error'), 'error');
+  } finally {
+    btn.textContent = 'Save Changes';
+    btn.disabled = false;
+  }
+}
+
+if (window.supabase) {
+  window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+} else {
+  document.addEventListener('supabase-ready', () => {
+    window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
+  });
+}
 </script>
 </body>
 </html>
