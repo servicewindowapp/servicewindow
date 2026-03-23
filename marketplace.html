@@ -1370,15 +1370,15 @@ function initMarketplace() {
       container.innerHTML = '';
 
       trucks.forEach(truck => {
-        const cred = (label, flag) =>
-          `<span class="cred-badge ${flag ? 'pass' : 'pending'}">${flag ? '&#10003;' : '&#9675;'} ${label}</span>`;
         const credBadges = [
-          cred('Verified',          truck.is_verified),
-          cred('Insurance',         truck.has_insurance),
-          cred('License',           truck.has_license),
-          cred('Food Handler Cert', truck.has_food_handler_cert),
-          cred('School Approved',   truck.is_school_approved),
-        ].join('');
+          [truck.is_verified,           '&#10003; Verified'],
+          [truck.has_insurance,         '&#10003; Insured'],
+          [truck.has_license,           '&#10003; Licensed'],
+          [truck.has_food_handler_cert, '&#10003; Food Handler Cert'],
+          [truck.is_school_approved,    '&#10003; School Approved'],
+        ].filter(([flag]) => flag)
+         .map(([, label]) => `<span class="cred-badge pass">${label}</span>`)
+         .join('');
 
         const card = document.createElement('div');
         card.className = 'card';
@@ -1393,12 +1393,12 @@ function initMarketplace() {
             <span class="card-meta-item"><span>&#11088;</span><span>${truck.rating} (${truck.review_count} reviews)</span></span>
             <span class="card-meta-item"><span>&#128101;</span><span>Up to ${truck.max_capacity}</span></span>
           </div>
-          <div class="cred-badges">${credBadges}</div>
           <div class="card-desc">${truck.description || ''}</div>
           <div class="card-tags">
             <span class="card-tag">${truck.cuisine_type || ''}</span>
             ${truck.cities_served ? truck.cities_served.slice(0,2).map(c => `<span class="card-tag">${c}</span>`).join('') : ''}
           </div>
+          ${credBadges ? `<div class="cred-badges">${credBadges}</div>` : ''}
           <div class="card-foot">
             <div>
               <div class="card-budget">$${truck.flat_event_rate}/event</div>

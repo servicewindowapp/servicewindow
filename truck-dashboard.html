@@ -254,19 +254,14 @@ tr:hover td{background:var(--bg);}
 .profile-cta{margin-left:auto;}
 .form-section{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;}
 .form-section-title{font-size:.86rem;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
-.cred-list{display:flex;flex-direction:column;gap:10px;}
-.cred-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--smoke);border-radius:var(--r-sm);min-height:44px;cursor:pointer;}
+.cred-list{display:flex;flex-direction:column;gap:8px;}
+.cred-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--smoke);border-radius:var(--r-sm);min-height:44px;cursor:pointer;user-select:none;}
 .cred-row:hover{background:#ede8e3;}
 .cred-row-left{display:flex;flex-direction:column;gap:2px;}
 .cred-row-label{font-size:.84rem;font-weight:700;color:var(--charcoal);}
 .cred-row-sub{font-size:.7rem;color:#6B7280;}
-.cred-toggle{width:44px;height:24px;border-radius:12px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
-.cred-toggle.on{background:var(--green,#16A34A);}
-.cred-toggle.off{background:#D1D5DB;}
-.cred-toggle::after{content:'';position:absolute;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;}
-.cred-toggle.on::after{left:23px;}
-.cred-toggle.off::after{left:3px;}
-.cred-expiry{display:none;margin-top:8px;}
+.cred-checkbox{width:20px;height:20px;accent-color:var(--fire);cursor:pointer;flex-shrink:0;}
+.cred-expiry{display:none;margin-top:4px;padding:10px 12px;background:var(--smoke);border-radius:var(--r-sm);}
 .cred-expiry.show{display:block;}
 .form-grid{display:grid;grid-template-columns:1fr;gap:12px;}
 @media(min-width:560px){.form-grid.two{grid-template-columns:1fr 1fr;}}
@@ -1415,45 +1410,45 @@ img,video{max-width:100%;height:auto;}
       <div class="form-section">
         <div class="form-section-title">Credentials &amp; Verification</div>
         <div class="cred-list">
-          <div class="cred-row" onclick="toggleCred('cred-verified')">
+          <label class="cred-row">
             <div class="cred-row-left">
               <div class="cred-row-label">&#10003; Verified by ServiceWindow</div>
               <div class="cred-row-sub">Profile reviewed and approved by our team</div>
             </div>
-            <button class="cred-toggle off" id="cred-verified" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
-          </div>
-          <div class="cred-row" onclick="toggleCred('cred-insurance')">
+            <input type="checkbox" id="cred-verified" class="cred-checkbox">
+          </label>
+          <label class="cred-row">
             <div class="cred-row-left">
               <div class="cred-row-label">&#128737; General Liability Insurance</div>
               <div class="cred-row-sub">Active certificate of insurance on file</div>
             </div>
-            <button class="cred-toggle off" id="cred-insurance" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
-          </div>
-          <div class="cred-row" onclick="toggleCred('cred-license')">
+            <input type="checkbox" id="cred-insurance" class="cred-checkbox">
+          </label>
+          <label class="cred-row">
             <div class="cred-row-left">
               <div class="cred-row-label">&#128196; Business / Catering License</div>
               <div class="cred-row-sub">Valid local operating license</div>
             </div>
-            <button class="cred-toggle off" id="cred-license" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
-          </div>
+            <input type="checkbox" id="cred-license" class="cred-checkbox" onchange="document.getElementById('cred-expiry-wrap').classList.toggle('show',this.checked)">
+          </label>
           <div id="cred-expiry-wrap" class="cred-expiry">
             <label class="form-label">License Expiry Date</label>
             <input class="form-control" type="date" id="p-license-expiry">
           </div>
-          <div class="cred-row" onclick="toggleCred('cred-food-handler')">
+          <label class="cred-row">
             <div class="cred-row-left">
               <div class="cred-row-label">&#127859; Food Handler Certification</div>
               <div class="cred-row-sub">ServSafe or equivalent — all staff certified</div>
             </div>
-            <button class="cred-toggle off" id="cred-food-handler" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
-          </div>
-          <div class="cred-row" onclick="toggleCred('cred-school')">
+            <input type="checkbox" id="cred-food-handler" class="cred-checkbox">
+          </label>
+          <label class="cred-row">
             <div class="cred-row-left">
-              <div class="cred-row-label">&#127979; School / Event Approved</div>
+              <div class="cred-row-label">&#127979; School Board Approved</div>
               <div class="cred-row-sub">Cleared for school events, fundraisers, and family venues</div>
             </div>
-            <button class="cred-toggle off" id="cred-school" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
-          </div>
+            <input type="checkbox" id="cred-school" class="cred-checkbox">
+          </label>
         </div>
       </div>
 
@@ -2296,30 +2291,13 @@ async function loadProfile() {
     if (truck.service_radius_miles) document.getElementById('p-service-radius').value   = truck.service_radius_miles;
 
     // credential toggles
-    setToggle('cred-verified',      truck.is_verified);
-    setToggle('cred-insurance',     truck.has_insurance);
-    setToggle('cred-license',       truck.has_license);
-    setToggle('cred-food-handler',  truck.has_food_handler_cert);
-    setToggle('cred-school',        truck.is_school_approved);
+    document.getElementById('cred-verified').checked    = !!truck.is_verified;
+    document.getElementById('cred-insurance').checked   = !!truck.has_insurance;
+    document.getElementById('cred-license').checked     = !!truck.has_license;
+    document.getElementById('cred-food-handler').checked = !!truck.has_food_handler_cert;
+    document.getElementById('cred-school').checked      = !!truck.is_school_approved;
     if (truck.license_expiry) document.getElementById('p-license-expiry').value = truck.license_expiry;
     if (truck.has_license) document.getElementById('cred-expiry-wrap').classList.add('show');
-  }
-}
-
-function setToggle(id, on) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.toggle('on', !!on);
-  el.classList.toggle('off', !on);
-}
-
-function toggleCred(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.toggle('on');
-  el.classList.toggle('off');
-  if (id === 'cred-license') {
-    document.getElementById('cred-expiry-wrap').classList.toggle('show', el.classList.contains('on'));
   }
 }
 
@@ -2346,11 +2324,11 @@ async function saveProfile(e) {
       serves_per_hour:       parseInt(document.getElementById('p-serves-per-hour').value) || null,
       flat_event_rate:       parseFloat(document.getElementById('p-flat-rate').value.replace(/[^0-9.]/g, '')) || null,
       service_radius_miles:  parseInt(document.getElementById('p-service-radius').value) || null,
-      is_verified:           document.getElementById('cred-verified').classList.contains('on'),
-      has_insurance:         document.getElementById('cred-insurance').classList.contains('on'),
-      has_license:           document.getElementById('cred-license').classList.contains('on'),
-      has_food_handler_cert: document.getElementById('cred-food-handler').classList.contains('on'),
-      is_school_approved:    document.getElementById('cred-school').classList.contains('on'),
+      is_verified:           document.getElementById('cred-verified').checked,
+      has_insurance:         document.getElementById('cred-insurance').checked,
+      has_license:           document.getElementById('cred-license').checked,
+      has_food_handler_cert: document.getElementById('cred-food-handler').checked,
+      is_school_approved:    document.getElementById('cred-school').checked,
       license_expiry:        document.getElementById('p-license-expiry').value || null
     };
 
