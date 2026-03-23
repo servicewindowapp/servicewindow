@@ -927,18 +927,20 @@ img,video{max-width:100%;height:auto;}
 
   <p class="hero-sub">The verified marketplace connecting food trucks, event planners, venues, and property owners across Southwest Florida.</p>
 
-  <form class="waitlist-form" id="heroForm" action="https://formspree.io/f/mbdzyold" method="POST">
-    <input type="hidden" name="_subject" value="New ServiceWindow Waitlist Signup">
-    <input type="hidden" name="form_location" value="Hero Waitlist">
+  <form class="waitlist-form" id="heroForm">
     <input type="hidden" name="role" id="heroRole" value="Truck">
     <div class="role-tabs">
       <button type="button" class="role-tab active" onclick="setRole(this,'heroRole')">🚚 Truck</button>
       <button type="button" class="role-tab" onclick="setRole(this,'heroRole')">🎉 Planner</button>
       <button type="button" class="role-tab" onclick="setRole(this,'heroRole')">🏢 Venue</button>
     </div>
+    <div class="form-row" style="gap:8px;margin-bottom:8px;">
+      <input class="form-input" type="text" name="business_name" id="heroBiz" placeholder="Business name (optional)" style="flex:1;">
+      <input class="form-input" type="text" name="city" id="heroCity" placeholder="City (optional)" style="flex:1;">
+    </div>
     <div class="form-row">
       <input class="form-input" type="email" name="email" placeholder="your@email.com" id="heroEmail" required>
-      <button type="submit" class="form-btn">Join →</button>
+      <button type="submit" class="form-btn" id="heroSubmitBtn">Join →</button>
     </div>
   </form>
 
@@ -1393,14 +1395,56 @@ async function submitForm(formEl, successHTML) {
   });
 }
 
-submitForm(
-  document.getElementById('heroForm'),
-  `<div style="background:var(--green-pale);border:1px solid #BBF7D0;border-radius:var(--r);padding:24px;text-align:center;">
-    <div style="font-size:2rem;margin-bottom:8px;">✅</div>
-    <div style="font-weight:700;color:var(--green);font-size:1rem;margin-bottom:4px;">You're on the list!</div>
-    <div style="font-size:.82rem;color:#166534;">We'll reach out when ServiceWindow opens.</div>
-  </div>`
-);
+// ── Hero waitlist form → Supabase
+(function() {
+  const form = document.getElementById('heroForm');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('heroSubmitBtn');
+    const email        = (document.getElementById('heroEmail').value || '').trim();
+    const role         = (document.getElementById('heroRole').value  || 'Truck').trim();
+    const business_name = (document.getElementById('heroBiz').value  || '').trim() || null;
+    const city         = (document.getElementById('heroCity').value  || '').trim() || null;
+    if (!email) return;
+    btn.textContent = 'Joining…';
+    btn.disabled = true;
+    const doInsert = async () => {
+      const { error } = await window.supabase.from('waitlist').insert({
+        email, role, business_name, city, source: 'landing'
+      });
+      if (error) {
+        const isDupe = error.code === '23505'
+          || (error.message||'').toLowerCase().includes('unique')
+          || (error.message||'').toLowerCase().includes('duplicate');
+        form.innerHTML = isDupe
+          ? `<div style="background:var(--green-pale);border:1px solid #BBF7D0;border-radius:var(--r);padding:24px;text-align:center;">
+               <div style="font-size:2rem;margin-bottom:8px;">✅</div>
+               <div style="font-weight:700;color:var(--green);font-size:1rem;margin-bottom:4px;">You're already on the list!</div>
+               <div style="font-size:.82rem;color:#166534;">We'll reach out when ServiceWindow opens in your area.</div>
+             </div>`
+          : null;
+        if (!isDupe) {
+          btn.textContent = 'Join →';
+          btn.disabled = false;
+          console.error('Waitlist insert failed:', error);
+          alert('Something went wrong. Please email hello@servicewindow.app');
+        }
+        return;
+      }
+      form.innerHTML = `<div style="background:var(--green-pale);border:1px solid #BBF7D0;border-radius:var(--r);padding:24px;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:8px;">✅</div>
+        <div style="font-weight:700;color:var(--green);font-size:1rem;margin-bottom:4px;">You're on the list!</div>
+        <div style="font-size:.82rem;color:#166534;">We'll reach out when ServiceWindow opens in your area.</div>
+      </div>`;
+    };
+    if (window.supabase) {
+      await doInsert();
+    } else {
+      document.addEventListener('supabase-ready', doInsert, { once: true });
+    }
+  });
+})();
 
 submitForm(
   document.getElementById('foundingForm'),
