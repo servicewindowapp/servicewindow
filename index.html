@@ -864,7 +864,13 @@ img,video{max-width:100%;height:auto;}
     <a class="sw-nav-link" href="contact.html">Contact</a>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
-    <a class="sw-nav-cta" href="index.html#waitlist" style="display:none;" id="navDesktopCta">Join Free</a>
+    <span id="navAuthBtns" style="display:flex;align-items:center;gap:8px;">
+      <a class="sw-nav-cta" href="index.html#waitlist">Join Free</a>
+    </span>
+    <span id="navUserArea" style="display:none;align-items:center;gap:8px;">
+      <span id="navUserName" style="font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:var(--smoke);white-space:nowrap;"></span>
+      <button class="sw-nav-cta outline" onclick="navSignOut()">Logout</button>
+    </span>
     <button class="sw-hamburger" id="swHamburger" onclick="openMenu()" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
@@ -1439,5 +1445,30 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     <span class="bn-label">Account</span>
   </a>
 </nav>
+<!-- Nav auth state -->
+<script src="supabase-client.js"></script>
+<script>
+async function initNavAuth(){
+  if(!window.supabase)return;
+  try{
+    const{data:{user}}=await window.supabase.auth.getUser();
+    const authBtns=document.getElementById('navAuthBtns');
+    const userArea=document.getElementById('navUserArea');
+    const userNameEl=document.getElementById('navUserName');
+    if(user){
+      let name=user.email?.split('@')[0]||'Account';
+      try{const{data:p}=await window.supabase.from('profiles').select('full_name,business_name').eq('id',user.id).single();if(p?.business_name)name=p.business_name.split(' ').slice(0,2).join(' ');else if(p?.full_name)name=p.full_name.split(' ')[0];}catch(_){}
+      if(userNameEl)userNameEl.textContent='\u{1F464} '+name;
+      if(authBtns)authBtns.style.display='none';
+      if(userArea)userArea.style.display='flex';
+    }else{
+      if(authBtns)authBtns.style.display='flex';
+      if(userArea)userArea.style.display='none';
+    }
+  }catch(e){console.warn('Nav auth:',e);}
+}
+async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
+if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
+</script>
 </body>
 </html>

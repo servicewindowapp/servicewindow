@@ -513,6 +513,10 @@ tr:hover td{background:var(--bg);}
       <div class="topbar-title" id="panelTitle">Dashboard</div>
       <div class="topbar-actions">
         <button class="topbar-btn topbar-btn-primary" onclick="openModal('modal-add-listing')">&#43; Add Listing</button>
+        <span id="navUserArea" style="display:none;align-items:center;gap:8px;">
+          <span id="navUserName" style="font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:var(--smoke);white-space:nowrap;"></span>
+          <button class="topbar-btn" onclick="navSignOut()">Logout</button>
+        </span>
       </div>
     </div>
 
@@ -1704,6 +1708,25 @@ if(window.supabase){
 }else{
   document.addEventListener('supabase-ready',initDashboard);
 }
+</script>
+<!-- Nav auth state -->
+<script>
+async function initNavAuth(){
+  if(!window.supabase)return;
+  try{
+    const{data:{user}}=await window.supabase.auth.getUser();
+    const userArea=document.getElementById('navUserArea');
+    const userNameEl=document.getElementById('navUserName');
+    if(user){
+      let name=user.email?.split('@')[0]||'Account';
+      try{const{data:p}=await window.supabase.from('profiles').select('full_name,business_name').eq('id',user.id).single();if(p?.business_name)name=p.business_name.split(' ').slice(0,2).join(' ');else if(p?.full_name)name=p.full_name.split(' ')[0];}catch(_){}
+      if(userNameEl)userNameEl.textContent='\u{1F464} '+name;
+      if(userArea)userArea.style.display='flex';
+    }
+  }catch(e){console.warn('Nav auth:',e);}
+}
+async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
+if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
 </script>
 </body>
 </html>
