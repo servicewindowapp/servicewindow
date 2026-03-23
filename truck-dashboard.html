@@ -2259,7 +2259,7 @@ async function saveProfile(e) {
     const truckData = {
       name:                 document.getElementById('p-truck-name').value.trim(),
       serves_per_hour:      parseInt(document.getElementById('p-serves-per-hour').value) || null,
-      flat_event_rate:      document.getElementById('p-flat-rate').value.trim(),
+      flat_event_rate:      parseFloat(document.getElementById('p-flat-rate').value.replace(/[^0-9.]/g, '')) || null,
       service_radius_miles: parseInt(document.getElementById('p-service-radius').value) || null
     };
 
