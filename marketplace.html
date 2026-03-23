@@ -618,6 +618,16 @@ button:active,[onclick]:active{opacity:.8;transform:scale(.98);}
   border-radius:6px;font-family:'DM Mono',monospace;
 }
 
+/* Credential badges on truck cards */
+.cred-badges{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px;}
+.cred-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:.62rem;font-weight:700;padding:3px 7px;border-radius:6px;
+  font-family:'DM Mono',monospace;white-space:nowrap;
+}
+.cred-badge.pass{background:var(--green-pale);color:var(--green);}
+.cred-badge.pending{background:#F5F5F5;color:#9CA3AF;}
+
 /* Loading pulse for buttons */
 .btn-loading{
   position:relative;overflow:hidden;pointer-events:none;
@@ -1360,6 +1370,16 @@ function initMarketplace() {
       container.innerHTML = '';
 
       trucks.forEach(truck => {
+        const cred = (label, flag) =>
+          `<span class="cred-badge ${flag ? 'pass' : 'pending'}">${flag ? '&#10003;' : '&#9675;'} ${label}</span>`;
+        const credBadges = [
+          cred('Verified',          truck.is_verified),
+          cred('Insurance',         truck.has_insurance),
+          cred('License',           truck.has_license),
+          cred('Food Handler Cert', truck.has_food_handler_cert),
+          cred('School Approved',   truck.is_school_approved),
+        ].join('');
+
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
@@ -1373,6 +1393,7 @@ function initMarketplace() {
             <span class="card-meta-item"><span>&#11088;</span><span>${truck.rating} (${truck.review_count} reviews)</span></span>
             <span class="card-meta-item"><span>&#128101;</span><span>Up to ${truck.max_capacity}</span></span>
           </div>
+          <div class="cred-badges">${credBadges}</div>
           <div class="card-desc">${truck.description || ''}</div>
           <div class="card-tags">
             <span class="card-tag">${truck.cuisine_type || ''}</span>
