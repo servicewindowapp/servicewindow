@@ -164,6 +164,13 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 .verif-banner-text{flex:1;}
 .verif-banner-btn{flex-shrink:0;height:36px;padding:0 14px;border:none;border-radius:8px;font-size:.76rem;font-weight:700;cursor:pointer;background:#F59E0B;color:#fff;font-family:'Sora',sans-serif;}
 .verif-banner-btn:hover{background:#D97706;}
+.file-upload-zone{border:2px dashed var(--border);border-radius:var(--r-sm);padding:20px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;}
+.file-upload-zone:hover{border-color:var(--fire);background:#FFF7F4;}
+.file-upload-icon{font-size:1.6rem;margin-bottom:6px;}
+.file-upload-text{font-family:'Sora',sans-serif;font-size:.83rem;font-weight:600;color:var(--charcoal);}
+.file-upload-hint{font-size:.72rem;color:var(--warm-gray);margin-top:3px;}
+.file-upload-name{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--fire);margin-top:6px;font-weight:600;}
+.file-upload-zone.has-file{border-color:var(--fire);background:#FFF7F4;}
 
 /* TABLE */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -1447,24 +1454,24 @@ tr:hover td{background:var(--bg);}
           <div class="form-grid two">
             <div class="form-group">
               <label class="form-label">Full Name</label>
-              <input type="text" class="form-input" id="p-full-name" value="Sarah M.">
+              <input type="text" class="form-input" id="p-full-name" placeholder="Your name">
             </div>
             <div class="form-group">
               <label class="form-label">Business Name</label>
-              <input type="text" class="form-input" id="p-business-name" value="Gulf Coast Events LLC">
+              <input type="text" class="form-input" id="p-business-name" placeholder="Business or organization name">
             </div>
             <div class="form-group">
               <label class="form-label">Phone</label>
-              <input type="tel" class="form-input" id="p-phone" value="(239) 555-0161">
+              <input type="tel" class="form-input" id="p-phone" placeholder="(239) 555-0000">
             </div>
             <div class="form-group">
               <label class="form-label">City</label>
-              <input type="text" class="form-input" id="p-city" value="Naples, FL">
+              <input type="text" class="form-input" id="p-city" placeholder="Naples, FL">
             </div>
           </div>
           <div class="form-group" style="margin-top:12px;">
             <label class="form-label">Bio</label>
-            <textarea class="form-input" id="p-bio" rows="3" placeholder="Tell trucks a bit about the events you typically plan...">Corporate and social organizer covering Southwest Florida. Specializing in company picnics, galas, and outdoor festivals. 200+ events planned.</textarea>
+            <textarea class="form-input" id="p-bio" rows="3" placeholder="Tell trucks a bit about the events you typically plan..."></textarea>
           </div>
           <div style="margin-top:14px;">
             <button id="profileSaveBtn" onclick="saveProfile(event)" style="height:44px;padding:0 24px;font-size:.86rem;font-weight:700;background:var(--fire);color:#fff;border:none;border-radius:var(--r-sm);cursor:pointer;font-family:'Sora',sans-serif;">Save Profile</button>
@@ -1533,6 +1540,81 @@ tr:hover td{background:var(--bg);}
     <div class="modal-footer">
       <button class="btn btn-md btn-outline" onclick="closeModal('modal-truck-1')">Close</button>
       <button class="btn btn-md btn-fire" onclick="closeModal('modal-truck-1');setPanel('post',document.getElementById('nav-post'));showToast('Post a request — Smoke &amp; Soul BBQ will see it!')">Request This Truck</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VERIFICATION REQUEST -->
+<div class="modal-backdrop" id="modal-verif" onclick="handleBackdropClick(event,'modal-verif')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Apply for Verified Organizer</div>
+      <button class="modal-close" onclick="closeModal('modal-verif')">&#10005;</button>
+    </div>
+    <div class="modal-body" id="verifModalBody">
+      <p style="font-size:.82rem;color:var(--warm-gray);margin-bottom:16px;line-height:1.55;">Verified organizers receive a badge on all requests, get priority placement with food trucks, and build instant credibility. Review takes 1–2 business days.</p>
+      <div class="form-grid two" style="gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Full Name <span style="color:var(--fire)">*</span></label>
+          <input type="text" class="form-input" id="vf-full-name" placeholder="Your legal name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Organization Name <span style="color:var(--fire)">*</span></label>
+          <input type="text" class="form-input" id="vf-org-name" placeholder="Business or organization">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Organization Type <span style="color:var(--fire)">*</span></label>
+          <select class="form-select" id="vf-org-type">
+            <option value="">Select type…</option>
+            <option value="private_party">Private Party</option>
+            <option value="wedding">Wedding</option>
+            <option value="corporate">Corporate</option>
+            <option value="community_hoa">Community / HOA</option>
+            <option value="school">School</option>
+            <option value="venue">Venue</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number <span style="color:var(--fire)">*</span></label>
+          <input type="tel" class="form-input" id="vf-phone" placeholder="(239) 555-0000">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label class="form-label">Website or Social Media Link</label>
+        <input type="url" class="form-input" id="vf-website" placeholder="https://…">
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label class="form-label">Describe the events you typically organize <span style="color:var(--fire)">*</span></label>
+        <textarea class="form-input" id="vf-description" rows="3" placeholder="e.g. Corporate picnics and outdoor festivals in Collier and Lee counties, 50–500 guests…"></textarea>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label class="form-label">How did you hear about ServiceWindow?</label>
+        <select class="form-select" id="vf-referral">
+          <option value="">Select…</option>
+          <option value="google">Google Search</option>
+          <option value="social_media">Social Media</option>
+          <option value="word_of_mouth">Word of Mouth</option>
+          <option value="food_truck">A Food Truck Operator</option>
+          <option value="event">Event or Conference</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label class="form-label">Supporting Document <span style="font-size:.75rem;color:var(--warm-gray);font-weight:400;">— optional</span></label>
+        <div class="file-upload-zone" id="verifFileZone" onclick="document.getElementById('vf-doc').click()">
+          <div class="file-upload-icon">&#128196;</div>
+          <div class="file-upload-text">Government ID or business document</div>
+          <div class="file-upload-hint">JPG, PNG, or PDF · max 5 MB · tap to select</div>
+          <div class="file-upload-name" id="verifFileName" style="display:none;"></div>
+        </div>
+        <input type="file" id="vf-doc" accept=".jpg,.jpeg,.png,.pdf" style="display:none;" onchange="handleVerifFile(this)">
+      </div>
+      <div id="verifFormError" style="display:none;margin-top:10px;padding:10px 12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;font-size:.8rem;color:#991B1B;"></div>
+    </div>
+    <div class="modal-footer" id="verifModalFooter">
+      <button class="btn btn-md btn-outline" onclick="closeModal('modal-verif')">Cancel</button>
+      <button class="btn btn-md btn-fire" id="verifSubmitBtn" onclick="submitVerificationRequest()">Submit Application</button>
     </div>
   </div>
 </div>
@@ -1875,13 +1957,132 @@ async function loadMessages(){
 }
 
 
-async function submitForVerification(){
+function openVerifModal(){
+  // Pre-fill fields from live profile data if available
+  const prefill=async()=>{
+    if(!window.supabase)return;
+    const{data:{user}}=await window.supabase.auth.getUser();
+    if(!user)return;
+    const{data:p}=await window.supabase.from('profiles')
+      .select('full_name,business_name,organizer_type,phone').eq('id',user.id).single();
+    if(!p)return;
+    const set=(id,val)=>{const el=document.getElementById(id);if(el&&val)el.value=val;};
+    set('vf-full-name',p.full_name);
+    set('vf-org-name',p.business_name);
+    set('vf-phone',p.phone);
+    if(p.organizer_type){
+      const sel=document.getElementById('vf-org-type');
+      if(sel)sel.value=p.organizer_type;
+    }
+  };
+  // Reset modal to form state (in case previously submitted)
+  const body=document.getElementById('verifModalBody');
+  const footer=document.getElementById('verifModalFooter');
+  if(body&&body.querySelector('.file-upload-zone')===null){
+    // Success state was shown — restore form HTML
+    body.innerHTML=`
+      <p style="font-size:.82rem;color:var(--warm-gray);margin-bottom:16px;line-height:1.55;">Verified organizers receive a badge on all requests, get priority placement with food trucks, and build instant credibility. Review takes 1–2 business days.</p>
+      <div class="form-grid two" style="gap:12px;">
+        <div class="form-group"><label class="form-label">Full Name <span style="color:var(--fire)">*</span></label><input type="text" class="form-input" id="vf-full-name" placeholder="Your legal name"></div>
+        <div class="form-group"><label class="form-label">Organization Name <span style="color:var(--fire)">*</span></label><input type="text" class="form-input" id="vf-org-name" placeholder="Business or organization"></div>
+        <div class="form-group"><label class="form-label">Organization Type <span style="color:var(--fire)">*</span></label><select class="form-select" id="vf-org-type"><option value="">Select type…</option><option value="private_party">Private Party</option><option value="wedding">Wedding</option><option value="corporate">Corporate</option><option value="community_hoa">Community / HOA</option><option value="school">School</option><option value="venue">Venue</option><option value="other">Other</option></select></div>
+        <div class="form-group"><label class="form-label">Phone Number <span style="color:var(--fire)">*</span></label><input type="tel" class="form-input" id="vf-phone" placeholder="(239) 555-0000"></div>
+      </div>
+      <div class="form-group" style="margin-top:12px;"><label class="form-label">Website or Social Media Link</label><input type="url" class="form-input" id="vf-website" placeholder="https://…"></div>
+      <div class="form-group" style="margin-top:12px;"><label class="form-label">Describe the events you typically organize <span style="color:var(--fire)">*</span></label><textarea class="form-input" id="vf-description" rows="3" placeholder="e.g. Corporate picnics and outdoor festivals in Collier and Lee counties, 50–500 guests…"></textarea></div>
+      <div class="form-group" style="margin-top:12px;"><label class="form-label">How did you hear about ServiceWindow?</label><select class="form-select" id="vf-referral"><option value="">Select…</option><option value="google">Google Search</option><option value="social_media">Social Media</option><option value="word_of_mouth">Word of Mouth</option><option value="food_truck">A Food Truck Operator</option><option value="event">Event or Conference</option><option value="other">Other</option></select></div>
+      <div class="form-group" style="margin-top:12px;"><label class="form-label">Supporting Document <span style="font-size:.75rem;color:var(--warm-gray);font-weight:400;">— optional</span></label><div class="file-upload-zone" id="verifFileZone" onclick="document.getElementById('vf-doc').click()"><div class="file-upload-icon">&#128196;</div><div class="file-upload-text">Government ID or business document</div><div class="file-upload-hint">JPG, PNG, or PDF · max 5 MB · tap to select</div><div class="file-upload-name" id="verifFileName" style="display:none;"></div></div><input type="file" id="vf-doc" accept=".jpg,.jpeg,.png,.pdf" style="display:none;" onchange="handleVerifFile(this)"></div>
+      <div id="verifFormError" style="display:none;margin-top:10px;padding:10px 12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;font-size:.8rem;color:#991B1B;"></div>`;
+    if(footer)footer.innerHTML='<button class="btn btn-md btn-outline" onclick="closeModal(\'modal-verif\')">Cancel</button><button class="btn btn-md btn-fire" id="verifSubmitBtn" onclick="submitVerificationRequest()">Submit Application</button>';
+  }
+  const errEl=document.getElementById('verifFormError');
+  if(errEl)errEl.style.display='none';
+  openModal('modal-verif');
+  prefill();
+}
+
+function handleVerifFile(input){
+  const zone=document.getElementById('verifFileZone');
+  const nameEl=document.getElementById('verifFileName');
+  if(input.files&&input.files[0]){
+    const f=input.files[0];
+    if(f.size>5*1024*1024){
+      showToast('File too large — max 5 MB','error');
+      input.value='';return;
+    }
+    zone.classList.add('has-file');
+    nameEl.textContent='📎 '+f.name;
+    nameEl.style.display='block';
+  }else{
+    zone.classList.remove('has-file');
+    nameEl.style.display='none';
+  }
+}
+
+async function submitVerificationRequest(){
   const btn=document.getElementById('verifSubmitBtn');
+  const errEl=document.getElementById('verifFormError');
+  const showErr=(msg)=>{if(errEl){errEl.textContent=msg;errEl.style.display='block';}};
+  if(errEl)errEl.style.display='none';
+
+  // Validate required fields
+  const fullName=document.getElementById('vf-full-name')?.value.trim()||'';
+  const orgName=document.getElementById('vf-org-name')?.value.trim()||'';
+  const orgType=document.getElementById('vf-org-type')?.value||'';
+  const phone=document.getElementById('vf-phone')?.value.trim()||'';
+  const website=document.getElementById('vf-website')?.value.trim()||null;
+  const description=document.getElementById('vf-description')?.value.trim()||'';
+  const referral=document.getElementById('vf-referral')?.value||null;
+
+  if(!fullName){showErr('Full name is required.');return;}
+  if(!orgName){showErr('Organization name is required.');return;}
+  if(!orgType){showErr('Please select an organization type.');return;}
+  if(!phone){showErr('Phone number is required.');return;}
+  if(!description){showErr('Please describe the events you typically organize.');return;}
+
   if(btn){btn.textContent='Submitting…';btn.disabled=true;}
-  const{data:{user}}=await window.supabase.auth.getUser();
-  if(!user)return;
-  await window.supabase.from('profiles').update({verification_status:'pending'}).eq('id',user.id);
-  renderVerifBanner('pending');
+
+  try{
+    const{data:{user}}=await window.supabase.auth.getUser();
+    if(!user)throw new Error('Not signed in');
+
+    const{error}=await window.supabase.from('verification_requests').insert({
+      user_id:       user.id,
+      full_name:     fullName,
+      org_name:      orgName,
+      org_type:      orgType,
+      phone,
+      website,
+      description,
+      referral,
+      status:        'pending',
+      submitted_at:  new Date().toISOString(),
+    });
+    if(error)throw error;
+
+    // Update profile verification_status to pending
+    await window.supabase.from('profiles').update({verification_status:'pending'}).eq('id',user.id);
+
+    // Show success state inside modal
+    const body=document.getElementById('verifModalBody');
+    const footer=document.getElementById('verifModalFooter');
+    if(body){
+      body.innerHTML=`
+        <div style="text-align:center;padding:32px 16px;">
+          <div style="font-size:2.8rem;margin-bottom:12px;">&#9989;</div>
+          <div style="font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:700;color:var(--charcoal);margin-bottom:8px;">Application Submitted!</div>
+          <div style="font-size:.84rem;color:var(--warm-gray);line-height:1.6;max-width:320px;margin:0 auto;">We'll review your information and follow up within 1–2 business days. You'll see a badge on your account once approved.</div>
+        </div>`;
+    }
+    if(footer){
+      footer.innerHTML='<button class="btn btn-md btn-fire" onclick="closeModal(\'modal-verif\')">Done</button>';
+    }
+    renderVerifBanner('pending');
+
+  }catch(err){
+    showErr('Something went wrong — please try again. ('+err.message+')');
+    if(btn){btn.textContent='Submit Application';btn.disabled=false;}
+  }
 }
 
 function renderVerifBanner(status){
@@ -1892,7 +2093,7 @@ function renderVerifBanner(status){
   if(status==='pending'){
     wrap.innerHTML='<div class="verif-banner pending"><span style="font-size:1.1rem;">&#128338;</span><div class="verif-banner-text"><strong>Verification in review</strong> — we\'ll notify you when approved.</div></div>';
   } else {
-    wrap.innerHTML='<div class="verif-banner unverified"><span style="font-size:1.1rem;">&#9888;</span><div class="verif-banner-text"><strong>Your account is not yet verified.</strong> Verified organizers get priority placement and build trust with food truck operators. <a href="#" onclick="submitForVerification();return false;" style="color:#92400E;font-weight:700;">Submit for verification →</a></div></div>';
+    wrap.innerHTML='<div class="verif-banner unverified"><span style="font-size:1.1rem;">&#9888;</span><div class="verif-banner-text"><strong>Your account is not yet verified.</strong> Verified organizers get priority placement and build trust with food truck operators. <a href="#" onclick="openVerifModal();return false;" style="color:#92400E;font-weight:700;">Apply for verification →</a></div></div>';
   }
 }
 
@@ -1963,13 +2164,13 @@ async function loadProfile() {
 
   const { data: profile } = await window.supabase
     .from('profiles').select('full_name,business_name,phone,city,bio').eq('id', user.id).single();
-  if (profile) {
-    if (profile.full_name)     { const el = document.getElementById('p-full-name');     if (el) el.value = profile.full_name; }
-    if (profile.business_name) { const el = document.getElementById('p-business-name'); if (el) el.value = profile.business_name; }
-    if (profile.phone)         { const el = document.getElementById('p-phone');         if (el) el.value = profile.phone; }
-    if (profile.city)          { const el = document.getElementById('p-city');          if (el) el.value = profile.city; }
-    if (profile.bio)           { const el = document.getElementById('p-bio');           if (el) el.value = profile.bio; }
-  }
+  const p = profile || {};
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  set('p-full-name',     p.full_name);
+  set('p-business-name', p.business_name);
+  set('p-phone',         p.phone);
+  set('p-city',          p.city);
+  set('p-bio',           p.bio);
 }
 
 async function saveProfile(e) {
