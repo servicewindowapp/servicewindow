@@ -2126,13 +2126,31 @@ async function initDashboard() {
     // ── 2. Pending + accepted requests ──────────────────────────────────
     const { data: requests } = await window.supabase
       .from('requests')
-      .select('id, event_name, event_date, city, budget, status')
+      .select('id, event_name, event_date, city, budget, status, requester_id')
       .eq('truck_id', truck.id)
       .in('status', ['pending', 'accepted'])
       .order('event_date', { ascending: true })
       .limit(6);
 
     currentTruckId = truck.id;
+
+    // Batch-fetch requester profiles for verification + organizer_type
+    let requesterMap = {};
+    if (requests && requests.length) {
+      const requesterIds = [...new Set(requests.map(r => r.requester_id).filter(Boolean))];
+      if (requesterIds.length) {
+        const { data: reqProfiles } = await window.supabase
+          .from('profiles')
+          .select('id, verification_status, organizer_type')
+          .in('id', requesterIds);
+        if (reqProfiles) reqProfiles.forEach(p => { requesterMap[p.id] = p; });
+      }
+    }
+
+    const ORGANIZER_LABELS = {
+      private_party: 'Private Party', wedding: 'Wedding', corporate: 'Corporate',
+      community_hoa: 'Community / HOA', school: 'School', venue: 'Venue', other: 'Other'
+    };
 
     const feed = document.getElementById('requestsFeed');
     if (feed && requests && requests.length) {
@@ -2144,13 +2162,24 @@ async function initDashboard() {
         const tagClass  = isPending ? 'tag-pending' : 'tag-accepted';
         const tagLabel  = isPending ? 'Pending' : 'Accepted';
 
+        const prof = requesterMap[req.requester_id] || {};
+        const isVerified = prof.verification_status === 'verified';
+        const verifBadge = isVerified
+          ? `<span style="display:inline-flex;align-items:center;gap:2px;font-size:.64rem;font-weight:700;padding:2px 6px;border-radius:5px;background:#F0FDF4;color:#15803D;border:1px solid #86EFAC;">&#10003; Verified</span>`
+          : `<span style="display:inline-flex;align-items:center;gap:2px;font-size:.64rem;font-weight:700;padding:2px 6px;border-radius:5px;background:#F5F5F5;color:#9CA3AF;">Unverified</span>`;
+        const orgTypeLabel = prof.organizer_type ? ORGANIZER_LABELS[prof.organizer_type] || prof.organizer_type : null;
+        const orgTypeTag = orgTypeLabel
+          ? `<span style="display:inline-flex;font-size:.64rem;font-weight:700;padding:2px 6px;border-radius:5px;background:#EEF2FF;color:#4338CA;">${orgTypeLabel}</span>`
+          : '';
+
         const card = document.createElement('div');
         card.dataset.reqId = req.id;
         card.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);gap:8px;';
         card.innerHTML = `
           <div style="min-width:0;flex:1;">
             <div style="font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${req.event_name}</div>
-            <div style="font-size:.7rem;color:var(--warm-gray);">${date} &bull; ${req.city || ''} &bull; ${budget} &bull; <span class="tag ${tagClass}">${tagLabel}</span></div>
+            <div style="font-size:.7rem;color:var(--warm-gray);margin-top:2px;">${date} &bull; ${req.city || ''} &bull; ${budget} &bull; <span class="tag ${tagClass}">${tagLabel}</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;">${verifBadge}${orgTypeTag}</div>
           </div>
           <div class="req-actions" style="display:flex;gap:6px;flex-shrink:0;">
             ${isPending ? `

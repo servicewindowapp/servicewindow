@@ -1426,13 +1426,36 @@ if (window.supabase) {
 
 // ── Booking modal ────────────────────────────────────────────────────────
 
-function openBookingModal(truckId, truckName) {
+async function openBookingModal(truckId, truckName) {
   document.getElementById('bookingTruckId').value = truckId;
   document.getElementById('bookingModalTitle').textContent = 'Book ' + truckName;
   document.getElementById('bookingFormContent').style.display = 'block';
   document.getElementById('bookingSuccess').style.display = 'none';
   document.getElementById('bookingModal').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Inject verification badge/tip below the modal title
+  const existing = document.getElementById('bookingVerifNote');
+  if (existing) existing.remove();
+  if (window.supabase) {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (user) {
+      const { data: prof } = await window.supabase
+        .from('profiles').select('verification_status').eq('id', user.id).single();
+      const status = prof?.verification_status;
+      const note = document.createElement('div');
+      note.id = 'bookingVerifNote';
+      if (status === 'verified') {
+        note.style.cssText = 'display:inline-flex;align-items:center;gap:5px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:5px 10px;font-size:.74rem;font-weight:700;color:#15803D;margin-bottom:10px;';
+        note.innerHTML = '&#10003; Verified Organizer';
+      } else {
+        note.style.cssText = 'font-size:.76rem;color:#6B7280;background:#F9FAFB;border-radius:8px;padding:8px 12px;margin-bottom:10px;line-height:1.5;';
+        note.innerHTML = '&#128161; <em>Tip: Verified organizers get faster responses from food truck operators.</em>';
+      }
+      const form = document.getElementById('bookingForm');
+      form.parentNode.insertBefore(note, form);
+    }
+  }
 }
 
 function closeBookingModal() {
