@@ -710,6 +710,8 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal) !i
         <button class="mfb-btn" onclick="mfbFilter(this)">Fort Myers</button>
       </div>
 
+      <div id="trucksFeed">
+
       <!-- Truck 1 — Featured -->
       <div class="truck-card featured" onclick="openTruck('smoky-wheels')">
         <div class="featured-label">&#11088; Top Rated Venue Partner</div>
@@ -937,6 +939,8 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal) !i
         </div>
       </div>
 
+      </div><!-- /trucksFeed -->
+
       <div class="load-more-wrap">
         <button class="load-more" onclick="showToast('Loading more trucks…');setTimeout(()=>showToast('76 more trucks loaded','success'),800)">Load More Trucks (76)</button>
       </div>
@@ -1145,11 +1149,11 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal) !i
         </div>
         <div class="form-group">
           <label class="form-label">Your Name &amp; Venue</label>
-          <input type="text" class="form-input" placeholder="e.g., Sarah · Bayfront Event Center">
+          <input type="text" id="inq-venue-name" class="form-input" placeholder="e.g., Sarah · Bayfront Event Center">
         </div>
         <div class="form-group">
           <label class="form-label">Type of Opportunity</label>
-          <select class="form-input">
+          <select id="inq-opportunity-type" class="form-input">
             <option>Weekly Residency / Regular Spot</option>
             <option>Private Event (one-time)</option>
             <option>Farmers Market / Recurring Market</option>
@@ -1159,15 +1163,15 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal) !i
         </div>
         <div class="form-group">
           <label class="form-label">Venue Location</label>
-          <input type="text" class="form-input" placeholder="Address or intersection, city">
+          <input type="text" id="inq-location" class="form-input" placeholder="Address or intersection, city">
         </div>
         <div class="form-group">
           <label class="form-label">Date(s) / Schedule</label>
-          <input type="text" class="form-input" placeholder="e.g., Every Thursday 5–9pm or April 12">
+          <input type="text" id="inq-schedule" class="form-input" placeholder="e.g., Every Thursday 5–9pm or April 12">
         </div>
         <div class="form-group">
           <label class="form-label">Expected Guests</label>
-          <select class="form-input">
+          <select id="inq-guests" class="form-input">
             <option>Under 50</option>
             <option>50–100</option>
             <option>100–250</option>
@@ -1177,9 +1181,9 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal) !i
         </div>
         <div class="form-group">
           <label class="form-label">Message (Optional)</label>
-          <textarea class="form-input" rows="3" placeholder="Anything specific about your venue, parking, power access, or expectations&hellip;"></textarea>
+          <textarea id="inq-notes" class="form-input" rows="3" placeholder="Anything specific about your venue, parking, power access, or expectations&hellip;"></textarea>
         </div>
-        <button class="inquiry-submit" onclick="submitInquiry()">Send Inquiry</button>
+        <button id="inqSubmitBtn" class="inquiry-submit" onclick="submitInquiry()">Send Inquiry</button>
       </div>
       <div class="inquiry-success" id="inquirySuccess" style="display:none;">
         <div class="inquiry-success-icon">&#127881;</div>
@@ -1191,6 +1195,9 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal) !i
     </div>
   </div>
 </div>
+
+<!-- Supabase client -->
+<script src="supabase-client.js"></script>
 
 <!-- ════════════════════════════════════════
      JAVASCRIPT
@@ -1338,17 +1345,129 @@ function openTruck(id) {
 }
 
 // ─── Inquiry ─────────────────────────────
-function openInquiry(truckName) {
-  document.getElementById('inquiryModalTitle').textContent = 'Inquiry — ' + truckName;
-  document.getElementById('inquiryTruckName').textContent = truckName;
+let _currentVenueId = null;
+
+function openInquiry(venueId, venueName) {
+  // support legacy call with just a name (hardcoded cards)
+  if (venueName === undefined) { venueName = venueId; venueId = null; }
+  _currentVenueId = venueId || null;
+  document.getElementById('inquiryModalTitle').textContent = 'Inquiry — ' + venueName;
+  document.getElementById('inquiryTruckName').textContent = venueName;
   document.getElementById('inquiryForm').style.display = 'flex';
   document.getElementById('inquirySuccess').style.display = 'none';
   openModal('modal-inquiry');
 }
-function submitInquiry() {
+
+async function submitInquiry() {
+  if (!window.supabase) { alert('Service unavailable. Please try again.'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { window.location.href = 'auth.html'; return; }
+
+  const notes = [
+    document.getElementById('inq-venue-name').value.trim(),
+    document.getElementById('inq-opportunity-type').value,
+    document.getElementById('inq-location').value.trim(),
+    document.getElementById('inq-schedule').value.trim(),
+    'Expected guests: ' + document.getElementById('inq-guests').value,
+    document.getElementById('inq-notes').value.trim(),
+  ].filter(Boolean).join(' | ');
+
+  const btn = document.getElementById('inqSubmitBtn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  const { error } = await window.supabase.from('requests').insert({
+    request_type: 'venue_booking',
+    status:       'pending',
+    requester_id: user.id,
+    venue_id:     _currentVenueId || null,
+    city:         document.getElementById('inq-location').value.trim() || null,
+    notes:        notes || null,
+  });
+
+  btn.textContent = 'Send Inquiry';
+  btn.disabled = false;
+
+  if (error) {
+    console.error('Inquiry insert failed:', error);
+    alert('Something went wrong. Please try again.');
+    return;
+  }
+
   document.getElementById('inquiryForm').style.display = 'none';
   document.getElementById('inquirySuccess').style.display = 'block';
   showToast('Inquiry sent!', 'success');
+}
+
+// ─── Live Data ────────────────────────────
+async function initVenues() {
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { window.location.href = 'auth.html'; return; }
+
+  const { data: venues, error } = await window.supabase
+    .from('venues')
+    .select('*, profiles(full_name, city)')
+    .eq('is_active', true)
+    .eq('is_approved', true)
+    .order('rating', { ascending: false });
+
+  if (error) { console.error('Failed to load venues:', error); return; }
+
+  const feed = document.getElementById('trucksFeed');
+  if (!feed) return;
+  feed.innerHTML = '';
+
+  if (!venues.length) {
+    feed.innerHTML = '<div style="padding:32px 16px;text-align:center;color:var(--warm-gray);font-family:Lora,serif;font-size:.9rem;">No venues listed yet. Check back soon.</div>';
+    return;
+  }
+
+  venues.forEach(v => {
+    const priceStr = v.price_per_event
+      ? '$' + v.price_per_event + '/event'
+      : (v.price_per_day ? '$' + v.price_per_day + '/day' : 'Contact for pricing');
+    const card = document.createElement('div');
+    card.className = 'truck-card';
+    card.innerHTML = `
+      <div class="tc-top">
+        <div class="tc-avatar" style="background:var(--teal-pale);">&#127970;</div>
+        <div class="tc-info">
+          <div class="tc-name">${v.name}</div>
+          <div class="tc-cuisine-row">
+            <span class="tc-cuisine">${v.venue_type || 'Venue'}</span>
+            <span class="tc-verified">&#10003; Verified</span>
+          </div>
+          <div class="tc-location">${v.city || ''}, FL${v.capacity ? ' &middot; Up to ' + v.capacity + ' guests' : ''}</div>
+        </div>
+      </div>
+      <div class="tc-badges">
+        <span class="tc-badge available">&#9679; Available</span>
+        ${v.power_available ? '<span class="tc-badge residency">Power</span>' : ''}
+        ${v.water_available ? '<span class="tc-badge private">Water</span>' : ''}
+      </div>
+      ${v.description ? '<div class="tc-desc">' + v.description + '</div>' : ''}
+      <div class="tc-rates">
+        <div class="tc-rate"><div class="tc-rate-lbl">Rate</div><div class="tc-rate-val">${priceStr}</div></div>
+        ${v.capacity ? '<div class="tc-rate"><div class="tc-rate-lbl">Capacity</div><div class="tc-rate-val">' + v.capacity + '</div></div>' : ''}
+        ${v.parking_spaces ? '<div class="tc-rate"><div class="tc-rate-lbl">Parking</div><div class="tc-rate-val">' + v.parking_spaces + ' spaces</div></div>' : ''}
+      </div>
+      <div class="tc-foot">
+        <div class="tc-posted">${v.review_count > 0 ? v.rating + ' \u2605 (' + v.review_count + ' reviews)' : 'New listing'}</div>
+        <button class="tc-inquire">Send Inquiry</button>
+      </div>
+    `;
+    card.querySelector('.tc-inquire').addEventListener('click', e => {
+      e.stopPropagation();
+      openInquiry(v.id, v.name);
+    });
+    feed.appendChild(card);
+  });
+}
+
+if (window.supabase) {
+  initVenues();
+} else {
+  document.addEventListener('supabase-ready', initVenues);
 }
 
 // ─── Modals ──────────────────────────────

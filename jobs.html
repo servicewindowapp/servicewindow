@@ -864,6 +864,8 @@ button:active{opacity:.85;transform:scale(.98);}
         <button class="mfb-btn" onclick="mfbFilter(this)">Cape Coral</button>
       </div>
 
+      <div id="jobsFeed">
+
       <!-- Featured job 1 -->
       <div class="job-card featured" onclick="openJob('smoky-wheels')">
         <div class="featured-label">&#11088; Featured Listing</div>
@@ -1064,6 +1066,8 @@ button:active{opacity:.85;transform:scale(.98);}
         </div>
       </div>
 
+      </div><!-- /jobsFeed -->
+
       <div class="load-more-wrap">
         <button class="load-more" onclick="showToast('Loading more jobs…');setTimeout(()=>showToast('16 more jobs loaded','success'),800)">Load More Jobs (16)</button>
       </div>
@@ -1196,21 +1200,21 @@ button:active{opacity:.85;transform:scale(.98);}
         <div style="font-size:.78rem;color:var(--warm-gray);line-height:1.55;">Your contact info and profile will be shared with the hiring truck. Free to apply — always.</div>
         <div class="form-group">
           <label class="form-label">Your Name</label>
-          <input type="text" class="form-input" placeholder="Full name">
+          <input type="text" id="apply-name" class="form-input" placeholder="Full name">
         </div>
         <div class="form-group">
           <label class="form-label">Phone Number</label>
-          <input type="tel" class="form-input" placeholder="(239) 555-0000">
+          <input type="tel" id="apply-phone" class="form-input" placeholder="(239) 555-0000">
         </div>
         <div class="form-group">
           <label class="form-label">Cover Note (Optional)</label>
-          <textarea class="form-input" rows="3" placeholder="Why are you a great fit? Keep it short and genuine."></textarea>
+          <textarea id="apply-note" class="form-input" rows="3" placeholder="Why are you a great fit? Keep it short and genuine."></textarea>
         </div>
         <div class="form-group">
           <label class="form-label">Earliest Start Date</label>
-          <input type="text" class="form-input" placeholder="e.g., Immediately or April 1">
+          <input type="text" id="apply-start" class="form-input" placeholder="e.g., Immediately or April 1">
         </div>
-        <button class="apply-submit" onclick="submitApplication()">Send Application</button>
+        <button id="applySubmitBtn" class="apply-submit" onclick="submitApplication()">Send Application</button>
       </div>
       <div class="apply-success" id="applySuccess" style="display:none;">
         <div class="apply-success-icon">&#127881;</div>
@@ -1222,6 +1226,9 @@ button:active{opacity:.85;transform:scale(.98);}
     </div>
   </div>
 </div>
+
+<!-- Supabase client -->
+<script src="supabase-client.js"></script>
 
 <!-- ════════════════════════════════════════
      JAVASCRIPT
@@ -1408,7 +1415,14 @@ function openJob(id) {
 // ═══════════════════════════════════
 //  APPLY FLOW
 // ═══════════════════════════════════
-function openApply(company, title) {
+let _currentJobId = null;
+let _currentJobTitle = '';
+let _currentJobCompany = '';
+
+function openApply(company, title, jobId) {
+  _currentJobId = jobId || null;
+  _currentJobTitle = title || '';
+  _currentJobCompany = company || '';
   document.getElementById('applyModalTitle').textContent = 'Quick Apply';
   document.getElementById('applyJobTitle').textContent = title;
   document.getElementById('applyCompany').textContent = company;
@@ -1416,10 +1430,120 @@ function openApply(company, title) {
   document.getElementById('applySuccess').style.display = 'none';
   openModal('modal-apply');
 }
-function submitApplication() {
+
+async function submitApplication() {
+  if (!window.supabase) { alert('Service unavailable. Please try again.'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { window.location.href = 'auth.html'; return; }
+
+  const name  = document.getElementById('apply-name').value.trim();
+  const phone = document.getElementById('apply-phone').value.trim();
+  const note  = document.getElementById('apply-note').value.trim();
+  const start = document.getElementById('apply-start').value.trim();
+
+  const notes = [
+    'Job: ' + _currentJobTitle,
+    'Company: ' + _currentJobCompany,
+    name  ? 'Applicant: ' + name   : '',
+    phone ? 'Phone: '    + phone   : '',
+    note  ? 'Cover: '    + note    : '',
+    start ? 'Start: '    + start   : '',
+  ].filter(Boolean).join(' | ');
+
+  const btn = document.getElementById('applySubmitBtn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  const { error } = await window.supabase.from('requests').insert({
+    request_type: 'job_inquiry',
+    status:       'pending',
+    requester_id: user.id,
+    notes:        notes || null,
+  });
+
+  btn.textContent = 'Send Application';
+  btn.disabled = false;
+
+  if (error) {
+    console.error('Application insert failed:', error);
+    alert('Something went wrong. Please try again.');
+    return;
+  }
+
   document.getElementById('applyForm').style.display = 'none';
   document.getElementById('applySuccess').style.display = 'block';
   showToast('Application sent!', 'success');
+}
+
+// ═══════════════════════════════════
+//  LIVE DATA — JOBS
+// ═══════════════════════════════════
+async function initJobs() {
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { window.location.href = 'auth.html'; return; }
+
+  const { data: jobs, error } = await window.supabase
+    .from('jobs')
+    .select('*, profiles(full_name, city)')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error('Failed to load jobs:', error); return; }
+
+  const feed = document.getElementById('jobsFeed');
+  if (!feed) return;
+  feed.innerHTML = '';
+
+  if (!jobs.length) {
+    feed.innerHTML = '<div style="padding:32px 16px;text-align:center;color:var(--warm-gray);font-family:Lora,serif;font-size:.9rem;">No jobs posted yet. Check back soon.</div>';
+    return;
+  }
+
+  const typeMap = { full_time: 'Full Time', part_time: 'Part Time', gig: 'Gig', seasonal: 'Seasonal' };
+  const typeClass = { full_time: 'ft', part_time: 'pt', gig: 'event', seasonal: 'seasonal' };
+
+  jobs.forEach(job => {
+    const company  = job.profiles?.full_name || 'ServiceWindow Truck';
+    const payStr   = job.pay_rate
+      ? (job.pay_type === 'hourly' ? '$' + job.pay_rate + '/hr'
+       : job.pay_type === 'salary' ? '$' + job.pay_rate + '/yr'
+       : '$' + job.pay_rate + '/event')
+      : 'Contact for pay';
+    const typeLabel = typeMap[job.job_type] || job.job_type || '';
+    const tClass    = typeClass[job.job_type] || 'ft';
+    const posted    = new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    card.innerHTML = `
+      <div class="jc-top">
+        <div class="jc-logo fire-bg">&#128188;</div>
+        <div class="jc-info">
+          <div class="jc-title">${job.title}</div>
+          <div class="jc-company">${company}</div>
+          <div class="jc-location">${job.city || ''}, FL</div>
+        </div>
+      </div>
+      ${typeLabel ? '<div class="jc-badges"><span class="jc-badge ' + tClass + '">' + typeLabel + '</span></div>' : ''}
+      ${job.description ? '<div class="jc-desc">' + job.description + '</div>' : ''}
+      <div class="jc-bottom">
+        <div class="jc-pay">${payStr}</div>
+        <div class="jc-posted">${posted}</div>
+        <button class="jc-apply">Apply Now</button>
+      </div>
+    `;
+    card.querySelector('.jc-apply').addEventListener('click', e => {
+      e.stopPropagation();
+      openApply(company, job.title, job.id);
+    });
+    feed.appendChild(card);
+  });
+}
+
+if (window.supabase) {
+  initJobs();
+} else {
+  document.addEventListener('supabase-ready', initJobs);
 }
 
 // ═══════════════════════════════════

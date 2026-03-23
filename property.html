@@ -512,6 +512,8 @@ button:active{opacity:.85;transform:scale(.98);}
         <button class="mfb-btn" onclick="mfbFilter(this)">Fort Myers</button>
       </div>
 
+      <div id="propsFeed">
+
       <!-- Property 1 — Featured -->
       <div class="prop-card featured" onclick="openProp('bayfront-lot')">
         <div class="featured-label">&#11088; Most Inquired This Week</div>
@@ -743,6 +745,8 @@ button:active{opacity:.85;transform:scale(.98);}
           <button class="pc-contact" onclick="event.stopPropagation();openContact('Marco Island Event Grounds')">Contact Owner</button>
         </div>
       </div>
+
+      </div><!-- /propsFeed -->
 
       <div class="load-more-wrap">
         <button class="load-more" onclick="showToast('Loading more properties…');setTimeout(()=>showToast('41 more properties loaded','success'),800)">Load More (41)</button>
@@ -1015,11 +1019,11 @@ button:active{opacity:.85;transform:scale(.98);}
         </div>
         <div class="form-group">
           <label class="form-label">Your Name &amp; Business</label>
-          <input type="text" class="form-input" placeholder="e.g., Jordan · Smoky Wheels BBQ">
+          <input type="text" id="cont-name" class="form-input" placeholder="e.g., Jordan · Smoky Wheels BBQ">
         </div>
         <div class="form-group">
           <label class="form-label">What You Need</label>
-          <select class="form-input">
+          <select id="cont-need" class="form-input">
             <option>Monthly parking space</option>
             <option>Commissary kitchen slot</option>
             <option>Storage unit</option>
@@ -1029,11 +1033,11 @@ button:active{opacity:.85;transform:scale(.98);}
         </div>
         <div class="form-group">
           <label class="form-label">Move-In Date</label>
-          <input type="text" class="form-input" placeholder="e.g., April 1, 2026 or ASAP">
+          <input type="text" id="cont-movein" class="form-input" placeholder="e.g., April 1, 2026 or ASAP">
         </div>
         <div class="form-group">
           <label class="form-label">Truck / Equipment Size</label>
-          <select class="form-input">
+          <select id="cont-size" class="form-input">
             <option>Under 16ft</option>
             <option>16–20ft</option>
             <option>20–26ft</option>
@@ -1043,9 +1047,9 @@ button:active{opacity:.85;transform:scale(.98);}
         </div>
         <div class="form-group">
           <label class="form-label">Message (Optional)</label>
-          <textarea class="form-input" rows="3" placeholder="Any specific questions about power, access hours, permit requirements&hellip;"></textarea>
+          <textarea id="cont-notes" class="form-input" rows="3" placeholder="Any specific questions about power, access hours, permit requirements&hellip;"></textarea>
         </div>
-        <button class="contact-submit" onclick="submitContact()">Send Message</button>
+        <button id="contSubmitBtn" class="contact-submit" onclick="submitContact()">Send Message</button>
       </div>
       <div class="contact-success" id="contactSuccess" style="display:none;">
         <div class="contact-success-icon">&#127881;</div>
@@ -1057,6 +1061,9 @@ button:active{opacity:.85;transform:scale(.98);}
     </div>
   </div>
 </div>
+
+<!-- Supabase client -->
+<script src="supabase-client.js"></script>
 
 <script>
 // ─── Menu ───
@@ -1139,17 +1146,136 @@ function openProp(id) {
 }
 
 // ─── Contact modal ───
-function openContact(propName) {
+let _currentPropId = null;
+
+function openContact(propName, propId) {
+  _currentPropId = propId || null;
   document.getElementById('contactModalTitle').textContent = 'Contact Owner';
   document.getElementById('contactPropName').textContent = propName;
   document.getElementById('contactForm').style.display = 'flex';
   document.getElementById('contactSuccess').style.display = 'none';
   openModal('modal-contact');
 }
-function submitContact() {
+
+async function submitContact() {
+  if (!window.supabase) { alert('Service unavailable. Please try again.'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { window.location.href = 'auth.html'; return; }
+
+  const name   = document.getElementById('cont-name').value.trim();
+  const need   = document.getElementById('cont-need').value;
+  const movein = document.getElementById('cont-movein').value.trim();
+  const size   = document.getElementById('cont-size').value;
+  const notes  = document.getElementById('cont-notes').value.trim();
+
+  const notesStr = [
+    name   ? 'Contact: ' + name   : '',
+    'Need: ' + need,
+    movein ? 'Move-in: ' + movein : '',
+    'Truck size: ' + size,
+    notes  ? 'Notes: '   + notes  : '',
+  ].filter(Boolean).join(' | ');
+
+  const btn = document.getElementById('contSubmitBtn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  const { error } = await window.supabase.from('requests').insert({
+    request_type: 'property_rental',
+    status:       'pending',
+    requester_id: user.id,
+    property_id:  _currentPropId || null,
+    notes:        notesStr || null,
+  });
+
+  btn.textContent = 'Send Message';
+  btn.disabled = false;
+
+  if (error) {
+    console.error('Contact insert failed:', error);
+    alert('Something went wrong. Please try again.');
+    return;
+  }
+
   document.getElementById('contactForm').style.display = 'none';
   document.getElementById('contactSuccess').style.display = 'block';
   showToast('Message sent!','success');
+}
+
+// ─── Live Data — Properties ───
+async function initProperties() {
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { window.location.href = 'auth.html'; return; }
+
+  const { data: props, error } = await window.supabase
+    .from('properties')
+    .select('*, profiles(full_name, city)')
+    .eq('is_active', true)
+    .eq('is_approved', true)
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error('Failed to load properties:', error); return; }
+
+  const feed = document.getElementById('propsFeed');
+  if (!feed) return;
+  feed.innerHTML = '';
+
+  if (!props.length) {
+    feed.innerHTML = '<div style="padding:32px 16px;text-align:center;color:var(--warm-gray);font-family:Lora,serif;font-size:.9rem;">No properties listed yet. Check back soon.</div>';
+    return;
+  }
+
+  props.forEach(p => {
+    const ownerName = p.profiles?.full_name || 'Property Owner';
+    const priceStr  = p.price_per_month
+      ? '$' + p.price_per_month + '/mo'
+      : (p.price_per_day ? '$' + p.price_per_day + '/day' : 'Contact for pricing');
+    const spaces    = p.available_spaces || 1;
+
+    const card = document.createElement('div');
+    card.className = 'prop-card';
+    card.innerHTML = `
+      <div class="pc-top">
+        <div class="pc-icon" style="background:var(--purple-pale);">&#127968;</div>
+        <div class="pc-info">
+          <div class="pc-name">${p.name}</div>
+          <div class="pc-owner-row">
+            <span class="pc-owner">${ownerName}</span>
+            <span class="pc-verified">&#10003; Verified Owner</span>
+          </div>
+          <div class="pc-location">${p.city || ''}, FL${p.address ? ' &middot; ' + p.address : ''}</div>
+        </div>
+      </div>
+      <div class="pc-badges">
+        <span class="pc-badge available">&#9679; ${spaces} Space${spaces !== 1 ? 's' : ''} Open</span>
+        ${p.property_type ? '<span class="pc-badge parking">' + p.property_type + '</span>' : ''}
+      </div>
+      ${p.description ? '<div class="pc-desc">' + p.description + '</div>' : ''}
+      <div class="pc-amenities">
+        ${p.power_available ? '<span class="pc-amenity">Power available</span>' : ''}
+        ${p.water_available ? '<span class="pc-amenity">Water hookup</span>' : ''}
+      </div>
+      <div class="pc-rates">
+        <div class="pc-rate"><div class="pc-rate-lbl">Rate</div><div class="pc-rate-val">${priceStr}</div></div>
+        <div class="pc-rate"><div class="pc-rate-lbl">Available</div><div class="pc-rate-val">${spaces} space${spaces !== 1 ? 's' : ''}</div></div>
+      </div>
+      <div class="pc-foot">
+        <div class="pc-posted">Active listing</div>
+        <button class="pc-contact">Contact Owner</button>
+      </div>
+    `;
+    card.querySelector('.pc-contact').addEventListener('click', e => {
+      e.stopPropagation();
+      openContact(p.name, p.id);
+    });
+    feed.appendChild(card);
+  });
+}
+
+if (window.supabase) {
+  initProperties();
+} else {
+  document.addEventListener('supabase-ready', initProperties);
 }
 
 // ─── Modals ───
