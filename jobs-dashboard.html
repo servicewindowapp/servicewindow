@@ -1774,13 +1774,12 @@ async function saveProfile(e) {
     const lastName  = (document.getElementById('p-last-name')?.value  || '').trim();
     const fullName  = [firstName, lastName].filter(Boolean).join(' ');
 
-    const { error } = await window.supabase.from('profiles').upsert({
-      id:        user.id,
+    const { error } = await window.supabase.from('profiles').update({
       full_name: fullName,
       phone:     document.getElementById('p-phone').value.trim(),
       city:      document.getElementById('p-city').value.trim(),
       bio:       document.getElementById('p-bio').value.trim()
-    });
+    }).eq('id', user.id);
     if (error) throw error;
     showToast('Profile saved!', 'success');
   } catch (err) {

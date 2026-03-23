@@ -2239,7 +2239,7 @@ async function loadProfile() {
 }
 
 async function saveProfile(e) {
-  const btn = e.currentTarget;
+  const btn = e?.currentTarget || document.getElementById('profileSaveBtn');
   if (!window.supabase) { showToast('Not connected','error'); return; }
   const { data: { user } } = await window.supabase.auth.getUser();
   if (!user) { showToast('Please sign in first.','error'); return; }
@@ -2248,13 +2248,12 @@ async function saveProfile(e) {
   btn.disabled = true;
 
   try {
-    const { error: pe } = await window.supabase.from('profiles').upsert({
-      id: user.id,
+    const { error: pe } = await window.supabase.from('profiles').update({
       full_name: document.getElementById('p-full-name').value.trim(),
       phone:     document.getElementById('p-phone').value.trim(),
       city:      document.getElementById('p-city').value.trim(),
       bio:       document.getElementById('p-bio').value.trim()
-    });
+    }).eq('id', user.id);
     if (pe) throw pe;
 
     const truckData = {

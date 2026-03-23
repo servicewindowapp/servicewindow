@@ -1767,11 +1767,10 @@ async function saveProfile(e) {
   btn.disabled = true;
 
   try {
-    const { error: pe } = await window.supabase.from('profiles').upsert({
-      id:        user.id,
+    const { error: pe } = await window.supabase.from('profiles').update({
       full_name: document.getElementById('p-full-name').value.trim(),
       phone:     document.getElementById('p-phone').value.trim()
-    });
+    }).eq('id', user.id);
     if (pe) throw pe;
 
     const venueData = {
