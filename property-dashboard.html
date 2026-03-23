@@ -1890,11 +1890,11 @@ async function loadProfile() {
 }
 
 async function saveProfile(e) {
+  const btn = e.currentTarget;
   if (!window.supabase) { showToast('Not connected','error'); return; }
   const { data: { user } } = await window.supabase.auth.getUser();
   if (!user) { showToast('Please sign in first.','error'); return; }
 
-  const btn = e.currentTarget;
   btn.textContent = 'Saving…';
   btn.disabled = true;
 
