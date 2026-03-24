@@ -784,7 +784,7 @@ async function loadTrucks() {
   try {
     const { data, error } = await window.supabase
       .from('trucks')
-      .select('*')
+      .select('*, profiles(full_name, phone, city, avatar_url)')
       .eq('is_active', true)
       .eq('is_approved', true);
 
