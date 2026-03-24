@@ -559,10 +559,12 @@ async function handleAuth(){
         verification_status: 'unverified',
       };
 
-      // Store intended plan for truck and service_provider roles
-      // Database trigger will automatically set trial_starts_at and trial_ends_at
+      // Set trial end date for truck and service_provider roles (30 days from signup)
       if(role === 'truck' || role === 'service_provider'){
         profileData.intended_plan = role === 'truck' ? (planParam || 'standard') : 'standard';
+        const trialEnd = new Date();
+        trialEnd.setDate(trialEnd.getDate() + 30);
+        profileData.trial_ends_at = trialEnd.toISOString();
       }
 
       await window.supabase.from('profiles').upsert(profileData);
