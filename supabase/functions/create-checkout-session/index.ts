@@ -6,8 +6,8 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"), {
 });
 
 const supabase = createClient(
-  Deno.env.get("SUPABASE_URL"),
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
+  Deno.env.get("APP_SUPABASE_URL"),
+  Deno.env.get("APP_SERVICE_ROLE_KEY")
 );
 
 const corsHeaders = {
