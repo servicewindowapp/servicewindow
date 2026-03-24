@@ -1503,10 +1503,15 @@ async function loadStats(){
       document.getElementById('stat-trucks').textContent=truckCount+'+';
     }
 
-    // Get distinct cities count
-    const{data:trucks}=await window.supabase.from('trucks').select('city',{head:1000});
+    // Get distinct cities count from cities_served array
+    const{data:trucks}=await window.supabase.from('trucks').select('cities_served').eq('is_active',true);
     if(trucks){
-      const cities=new Set(trucks.map(t=>t.city).filter(Boolean));
+      const cities=new Set();
+      trucks.forEach(t=>{
+        if(t.cities_served && Array.isArray(t.cities_served)){
+          t.cities_served.forEach(city=>cities.add(city));
+        }
+      });
       document.getElementById('stat-cities').textContent=cities.size;
     }
   }catch(e){console.warn('Load stats:',e);}
