@@ -1642,16 +1642,17 @@ async function displayTrialBanner(userId){
     const bannerEl=document.getElementById('trialStatusBanner');
     const messageEl=document.getElementById('trialMessage');
     if(isTrialActive){
-      const trialEndDate=trialEnd.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-      messageEl.innerHTML=`<strong>Your free trial ends on ${trialEndDate}</strong> — after that you'll be billed automatically at the Standard rate.`;
+      const daysRemaining=Math.ceil((trialEnd-now)/(1000*60*60*24));
+      const trialEndDate=trialEnd.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      messageEl.innerHTML=`<strong>Your free trial is active</strong> — ${daysRemaining} days remaining. Add a payment method before ${trialEndDate} to keep your listing live.`;
       bannerEl.style.display='block';
-      bannerEl.style.background='#EFF6FF';
-      bannerEl.style.borderBottomColor='#BFDBFE';
+      bannerEl.style.background='#DCFCE7';
+      bannerEl.style.borderBottomColor='#86EFAC';
     }else if(isTrialExpired){
-      messageEl.innerHTML='<strong>Your trial has ended</strong> — upgrade to keep access.';
+      messageEl.innerHTML='<strong>Your trial has ended</strong> — add a payment method to keep your listing active.';
       bannerEl.style.display='block';
-      bannerEl.style.background='#FFFBEB';
-      bannerEl.style.borderBottomColor='#FDE68A';
+      bannerEl.style.background='#FEF3C7';
+      bannerEl.style.borderBottomColor='#FCD34D';
     }
   }catch(err){
     console.warn('Error checking trial status:',err);
