@@ -28,15 +28,15 @@ Deno.serve(async (req) => {
 
   try {
     console.log("Step 1: Checking environment variables");
-    const appSupabaseUrl = Deno.env.get("APP_SUPABASE_URL");
-    const appServiceRoleKey = Deno.env.get("APP_SERVICE_ROLE_KEY");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const siteUrl = Deno.env.get("SITE_URL");
 
-    console.log("APP_SUPABASE_URL:", appSupabaseUrl ? "present" : "MISSING");
-    console.log("APP_SERVICE_ROLE_KEY:", appServiceRoleKey ? "present (length: " + appServiceRoleKey.length + ")" : "MISSING");
+    console.log("SUPABASE_URL:", supabaseUrl ? "present" : "MISSING");
+    console.log("SUPABASE_SERVICE_ROLE_KEY:", supabaseServiceRoleKey ? "present (length: " + supabaseServiceRoleKey.length + ")" : "MISSING");
     console.log("SITE_URL:", siteUrl || "not set");
 
-    if (!appSupabaseUrl || !appServiceRoleKey) {
+    if (!supabaseUrl || !supabaseServiceRoleKey) {
       console.error("Missing required environment variables");
       return new Response(
         JSON.stringify({ error: "Server configuration error" }),
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     }
 
     console.log("Step 2: Creating Supabase client");
-    const supabase = createClient(appSupabaseUrl, appServiceRoleKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
     console.log("Supabase client created");
 
     console.log("Step 3: Extracting authorization header");

@@ -193,7 +193,7 @@ async function handleSuccessfulPayment() {
 
     // Call edge function to finalize the subscription
     // This function verifies the Stripe session and updates the profile
-    const response = await fetch('http://localhost:54321/functions/v1/stripe-webhook-success', {
+    const response = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/stripe-webhook-success', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
