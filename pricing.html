@@ -430,7 +430,7 @@ async function handleCheckout(planId) {
     }
 
     // User is logged in — create checkout session
-    const response = await fetch('http://localhost:54321/functions/v1/create-checkout-session', {
+    const response = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

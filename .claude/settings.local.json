@@ -87,7 +87,12 @@
       "Bash(sed -n '290,295p' admin-dashboard.html)",
       "Bash(sed -n '653,658p' jobs-dashboard.html)",
       "Bash(sed -n '574,579p' planner-dashboard.html)",
-      "Bash(exit 0)"
+      "Bash(exit 0)",
+      "Bash(supabase link:*)",
+      "Bash(supabase login:*)",
+      "Bash($env:SUPABASE_ACCESS_TOKEN=\"sbp_916de0a596c8dc15d9c5d350538d830b00511431\")",
+      "Bash(export SUPABASE_ACCESS_TOKEN=\"sbp_916de0a596c8dc15d9c5d350538d830b00511431\")",
+      "Bash(supabase functions:*)"
     ]
   }
 }

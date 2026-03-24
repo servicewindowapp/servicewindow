@@ -1691,7 +1691,7 @@ async function manageSubscription(){
     const{data:{user}}=await window.supabase.auth.getUser();
     if(!user){window.location.href='auth.html';return;}
     const{data:{session}}=await window.supabase.auth.getSession();
-    const response=await fetch('http://localhost:54321/functions/v1/create-portal-session',{
+    const response=await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-portal-session',{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
