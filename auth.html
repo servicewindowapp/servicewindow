@@ -559,10 +559,12 @@ async function handleAuth(){
         verification_status: 'unverified',
       };
 
-      // Set trial end date for truck and service_provider roles (30 days from signup)
+      // Set trial dates for truck and service_provider roles (30 days from signup)
       if(role === 'truck' || role === 'service_provider'){
         profileData.intended_plan = role === 'truck' ? (planParam || 'standard') : 'standard';
-        const trialEnd = new Date();
+        const now = new Date();
+        profileData.trial_started_at = now.toISOString();
+        const trialEnd = new Date(now);
         trialEnd.setDate(trialEnd.getDate() + 30);
         profileData.trial_ends_at = trialEnd.toISOString();
       }
