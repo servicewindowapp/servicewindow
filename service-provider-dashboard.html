@@ -427,6 +427,15 @@ select.form-input{cursor:pointer;}
   font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:6px;
   font-family:'DM Mono',monospace;
 }
+
+/* Rating for service providers */
+.rating-section-provider{background:#FEF3E2;border:1.5px solid var(--amber-border);border-radius:var(--r);padding:16px;margin-bottom:16px;}
+.rating-section-provider .rating-value{color:var(--amber);}
+.rating-section-provider .rating-stars{color:var(--amber);}
+.rating-display-large{display:flex;align-items:center;gap:12px;}
+.rating-value{font-size:1.8rem;font-weight:700;}
+.rating-stars{font-size:1rem;letter-spacing:2px;}
+.rating-meta{font-size:.75rem;color:var(--warm-gray);font-family:'DM Mono',monospace;display:block;margin-top:4px;}
 .billing-status.paid{background:var(--green-pale);color:var(--green);}
 .notif-row{
   display:flex;align-items:center;justify-content:space-between;
@@ -1058,6 +1067,21 @@ input:focus,textarea:focus,select:focus{
            PANEL: ACCOUNT & BILLING
       ══════════════════════════════════ -->
       <div class="panel" id="panel-account">
+
+        <!-- Service Provider Rating -->
+        <div class="rating-section-provider">
+          <div style="font-size:.85rem;font-weight:700;color:var(--smoke);margin-bottom:10px;">Your Rating from Food Trucks</div>
+          <div class="rating-display-large">
+            <div>
+              <div class="rating-value" style="color:var(--amber);">4.6</div>
+              <div class="rating-stars" style="color:var(--amber);">★★★★☆</div>
+            </div>
+            <div>
+              <div class="rating-meta">(19 reviews)</div>
+              <div style="font-size:.75rem;color:var(--amber);font-weight:600;margin-top:4px;">Trucks trust your services!</div>
+            </div>
+          </div>
+        </div>
 
         <!-- Business Profile -->
         <div class="profile-section">

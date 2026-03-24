@@ -344,6 +344,15 @@ tr:hover td{background:var(--bg);}
 }
 .chip-toggle.active{background:var(--fire-pale);border-color:var(--fire);color:var(--fire);}
 
+/* Rating for property owners */
+.rating-section-property{background:var(--purple-pale);border:1.5px solid var(--purple-border);border-radius:var(--r-sm);padding:16px;margin-bottom:16px;}
+.rating-section-property .rating-value{color:var(--purple);}
+.rating-section-property .rating-stars{color:var(--purple);}
+.rating-display-large{display:flex;align-items:center;gap:12px;}
+.rating-value{font-size:1.8rem;font-weight:700;}
+.rating-stars{font-size:1rem;letter-spacing:2px;}
+.rating-meta{font-size:.75rem;color:var(--warm-gray);font-family:'DM Mono',monospace;display:block;margin-top:4px;}
+
 /* FILTER */
 .filter-bar-row{display:flex;gap:8px;padding:10px 0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .filter-bar-row::-webkit-scrollbar{display:none;}
@@ -1293,6 +1302,21 @@ tr:hover td{background:var(--bg);}
         <div style="margin-bottom:16px;">
           <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;">Account Settings</div>
           <div style="font-size:.78rem;color:var(--warm-gray);">Manage your profile and subscription.</div>
+        </div>
+
+        <!-- Property Owner Rating -->
+        <div class="rating-section-property">
+          <div style="font-size:.85rem;font-weight:700;color:var(--smoke);margin-bottom:10px;">Your Rating from Food Trucks</div>
+          <div class="rating-display-large">
+            <div>
+              <div class="rating-value" style="color:var(--purple);">4.9</div>
+              <div class="rating-stars" style="color:var(--purple);">★★★★★</div>
+            </div>
+            <div>
+              <div class="rating-meta">(22 reviews)</div>
+              <div style="font-size:.75rem;color:var(--purple);font-weight:600;margin-top:4px;">Trucks love your properties!</div>
+            </div>
+          </div>
         </div>
 
         <div class="box">

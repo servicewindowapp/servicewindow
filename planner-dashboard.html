@@ -188,6 +188,15 @@ tr:hover td{background:var(--bg);}
 .badge-fire{background:var(--fire-pale);color:var(--fire);}
 .badge-gray{background:var(--bg);color:var(--mid-gray);border:1px solid var(--border);}
 
+/* Rating display for organizers */
+.rating-section-organizer{background:var(--green-pale);border:1.5px solid var(--green-border);border-radius:var(--r);padding:16px;margin-bottom:16px;}
+.rating-section-organizer .rating-value{color:var(--green);}
+.rating-section-organizer .rating-stars{color:var(--green);}
+.rating-display-large{display:flex;align-items:center;gap:12px;}
+.rating-value{font-size:2rem;font-weight:700;}
+.rating-stars{font-size:1.1rem;letter-spacing:2px;}
+.rating-meta{font-size:.75rem;color:var(--warm-gray);font-family:'DM Mono',monospace;display:block;margin-top:4px;}
+
 /* ACTIVITY */
 .activity-list{display:flex;flex-direction:column;gap:10px;}
 .activity-item{
@@ -1448,6 +1457,21 @@ tr:hover td{background:var(--bg);}
 
       <!-- PANEL: PROFILE -->
       <div class="panel" id="panel-profile">
+        <!-- Organizer Rating Section -->
+        <div class="rating-section-organizer">
+          <div style="font-size:.85rem;font-weight:700;color:var(--smoke);margin-bottom:10px;">Your Rating from Trucks</div>
+          <div class="rating-display-large">
+            <div>
+              <div class="rating-value" style="color:var(--green);">4.7</div>
+              <div class="rating-stars" style="color:var(--green);">★★★★★</div>
+            </div>
+            <div>
+              <div class="rating-meta">(34 reviews)</div>
+              <div style="font-size:.75rem;color:var(--green);font-weight:600;margin-top:4px;">Trucks love working with you!</div>
+            </div>
+          </div>
+        </div>
+
         <div class="box">
           <div class="box-title">My Profile</div>
           <div style="font-size:.78rem;color:var(--warm-gray);margin-bottom:14px;">This information is shown when food trucks view your requests.</div>

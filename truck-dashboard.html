@@ -251,6 +251,29 @@ tr:hover td{background:var(--bg);}
 .profile-badge.verified{background:var(--green-pale);color:var(--green);}
 .profile-badge.plan{background:var(--fire-pale);color:var(--fire);}
 .profile-badge.founding{background:var(--amber-pale);color:var(--amber);}
+
+/* Badge toggles */
+.badge-toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.badge-toggle{display:flex;align-items:center;gap:8px;padding:10px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;}
+.badge-toggle input{cursor:pointer;}
+.badge-toggle:has(input:checked){background:var(--fire-pale);border-color:var(--fire);}
+.badge-toggle-label{flex:1;font-size:.9rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+
+/* Rating display */
+.rating-section{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;}
+.rating-section-title{font-size:.95rem;font-weight:700;margin-bottom:12px;color:var(--smoke);}
+.rating-display-large{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.rating-value{font-size:2rem;font-weight:700;color:var(--fire);}
+.rating-stars{font-size:1.2rem;letter-spacing:2px;color:var(--fire);}
+.rating-meta{font-size:.8rem;color:var(--warm-gray);font-family:'DM Mono',monospace;}
+.reviews-list{max-height:300px;overflow-y:auto;}
+.review-item{padding:12px;border-bottom:1px solid var(--border);font-size:.85rem;line-height:1.5;}
+.review-item:last-child{border-bottom:none;}
+.review-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.review-author{font-weight:700;color:var(--smoke);}
+.review-date{font-size:.75rem;color:var(--mid-gray);}
+.review-stars{color:var(--fire);margin-bottom:4px;}
+.review-text{color:var(--warm-gray);font-family:'Lora',serif;}
 .profile-cta{margin-left:auto;}
 .form-section{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;}
 .form-section-title{font-size:.86rem;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
@@ -1302,6 +1325,39 @@ img,video{max-width:100%;height:auto;}
         </div>
       </div>
 
+      <!-- Rating Section -->
+      <div class="rating-section">
+        <div class="rating-section-title">Your Marketplace Rating</div>
+        <div class="rating-display-large">
+          <div>
+            <div class="rating-value" id="profileRatingValue">4.8</div>
+            <div class="rating-stars" id="profileRatingStars">★★★★★</div>
+          </div>
+          <div>
+            <div class="rating-meta" id="profileReviewCount">(127 reviews)</div>
+            <button class="btn btn-sm btn-outline" onclick="document.getElementById('panel-profile').scrollTo({top: document.getElementById('panel-profile').scrollHeight, behavior: 'smooth'})">View Reviews &rarr;</button>
+          </div>
+        </div>
+        <div id="profileReviewsList" class="reviews-list">
+          <div class="review-item">
+            <div class="review-header">
+              <span class="review-author">Sarah's Events Co.</span>
+              <span class="review-date">2 weeks ago</span>
+            </div>
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">Outstanding service! Smoke Ring BBQ delivered incredible food and their team was professional and responsive throughout our corporate event. Highly recommend!</div>
+          </div>
+          <div class="review-item">
+            <div class="review-header">
+              <span class="review-author">Marco Island Resort</span>
+              <span class="review-date">1 month ago</span>
+            </div>
+            <div class="review-stars">★★★★☆</div>
+            <div class="review-text">Great food and good service. Setup was quick and staff was friendly. Small note: arrived 10 mins late, but overall excellent experience.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="form-section">
         <div class="form-section-title">Truck Details</div>
         <div class="form-grid two">
@@ -1404,6 +1460,27 @@ img,video{max-width:100%;height:auto;}
               <option>2+ weeks</option>
             </select>
           </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Special Badges</div>
+        <p style="font-size:.85rem;color:var(--warm-gray);margin-bottom:12px;">Help organizers find you for specific event types. These badges appear on your marketplace profile.</p>
+        <div class="badge-toggle-grid">
+          <label class="badge-toggle">
+            <input type="checkbox" id="badge-fundraiser">
+            <span class="badge-toggle-label">
+              <span>&#10003;</span>
+              <span>Fundraiser Friendly</span>
+            </span>
+          </label>
+          <label class="badge-toggle">
+            <input type="checkbox" id="badge-veteran">
+            <span class="badge-toggle-label">
+              <span>&#127988;</span>
+              <span>Veteran Owned</span>
+            </span>
+          </label>
         </div>
       </div>
 

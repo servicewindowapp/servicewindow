@@ -628,6 +628,35 @@ button:active,[onclick]:active{opacity:.8;transform:scale(.98);}
 .cred-badge.pass{background:var(--green-pale);color:var(--green);}
 .cred-badge.pending{background:#F5F5F5;color:#9CA3AF;}
 
+/* Special badges for trucks */
+.special-badges{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px;}
+.special-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.65rem;font-weight:700;padding:4px 9px;border-radius:6px;
+  font-family:'Sora',sans-serif;white-space:nowrap;
+}
+.special-badge.fundraiser{background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;}
+.special-badge.veteran{background:#E3F2FD;color:#1565C0;border:1px solid #BBDEFB;}
+
+/* Star rating display */
+.rating-display{display:inline-flex;align-items:center;gap:4px;font-size:.85rem;}
+.stars{letter-spacing:1px;color:var(--fire);}
+.review-count{font-size:.75rem;color:var(--warm-gray);font-family:'DM Mono',monospace;}
+
+/* Review modal */
+.review-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-end;}
+.review-modal.open{display:flex;}
+.review-modal-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px;animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.review-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.review-modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--warm-gray);}
+.star-selector{display:flex;gap:8px;margin:16px 0;font-size:2.5rem;cursor:pointer;}
+.star-selector .star{transition:transform .1s,color .1s;color:#E0E0E0;}
+.star-selector .star.filled{color:var(--fire);}
+.star-selector .star:hover{transform:scale(1.1);}
+.review-textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:'Lora',serif;font-size:.9rem;min-height:100px;resize:vertical;}
+.review-textarea:focus{outline:none;border-color:var(--fire);box-shadow:0 0 0 3px rgba(255,84,0,.12);}
+
 /* Loading pulse for buttons */
 .btn-loading{
   position:relative;overflow:hidden;pointer-events:none;
@@ -1047,6 +1076,46 @@ img,video{max-width:100%;height:auto;}
   </div>
 </div>
 
+<!-- Review Modal -->
+<div class="review-modal" id="reviewModal">
+  <div class="review-modal-sheet">
+    <div class="review-modal-header">
+      <div>
+        <h2 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;" id="reviewModalTitle">Leave a Review</h2>
+        <p style="font-size:.85rem;color:var(--warm-gray);margin:0;">Share your experience with this truck</p>
+      </div>
+      <button class="review-modal-close" onclick="closeReviewModal()">&times;</button>
+    </div>
+
+    <form id="reviewForm" action="https://formspree.io/f/mbdzyold" method="POST">
+      <input type="hidden" name="review_type" value="truck">
+      <input type="hidden" name="truck_id" id="reviewTruckId">
+      <input type="hidden" name="truck_name" id="reviewTruckName">
+      <input type="hidden" name="reviewer_type" value="organizer">
+      <input type="hidden" name="rating" id="reviewRating" value="5">
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-size:.9rem;font-weight:600;margin-bottom:10px;color:var(--smoke);">How would you rate this truck?</label>
+        <div class="star-selector" id="starSelector">
+          <span class="star filled" data-rating="1">★</span>
+          <span class="star filled" data-rating="2">★</span>
+          <span class="star filled" data-rating="3">★</span>
+          <span class="star filled" data-rating="4">★</span>
+          <span class="star filled" data-rating="5">★</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label class="form-label" for="reviewText">Your Review</label>
+        <textarea class="review-textarea" id="reviewText" name="review_text" placeholder="What was your experience? (optional)"></textarea>
+      </div>
+
+      <button type="submit" class="modal-submit" style="width:100%;">Submit Review &rarr;</button>
+      <p class="modal-note" style="text-align:center;">Your review helps the community find great trucks.</p>
+    </form>
+  </div>
+</div>
+
 <script>
 // DATA
 const LISTINGS = [
@@ -1380,6 +1449,13 @@ function initMarketplace() {
          .map(([, label]) => `<span class="cred-badge pass">${label}</span>`)
          .join('');
 
+        const specialBadges = [
+          [truck.fundraiser_friendly, 'fundraiser', '&#10003; Fundraiser Friendly'],
+          [truck.veteran_owned,       'veteran',     '&#127988; Veteran Owned'],
+        ].filter(([flag]) => flag)
+         .map(([, cls, label]) => `<span class="special-badge ${cls}">${label}</span>`)
+         .join('');
+
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
@@ -1398,14 +1474,16 @@ function initMarketplace() {
             <span class="card-tag">${truck.cuisine_type || ''}</span>
             ${truck.cities_served ? truck.cities_served.slice(0,2).map(c => `<span class="card-tag">${c}</span>`).join('') : ''}
           </div>
+          ${specialBadges ? `<div class="special-badges">${specialBadges}</div>` : ''}
           ${credBadges ? `<div class="cred-badges">${credBadges}</div>` : ''}
-          <div class="card-foot">
-            <div>
+          <div class="card-foot" style="flex-wrap:wrap;gap:8px;">
+            <div style="flex:1;min-width:120px;">
               <div class="card-budget">$${truck.flat_event_rate}/event</div>
               <div class="card-budget-label">Flat Rate</div>
             </div>
-            <button class="card-respond" data-truck-id="${truck.id}" data-truck-name="${truck.name}">Book &rarr;</button>
+            <button class="card-respond" data-truck-id="${truck.id}" data-truck-name="${truck.name}" style="flex:1;min-width:120px;">Book &rarr;</button>
           </div>
+          <button class="btn btn-outline" onclick="openReviewModal('${truck.id}','${truck.name}')" style="width:100%;margin-top:8px;height:40px;border:1.5px solid var(--border);background:transparent;color:var(--smoke);border-radius:8px;font-size:.85rem;font-weight:600;">Leave a Review</button>
         `;
         card.querySelector('.card-respond').addEventListener('click', e => {
           e.stopPropagation();
@@ -1466,6 +1544,88 @@ function closeBookingModal() {
 function handleBookingBackdropClick(e) {
   if (e.target === document.getElementById('bookingModal')) closeBookingModal();
 }
+
+// ── Review Modal ────────────────────────────────────────────────────────
+
+function openReviewModal(truckId, truckName) {
+  document.getElementById('reviewTruckId').value = truckId;
+  document.getElementById('reviewTruckName').value = truckName;
+  document.getElementById('reviewModalTitle').textContent = `Rate ${truckName}`;
+  document.getElementById('reviewRating').value = 5;
+  document.getElementById('reviewText').value = '';
+
+  // Reset stars to all filled
+  document.querySelectorAll('.star-selector .star').forEach((s, i) => {
+    s.classList.toggle('filled', i < 5);
+  });
+
+  document.getElementById('reviewModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReviewModal() {
+  document.getElementById('reviewModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Star rating selector
+document.addEventListener('DOMContentLoaded', function() {
+  const stars = document.querySelectorAll('.star-selector .star');
+  stars.forEach(star => {
+    star.addEventListener('click', function() {
+      const rating = this.getAttribute('data-rating');
+      document.getElementById('reviewRating').value = rating;
+
+      stars.forEach(s => {
+        s.classList.toggle('filled', parseInt(s.getAttribute('data-rating')) <= rating);
+      });
+    });
+
+    star.addEventListener('mouseover', function() {
+      const rating = this.getAttribute('data-rating');
+      stars.forEach(s => {
+        s.classList.toggle('filled', parseInt(s.getAttribute('data-rating')) <= rating);
+      });
+    });
+  });
+
+  document.getElementById('starSelector').addEventListener('mouseleave', function() {
+    const currentRating = document.getElementById('reviewRating').value;
+    stars.forEach(s => {
+      s.classList.toggle('filled', parseInt(s.getAttribute('data-rating')) <= currentRating);
+    });
+  });
+
+  // Handle review form submission
+  document.getElementById('reviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const rating = document.getElementById('reviewRating').value;
+    const text = document.getElementById('reviewText').value;
+    const truckName = document.getElementById('reviewTruckName').value;
+
+    // Submit via Formspree
+    fetch(this.action, {
+      method: 'POST',
+      body: new FormData(this),
+      headers: { 'Accept': 'application/json' }
+    }).then(response => {
+      if (response.ok) {
+        // Show success message
+        const form = this;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = '✓ Review submitted!';
+        submitBtn.disabled = true;
+        setTimeout(() => {
+          closeReviewModal();
+          form.reset();
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }, 1500);
+      }
+    }).catch(err => console.error('Error:', err));
+  });
+});
 
 async function submitBookingRequest() {
   const { data: { user } } = await window.supabase.auth.getUser();
