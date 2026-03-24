@@ -82,7 +82,11 @@
       "Bash(sed -n '524,533p' property-dashboard.html)",
       "Bash(sed -n '626,640p' jobs-dashboard.html)",
       "Bash(__NEW_LINE_0fa8e4d8e7c91472__ echo:*)",
-      "Bash(cd \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\" grep -in \"planner\" auth.html index.html marketplace.html planner-dashboard.html truck-dashboard.html venue-dashboard.html property-dashboard.html service-provider-dashboard.html jobs-dashboard.html pricing.html about.html contact.html jobs.html property.html venues.html)"
+      "Bash(cd \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\" grep -in \"planner\" auth.html index.html marketplace.html planner-dashboard.html truck-dashboard.html venue-dashboard.html property-dashboard.html service-provider-dashboard.html jobs-dashboard.html pricing.html about.html contact.html jobs.html property.html venues.html)",
+      "Read(//c/Users/wesfi/onedrive/desktop/Food Truck App/**)",
+      "Bash(sed -n '290,295p' admin-dashboard.html)",
+      "Bash(sed -n '653,658p' jobs-dashboard.html)",
+      "Bash(sed -n '574,579p' planner-dashboard.html)"
     ]
   }
 }
