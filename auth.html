@@ -532,23 +532,28 @@ async function handleAuth(){
 
     if(error){ showError(error.message); return; }
 
-    // Create profile row with trial dates
+    // Create profile row with trial dates for truck and service_provider roles
     if(data.user){
-      const now = new Date();
-      const trialEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
-
-      await window.supabase.from('profiles').upsert({
+      const profileData = {
         id:                  data.user.id,
         full_name:           name,
         role,
         email,
         organizer_type:      organizerType,
         verification_status: 'unverified',
-        trial_starts_at:     now.toISOString(),
-        trial_ends_at:       trialEnd.toISOString(),
-        trial_converted:     false,
-        intended_plan:       planParam,
-      });
+      };
+
+      // Set trial dates for truck and service_provider roles
+      if(role === 'truck' || role === 'service_provider'){
+        const now = new Date();
+        const trialEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
+        profileData.trial_starts_at = now.toISOString();
+        profileData.trial_ends_at = trialEnd.toISOString();
+        profileData.trial_converted = false;
+        profileData.intended_plan = role === 'truck' ? (planParam || 'standard') : 'standard';
+      }
+
+      await window.supabase.from('profiles').upsert(profileData);
       await redirectByRole(data.user.id);
     } else {
       // Email confirmation required
