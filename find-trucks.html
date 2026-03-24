@@ -783,9 +783,8 @@ document.getElementById('modalRequestBtn').addEventListener('click', () => {
 async function loadTrucks() {
   try {
     const { data, error } = await window.supabase
-      .from('profiles')
+      .from('trucks')
       .select('*')
-      .eq('role', 'truck')
       .eq('is_active', true)
       .eq('is_approved', true);
 
