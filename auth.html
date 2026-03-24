@@ -389,6 +389,10 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
 <script src="supabase-client.js"></script>
 
 <script>
+// ── Trial & Plan Capture ──────────────────────────────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+const planParam = urlParams.get('plan') || 'standard'; // Default to standard if not specified
+
 // ── Nav menu ──────────────────────────────────────────────────────────────
 function openMenu(){
   document.getElementById('swMenu').classList.add('open');
@@ -528,8 +532,11 @@ async function handleAuth(){
 
     if(error){ showError(error.message); return; }
 
-    // Create profile row
+    // Create profile row with trial dates
     if(data.user){
+      const now = new Date();
+      const trialEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
+
       await window.supabase.from('profiles').upsert({
         id:                  data.user.id,
         full_name:           name,
@@ -537,6 +544,10 @@ async function handleAuth(){
         email,
         organizer_type:      organizerType,
         verification_status: 'unverified',
+        trial_starts_at:     now.toISOString(),
+        trial_ends_at:       trialEnd.toISOString(),
+        trial_converted:     false,
+        intended_plan:       planParam,
       });
       await redirectByRole(data.user.id);
     } else {

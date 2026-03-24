@@ -577,6 +577,23 @@ tr:hover td{background:var(--bg);}
       <!-- PANEL: HOME -->
       <div class="panel active" id="panel-home">
 
+        <!-- Trial Banner -->
+        <div id="trialBanner" style="display:none;background:var(--amber-pale);border:1px solid var(--amber);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="flex:1;">
+            <div style="font-size:.9rem;font-weight:700;color:var(--amber);margin-bottom:2px;"><span id="trialDaysRemaining">30</span> days left in your free trial</div>
+            <div style="font-size:.8rem;color:var(--warm-gray);">After your trial ends, your <span id="trialPlanName">plan</span> will be billed at <span id="trialPlanPrice">$29</span>/mo.</div>
+          </div>
+          <button style="height:36px;padding:0 16px;background:var(--amber);color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;" onclick="window.location.href='pricing.html'">View Plans</button>
+        </div>
+        <!-- Expired Trial Banner -->
+        <div id="expiredTrialBanner" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="flex:1;">
+            <div style="font-size:.9rem;font-weight:700;color:#DC2626;margin-bottom:2px;">Your free trial has ended</div>
+            <div style="font-size:.8rem;color:var(--warm-gray);">Upgrade to continue accessing the full platform.</div>
+          </div>
+          <button style="height:36px;padding:0 16px;background:#DC2626;color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;" onclick="window.location.href='pricing.html'">Upgrade Now</button>
+        </div>
+
         <div class="welcome-banner">
           <div class="welcome-banner-icon">&#127881;</div>
           <div>
@@ -2121,14 +2138,34 @@ function renderVerifBanner(status){
   }
 }
 
+function displayTrialBanner(profile){
+  const now=new Date();
+  const trialEnd=profile.trial_ends_at?new Date(profile.trial_ends_at):null;
+  const isTrialActive=trialEnd&&trialEnd>now&&!profile.trial_converted;
+  const isTrialExpired=trialEnd&&trialEnd<=now&&!profile.trial_converted;
+
+  if(isTrialActive){
+    const daysRemaining=Math.ceil((trialEnd-now)/(1000*60*60*24));
+    const planPrices={standard:'$29',pro:'$49',provider:'$39'};
+    const planPrice=planPrices[profile.intended_plan]||'$29';
+    document.getElementById('trialDaysRemaining').textContent=daysRemaining;
+    document.getElementById('trialPlanName').textContent=profile.intended_plan||'Standard';
+    document.getElementById('trialPlanPrice').textContent=planPrice;
+    document.getElementById('trialBanner').style.display='flex';
+  } else if(isTrialExpired){
+    document.getElementById('expiredTrialBanner').style.display='flex';
+  }
+}
+
 async function initDashboard(){
   const{data:{user}}=await window.supabase.auth.getUser();
   if(!user){window.location.href='auth.html';return;}
   currentUserId=user.id;
 
-  // Verification banner
-  const{data:prof}=await window.supabase.from('profiles').select('verification_status').eq('id',user.id).single();
+  // Verification banner & trial status
+  const{data:prof}=await window.supabase.from('profiles').select('verification_status,trial_starts_at,trial_ends_at,trial_converted,intended_plan').eq('id',user.id).single();
   renderVerifBanner(prof?.verification_status||'unverified');
+  if(prof) displayTrialBanner(prof);
   const{data:reqs}=await window.supabase.from('requests').select('id,status').eq('requester_id',currentUserId);
   const kpiGrid=document.getElementById('kpiGrid');
   if(kpiGrid&&reqs){

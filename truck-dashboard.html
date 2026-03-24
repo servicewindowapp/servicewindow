@@ -775,6 +775,22 @@ img,video{max-width:100%;height:auto;}
 
     <!-- ═══ PANEL: HOME ═══ -->
     <div class="panel active" id="panel-home">
+      <!-- Trial Banner -->
+      <div id="trialBanner" style="display:none;background:var(--amber-pale);border:1px solid var(--amber);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="flex:1;">
+          <div style="font-size:.9rem;font-weight:700;color:var(--amber);margin-bottom:2px;"><span id="trialDaysRemaining">30</span> days left in your free trial</div>
+          <div style="font-size:.8rem;color:var(--warm-gray);">After your trial ends, your <span id="trialPlanName">plan</span> will be billed at <span id="trialPlanPrice">$29</span>/mo.</div>
+        </div>
+        <button class="btn btn-sm" style="background:var(--amber);color:#fff;border:none;" onclick="window.location.href='pricing.html'">View Plans</button>
+      </div>
+      <!-- Expired Trial Banner -->
+      <div id="expiredTrialBanner" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="flex:1;">
+          <div style="font-size:.9rem;font-weight:700;color:#DC2626;margin-bottom:2px;">Your free trial has ended</div>
+          <div style="font-size:.8rem;color:var(--warm-gray);">Upgrade to continue accessing the full platform.</div>
+        </div>
+        <button class="btn btn-sm" style="background:#DC2626;color:#fff;border:none;" onclick="window.location.href='pricing.html'">Upgrade Now</button>
+      </div>
       <!-- Plan Banner -->
       <div class="plan-banner">
         <div class="plan-banner-icon">&#9989;</div>
@@ -2141,6 +2157,41 @@ async function submitOnboarding() {
 }
 
 // ═══════════════════════════════════
+//  TRIAL BANNER
+// ═══════════════════════════════════
+async function displayTrialBanner(userId) {
+  try {
+    const { data: profile } = await window.supabase
+      .from('profiles')
+      .select('trial_starts_at, trial_ends_at, trial_converted, intended_plan')
+      .eq('id', userId)
+      .single();
+
+    if (!profile) return;
+
+    const now = new Date();
+    const trialEnd = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
+    const isTrialActive = trialEnd && trialEnd > now && !profile.trial_converted;
+    const isTrialExpired = trialEnd && trialEnd <= now && !profile.trial_converted;
+
+    if (isTrialActive) {
+      const daysRemaining = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
+      const planPrices = { standard: '$29', pro: '$49', provider: '$39' };
+      const planPrice = planPrices[profile.intended_plan] || '$29';
+
+      document.getElementById('trialDaysRemaining').textContent = daysRemaining;
+      document.getElementById('trialPlanName').textContent = profile.intended_plan || 'Standard';
+      document.getElementById('trialPlanPrice').textContent = planPrice;
+      document.getElementById('trialBanner').style.display = 'flex';
+    } else if (isTrialExpired) {
+      document.getElementById('expiredTrialBanner').style.display = 'flex';
+    }
+  } catch (err) {
+    console.warn('Error checking trial status:', err);
+  }
+}
+
+// ═══════════════════════════════════
 //  REQUESTS FEED REFRESH
 // ═══════════════════════════════════
 async function refreshRequestsFeed() {
@@ -2539,6 +2590,9 @@ async function initDashboard() {
     return;
   }
   currentUserId = user.id;
+
+  // Check and display trial status
+  await displayTrialBanner(user.id);
 
   // ── 1. Truck profile stats ──────────────────────────────────────────────
   const { data: truck } = await window.supabase
