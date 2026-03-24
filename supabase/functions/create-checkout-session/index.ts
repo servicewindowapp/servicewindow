@@ -1,7 +1,20 @@
 import Stripe from "https://esm.sh/stripe@13.10.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-console.log("Edge Function: create-checkout-session starting");
+// Log environment at startup
+console.log("========== Edge Function: create-checkout-session ==========");
+console.log("Startup: Checking environment variables");
+
+const appSupabaseUrlEnv = Deno.env.get("APP_SUPABASE_URL");
+const appServiceRoleKeyEnv = Deno.env.get("APP_SERVICE_ROLE_KEY");
+const stripeSecretKeyEnv = Deno.env.get("STRIPE_SECRET_KEY");
+const siteUrlEnv = Deno.env.get("SITE_URL");
+
+console.log("APP_SUPABASE_URL exists:", !!appSupabaseUrlEnv, appSupabaseUrlEnv ? "Value: " + appSupabaseUrlEnv.substring(0, 20) + "..." : "");
+console.log("APP_SERVICE_ROLE_KEY exists:", !!appServiceRoleKeyEnv, appServiceRoleKeyEnv ? "Length: " + appServiceRoleKeyEnv.length : "");
+console.log("STRIPE_SECRET_KEY exists:", !!stripeSecretKeyEnv, stripeSecretKeyEnv ? "Starts with: " + stripeSecretKeyEnv.substring(0, 10) : "");
+console.log("SITE_URL exists:", !!siteUrlEnv, siteUrlEnv ? "Value: " + siteUrlEnv : "");
+console.log("==========================================================");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://servicewindow.app",
@@ -27,21 +40,43 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log("Step 1: Checking environment variables");
+    console.log("Step 1: Reading environment variables from Deno.env");
     const appSupabaseUrl = Deno.env.get("APP_SUPABASE_URL");
     const appServiceRoleKey = Deno.env.get("APP_SERVICE_ROLE_KEY");
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
     const siteUrl = Deno.env.get("SITE_URL");
 
-    console.log("APP_SUPABASE_URL:", appSupabaseUrl ? "present" : "MISSING");
-    console.log("APP_SERVICE_ROLE_KEY:", appServiceRoleKey ? "present (length: " + appServiceRoleKey.length + ")" : "MISSING");
-    console.log("STRIPE_SECRET_KEY:", stripeSecretKey ? "present" : "MISSING");
-    console.log("SITE_URL:", siteUrl || "not set");
+    console.log("APP_SUPABASE_URL:", appSupabaseUrl ? "✓ present (length: " + appSupabaseUrl.length + ")" : "✗ MISSING");
+    console.log("APP_SERVICE_ROLE_KEY:", appServiceRoleKey ? "✓ present (length: " + appServiceRoleKey.length + ")" : "✗ MISSING");
+    console.log("STRIPE_SECRET_KEY:", stripeSecretKey ? "✓ present" : "✗ MISSING");
+    console.log("SITE_URL:", siteUrl ? "✓ " + siteUrl : "✗ not set");
 
-    if (!appSupabaseUrl || !appServiceRoleKey) {
-      console.error("Missing required environment variables");
+    if (!appSupabaseUrl) {
+      console.error("ERROR: APP_SUPABASE_URL is not set in environment");
       return new Response(
-        JSON.stringify({ error: "Server configuration error" }),
+        JSON.stringify({ error: "Server configuration error: missing APP_SUPABASE_URL" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    if (!appServiceRoleKey) {
+      console.error("ERROR: APP_SERVICE_ROLE_KEY is not set in environment");
+      return new Response(
+        JSON.stringify({ error: "Server configuration error: missing APP_SERVICE_ROLE_KEY" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    if (!stripeSecretKey) {
+      console.error("ERROR: STRIPE_SECRET_KEY is not set in environment");
+      return new Response(
+        JSON.stringify({ error: "Server configuration error: missing STRIPE_SECRET_KEY" }),
         {
           status: 500,
           headers: corsHeaders,
