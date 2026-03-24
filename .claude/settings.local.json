@@ -86,7 +86,8 @@
       "Read(//c/Users/wesfi/onedrive/desktop/Food Truck App/**)",
       "Bash(sed -n '290,295p' admin-dashboard.html)",
       "Bash(sed -n '653,658p' jobs-dashboard.html)",
-      "Bash(sed -n '574,579p' planner-dashboard.html)"
+      "Bash(sed -n '574,579p' planner-dashboard.html)",
+      "Bash(exit 0)"
     ]
   }
 }
