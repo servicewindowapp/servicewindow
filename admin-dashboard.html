@@ -249,6 +249,11 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
         <span>Verifications</span>
         <span class="sidebar-badge" id="verify-badge">0</span>
       </div>
+      <div class="sidebar-item" onclick="setPanel('trucks',this)">
+        <span class="sidebar-icon">🚚</span>
+        <span>Truck Approvals</span>
+        <span class="sidebar-badge" id="trucks-badge">0</span>
+      </div>
       <div class="sidebar-item" onclick="setPanel('users',this)">
         <span class="sidebar-icon">👥</span>
         <span>Users</span>
@@ -356,6 +361,33 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
         </div>
 
         <div id="verify-list"></div>
+      </div>
+
+      <!-- TRUCK APPROVALS PANEL -->
+      <div class="panel" id="panel-trucks">
+        <div style="margin-bottom:20px;">
+          <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:4px;">Truck Approvals</h1>
+          <p style="font-size:.85rem;color:var(--warm-gray);">New food trucks pending admin approval</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Truck Name</th>
+                <th>Cuisine</th>
+                <th>Owner</th>
+                <th>City</th>
+                <th>Credentials</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="trucks-list">
+              <tr><td colspan="7" class="loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- USERS PANEL -->
@@ -501,6 +533,7 @@ async function initAdmin() {
 
   loadStats();
   loadVerificationQueue();
+  loadTruckApprovalQueue();
   loadUsers();
   loadActivity();
   loadWaitlist();
@@ -509,13 +542,14 @@ async function initAdmin() {
 // ── STATS ────────────────────────────────────────────────────────
 async function loadStats() {
   try {
-    const [users, trucks, venues, bookings, waitlist, pending] = await Promise.all([
+    const [users, trucks, venues, bookings, waitlist, pending, pendingTrucks] = await Promise.all([
       window.supabase.from('profiles').select('id', { count: 'exact' }),
       window.supabase.from('trucks').select('id', { count: 'exact' }).eq('is_active', true),
       window.supabase.from('venues').select('id', { count: 'exact' }).eq('is_active', true),
       window.supabase.from('booking_requests').select('id', { count: 'exact' }),
       window.supabase.from('waitlist').select('id', { count: 'exact' }),
       window.supabase.from('verification_requests').select('id', { count: 'exact' }).eq('status', 'pending'),
+      window.supabase.from('trucks').select('id', { count: 'exact' }).eq('is_approved', false),
     ]);
 
     const userCount = users.count || 0;
@@ -524,6 +558,7 @@ async function loadStats() {
     const bookingCount = bookings.count || 0;
     const waitlistCount = waitlist.count || 0;
     const pendingCount = pending.count || 0;
+    const pendingTrucksCount = pendingTrucks.count || 0;
 
     document.getElementById('stat-users').textContent = userCount;
     document.getElementById('stat-trucks').textContent = truckCount;
@@ -533,6 +568,7 @@ async function loadStats() {
     document.getElementById('stat-pending').textContent = pendingCount;
 
     document.getElementById('verify-badge').textContent = pendingCount;
+    document.getElementById('trucks-badge').textContent = pendingTrucksCount;
 
     loadRecentBookings();
   } catch (err) {
@@ -661,6 +697,102 @@ async function confirmReject() {
   } catch (err) {
     console.error('Error rejecting verification:', err);
     showToast('Error rejecting verification', 'error');
+  }
+}
+
+// ── TRUCK APPROVALS ────────────────────────────────────────────
+async function loadTruckApprovalQueue() {
+  try {
+    const { data: trucks } = await window.supabase
+      .from('trucks')
+      .select('id, name, cuisine_type, owner_id, city, cities_served, is_verified, has_insurance, has_license, has_food_handler_cert, is_school_approved, created_at')
+      .eq('is_approved', false)
+      .order('created_at', { ascending: false });
+
+    if (!trucks || trucks.length === 0) {
+      document.getElementById('trucks-list').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--mid-gray);">No pending truck approvals</td></tr>';
+      return;
+    }
+
+    // Fetch owner names from profiles
+    const ownerIds = [...new Set(trucks.map(t => t.owner_id).filter(Boolean))];
+    let ownerMap = {};
+    if (ownerIds.length > 0) {
+      const { data: profiles } = await window.supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', ownerIds);
+      if (profiles) {
+        profiles.forEach(p => { ownerMap[p.id] = p.full_name || '—'; });
+      }
+    }
+
+    const rows = trucks.map(t => {
+      const ownerName = ownerMap[t.owner_id] || '—';
+      const createdDate = new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const city = t.city || (Array.isArray(t.cities_served) && t.cities_served[0]) || '—';
+
+      // Build credential badges
+      let credBadges = '';
+      if (t.is_verified) credBadges += '<span class="badge badge-green">✓ Verified</span>';
+      if (t.has_insurance) credBadges += '<span class="badge badge-blue">🛡 Insurance</span>';
+      if (t.has_license) credBadges += '<span class="badge badge-blue">📋 License</span>';
+      if (t.has_food_handler_cert) credBadges += '<span class="badge badge-blue">🏥 Food Handler</span>';
+      if (t.is_school_approved) credBadges += '<span class="badge badge-amber">🏫 School Approved</span>';
+      if (!credBadges) credBadges = '<span style="font-size:.75rem;color:var(--mid-gray);">None claimed</span>';
+
+      return `
+        <tr>
+          <td style="font-weight:700;">${t.name}</td>
+          <td>${t.cuisine_type || '—'}</td>
+          <td>${ownerName}</td>
+          <td>${city}</td>
+          <td style="font-size:.8rem;">${credBadges}</td>
+          <td>${createdDate}</td>
+          <td style="display:flex;gap:6px;">
+            <button class="btn btn-green" onclick="approveTruck('${t.id}')">✓ Approve</button>
+            <button class="btn btn-red" onclick="rejectTruck('${t.id}')">✕ Reject</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    document.getElementById('trucks-list').innerHTML = rows;
+  } catch (err) {
+    console.error('Error loading truck approvals:', err);
+    document.getElementById('trucks-list').innerHTML = '<tr><td colspan="7" style="color:#DC2626;">Error loading trucks</td></tr>';
+  }
+}
+
+async function approveTruck(truckId) {
+  try {
+    await window.supabase
+      .from('trucks')
+      .update({ is_approved: true })
+      .eq('id', truckId);
+
+    showToast('Truck approved ✓', 'success');
+    loadTruckApprovalQueue();
+    loadStats();
+  } catch (err) {
+    console.error('Error approving truck:', err);
+    showToast('Error approving truck', 'error');
+  }
+}
+
+async function rejectTruck(truckId) {
+  try {
+    await window.supabase
+      .from('trucks')
+      .update({ is_active: false })
+      .eq('id', truckId);
+
+    showToast('Truck rejected — deactivated', 'success');
+    loadTruckApprovalQueue();
+    loadStats();
+  } catch (err) {
+    console.error('Error rejecting truck:', err);
+    showToast('Error rejecting truck', 'error');
   }
 }
 
