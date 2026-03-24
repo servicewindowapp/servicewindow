@@ -1319,7 +1319,11 @@ img,video{max-width:100%;height:auto;}
     <!-- ═══ PANEL: PROFILE ═══ -->
     <div class="panel" id="panel-profile">
       <div class="profile-header">
-        <div class="profile-avatar">SR</div>
+        <div style="position:relative;">
+          <div class="profile-avatar" id="profileAvatar" style="cursor:pointer;" onclick="document.getElementById('avatarInput').click()">SR</div>
+          <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="uploadAvatar(event)">
+          <span style="position:absolute;bottom:-8px;right:-8px;background:var(--fire);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;border:2px solid #fff;cursor:pointer;" title="Click avatar to upload photo">📷</span>
+        </div>
         <div style="flex:1;">
           <div class="profile-name">Smoke Ring BBQ</div>
           <div class="profile-sub">&#128205; Fort Myers, FL &bull; Member since Jan 2025</div>
@@ -2818,6 +2822,56 @@ async function navSignOut(){if(window.supabase)await window.supabase.auth.signOu
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
 </script>
 <script>
+// ── AVATAR UPLOAD ────────────────────────────────────────────────────────────
+async function uploadAvatar(event) {
+  const file = event.target.files[0];
+  if (!file || !window.supabase) return;
+
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { showToast('Please sign in first.', 'error'); return; }
+
+  const ext = file.name.split('.').pop();
+  const filePath = `trucks/${user.id}.${ext}`;
+
+  try {
+    // Upload to storage
+    const { error: uploadError } = await window.supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    // Get public URL
+    const { data } = window.supabase.storage.from('avatars').getPublicUrl(filePath);
+    const avatarUrl = data?.publicUrl;
+
+    // Update trucks table with avatar URL
+    const { data: existing } = await window.supabase
+      .from('trucks').select('id').eq('owner_id', user.id).single();
+
+    if (existing) {
+      await window.supabase.from('trucks').update({ avatar_url: avatarUrl }).eq('id', existing.id);
+    }
+
+    // Display uploaded image
+    document.getElementById('profileAvatar').textContent = '';
+    const img = document.createElement('img');
+    img.src = avatarUrl + '?t=' + Date.now();
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    document.getElementById('profileAvatar').appendChild(img);
+
+    showToast('Photo uploaded successfully!', 'success');
+  } catch (err) {
+    console.error('Avatar upload error:', err);
+    showToast('Failed to upload photo: ' + err.message, 'error');
+  }
+
+  // Reset file input
+  event.target.value = '';
+}
+
 // ── PROFILE LOAD / SAVE ──────────────────────────────────────────────────────
 async function loadProfile() {
   if (!window.supabase) return;
@@ -2834,9 +2888,20 @@ async function loadProfile() {
   }
 
   const { data: truck } = await window.supabase
-    .from('trucks').select('name,serves_per_hour,flat_event_rate,service_radius_miles,is_verified,has_insurance,has_license,license_expiry,has_food_handler_cert,is_school_approved')
+    .from('trucks').select('name,serves_per_hour,flat_event_rate,service_radius_miles,is_verified,has_insurance,has_license,license_expiry,has_food_handler_cert,is_school_approved,avatar_url')
     .eq('owner_id', user.id).single();
   if (truck) {
+    // Load avatar if it exists
+    if (truck.avatar_url) {
+      document.getElementById('profileAvatar').textContent = '';
+      const img = document.createElement('img');
+      img.src = truck.avatar_url;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      document.getElementById('profileAvatar').appendChild(img);
+    }
+
     if (truck.name)                 document.getElementById('p-truck-name').value      = truck.name;
     if (truck.serves_per_hour)      document.getElementById('p-serves-per-hour').value = truck.serves_per_hour;
     if (truck.flat_event_rate)      document.getElementById('p-flat-rate').value        = truck.flat_event_rate;

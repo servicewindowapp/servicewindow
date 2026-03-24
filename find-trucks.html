@@ -731,6 +731,14 @@ function openModal(truck) {
   const cities = Array.isArray(truck.cities_served) ? truck.cities_served.join(', ') : (truck.cities_served || '—');
   document.getElementById('modalCities').textContent = cities;
 
+  // Display avatar in modal
+  const modalPhoto = document.getElementById('modalPhoto');
+  if (truck.avatar_url) {
+    modalPhoto.innerHTML = `<img src="${truck.avatar_url}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    modalPhoto.textContent = truck.avatar_emoji || '🚚';
+  }
+
   renderBadges(truck);
   document.getElementById('modalOverlay').classList.add('open');
 }
@@ -843,7 +851,7 @@ function renderTrucks() {
 
   grid.innerHTML = filteredTrucks.map(truck => `
     <div class="truck-card" onclick="openModal(${JSON.stringify(truck).replace(/"/g, '&quot;')})">
-      <div class="truck-photo">${truck.avatar_emoji || '🚚'}</div>
+      <div class="truck-photo">${truck.avatar_url ? `<img src="${truck.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : (truck.avatar_emoji || '🚚')}</div>
       <div class="truck-info">
         <div class="truck-name">${truck.name || 'Unnamed Truck'}</div>
         <div class="truck-cuisine">${truck.cuisine_type || 'Food'}</div>
