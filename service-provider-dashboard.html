@@ -664,10 +664,10 @@ input:focus,textarea:focus,select:focus{
         <div class="plan-banner">
           <div class="plan-banner-icon">&#9989;</div>
           <div class="plan-banner-text">
-            <div class="plan-banner-title">Standard Plan &mdash; $39/mo</div>
-            <div class="plan-banner-sub">Up to 3 active service listings &middot; Vendor Services board &middot; Upgrade to Pro for all boards</div>
+            <div class="plan-banner-title" id="planBannerTitle">Standard Plan &mdash; $39/mo</div>
+            <div class="plan-banner-sub" id="planBannerSub">Up to 3 active service listings &middot; Vendor Services board &middot; Upgrade to Pro for all boards</div>
           </div>
-          <button class="plan-banner-upgrade" onclick="openModal('modal-upgrade')">Upgrade</button>
+          <button class="plan-banner-upgrade" id="planBannerBtn" onclick="manageSubscription()">Manage</button>
         </div>
 
         <!-- KPIs -->
@@ -1683,6 +1683,31 @@ async function initNavAuth(){
     }
   }catch(e){console.warn('Nav auth:',e);}
 }
+
+// ── Manage Subscription (Stripe Customer Portal) ────────────────
+async function manageSubscription(){
+  try{
+    if(!window.supabase){showToast('Not connected');return;}
+    const{data:{user}}=await window.supabase.auth.getUser();
+    if(!user){window.location.href='auth.html';return;}
+    const{data:{session}}=await window.supabase.auth.getSession();
+    const response=await fetch('http://localhost:54321/functions/v1/create-portal-session',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${session.access_token}`
+      },
+      body:JSON.stringify({user_id:user.id})
+    });
+    const result=await response.json();
+    if(result.error){showToast('Error: '+result.error);return;}
+    window.location.href=result.url;
+  }catch(err){
+    console.error('Subscription management error:',err);
+    showToast('Unable to access subscription management');
+  }
+}
+
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
 </script>

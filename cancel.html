@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Checkout Cancelled — ServiceWindow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --fire: #FF5400;
+  --navy: #1E3A5F;
+  --smoke: #1C1917;
+  --charcoal: #292524;
+  --warm-gray: #57534E;
+  --mid-gray: #A8A29E;
+  --border: #E7E5E4;
+  --bg: #FAFAF9;
+  --white: #FFFFFF;
+  --amber: #D97706;
+  --r: 16px;
+  --sh: 0 4px 16px rgba(0,0,0,.08);
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--smoke);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:20px;
+}
+.container {
+  max-width:500px;
+  background:white;
+  border-radius:var(--r);
+  padding:40px 28px;
+  text-align:center;
+  box-shadow:var(--sh);
+}
+.cancel-icon {
+  font-size:4rem;
+  margin-bottom:20px;
+}
+h1 {
+  font-family:'Lora',serif;
+  font-size:1.8rem;
+  font-weight:700;
+  margin-bottom:10px;
+  color:var(--smoke);
+}
+.cancel-sub {
+  font-size:0.95rem;
+  color:var(--warm-gray);
+  line-height:1.6;
+  margin-bottom:28px;
+}
+.info-box {
+  background:#FFFBEB;
+  border:1px solid #FDE68A;
+  border-radius:10px;
+  padding:16px;
+  margin-bottom:24px;
+  text-align:left;
+}
+.info-text {
+  font-size:0.85rem;
+  color:var(--warm-gray);
+  line-height:1.5;
+}
+.cta-group {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.btn {
+  height:48px;
+  border:none;
+  border-radius:8px;
+  font-family:'Sora',sans-serif;
+  font-size:0.88rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn-primary {
+  background:var(--fire);
+  color:white;
+}
+.btn-primary:hover { background:#E85A00; }
+.btn-secondary {
+  background:var(--bg);
+  color:var(--fire);
+  border:1.5px solid var(--border);
+}
+.btn-secondary:hover {
+  background:white;
+  border-color:var(--fire);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="cancel-icon">↩️</div>
+  <h1>Checkout Cancelled</h1>
+  <p class="cancel-sub">No worries — your trial is still active and you can try again whenever you're ready.</p>
+
+  <div class="info-box">
+    <p class="info-text">
+      <strong>Your free trial is still active.</strong> You can return to our pricing page anytime to choose a plan and upgrade before your trial ends.
+    </p>
+  </div>
+
+  <div class="cta-group">
+    <a href="pricing.html" class="btn btn-primary">Back to Pricing →</a>
+    <a href="truck-dashboard.html" class="btn btn-secondary">Continue to Dashboard</a>
+  </div>
+
+  <p style="font-size:0.78rem; color:var(--mid-gray); margin-top:20px;">
+    Questions? Contact us at support@servicewindow.app
+  </p>
+</div>
+</body>
+</html>

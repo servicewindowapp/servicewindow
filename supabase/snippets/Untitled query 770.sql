@@ -1,0 +1,8 @@
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS trial_started_at TIMESTAMP WITH TIME ZONE,
+  ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMP WITH TIME ZONE,
+  ADD COLUMN IF NOT EXISTS trial_converted BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS intended_plan TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_profiles_trial_ends_at ON profiles(trial_ends_at)
+WHERE trial_ends_at IS NOT NULL;

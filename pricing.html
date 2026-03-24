@@ -6,6 +6,7 @@
 <title>Pricing — ServiceWindow</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
 <style>
 :root {
   --fire:        #FF5400;
@@ -165,7 +166,7 @@ footer{background:var(--charcoal);padding:40px 20px 32px;color:#fff;}
       </div>
       <p class="price-note">Founding rate locked in for life • Auto-renews on day 30</p>
       <p class="price-disclaimer">Billed monthly starting on your 30-day anniversary. Cancel anytime before then.</p>
-      <button class="tier-cta" onclick="window.location.href='auth.html?plan=standard&role=truck'">Start Free — Join Now</button>
+      <button class="tier-cta" onclick="handleCheckout('truck_standard')">Start Free — Join Now</button>
       <ul class="tier-features">
         <li>Unlimited marketplace applications</li>
         <li>Event Calendar — 2 years visibility</li>
@@ -196,7 +197,7 @@ footer{background:var(--charcoal);padding:40px 20px 32px;color:#fff;}
       </div>
       <p class="price-note">Founding rate locked in for life • Auto-renews on day 30</p>
       <p class="price-disclaimer">Billed monthly starting on your 30-day anniversary. Cancel anytime before then.</p>
-      <button class="tier-cta" onclick="window.location.href='auth.html?plan=pro&role=truck'">Start Free — Join Now</button>
+      <button class="tier-cta" onclick="handleCheckout('truck_pro')">Start Free — Join Now</button>
       <ul class="tier-features">
         <li>Everything in Standard</li>
         <li>Featured placement in marketplace</li>
@@ -245,7 +246,7 @@ footer{background:var(--charcoal);padding:40px 20px 32px;color:#fff;}
       </div>
       <p class="price-note">Founding rate locked in for life • Auto-renews on day 30</p>
       <p class="price-disclaimer">Billed monthly starting on your 30-day anniversary. Cancel anytime before then.</p>
-      <button class="tier-cta" onclick="window.location.href='auth.html?plan=standard&role=service_provider'">Start Free — Join Now</button>
+      <button class="tier-cta" onclick="handleCheckout('service_provider_standard')">Start Free — Join Now</button>
       <ul class="tier-features">
         <li>Verified service provider listing</li>
         <li>Visible to all truck subscribers</li>
@@ -395,6 +396,72 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+// ───────────────────────────────────────────────────────────────
+// STRIPE CHECKOUT
+// ───────────────────────────────────────────────────────────────
+// Configuration: Update with your Stripe publishable key
+const STRIPE_PUBLIC_KEY = 'pk_test_your_key_here'; // Replace with actual key from .env
+const stripe = Stripe(STRIPE_PUBLIC_KEY);
+
+// Price IDs for each subscription product (set these after creating products in Stripe)
+const PRICE_IDS = {
+  truck_standard: 'price_1234567890abcdef',    // Truck Standard $29/mo — UPDATE AFTER CREATING IN STRIPE
+  truck_pro: 'price_0987654321fedcba',         // Truck Pro $49/mo — UPDATE AFTER CREATING IN STRIPE
+  service_provider_standard: 'price_abcdef1234567890' // Service Provider Standard $29/mo — UPDATE AFTER CREATING IN STRIPE
+};
+
+async function handleCheckout(planId) {
+  try {
+    // Check if user is logged in
+    const response = await fetch('/supabase-client.js');
+    if (!window.supabase) {
+      // Not logged in, redirect to signup
+      const role = planId.includes('service_provider') ? 'service_provider' : 'truck';
+      window.location.href = `auth.html?role=${role}&plan=${planId}`;
+      return;
+    }
+
+    const { data: { user }, error } = await window.supabase.auth.getUser();
+    if (error || !user) {
+      const role = planId.includes('service_provider') ? 'service_provider' : 'truck';
+      window.location.href = `auth.html?role=${role}&plan=${planId}`;
+      return;
+    }
+
+    // User is logged in — create checkout session
+    const response = await fetch('http://localhost:54321/functions/v1/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${(await window.supabase.auth.getSession()).data.session.access_token}`
+      },
+      body: JSON.stringify({
+        price_id: PRICE_IDS[planId],
+        plan_name: planId,
+        user_id: user.id,
+        user_email: user.email
+      })
+    });
+
+    const { sessionId, error: checkoutError } = await response.json();
+
+    if (checkoutError) {
+      alert('Error: ' + checkoutError);
+      return;
+    }
+
+    // Redirect to Stripe Checkout
+    const result = await stripe.redirectToCheckout({ sessionId });
+    if (result.error) {
+      alert('Payment error: ' + result.error.message);
+    }
+  } catch (err) {
+    console.error('Checkout error:', err);
+    alert('Unable to start checkout. Please try again.');
+  }
+}
 </script>
+<script src="supabase-client.js"></script>
 </body>
 </html>

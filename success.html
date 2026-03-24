@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Payment Successful — ServiceWindow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --fire: #FF5400;
+  --navy: #1E3A5F;
+  --smoke: #1C1917;
+  --charcoal: #292524;
+  --warm-gray: #57534E;
+  --mid-gray: #A8A29E;
+  --border: #E7E5E4;
+  --bg: #FAFAF9;
+  --white: #FFFFFF;
+  --green: #16A34A;
+  --green-pale: #F0FDF4;
+  --r: 16px;
+  --sh: 0 4px 16px rgba(0,0,0,.08);
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--smoke);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:20px;
+}
+.container {
+  max-width:500px;
+  background:white;
+  border-radius:var(--r);
+  padding:40px 28px;
+  text-align:center;
+  box-shadow:var(--sh);
+}
+.success-icon {
+  font-size:4rem;
+  margin-bottom:20px;
+}
+h1 {
+  font-family:'Lora',serif;
+  font-size:1.8rem;
+  font-weight:700;
+  margin-bottom:10px;
+  color:var(--smoke);
+}
+.success-sub {
+  font-size:0.95rem;
+  color:var(--warm-gray);
+  line-height:1.6;
+  margin-bottom:28px;
+}
+.status-box {
+  background:var(--green-pale);
+  border:1px solid #86EFAC;
+  border-radius:10px;
+  padding:16px;
+  margin-bottom:24px;
+  text-align:left;
+}
+.status-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:0.85rem;
+  margin-bottom:8px;
+}
+.status-item:last-child { margin-bottom:0; }
+.status-check {
+  color:var(--green);
+  font-weight:700;
+  flex-shrink:0;
+}
+.status-label {
+  color:var(--warm-gray);
+}
+.status-value {
+  color:var(--smoke);
+  font-weight:600;
+}
+.cta-group {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.btn {
+  height:48px;
+  border:none;
+  border-radius:8px;
+  font-family:'Sora',sans-serif;
+  font-size:0.88rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn-primary {
+  background:var(--fire);
+  color:white;
+}
+.btn-primary:hover { background:#E85A00; }
+.btn-secondary {
+  background:var(--bg);
+  color:var(--fire);
+  border:1.5px solid var(--border);
+}
+.btn-secondary:hover {
+  background:white;
+  border-color:var(--fire);
+}
+.loading { opacity:0.6; pointer-events:none; }
+#errorMsg {
+  display:none;
+  background:#FEE2E2;
+  border:1px solid #FECACA;
+  color:#991B1B;
+  padding:12px;
+  border-radius:8px;
+  font-size:0.85rem;
+  margin-bottom:20px;
+}
+#errorMsg.show { display:block; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="success-icon">✨</div>
+  <h1 id="successTitle">Welcome to ServiceWindow!</h1>
+  <p class="success-sub">Your subscription is active and you have full access to all features.</p>
+
+  <div class="status-box">
+    <div class="status-item">
+      <span class="status-check">✓</span>
+      <span class="status-label">Plan:</span>
+      <span class="status-value" id="planName">—</span>
+    </div>
+    <div class="status-item">
+      <span class="status-check">✓</span>
+      <span class="status-label">Billing Cycle:</span>
+      <span class="status-value">Monthly</span>
+    </div>
+    <div class="status-item">
+      <span class="status-check">✓</span>
+      <span class="status-label">Status:</span>
+      <span class="status-value" style="color:var(--green);">Active</span>
+    </div>
+  </div>
+
+  <div id="errorMsg"></div>
+
+  <div class="cta-group">
+    <button class="btn btn-primary" id="goToDashboardBtn">Go to Dashboard →</button>
+    <a href="pricing.html" class="btn btn-secondary">Back to Pricing</a>
+  </div>
+
+  <p style="font-size:0.78rem; color:var(--mid-gray); margin-top:20px;">
+    You'll receive a confirmation email shortly. You can manage your subscription anytime.
+  </p>
+</div>
+
+<script src="supabase-client.js"></script>
+<script>
+async function handleSuccessfulPayment() {
+  try {
+    // Get Stripe session ID from URL
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+
+    if (!sessionId) {
+      showError('No session found. Please contact support.');
+      return;
+    }
+
+    // Get current user
+    const { data: { user }, error: authError } = await window.supabase.auth.getUser();
+    if (authError || !user) {
+      showError('Not logged in. Redirecting to signin...');
+      setTimeout(() => { window.location.href = 'auth.html'; }, 2000);
+      return;
+    }
+
+    // Call edge function to finalize the subscription
+    // This function verifies the Stripe session and updates the profile
+    const response = await fetch('http://localhost:54321/functions/v1/stripe-webhook-success', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${(await window.supabase.auth.getSession()).data.session.access_token}`
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        user_id: user.id
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      showError(result.error || 'Failed to process payment. Please contact support.');
+      return;
+    }
+
+    // Update UI with subscription details
+    document.getElementById('planName').textContent = result.plan || 'Premium';
+
+    // Redirect to appropriate dashboard after 3 seconds
+    setTimeout(() => {
+      const dashboards = {
+        truck: 'truck-dashboard.html',
+        service_provider: 'service-provider-dashboard.html'
+      };
+      const dest = dashboards[result.role] || 'truck-dashboard.html';
+      window.location.href = dest;
+    }, 3000);
+
+  } catch (err) {
+    console.error('Success page error:', err);
+    showError(err.message || 'An error occurred. Please contact support.');
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+document.getElementById('goToDashboardBtn').addEventListener('click', () => {
+  // Redirect based on stored role in localStorage
+  const role = localStorage.getItem('user_role') || 'truck';
+  const dashboards = {
+    truck: 'truck-dashboard.html',
+    service_provider: 'service-provider-dashboard.html'
+  };
+  window.location.href = dashboards[role];
+});
+
+if (window.supabase) {
+  handleSuccessfulPayment();
+} else {
+  document.addEventListener('supabase-ready', handleSuccessfulPayment);
+}
+</script>
+</body>
+</html>
