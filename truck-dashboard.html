@@ -1536,6 +1536,53 @@ img,video{max-width:100%;height:auto;}
       </div>
     </div>
 
+    <div class="panel" id="panel-onboarding" style="display:flex;align-items:center;justify-content:center;">
+      <div style="width:100%;max-width:480px;padding:32px 20px;text-align:center;">
+        <div style="font-family:'Lora',serif;font-size:1.8rem;font-weight:700;margin-bottom:8px;">Welcome to ServiceWindow</div>
+        <p style="font-size:.95rem;color:var(--warm-gray);line-height:1.6;margin-bottom:32px;">Let's set up your food truck profile so you can start receiving catering requests.</p>
+
+        <form id="onboardingForm" style="display:flex;flex-direction:column;gap:14px;">
+          <div style="text-align:left;">
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:6px;">Truck Name</label>
+            <input class="form-control" id="ob-truck-name" type="text" placeholder="e.g., Smoke Ring BBQ" required>
+          </div>
+
+          <div style="text-align:left;">
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:6px;">Cuisine Type</label>
+            <input class="form-control" id="ob-cuisine" type="text" placeholder="e.g., BBQ, Tacos, Comfort Food" required>
+          </div>
+
+          <div style="text-align:left;">
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:6px;">Description</label>
+            <textarea class="form-control" id="ob-description" placeholder="Tell customers about your food truck, specialties, and vibe…" style="min-height:80px;" required></textarea>
+          </div>
+
+          <div style="text-align:left;">
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:6px;">Service Radius (miles)</label>
+            <input class="form-control" id="ob-radius" type="number" placeholder="e.g., 15" min="1" required>
+          </div>
+
+          <div style="text-align:left;">
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:6px;">Price per Hour ($)</label>
+            <input class="form-control" id="ob-hourly" type="number" placeholder="e.g., 75" min="1" required>
+          </div>
+
+          <div style="text-align:left;">
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:6px;">Flat Event Rate ($)</label>
+            <input class="form-control" id="ob-flat-rate" type="number" placeholder="e.g., 250" min="1" required>
+          </div>
+
+          <div style="text-align:left;">
+            <label style="font-size:.8rem;font-weight:600;display:block;margin-bottom:6px;">Cities Served</label>
+            <input class="form-control" id="ob-cities" type="text" placeholder="e.g., Naples, Fort Myers, Bonita Springs" required>
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="submitOnboarding()" style="margin-top:12px;height:46px;">Create Profile &rarr;</button>
+          <p style="font-size:.7rem;color:var(--mid-gray);margin-top:8px;">Your profile will be pending admin approval. You'll receive a notification when approved.</p>
+        </form>
+      </div>
+    </div>
+
   </div><!-- /panels -->
 </div><!-- /main -->
 
@@ -2038,6 +2085,61 @@ async function submitExternalBooking() {
   }
 }
 
+async function submitOnboarding() {
+  const truckName = document.getElementById('ob-truck-name').value.trim();
+  const cuisine = document.getElementById('ob-cuisine').value.trim();
+  const description = document.getElementById('ob-description').value.trim();
+  const radius = document.getElementById('ob-radius').value.trim();
+  const hourly = document.getElementById('ob-hourly').value.trim();
+  const flatRate = document.getElementById('ob-flat-rate').value.trim();
+  const cities = document.getElementById('ob-cities').value.trim();
+
+  if (!truckName || !cuisine || !description || !radius || !hourly || !flatRate || !cities) {
+    showToast('Please fill in all required fields.', 'warning');
+    return;
+  }
+
+  try {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) {
+      showToast('You must be logged in.', 'warning');
+      return;
+    }
+
+    // Insert new truck record
+    const { data: newTruck, error } = await window.supabase
+      .from('trucks')
+      .insert([{
+        owner_id: user.id,
+        name: truckName,
+        cuisine_type: cuisine,
+        description: description,
+        service_radius_miles: parseInt(radius),
+        serves_per_hour: parseInt(hourly),
+        flat_event_rate: parseInt(flatRate),
+        cities_served: cities.split(',').map(c => c.trim()),
+        is_active: true,
+        is_approved: false
+      }])
+      .select('id')
+      .single();
+
+    if (error) {
+      showToast('Error creating profile: ' + error.message, 'warning');
+      return;
+    }
+
+    showToast('Truck profile created! Pending admin approval.', 'success');
+
+    // Reload dashboard after 1 second
+    setTimeout(() => {
+      initDashboard();
+    }, 1000);
+  } catch (err) {
+    showToast('An error occurred: ' + err.message, 'warning');
+  }
+}
+
 // ═══════════════════════════════════
 //  REQUESTS FEED REFRESH
 // ═══════════════════════════════════
@@ -2441,6 +2543,7 @@ async function initDashboard() {
     .single();
 
   if (truck) {
+    // Show main dashboard
     const kpiGrid = document.getElementById('kpiGrid');
     if (kpiGrid) {
       const vals = kpiGrid.querySelectorAll('.kpi-value');
@@ -2531,6 +2634,10 @@ async function initDashboard() {
         feed.appendChild(card);
       });
     }
+  } else {
+    // No truck found — show onboarding panel
+    setPanel('onboarding', null);
+    document.getElementById('panelTitle').textContent = 'Complete Your Profile';
   }
 
   // ── 3. Message threads ──────────────────────────────────────────────────
