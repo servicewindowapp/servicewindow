@@ -335,6 +335,16 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
             <div class="stat-value" id="stat-pending">—</div>
             <div class="stat-sub" id="stat-pending-sub"></div>
           </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Trials</div>
+            <div class="stat-value" id="stat-active-trials">—</div>
+            <div class="stat-sub" id="stat-active-trials-sub"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Expired Trials</div>
+            <div class="stat-value" id="stat-expired-trials">—</div>
+            <div class="stat-sub" id="stat-expired-trials-sub"></div>
+          </div>
         </div>
 
         <div class="card">
@@ -577,7 +587,8 @@ async function initAdmin() {
 // ── STATS ────────────────────────────────────────────────────────
 async function loadStats() {
   try {
-    const [users, trucks, venues, bookings, waitlist, pending, pendingTrucks] = await Promise.all([
+    const now = new Date().toISOString();
+    const [users, trucks, venues, bookings, waitlist, pending, pendingTrucks, activeTrials, expiredTrials] = await Promise.all([
       window.supabase.from('profiles').select('id', { count: 'exact' }),
       window.supabase.from('trucks').select('id', { count: 'exact' }).eq('is_active', true),
       window.supabase.from('venues').select('id', { count: 'exact' }).eq('is_active', true),
@@ -585,6 +596,8 @@ async function loadStats() {
       window.supabase.from('waitlist').select('id', { count: 'exact' }),
       window.supabase.from('verification_requests').select('id', { count: 'exact' }).eq('status', 'pending'),
       window.supabase.from('trucks').select('id', { count: 'exact' }).eq('is_approved', false),
+      window.supabase.from('profiles').select('id', { count: 'exact' }).gt('trial_ends_at', now),
+      window.supabase.from('profiles').select('id', { count: 'exact' }).lt('trial_ends_at', now),
     ]);
 
     const userCount = users.count || 0;
@@ -594,6 +607,8 @@ async function loadStats() {
     const waitlistCount = waitlist.count || 0;
     const pendingCount = pending.count || 0;
     const pendingTrucksCount = pendingTrucks.count || 0;
+    const activeTrialsCount = activeTrials.count || 0;
+    const expiredTrialsCount = expiredTrials.count || 0;
 
     document.getElementById('stat-users').textContent = userCount;
     document.getElementById('stat-trucks').textContent = truckCount;
@@ -601,6 +616,8 @@ async function loadStats() {
     document.getElementById('stat-bookings').textContent = bookingCount;
     document.getElementById('stat-waitlist').textContent = waitlistCount;
     document.getElementById('stat-pending').textContent = pendingCount;
+    document.getElementById('stat-active-trials').textContent = activeTrialsCount;
+    document.getElementById('stat-expired-trials').textContent = expiredTrialsCount;
 
     document.getElementById('verify-badge').textContent = pendingCount;
     document.getElementById('trucks-badge').textContent = pendingTrucksCount;
