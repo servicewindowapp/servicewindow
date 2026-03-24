@@ -30,6 +30,22 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Verify authorization header
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("Missing or invalid authorization header:", authHeader ? "present but invalid" : "missing");
+      return new Response(
+        JSON.stringify({ error: "Missing authorization header" }),
+        {
+          status: 401,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    console.log("Authorization token received, length:", token.length);
+
     const { price_id, plan_name, user_id, user_email } = await req.json();
 
     // Create Stripe checkout session
