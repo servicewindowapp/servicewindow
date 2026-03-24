@@ -2532,7 +2532,12 @@ function showCardError(cardEl, msg) {
 
 async function initDashboard() {
   const { data: { user } } = await window.supabase.auth.getUser();
-  if (!user) { window.location.href = 'auth.html'; return; }
+  if (!user) {
+    // Clear redirect flag to allow auth page to work
+    sessionStorage.removeItem('_sw_auth_redirected');
+    window.location.href = 'auth.html';
+    return;
+  }
   currentUserId = user.id;
 
   // ── 1. Truck profile stats ──────────────────────────────────────────────

@@ -477,13 +477,26 @@ const ROLE_DASHBOARDS = {
 };
 
 async function redirectByRole(userId){
-  const { data: profile } = await window.supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  const dest = (profile && ROLE_DASHBOARDS[profile.role]) || 'truck-dashboard.html';
-  window.location.href = dest;
+  try {
+    const { data: profile, error } = await window.supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
+    // If profile lookup fails, default to truck-dashboard
+    const role = (profile && profile.role) || 'truck';
+    const dest = ROLE_DASHBOARDS[role] || 'truck-dashboard.html';
+
+    // Set flag to prevent redirect loops
+    sessionStorage.setItem('_sw_auth_redirected', 'true');
+    window.location.href = dest;
+  } catch(err) {
+    // Profile doesn't exist yet or error — redirect to truck dashboard
+    // User will see onboarding if needed
+    sessionStorage.setItem('_sw_auth_redirected', 'true');
+    window.location.href = 'truck-dashboard.html';
+  }
 }
 
 // ── Main auth handler ─────────────────────────────────────────────────────
@@ -568,11 +581,43 @@ async function handleForgotPassword(e){
 }
 
 // ── Auto-redirect if already logged in ───────────────────────────────────
-function checkSession(){
+async function checkSession(){
   if(!window.supabase) return;
-  window.supabase.auth.getSession().then(({ data }) => {
-    if(data.session) redirectByRole(data.session.user.id);
-  });
+
+  // Prevent infinite redirect loops by checking if we just redirected
+  const redirectFlag = sessionStorage.getItem('_sw_auth_redirected');
+  if(redirectFlag === 'true') {
+    sessionStorage.removeItem('_sw_auth_redirected');
+    return;
+  }
+
+  try {
+    const { data: { session } } = await window.supabase.auth.getSession();
+
+    if(!session) return; // No session, stay on auth page
+
+    const userId = session.user.id;
+
+    // Verify profile exists and has a valid role before redirecting
+    const { data: profile, error } = await window.supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
+    if(error || !profile || !profile.role) {
+      // Profile doesn't exist or invalid — stay on auth page, user may need onboarding
+      return;
+    }
+
+    // Profile is valid, safe to redirect
+    sessionStorage.setItem('_sw_auth_redirected', 'true');
+    const dest = ROLE_DASHBOARDS[profile.role] || 'truck-dashboard.html';
+    window.location.href = dest;
+  } catch(err) {
+    // Silently fail — user can sign in manually
+    console.warn('Session check failed:', err);
+  }
 }
 
 // ── Enter key submit ──────────────────────────────────────────────────────
