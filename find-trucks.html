@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Find Food Trucks — ServiceWindow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --fire:        #FF5400;
+  --fire-lt:     #FF7A33;
+  --fire-pale:   #FFF0E8;
+  --navy:        #1E3A5F;
+  --smoke:       #1C1917;
+  --charcoal:    #292524;
+  --warm-gray:   #57534E;
+  --mid-gray:    #A8A29E;
+  --border:      #E7E5E4;
+  --bg:          #FAFAF9;
+  --white:       #FFFFFF;
+  --green:       #16A34A;
+  --green-pale:  #F0FDF4;
+  --amber:       #D97706;
+  --amber-pale:  #FFFBEB;
+  --r:           16px;
+  --r-sm:        10px;
+  --sh-sm:       0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh:          0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
+  --sh-lg:       0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+img{max-width:100%;height:auto;display:block;}
+a{text-decoration:none;}
+
+/* ═══════════════════════════════════════
+   NAV & MENU
+═══════════════════════════════════════ */
+.sw-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,250,249,.97);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  height:56px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+}
+@media(min-width:768px){.sw-nav{padding:0 40px;}}
+.sw-nav-logo{height:30px;width:auto;flex-shrink:0;}
+.sw-nav-desktop-links{
+  display:none;align-items:center;gap:20px;
+}
+@media(min-width:768px){.sw-nav-desktop-links{display:flex;}}
+.sw-nav-link{
+  font-size:.82rem;font-weight:600;color:var(--warm-gray);
+  transition:color .2s;text-decoration:none;
+}
+.sw-nav-link:hover,.sw-nav-link.active{color:var(--fire);}
+.sw-nav-cta{
+  height:36px;padding:0 16px;background:var(--fire);color:#fff;
+  border:none;border-radius:8px;font-family:'Sora',sans-serif;
+  font-size:.8rem;font-weight:700;cursor:pointer;transition:background .2s;
+  text-decoration:none;display:inline-flex;align-items:center;
+}
+.sw-nav-cta:hover{background:#E85A00;}
+.sw-hamburger{
+  width:32px;height:32px;border:none;background:transparent;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:5px;padding:4px;
+}
+@media(min-width:768px){.sw-hamburger{display:none;}}
+.sw-hamburger span{
+  width:18px;height:2px;background:var(--smoke);
+  border-radius:2px;transition:all .25s;display:block;
+}
+.sw-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.sw-hamburger.open span:nth-child(2){opacity:0;}
+.sw-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.sw-overlay{
+  position:fixed;inset:0;background:rgba(28,25,23,.55);
+  z-index:199;display:none;
+}
+.sw-overlay.open{display:block;}
+.sw-menu{
+  position:fixed;top:0;right:-100%;width:min(300px,88vw);
+  height:100%;background:#fff;z-index:200;
+  transition:right .28s ease;
+  overflow-y:auto;display:flex;flex-direction:column;
+  box-shadow:var(--sh-lg);
+}
+.sw-menu.open{right:0;}
+.sw-menu-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.sw-menu-logo{height:26px;width:auto;}
+.sw-menu-close{
+  width:36px;height:36px;border:none;background:var(--bg);
+  border-radius:50%;font-size:1.1rem;cursor:pointer;
+  color:var(--warm-gray);display:flex;align-items:center;justify-content:center;
+}
+.sw-menu-section{padding:12px 10px 4px;}
+.sw-menu-label{
+  font-size:.62rem;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--mid-gray);
+  padding:0 10px;margin-bottom:4px;
+}
+.sw-menu-item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 12px;border-radius:10px;
+  font-size:.88rem;font-weight:600;color:var(--warm-gray);
+  cursor:pointer;transition:all .15s;text-decoration:none;
+  min-height:44px;
+}
+.sw-menu-item:hover,.sw-menu-item.active{background:var(--fire-pale);color:var(--fire);}
+.sw-menu-icon{font-size:1rem;flex-shrink:0;width:20px;text-align:center;}
+.sw-menu-footer{margin-top:auto;padding:16px 16px 24px;border-top:1px solid var(--border);flex-shrink:0;}
+.sw-menu-cta{
+  height:44px;background:var(--fire);color:#fff;border:none;
+  border-radius:var(--r-sm);font-family:'Sora',sans-serif;
+  font-size:.88rem;font-weight:700;cursor:pointer;
+  transition:background .2s;width:100%;display:flex;
+  align-items:center;justify-content:center;text-decoration:none;
+}
+.sw-menu-cta:hover{background:#E85A00;}
+
+/* ═══════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════ */
+.hero{
+  padding:28px 16px;
+  background:linear-gradient(135deg,rgba(255,84,0,.06) 0%,transparent 100%);
+}
+.hero-title{
+  font-family:'Lora',serif;
+  font-size:clamp(1.5rem,5vw,2.2rem);
+  font-weight:700;
+  line-height:1.2;
+  margin-bottom:20px;
+  color:var(--smoke);
+}
+.search-box{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin-bottom:16px;
+}
+.search-input{
+  height:48px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:0 16px;
+  font-family:'Sora',sans-serif;
+  font-size:.88rem;
+  color:var(--smoke);
+  background:#fff;
+  outline:none;
+  transition:border-color .2s;
+}
+.search-input:focus{border-color:var(--fire);}
+.search-input::placeholder{color:var(--mid-gray);}
+.search-btn{
+  height:48px;
+  width:48px;
+  background:var(--fire);
+  color:#fff;
+  border:none;
+  border-radius:var(--r-sm);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1rem;
+  transition:background .2s;
+}
+.search-btn:hover{background:#E85A00;}
+
+/* ═══════════════════════════════════════
+   FILTER BAR
+═══════════════════════════════════════ */
+.filter-bar{
+  position:sticky;top:56px;z-index:99;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.filter-select{
+  height:44px;
+  padding:0 12px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  font-family:'Sora',sans-serif;
+  font-size:.8rem;
+  color:var(--smoke);
+  background:#fff;
+  cursor:pointer;
+  outline:none;
+  transition:border-color .2s;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.filter-select:focus{border-color:var(--fire);}
+.filter-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:44px;
+  padding:0 12px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  background:#fff;
+  font-size:.8rem;
+  font-weight:600;
+  color:var(--warm-gray);
+  cursor:pointer;
+  transition:all .2s;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.filter-chip:hover{border-color:var(--fire);color:var(--fire);}
+.filter-chip.active{background:var(--fire);color:#fff;border-color:var(--fire);}
+.filter-chip-check{font-size:.9rem;}
+
+/* ═══════════════════════════════════════
+   TRUCKS GRID
+═══════════════════════════════════════ */
+.trucks-container{
+  padding:20px 16px 80px;
+}
+.trucks-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+@media(min-width:540px){
+  .trucks-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+}
+@media(min-width:768px){
+  .trucks-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+.truck-card{
+  background:#fff;
+  border-radius:var(--r);
+  overflow:hidden;
+  box-shadow:var(--sh);
+  transition:all .2s;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+}
+.truck-card:hover{
+  box-shadow:var(--sh-lg);
+  transform:translateY(-4px);
+}
+.truck-photo{
+  width:100%;
+  height:160px;
+  background:linear-gradient(135deg,var(--fire-pale) 0%,#fff 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:3rem;
+  overflow:hidden;
+}
+.truck-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.truck-info{
+  flex:1;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+}
+.truck-name{
+  font-size:.95rem;
+  font-weight:700;
+  color:var(--smoke);
+  margin-bottom:4px;
+}
+.truck-cuisine{
+  font-size:.75rem;
+  color:var(--warm-gray);
+  margin-bottom:8px;
+}
+.truck-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-bottom:8px;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  font-size:.65rem;
+  font-weight:700;
+  padding:4px 8px;
+  border-radius:6px;
+  font-family:'DM Mono',monospace;
+}
+.badge-verified{
+  background:var(--green-pale);
+  color:var(--green);
+}
+.badge-school{
+  background:var(--amber-pale);
+  color:var(--amber);
+}
+.truck-rating{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-size:.8rem;
+  margin-bottom:8px;
+  color:var(--warm-gray);
+}
+.truck-stars{
+  display:flex;
+  gap:1px;
+}
+.star{
+  font-size:.85rem;
+}
+.truck-cta{
+  margin-top:auto;
+  height:40px;
+  background:var(--fire);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  font-family:'Sora',sans-serif;
+  font-size:.82rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .2s;
+}
+.truck-cta:hover{background:#E85A00;}
+
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--warm-gray);
+}
+.empty-state-icon{
+  font-size:3rem;
+  margin-bottom:12px;
+}
+.empty-state-title{
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--smoke);
+  margin-bottom:8px;
+}
+.empty-state-text{
+  font-size:.88rem;
+  margin-bottom:20px;
+}
+
+/* ═══════════════════════════════════════
+   MODAL
+═══════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(28,25,23,.6);
+  z-index:300;
+  display:none;
+  align-items:flex-end;
+}
+@media(min-width:640px){
+  .modal-overlay{
+    align-items:center;
+    justify-content:center;
+  }
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:#fff;
+  width:100%;
+  max-height:90vh;
+  border-radius:0;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+}
+@media(min-width:640px){
+  .modal{
+    width:90%;
+    max-width:500px;
+    border-radius:var(--r);
+    max-height:85vh;
+  }
+}
+.modal-header{
+  padding:20px 20px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+}
+.modal-close{
+  width:36px;
+  height:36px;
+  border:none;
+  background:var(--bg);
+  border-radius:50%;
+  font-size:1.2rem;
+  cursor:pointer;
+  color:var(--warm-gray);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.modal-photo{
+  width:100%;
+  height:200px;
+  background:linear-gradient(135deg,var(--fire-pale) 0%,#fff 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:4rem;
+}
+.modal-content{
+  padding:20px;
+  flex:1;
+}
+.modal-title{
+  font-family:'Lora',serif;
+  font-size:1.5rem;
+  font-weight:700;
+  margin-bottom:8px;
+  color:var(--smoke);
+}
+.modal-subtitle{
+  font-size:.9rem;
+  color:var(--warm-gray);
+  margin-bottom:16px;
+}
+.modal-section{
+  margin-bottom:20px;
+}
+.modal-section-title{
+  font-size:.85rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:var(--mid-gray);
+  margin-bottom:8px;
+}
+.modal-text{
+  font-size:.88rem;
+  line-height:1.5;
+  color:var(--warm-gray);
+  margin-bottom:8px;
+}
+.modal-info-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+  font-size:.85rem;
+}
+.modal-info-row:last-child{border-bottom:none;}
+.modal-info-label{
+  color:var(--mid-gray);
+  font-weight:500;
+}
+.modal-info-value{
+  color:var(--smoke);
+  font-weight:700;
+}
+.modal-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:8px;
+}
+.modal-footer{
+  padding:20px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+.modal-btn{
+  width:100%;
+  height:48px;
+  background:var(--fire);
+  color:#fff;
+  border:none;
+  border-radius:var(--r-sm);
+  font-family:'Sora',sans-serif;
+  font-size:.88rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .2s;
+}
+.modal-btn:hover{background:#E85A00;}
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+.sw-footer{background:var(--charcoal);padding:36px 16px 28px;}
+@media(min-width:768px){.sw-footer{padding:48px 40px 36px;}}
+.sw-footer-logo{height:30px;width:auto;filter:brightness(0) invert(1);margin-bottom:14px;}
+.sw-footer-tagline{
+  font-size:.76rem;color:rgba(255,255,255,.45);
+  line-height:1.65;max-width:320px;margin-bottom:20px;
+}
+.sw-footer-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-bottom:24px;
+}
+@media(min-width:480px){.sw-footer-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:768px){.sw-footer-grid{grid-template-columns:repeat(4,1fr);}}
+.sw-footer-link{
+  font-size:.8rem;color:rgba(255,255,255,.42);
+  transition:color .2s;text-decoration:none;
+  padding:3px 0;display:block;
+}
+.sw-footer-link:hover{color:rgba(255,255,255,.85);}
+.sw-footer-bottom{
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-top:16px;font-size:.75rem;
+  color:rgba(255,255,255,.4);
+}
+
+button,a[role="button"]{
+  min-height:44px;transition:all .15s;
+}
+input,select,.form-input{
+  min-height:48px;font-size:16px;
+}
+</style>
+</head>
+<body>
+<!-- ═══ NAV ═══ -->
+<nav class="sw-nav">
+  <a href="index.html"><img class="sw-nav-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgo8Zz48cGF0aCBzdHlsZT0ib3BhY2l0eToxIiBmaWxsPSIjMDAxZjQzIiBkPSJNIDU2My41LDM2OS41IEMgNTc3Ljk5MiwzNzEuNDI3IDU5Mi4zMjYsMzc0LjA5MyA2MDYuNSwzNzcuNUMgNjA2LjY0OSwzNzguNTUyIDYwNi40ODMsMzc5LjU1MiA2MDYsMzgwLjVDIDYwNC4yNzMsMzc5LjYyNiA2MDIuNDQsMzc5Ljc5MyA2MDAuNSwzODFDIDYwMS4zMjgsMzgxLjkxNSA2MDIuMzI4LDM4Mi41ODEgNjAzLjUsMzgzQyA1OTYuNTg4LDM4My43NzYgNTg5Ljc1NCwzODMuNjEgNTgzLDM4Mi41QyA1ODAuMDU5LDM4My4wNTkgNTc3LjIyNSwzODMuODkzIDU3NC41LDM4NUMgNTc1LjAyMiwzODUuNTYxIDU3NS4zNTUsMzg2LjIyOCA1NzUuNSwzODdDIDU3NC4xNzYsMzkyLjk0MiA1NzMuMTc2LDM5OC45NDIgNTcyLjUsNDA1QyA1NzIuNjYsNDA5LjgxNSA1NzMuODI3LDQxNC4zMTUgNTc2LDQxOC41QyA1NzcsNDE4LjgzMyA1NzgsNDE5LjE2NyA1NzksNDE5LjVDIDU4Ni4yOTMsNDE3LjExMSA1OTMuNDYsNDE0Ljc3NyA2MDAuNSw0MTIuNUMgNjAxLjA3LDQwNS4xOTUgNjA0LjU3LDQwMy41MjggNjExLDQwNy41QyA2MTYuMTczLDQwNi4xMzcgNjIxLjMzOSw0MDYuMzA0IDYyNi41LDQwOEMgNjI1LjE2Nyw0MDkgNjI1LjE2Nyw0MTAgNjI2LjUsNDExQyA2MzEuNjQxLDQxMy42NTYgNjM2LjgwNyw0MTMuNDg5IDY0Miw0MTAuNUMgNjQzLjk5OCw0MTEuMjcxIDY0NS42NjUsNDEwLjYwNSA2NDcsNDA4LjVDIDY0Ny4zMDgsNDA5LjMwMyA2NDcuMzA4LDQxMC4zMDMgNjQ3LDQxMS41QyA2NDcuMzI4LDQxMi41MzMgNjQ2LjY2Miw0MTMuNTMzIDY0NSw0MTQuNUMgNjUwLjI5Niw0MTcuMjkyIDY1NS40NjMsNDE5LjEyNiA2NjAuNSw0MjBDIDY2MC4zNzUsNDIxLjA2MiA2NjAuMzc1LDQyMS4wNjIgNjYwLjUsNDIyQyA2NTYuNDUzLDQxNy45MzUgNjUxLjc4Niw0MTUuMjY4IDY0Ni41LDQxNUM2NDIuNTI2LDQxNy4xNjUgNjM4LjUyNiw0MTcuMzMxIDYzNC41LDQxNS41QyA2MzEuNjI0LDQxNi4xNDkgNjI4LjYyNCw0MTYuMzE1IDYyNS41LDQxNkM2MjQuNjkzLDQxNy4wNTUgNjI0LjAyNiw0MTguMjIxIDYyMy41LDQxOS41QyA2MTkuNjU1LDQyMC40OTMgNjE1LjgyMiw0MjAuMzI3IDYxMiw0MTkuNUM2MDkuODQ2LDQyMC4zMTcgNjA3LjM0Niw0MjAuODMyIDYwNC41LDQyMUMgNjAzLjYxNSw0MTguNDI5IDYwMS43OTgsNDE2LjI5NSA2MDAsNDE0QyA1OTguNDc3LDQxNi4yMTEgNTk2LjMxLDQxNy43MjggNTkzLjUsNDE4LjVDIDU5MC40Nyw0MTcuNjEyIDU4Ny42MDMsNDE2LjEyNSA1ODUsNDE0QyA1ODIuNzU2LDQxNi4yNDcgNTgwLjI1Niw0MTcuNDEzIDU3Ny41LDQxNy41QyA1NzYuMzMzLDQxNi4zMzMgNTc1LjY2NiwNDE1IDE1Nyw0MTRDIDU3NC41OTUsNDEzLjIyOCA1NzQuNzYxLDQxMS41NjEgNTc2LDQxMEM1NzcuMzAxLDQxMS4wMDkgNTc4LjMwMSw0MTEuODQyIDU3OC41LDQxM0MgNTc5LjMxNSw0MTUuOTU2IDU4MC4zMTUsNDE4LjI4OSA1ODIsNDIwQyA1ODAuNDU2LDQyMS44MzEgNTc4Ljc4OSw0MjMuNDk4IDU3Ny41LDQyNUMgNTc2LjY2Nyw0MjQuMzMzIDU3Ni4zMzMsNDIzLjMzMyA1NzYuNSw0MjJDIDU3Ni41MjIsNDIzLjIyNyA1NzYuNjg4LDQyMy4zOTMgNTc3LDQyMy41QyA1NzgumluaXQsNDI0IFoxXzEyMzQ1QzU3OC41LDQyNCA1NzkuNSw0MjQgNTgwLjUsNDI0QyA1ODIuMDk0LDQyNC4zNzUgNTgzLjEwOSw0MjMuNDQxIDU4Myw0MjJDIDU4Mi4zNTMsNDIwLjI2NSA1ODIuMTg3LDQxOC41OTkgNTgyLjUsNDE3QyA1ODMuNjkzLDQxOC41NDUgNTg0LjUyNyw0MjAuNDEyIDU4NSw0MjJDIDU4Ni4wNDgsNDIzLjc4OCA1ODcuODQ4LDQyNC4xMjEgNTkwLDQyMy41QyA1OTEuNTMxLDQyMS4zOTEgNTkxLjg2NCw0MTkuNTkxIDU5MCw0MTdDIDU5MS41MzEsNDE0LjU3NSA1OTMuMDY0LDQxMi4wNzUgNTk0LjUsNDA5LjVDIDU5Ni41OTcsNDEwLjczOSA1OTcuMjY0LDQxMi45MDYgNTk2LDQxNUMgNTk1LDQxNyA1OTMuODM0LDQxOC41IDU5Miw0MTlDIDU5MS4zMzMsNDE4LjMzMyA1OTEuMzMzLDQxNy42NjcgNTkyLDQxN0MgNTkzLjQxLDQxOC4yNzggNTk0LjU3Nyw0MTkuMjc4IDU5NSw0MjBDIDU5Ni45OTIsNDIwLjAwOCA1OTguNjU5LDQxOC44NzUgNTk5LDQxN0MgNTk5LjMzMyw0MTYuMzMzIDU5OS42NjcsNDE1LjY2NyA2MDAuNSw0MTZDIDI2MDEuNjY3LDQxNi4zMzMgNjAyLjMzMyw0MTUuMzMzIDYwMiw0MTRDIDI2MDIuMzMzLDQxMy4zMzMgNjAyLDQxMi42NjcgNjAxLDQxMkMgNjAxLDQxMC4xNjcgNjAwLjE2Nyw0MDkuNSA1OTksNDA5Qygilks1OTcuNDQ5LDQxMC40NDkgNTk2LjEyMSw0MTEuNjE3IDU5NSw0MTNDIDI1OTUuMDAwLDQxNS4xNjcgNTk0Ljg1Myw0MTcuNDUzIDU5NS41LDQyMEMgNTk2Ljc5OCw0MjEuNDc3IDU5OC4xNjUsNDIyLjY0NCA2MDAuNSw0MjNDIGtyZWoK" alt="ServiceWindow"></a>
+  <div class="sw-nav-desktop-links">
+    <a href="index.html" class="sw-nav-link">Home</a>
+    <a href="find-trucks.html" class="sw-nav-link active">Find Trucks</a>
+    <a href="marketplace.html" class="sw-nav-link">Marketplace</a>
+    <a href="pricing.html" class="sw-nav-link">Pricing</a>
+  </div>
+  <button class="sw-hamburger" id="hamburgerBtn">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<!-- ═══ SLIDE-IN MENU ═══ -->
+<div class="sw-overlay" id="overlay"></div>
+<div class="sw-menu" id="menu">
+  <div class="sw-menu-head">
+    <img class="sw-menu-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgo8Zz48cGF0aCBzdHlsZT0ib3BhY2l0eToxIiBmaWxsPSIjMDAxZjQzIiBkPSJNIDU2My41LDM2OS41IEMgNTc3Ljk5MiwzNzEuNDI3IDU5Mi4zMjYsMzc0LjA5MyA2MDYuNSwzNzcuNUMgNjA2LjY0OSwzNzguNTUyIDYwNi40ODMsMzc5LjU1MiA2MDYsMzgwLjVDIDYwNC4yNzMsMzc5LjYyNiA2MDIuNDQsMzc5Ljc5MyA2MDAuNSwzODFDIDYwMS4zMjgsMzgxLjkxNSA2MDIuMzI4LDM4Mi41ODEgNjAzLjUsMzgzQyA1OTYuNTg4LDM4My43NzYgNTg5Ljc1NCwzODMuNjEgNTgzLDM4Mi41QyA1ODAuMDU5LDM4My4wNTkgNTc3LjIyNSwzODMuODkzIDU3NC41LDM4NUMgNTc1LjAyMiwzODUuNTYxIDU3NS4zNTUsMzg2LjIyOCA1NzUuNSwzODdDIDU3NC4xNzYsMzkyLjk0MiA1NzMuMTc2LDM5OC45NDIgNTcyLjUsNDA1QyA1NzIuNjYsNDA5LjgxNSA1NzMuODI3LDQxNC4zMTUgNTc2LDQxOC41QyA1NzcsNDE4LjgzMyA1NzgsNDE5LjE2NyA1NzksNDE5LjVDIDU4Ni4yOTMsNDE3LjExMSA1OTMuNDYsNDE0Ljc3NyA2MDAuNSw0MTIuNUMgNjAxLjA3LDQwNS4xOTUgNjA0LjU3LDQwMy41MjggNjExLDQwNy41QyA2MTYuMTczLDQwNi4xMzcgNjIxLjMzOSw0MDYuMzA0IDYyNi41LDQwOEMgNjI1LjE2Nyw0MDkgNjI1LjE2Nyw0MTAgNjI2LjUsNDExQyA2MzEuNjQxLDQxMy42NTYgNjM2LjgwNyw0MTMuNDg5IDY0Miw0MTAuNUMgNjQzLjk5OCw0MTEuMjcxIDY0NS42NjUsNDEwLjYwNSA2NDcsNDA4LjVDIDY0Ny4zMDgsNDA5LjMwMyA2NDcuMzA4LDQxMC4zMDMgNjQ3LDQxMS41QyA2NDcuMzI4LDQxMi41MzMgNjQ2LjY2Miw0MTMuNTMzIDY0NSw0MTQuNUMgNjUwLjI5Niw0MTcuMjkyIDY1NS40NjMsNDE5LjEyNiA2NjAuNSw0MjBDIDY2MC4zNzUsNDIxLjA2MiA2NjAuMzc1LDQyMS4wNjIgNjYwLjUsNDIyQyA2NTYuNDUzLDQxNy45MzUgNjUxLjc4Niw0MTUuMjY4IDY0Ni41LDQxNUM2NDIuNTI2LDQxNy4xNjUgNjM4LjUyNiw0MTcuMzMxIDYzNC41LDQxNS41QyA2MzEuNjI0LDQxNi4xNDkgNjI4LjYyNCw0MTYuMzE1IDYyNS41LDQxNkM2MjQuNjkzLDQxNy4wNTUgNjI0LjAyNiw0MTguMjIxIDYyMy41LDQxOS41QyA2MTkuNjU1LDQyMC40OTMgNjE1LjgyMiw0MjAuMzI3IDYxMiw0MTkuNUM2MDkuODQ2LDQyMC4zMTcgNjA3LjM0Niw0MjAuODMyIDYwNC41LDQyMUMgNjAzLjYxNSw0MTguNDI5IDYwMS43OTgsNDE2LjI5NSA2MDAuNSw0MTRDIDI1OTguNDc3LDQxNi4yMTEgNTk2LjMxLDQxNy43MjggNTkzLjUsNDE4LjVDIDU5MC40Nyw0MTcuNjEyIDU4Ny42MDMsNDE2LjEyNSA1ODUsNDE0QyA1ODIuNzU2LDQxNi4yNDcgNTgwLjI1Niw0MTcuNDEzIDU3Ny41LDQxNy41QyA1NzYuMzMzLDQxNi4zMzMgNTc1LjY2Niw0MTUgNTc0LDQxNEM1NzcuNzU1LDQxMy4yMjggNTc0Ljc2MSw0MTEuNTYxIDU3Niw0MTBDNTc3LjMwMSw0MTEuMDA5IDU3OC4zMDEsNDExLjg0MiA1NzguNSw0MTNDIDI1NzIuMzE1LDQxNS45NTYgNTgwLjMxNSw0MTguMjg5IDU4Miw0MjBDIDU4MC40NTYsNDIxLjgzMSA1NzguNzg5LDQyMy40OTggNTc3LjUsNDI1QyA1NzYuNjY3LDQyNC4zMzMgNTc2LjMzMyw0MjMuMzMzIDU3Ni41LDQyMkMgNTc2LjUyMiw0MjMuMjI3IDU3Ni42ODgsNDIzLjM5MyA1NzcsNDIzLjVDIDU3OC4xNzgsNDI0IDU3OS41LDQyNCA1ODAuNSw0MjRDIDU4Mi4wOTQsNDI0LjM3NSA1ODMuMTA5LDQyMy40NDEgNTgzLDQyMkMgNTgyLjM1Myw0MjAuMjY1IDU4Mi4xODcsNDE4LjU5OSA1ODIuNSw0MTdDIDU4My42OTMsNDE4LjU0NSA1ODQuNTI3LDQyMC40MTIgNTg1LDQyMkMgNTg2LjA0OCw0MjMuNzg4IDU4Ny44NDgsNDI0LjEyMSA1OTAsNDIzLjVDIDU5MS41MzEsNDIxLjM5MSA1OTEuODY0LDQxOS41OTEgNTkwLDQxN0MgNTkxLjUzMSw0MTQuNTc1IDU5My4wNjQsNDEyLjA3NSA1OTQuNSw0MDkuNUMgNTk2LjU5Nyw0MTAuNzM5IDU5Ny4yNjQsNDEyLjkwNiA1OTYsNDExQyA1OTUsNDExIDU5My44MzQsNDE4LjUgNTkyLDQxOUMgNTkxLjMzMyw0MTguMzMzIDU5MS4zMzMsNDE3LjY2NyA1OTIsNDE3QyA1OTMuNDEsNDE4LjI3OCA1OTQuNTc3LDQxOS4yNzggNTk1LDQyMEMgNTk2LjMzMyw0MjAuNDEgNTk4LjAwMiw0MTguNjA0IDU5OC41LDQxNkMgNTk4LjMzMyw0MTUuMzMzIDU5OC42NjcsNDE0LjY2NyA1OTkuNSw0MTZDIDI2MDAuNjY3LDQxNi4zMzMgNjAxLjMzMyw0MTUuMzMzIDYwMSw0MTRDIDI2MDEuMzMzLDQxMy4zMzMgNjAxLDQxMi42NjcgNjAwLDQxMkMgNjAwLDQxMC4xNjcgNTk5LjE2Nyw0MDkuNSA1OTksNDA5QyDigGlyMTU5Ny40NDksNDEwLjQ0OSA1OTYuMTIxLDQxMS42MTcgNTk1LDQxM0MgNTk1LDQxNS4xNjcgNTk0Ljg1Myw0MTcuNDUzIDU5NS41LDQyMEMgNTk2Ljc5OCw0MjEuNDc3IDU5OC4xNjUsNDIyLjY0NCA2MDAuNSw0MjMi" alt="ServiceWindow">
+    <button class="sw-menu-close" id="menuCloseBtn">✕</button>
+  </div>
+  <div class="sw-menu-section">
+    <div class="sw-menu-label">Explore</div>
+    <a class="sw-menu-item" href="index.html"><span class="sw-menu-icon">🏠</span>Home</a>
+    <a class="sw-menu-item active" href="find-trucks.html"><span class="sw-menu-icon">🚚</span>Find Trucks</a>
+    <a class="sw-menu-item" href="marketplace.html"><span class="sw-menu-icon">🍽️</span>Marketplace</a>
+    <a class="sw-menu-item" href="pricing.html"><span class="sw-menu-icon">💰</span>Pricing</a>
+  </div>
+  <div class="sw-menu-footer">
+    <a class="sw-menu-cta" href="index.html#waitlist" onclick="closeMenu()">Get Started &#8594;</a>
+  </div>
+</div>
+
+<!-- ═══ HERO SECTION ═══ -->
+<section class="hero">
+  <h1 class="hero-title">Find Food Trucks Near You</h1>
+  <div class="search-box">
+    <input type="text" class="search-input" id="cityInput" placeholder="Search by city or zip...">
+    <button class="search-btn">🔍</button>
+  </div>
+</section>
+
+<!-- ═══ FILTER BAR ═══ -->
+<div class="filter-bar">
+  <select class="filter-select" id="cuisineFilter">
+    <option value="">All Cuisines</option>
+  </select>
+  <select class="filter-select" id="cityFilterSelect">
+    <option value="">All Cities</option>
+  </select>
+  <button class="filter-chip" id="verifiedFilter">
+    <span class="filter-chip-check">✓</span>Verified
+  </button>
+  <button class="filter-chip" id="schoolFilter">
+    <span class="filter-chip-check">✓</span>School Approved
+  </button>
+</div>
+
+<!-- ═══ TRUCKS GRID ═══ -->
+<div class="trucks-container">
+  <div class="trucks-grid" id="trucksGrid">
+    <!-- Trucks will be loaded here -->
+  </div>
+</div>
+
+<!-- ═══ TRUCK PROFILE MODAL ═══ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 style="flex:1;font-size:1.2rem;font-weight:700;color:var(--smoke);">Truck Details</h2>
+      <button class="modal-close" id="modalCloseBtn">✕</button>
+    </div>
+    <div class="modal-photo" id="modalPhoto">🚚</div>
+    <div class="modal-content">
+      <div class="modal-title" id="modalName">—</div>
+      <div class="modal-subtitle" id="modalCuisine">—</div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">About</div>
+        <div class="modal-text" id="modalDescription">—</div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-info-row">
+          <span class="modal-info-label">Rating</span>
+          <span class="modal-info-value" id="modalRating">—</span>
+        </div>
+        <div class="modal-info-row">
+          <span class="modal-info-label">Price Range</span>
+          <span class="modal-info-value" id="modalPrice">—</span>
+        </div>
+        <div class="modal-info-row">
+          <span class="modal-info-label">Per Hour Rate</span>
+          <span class="modal-info-value" id="modalHourly">—</span>
+        </div>
+        <div class="modal-info-row">
+          <span class="modal-info-label">Event Rate</span>
+          <span class="modal-info-value" id="modalEventRate">—</span>
+        </div>
+        <div class="modal-info-row">
+          <span class="modal-info-label">Serves Per Hour</span>
+          <span class="modal-info-value" id="modalServes">—</span>
+        </div>
+        <div class="modal-info-row">
+          <span class="modal-info-label">Max Capacity</span>
+          <span class="modal-info-value" id="modalCapacity">—</span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Cities Served</div>
+        <div class="modal-text" id="modalCities">—</div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Credentials</div>
+        <div class="modal-badges" id="modalBadges">
+          <!-- Badges will be loaded here -->
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" id="modalRequestBtn">Request This Truck</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="sw-footer">
+  <img class="sw-footer-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgo8Zz48cGF0aCBzdHlsZT0ib3BhY2l0eToxIiBmaWxsPSIjMDAxZjQzIiBkPSJNIDU2My41LDM2OS41IEMgNTc3Ljk5MiwzNzEuNDI3IDU5Mi4zMjYsMzc0LjA5MyA2MDYuNSwzNzcuNUMgNjA2LjY0OSwzNzguNTUyIDYwNi40ODMsMzc5LjU1MiA2MDYsMzgwLjVDIDYwNC4yNzMsMzc5LjYyNiA2MDIuNDQsMzc5Ljc5MyA2MDAuNSwzODFDIDYwMS4zMjgsMzgxLjkxNSA2MDIuMzI4LDM4Mi41ODEgNjAzLjUsMzgzQyA1OTYuNTg4LDM4My43NzYgNTg5Ljc1NCwzODMuNjEgNTgzLDM4Mi41QyA1ODAuMDU5LDM4My4wNTkgNTc3LjIyNSwzODMuODkzIDU3NC41LDM4NUMgNTc1LjAyMiwzODUuNTYxIDU3NS4zNTUsMzg2LjIyOCA1NzUuNSwzODdDIDU3NC4xNzYsMzkyLjk0MiA1NzMuMTc2LDM5OC45NDIgNTcyLjUsNDA1QyA1NzIuNjYsNDA5LjgxNSA1NzMuODI3LDQxNC4zMTUgNTc2LDQxOC41QyA1NzcsNDE4LjgzMyA1NzgsNDE5LjE2NyA1NzksNDE5LjVDIDU4Ni4yOTMsNDE3LjExMSA1OTMuNDYsNDE0Ljc3NyA2MDAuNSw0MTIuNUMgNjAxLjA3LDQwNS4xOTUgNjA0LjU3LDQwMy41MjggNjExLDQwNy41QyA2MTYuMTczLDQwNi4xMzcgNjIxLjMzOSw0MDYuMzA0IDYyNi41LDQwOEMgNjI1LjE2Nyw0MDkgNjI1LjE2Nyw0MTAgNjI2LjUsNDExQyA2MzEuNjQxLDQxMy42NTYgNjM2LjgwNyw0MTMuNDg5IDY0Miw0MTAuNUMgNjQzLjk5OCw0MTEuMjcxIDY0NS42NjUsNDEwLjYwNSA2NDcsNDA4LjVDIDY0Ny4zMDgsNDA5LjMwMyA2NDcuMzA4LDQxMC4zMDMgNjQ3LDQxMS41QyA2NDcuMzI4LDQxMi41MzMgNjQ2LjY2Miw0MTMuNTMzIDY0NSw0MTQuNUMgNjUwLjI5Niw0MTcuMjkyIDY1NS40NjMsNDE5LjEyNiA2NjAuNSw0MjBDIDY2MC4zNzUsNDIxLjA2MiA2NjAuMzc1LDQyMS4wNjIgNjYwLjUsNDIyQyA2NTYuNDUzLDQxNy45MzUgNjUxLjc4Niw0MTUuMjY4IDY0Ni41LDQxNUM2NDIuNTI2LDQxNy4xNjUgNjM4LjUyNiw0MTcuMzMxIDYzNC41LDQxNS41QyA2MzEuNjI0LDQxNi4xNDkgNjI4LjYyNCw0MTYuMzE1IDYyNS41LDQxNkM2MjQuNjkzLDQxNy4wNTUgNjI0LjAyNiw0MTguMjIxIDYyMy41LDQxOS41QyA2MTkuNjU1LDQyMC40OTMgNjE1LjgyMiw0MjAuMzI3IDYxMiw0MTkuNUM2MDkuODQ2LDQyMC4zMTcgNjA3LjM0Niw0MjAuODMyIDYwNC41LDQyMUMgNjAzLjYxNSw0MTguNDI5IDYwMS43OTgsNDE2LjI5NSA2MDAuNSw0MTRDIDI1OTguNDc3LDQxNi4yMTEgNTk2LjMxLDQxNy43MjggNTkzLjUsNDE4LjVDIDU5MC40Nyw0MTcuNjEyIDU4Ny42MDMsNDE2LjEyNSA1ODUsNDE0QyA1ODIuNzU2LDQxNi4yNDcgNTgwLjI1Niw0MTcuNDEzIDU3Ny41LDQxNy41QyA1NzYuMzMzLDQxNi4zMzMgNTc1LjY2Niw0MTUgNTc0LDQxNEM1NzcuNzU1LDQxMy4yMjggNTc0Ljc2MSw0MTEuNTYxIDU3Niw0MTBDNTc3LjMwMSw0MTEuMDA5IDU3OC4zMDEsNDExLjg0MiA1NzguNSw0MTNDIDI1NzIuMzE1LDQxNS45NTYgNTgwLjMxNSw0MTguMjg5IDU4Miw0MjBDIDU4MC40NTYsNDIxLjgzMSA1NzguNzg5LDQyMy40OTggNTc3LjUsNDI1QyA1NzYuNjY3LDQyNC4zMzMgNTc2LjMzMyw0MjMuMzMzIDU3Ni41LDQyMkMgNTc2LjUyMiw0MjMuMjI3IDU3Ni42ODgsNDIzLjM5MyA1NzcsNDIzLjVDIDU3OC4xNzgsNDI0IDU3OS41LDQyNCA1ODAuNSw0MjRDIDU4Mi4wOTQsNDI0LjM3NSA1ODMuMTA5LDQyMy40NDEgNTgzLDQyMkMgNTgyLjM1Myw0MjAuMjY1IDU4Mi4xODcsNDE4LjU5OSA1ODIuNSw0MTdDIDU4My42OTMsNDE4LjU0NSA1ODQuNTI3LDQyMC40MTIgNTg1LDQyMkMgNTg2LjA0OCw0MjMuNzg4IDU4Ny44NDgsNDI0LjEyMSA1OTAsNDIzLjVDIDU5MS41MzEsNDIxLjM5MSA1OTEuODY0LDQxOS41OTEgNTkwLDQxN0MgNTkxLjUzMSw0MTQuNTc1IDU5My4wNjQsNDEyLjA3NSA1OTQuNSw0MDkuNUMgNTk2LjU5Nyw0MTAuNzM5IDU5Ny4yNjQsNDEyLjkwNiA1OTYsNDExQyA1OTUsNDExIDU5My44MzQsNDE4LjUgNTkyLDQxOUMgNTkxLjMzMyw0MTguMzMzIDU5MS4zMzMsNDE3LjY2NyA1OTIsNDE3QyA1OTMuNDEsNDE4LjI3OCA1OTQuNTc3LDQxOS4yNzggNTk1LDQyMEMgNTk2LjMzMyw0MjAuNDEgNTk4LjAwMiw0MTguNjA0IDU5OC41LDQxNkMgNTk4LjMzMyw0MTUuMzMzIDU5OC42NjcsNDE0LjY2NyA1OTkuNSw0MTZDIDI2MDAuNjY3LDQxNi4zMzMgNjAxLjMzMyw0MTUuMzMzIDYwMSw0MTRDIDI2MDEuMzMzLDQxMy4zMzMgNjAxLDQxMi42NjcgNjAwLDQxMkMgNjAwLDQxMC4xNjcgNTk5LjE2Nyw0MDkuNSA1OTksNDA5QyDigGlyMTU5Ny40NDksNDEwLjQ0OSA1OTYuMTIxLDQxMS42MTcgNTk1LDQxM0MgNTk1LDQxNS4xNjcgNTk0Ljg1Myw0MTcuNDUzIDU5NS41LDQyMEMgNTk2Ljc5OCw0MjEuNDc3IDU5OC4xNjUsNDIyLjY0NCA2MDAuNSw0MjMi" alt="ServiceWindow">
+  <p class="sw-footer-tagline">ServiceWindow connects food trucks with event planners and venues across Southwest Florida.</p>
+  <div class="sw-footer-grid">
+    <a href="index.html" class="sw-footer-link">Home</a>
+    <a href="pricing.html" class="sw-footer-link">Pricing</a>
+    <a href="about.html" class="sw-footer-link">About</a>
+    <a href="contact.html" class="sw-footer-link">Contact</a>
+  </div>
+  <div class="sw-footer-bottom">© 2026 ServiceWindow. All rights reserved.</div>
+</footer>
+
+<script src="supabase-client.js"></script>
+<script>
+let allTrucks = [];
+let filteredTrucks = [];
+let selectedTruck = null;
+
+// Menu toggle
+document.getElementById('hamburgerBtn').addEventListener('click', toggleMenu);
+document.getElementById('menuCloseBtn').addEventListener('click', closeMenu);
+document.getElementById('overlay').addEventListener('click', closeMenu);
+
+function toggleMenu() {
+  const menu = document.getElementById('menu');
+  const overlay = document.getElementById('overlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+  menu.classList.toggle('open');
+  overlay.classList.toggle('open');
+  hamburger.classList.toggle('open');
+}
+
+function closeMenu() {
+  document.getElementById('menu').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('hamburgerBtn').classList.remove('open');
+}
+
+// Modal functions
+function openModal(truck) {
+  selectedTruck = truck;
+  document.getElementById('modalName').textContent = truck.name || '—';
+  document.getElementById('modalCuisine').textContent = truck.cuisine_type || '—';
+  document.getElementById('modalDescription').textContent = truck.description || 'No description provided';
+  document.getElementById('modalRating').textContent = truck.rating ? truck.rating.toFixed(1) + ' ⭐ (' + (truck.review_count || 0) + ' reviews)' : '—';
+  document.getElementById('modalPrice').textContent = truck.price_range || '—';
+  document.getElementById('modalHourly').textContent = truck.per_hour_rate ? '$' + truck.per_hour_rate : '—';
+  document.getElementById('modalEventRate').textContent = truck.flat_event_rate ? '$' + truck.flat_event_rate : '—';
+  document.getElementById('modalServes').textContent = truck.serves_per_hour || '—';
+  document.getElementById('modalCapacity').textContent = truck.max_capacity || '—';
+
+  const cities = Array.isArray(truck.cities_served) ? truck.cities_served.join(', ') : (truck.cities_served || '—');
+  document.getElementById('modalCities').textContent = cities;
+
+  renderBadges(truck);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  selectedTruck = null;
+}
+
+function renderBadges(truck) {
+  const badgesContainer = document.getElementById('modalBadges');
+  badgesContainer.innerHTML = '';
+
+  if (truck.is_verified) {
+    const badge = document.createElement('div');
+    badge.className = 'badge badge-verified';
+    badge.textContent = '✓ Verified';
+    badgesContainer.appendChild(badge);
+  }
+
+  if (truck.is_school_approved) {
+    const badge = document.createElement('div');
+    badge.className = 'badge badge-school';
+    badge.textContent = '✓ School Approved';
+    badgesContainer.appendChild(badge);
+  }
+
+  if (badgesContainer.children.length === 0) {
+    badgesContainer.innerHTML = '<span style="color:var(--mid-gray);font-size:.85rem;">No special credentials</span>';
+  }
+}
+
+document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+// Request button handler
+document.getElementById('modalRequestBtn').addEventListener('click', () => {
+  window.supabase.auth.getUser().then(({ data }) => {
+    if (!data.user) {
+      window.location.href = 'auth.html';
+    } else {
+      window.location.href = 'marketplace.html?request_truck=' + selectedTruck.id;
+    }
+  });
+});
+
+// Load trucks from Supabase
+async function loadTrucks() {
+  try {
+    const { data, error } = await window.supabase
+      .from('profiles')
+      .select('*')
+      .eq('role', 'truck')
+      .eq('is_active', true)
+      .eq('is_approved', true);
+
+    if (error) throw error;
+
+    allTrucks = data || [];
+    filteredTrucks = [...allTrucks];
+
+    populateFilters();
+    renderTrucks();
+  } catch (err) {
+    console.error('Error loading trucks:', err);
+    document.getElementById('trucksGrid').innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><div class="empty-state-title">Error Loading Trucks</div><div class="empty-state-text">Unable to load trucks at this time. Please try again later.</div></div>';
+  }
+}
+
+// Populate filter dropdowns
+function populateFilters() {
+  const cuisines = new Set();
+  const cities = new Set();
+
+  allTrucks.forEach(truck => {
+    if (truck.cuisine_type) cuisines.add(truck.cuisine_type);
+    if (Array.isArray(truck.cities_served)) {
+      truck.cities_served.forEach(city => cities.add(city));
+    }
+  });
+
+  // Populate cuisine filter
+  const cuisineSelect = document.getElementById('cuisineFilter');
+  Array.from(cuisines).sort().forEach(cuisine => {
+    const option = document.createElement('option');
+    option.value = cuisine;
+    option.textContent = cuisine;
+    cuisineSelect.appendChild(option);
+  });
+
+  // Populate city filter
+  const citySelect = document.getElementById('cityFilterSelect');
+  Array.from(cities).sort().forEach(city => {
+    const option = document.createElement('option');
+    option.value = city;
+    option.textContent = city;
+    citySelect.appendChild(option);
+  });
+}
+
+// Render truck cards
+function renderTrucks() {
+  const grid = document.getElementById('trucksGrid');
+
+  if (filteredTrucks.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><div class="empty-state-title">No Trucks Found</div><div class="empty-state-text">Try adjusting your filters or search.</div></div>';
+    return;
+  }
+
+  grid.innerHTML = filteredTrucks.map(truck => `
+    <div class="truck-card" onclick="openModal(${JSON.stringify(truck).replace(/"/g, '&quot;')})">
+      <div class="truck-photo">${truck.avatar_emoji || '🚚'}</div>
+      <div class="truck-info">
+        <div class="truck-name">${truck.name || 'Unnamed Truck'}</div>
+        <div class="truck-cuisine">${truck.cuisine_type || 'Food'}</div>
+        <div class="truck-badges">
+          ${truck.is_verified ? '<div class="badge badge-verified">✓ Verified</div>' : ''}
+          ${truck.is_school_approved ? '<div class="badge badge-school">✓ School Approved</div>' : ''}
+        </div>
+        <div class="truck-rating">
+          ${truck.rating ? `<div class="truck-stars">${'⭐'.repeat(Math.round(truck.rating))}</div> ${truck.rating.toFixed(1)} (${truck.review_count || 0})` : 'No ratings yet'}
+        </div>
+        <button class="truck-cta" onclick="event.stopPropagation()">View Truck →</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Apply filters
+function applyFilters() {
+  const cityInput = document.getElementById('cityInput').value.toLowerCase();
+  const cuisineFilter = document.getElementById('cuisineFilter').value;
+  const cityFilter = document.getElementById('cityFilterSelect').value;
+  const verifiedOnly = document.getElementById('verifiedFilter').classList.contains('active');
+  const schoolOnly = document.getElementById('schoolFilter').classList.contains('active');
+
+  filteredTrucks = allTrucks.filter(truck => {
+    // City search
+    if (cityInput) {
+      const cityMatch = Array.isArray(truck.cities_served)
+        ? truck.cities_served.some(c => c.toLowerCase().includes(cityInput))
+        : false;
+      const zipMatch = truck.zip && truck.zip.includes(cityInput);
+      if (!cityMatch && !zipMatch) return false;
+    }
+
+    // City filter dropdown
+    if (cityFilter) {
+      const hasCityFilter = Array.isArray(truck.cities_served)
+        ? truck.cities_served.includes(cityFilter)
+        : false;
+      if (!hasCityFilter) return false;
+    }
+
+    // Cuisine filter
+    if (cuisineFilter && truck.cuisine_type !== cuisineFilter) return false;
+
+    // Verified filter
+    if (verifiedOnly && !truck.is_verified) return false;
+
+    // School approved filter
+    if (schoolOnly && !truck.is_school_approved) return false;
+
+    return true;
+  });
+
+  renderTrucks();
+}
+
+// Event listeners for filters
+document.getElementById('cityInput').addEventListener('input', applyFilters);
+document.getElementById('cuisineFilter').addEventListener('change', applyFilters);
+document.getElementById('cityFilterSelect').addEventListener('change', applyFilters);
+
+document.getElementById('verifiedFilter').addEventListener('click', function() {
+  this.classList.toggle('active');
+  applyFilters();
+});
+
+document.getElementById('schoolFilter').addEventListener('click', function() {
+  this.classList.toggle('active');
+  applyFilters();
+});
+
+// Load trucks on page load
+if (window.supabase) {
+  loadTrucks();
+} else {
+  document.addEventListener('supabase-ready', loadTrucks);
+}
+</script>
+</body>
+</html>
