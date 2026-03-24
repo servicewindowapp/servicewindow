@@ -1,8 +1,8 @@
 // supabase-client.js
-// Local development credentials — replace with cloud credentials at launch
+// Cloud Supabase credentials for production
 
-const SUPABASE_URL = 'http://127.0.0.1:54321';
-const SUPABASE_ANON_KEY = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+const SUPABASE_URL = 'https://krmfxedkxoyzkeqnijcd.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_vsvnMZz41fPzbybrFrpfuw_THC64Lbq';
 
 // Load Supabase from CDN
 const supabaseScript = document.createElement('script');

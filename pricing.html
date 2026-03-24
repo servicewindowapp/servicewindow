@@ -400,15 +400,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // ───────────────────────────────────────────────────────────────
 // STRIPE CHECKOUT
 // ───────────────────────────────────────────────────────────────
-// Configuration: Update with your Stripe publishable key
-const STRIPE_PUBLIC_KEY = 'pk_test_your_key_here'; // Replace with actual key from .env
+// Configuration: Stripe publishable key
+const STRIPE_PUBLIC_KEY = 'pk_test_51TEVYWCgL5LTt01MVkdcaZGmXIgrmXnprGBmsVvd2IPvEh0d57qdjPyH5UCbNMlgH9dxRmZ6dKrKMSYYLA7LyXN300pNrDRaT3';
 const stripe = Stripe(STRIPE_PUBLIC_KEY);
 
-// Price IDs for each subscription product (set these after creating products in Stripe)
+// Price IDs for each subscription product
 const PRICE_IDS = {
-  truck_standard: 'price_1234567890abcdef',    // Truck Standard $29/mo — UPDATE AFTER CREATING IN STRIPE
-  truck_pro: 'price_0987654321fedcba',         // Truck Pro $49/mo — UPDATE AFTER CREATING IN STRIPE
-  service_provider_standard: 'price_abcdef1234567890' // Service Provider Standard $29/mo — UPDATE AFTER CREATING IN STRIPE
+  truck_standard: 'price_1TEVtGCgL5LTt01MXBTjA1lr',    // Truck Standard $29/mo
+  truck_pro: 'price_1TEVrjCgL5LTt01MrABZ2ryi',         // Truck Pro $49/mo
+  service_provider_standard: 'price_1TEWSqCgL5LTt01Mp0BYuklW' // Service Provider Standard $29/mo
 };
 
 async function handleCheckout(planId) {
