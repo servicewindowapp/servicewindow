@@ -858,8 +858,9 @@ img,video{max-width:100%;height:auto;}
 
       <div class="two-col">
         <div class="card" style="margin-bottom:0;">
-          <div class="card-hd">
+          <div class="card-hd" style="display:flex;align-items:center;justify-content:space-between;">
             <div class="card-hd-title">New Marketplace Requests</div>
+            <button class="btn btn-sm btn-outline" onclick="openModal('modal-external-booking')">+ Log External Booking</button>
           </div>
           <div class="card-body" id="requestsFeed" style="display:flex;flex-direction:column;gap:10px;">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);">
@@ -1688,6 +1689,75 @@ img,video{max-width:100%;height:auto;}
   </div>
 </div>
 
+<div class="modal-backdrop" id="modal-external-booking" onclick="handleBackdropClick(event,'modal-external-booking')">
+  <div class="modal modal-wrap">
+    <div class="modal-drag"></div>
+    <button class="modal-close" onclick="closeModal('modal-external-booking')">&times;</button>
+    <div class="modal-eyebrow">Log a Booking</div>
+    <h2 class="modal-title">External Booking</h2>
+    <p class="modal-sub">Record a booking you received outside the ServiceWindow marketplace.</p>
+    <div class="modal-form" id="externalBookingForm">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:.8rem;font-weight:600;">Event Name</label>
+        <input class="form-control" id="ebEventName" type="text" placeholder="e.g., Corp Retreat">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:.8rem;font-weight:600;">Event Date</label>
+        <input class="form-control" id="ebEventDate" type="date">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+          <label style="font-size:.8rem;font-weight:600;">Start Time</label>
+          <input class="form-control" id="ebStartTime" type="time">
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+          <label style="font-size:.8rem;font-weight:600;">End Time</label>
+          <input class="form-control" id="ebEndTime" type="time">
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:.8rem;font-weight:600;">Location/Venue</label>
+        <input class="form-control" id="ebLocation" type="text" placeholder="Venue name or address">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:.8rem;font-weight:600;">City</label>
+        <input class="form-control" id="ebCity" type="text" placeholder="e.g., Naples, Fort Myers">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:.8rem;font-weight:600;">Guest Count</label>
+        <input class="form-control" id="ebGuestCount" type="number" placeholder="Number of guests" min="1">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:.8rem;font-weight:600;">Notes</label>
+        <textarea class="form-control" id="ebNotes" placeholder="Any special details or requests…"></textarea>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;">
+        <div style="font-size:.9rem;font-weight:600;margin-bottom:12px;">Booker Details</div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+            <input class="form-control" id="ebFirstName" type="text" placeholder="First name">
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+            <input class="form-control" id="ebLastName" type="text" placeholder="Last name">
+          </div>
+        </div>
+        <input class="form-control" id="ebPhone" type="tel" placeholder="Phone number" style="margin-top:8px;">
+        <input class="form-control" id="ebEmail" type="email" placeholder="Email address" style="margin-top:8px;">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;">
+        <input type="checkbox" id="ebInviteCheckbox" checked style="width:18px;height:18px;cursor:pointer;">
+        <label for="ebInviteCheckbox" style="font-size:.8rem;cursor:pointer;">Invite booker to join ServiceWindow</label>
+      </div>
+      <button class="modal-submit" onclick="submitExternalBooking()">Log Booking &rarr;</button>
+    </div>
+    <div class="modal-success" id="external-booking-success">
+      <div class="modal-success-icon">&#128203;</div>
+      <h3>Booking Logged!</h3>
+      <p>The external booking has been added to your requests feed.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════
 //  PANEL NAVIGATION
@@ -1852,6 +1922,189 @@ function postShift() {
   document.getElementById('modal-post-shift').querySelector('.modal-form').style.display = 'none';
   document.getElementById('post-shift-success').style.display = 'block';
   showToast('Shift posted!','success');
+}
+
+async function submitExternalBooking() {
+  const eventName = document.getElementById('ebEventName').value.trim();
+  const eventDate = document.getElementById('ebEventDate').value.trim();
+  const startTime = document.getElementById('ebStartTime').value.trim();
+  const endTime = document.getElementById('ebEndTime').value.trim();
+  const location = document.getElementById('ebLocation').value.trim();
+  const city = document.getElementById('ebCity').value.trim();
+  const guestCount = document.getElementById('ebGuestCount').value.trim();
+  const notes = document.getElementById('ebNotes').value.trim();
+  const firstName = document.getElementById('ebFirstName').value.trim();
+  const lastName = document.getElementById('ebLastName').value.trim();
+  const phone = document.getElementById('ebPhone').value.trim();
+  const email = document.getElementById('ebEmail').value.trim();
+  const inviteChecked = document.getElementById('ebInviteCheckbox').checked;
+
+  if (!eventName || !eventDate || !startTime || !endTime || !location || !city || !guestCount || !firstName || !lastName || !email) {
+    showToast('Please fill in all required fields.', 'warning');
+    return;
+  }
+
+  try {
+    // Get current user and truck
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) {
+      showToast('You must be logged in.', 'warning');
+      return;
+    }
+
+    const { data: truck } = await window.supabase
+      .from('trucks')
+      .select('id')
+      .eq('operator_id', user.id)
+      .single();
+
+    if (!truck) {
+      showToast('Could not find your truck profile.', 'warning');
+      return;
+    }
+
+    // Build notes with booker details
+    const bookerInfo = `Booker: ${firstName} ${lastName}\nPhone: ${phone}\nEmail: ${email}`;
+    const combinedNotes = notes ? `${notes}\n\n${bookerInfo}` : bookerInfo;
+
+    // Insert request
+    const { error: reqError } = await window.supabase
+      .from('requests')
+      .insert([{
+        request_type: 'truck_booking',
+        status: 'accepted',
+        source: 'external',
+        truck_id: truck.id,
+        event_name: eventName,
+        event_date: eventDate,
+        start_time: startTime,
+        end_time: endTime,
+        location: location,
+        city: city,
+        guest_count: parseInt(guestCount),
+        notes: combinedNotes,
+        requester_first_name: firstName,
+        requester_last_name: lastName,
+        requester_email: email,
+        requester_phone: phone
+      }]);
+
+    if (reqError) {
+      showToast('Error logging booking: ' + reqError.message, 'warning');
+      return;
+    }
+
+    // Insert into waitlist if checkbox is checked
+    if (inviteChecked) {
+      await window.supabase
+        .from('waitlist')
+        .insert([{
+          email: email,
+          role: 'organizer',
+          source: 'truck_invite',
+          business_name: eventName
+        }]);
+    }
+
+    // Show success and reset form
+    document.getElementById('externalBookingForm').style.display = 'none';
+    document.getElementById('external-booking-success').style.display = 'block';
+    showToast('Booking logged successfully!', 'success');
+
+    // Reset form fields
+    document.getElementById('ebEventName').value = '';
+    document.getElementById('ebEventDate').value = '';
+    document.getElementById('ebStartTime').value = '';
+    document.getElementById('ebEndTime').value = '';
+    document.getElementById('ebLocation').value = '';
+    document.getElementById('ebCity').value = '';
+    document.getElementById('ebGuestCount').value = '';
+    document.getElementById('ebNotes').value = '';
+    document.getElementById('ebFirstName').value = '';
+    document.getElementById('ebLastName').value = '';
+    document.getElementById('ebPhone').value = '';
+    document.getElementById('ebEmail').value = '';
+    document.getElementById('ebInviteCheckbox').checked = true;
+
+    // Refresh requests feed after 1 second
+    setTimeout(() => {
+      closeModal('modal-external-booking');
+      document.getElementById('externalBookingForm').style.display = 'flex';
+      document.getElementById('external-booking-success').style.display = 'none';
+      refreshRequestsFeed();
+    }, 1500);
+  } catch (err) {
+    showToast('An error occurred: ' + err.message, 'warning');
+  }
+}
+
+// ═══════════════════════════════════
+//  REQUESTS FEED REFRESH
+// ═══════════════════════════════════
+async function refreshRequestsFeed() {
+  if (!currentTruckId) return;
+
+  const { data: requests } = await window.supabase
+    .from('requests')
+    .select('id, event_name, event_date, city, budget, status, requester_id')
+    .eq('truck_id', currentTruckId)
+    .in('status', ['pending', 'accepted'])
+    .order('event_date', { ascending: true })
+    .limit(6);
+
+  // Batch-fetch requester profiles
+  let requesterMap = {};
+  if (requests && requests.length) {
+    const requesterIds = [...new Set(requests.map(r => r.requester_id).filter(Boolean))];
+    if (requesterIds.length) {
+      const { data: reqProfiles } = await window.supabase
+        .from('profiles')
+        .select('id, verification_status, organizer_type')
+        .in('id', requesterIds);
+      if (reqProfiles) reqProfiles.forEach(p => { requesterMap[p.id] = p; });
+    }
+  }
+
+  const ORGANIZER_LABELS = {
+    private_party: 'Private Party', wedding: 'Wedding', corporate: 'Corporate',
+    community_hoa: 'Community / HOA', school: 'School', venue: 'Venue', other: 'Other'
+  };
+
+  const feed = document.getElementById('requestsFeed');
+  if (feed && requests && requests.length) {
+    feed.innerHTML = '';
+    requests.forEach(req => {
+      const date      = req.event_date ? new Date(req.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
+      const budget    = req.budget ? `$${req.budget}` : '—';
+      const isPending = req.status === 'pending';
+      const tagClass  = isPending ? 'tag-pending' : 'tag-accepted';
+      const tagLabel  = isPending ? 'Pending' : 'Accepted';
+
+      const prof = requesterMap[req.requester_id] || {};
+      const isVerified = prof.verification_status === 'verified';
+      const verifBadge = isVerified
+        ? `<span style="display:inline-flex;align-items:center;gap:2px;font-size:.64rem;font-weight:700;padding:2px 6px;border-radius:5px;background:#F0FDF4;color:#15803D;border:1px solid #86EFAC;">&#10003; Verified</span>`
+        : '';
+      const orgTypeLabel = prof.organizer_type ? ORGANIZER_LABELS[prof.organizer_type] || prof.organizer_type : null;
+      const orgTypeTag = orgTypeLabel
+        ? `<span style="display:inline-flex;font-size:.64rem;font-weight:700;padding:2px 6px;border-radius:5px;background:#EEF2FF;color:#4338CA;">${orgTypeLabel}</span>`
+        : '';
+
+      const card = document.createElement('div');
+      card.dataset.reqId = req.id;
+      card.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);gap:8px;';
+      card.innerHTML = `
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${req.event_name}</div>
+          <div style="font-size:.7rem;color:var(--warm-gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${date} • ${req.city} • ${budget}</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="setPanel('marketplace',document.getElementById('nav-marketplace'))">Bid</button>
+      `;
+      feed.appendChild(card);
+    });
+  } else if (feed) {
+    feed.innerHTML = '<div style="text-align:center;padding:20px;color:var(--warm-gray);font-size:.8rem;">No pending requests.</div>';
+  }
 }
 
 // ═══════════════════════════════════
