@@ -950,11 +950,11 @@ img,video{max-width:100%;height:auto;}
     <div class="stat-label">Active operators in SWFL groups</div>
   </div>
   <div class="stat">
-    <div class="stat-num">83+</div>
+    <div class="stat-num" id="stat-trucks">83+</div>
     <div class="stat-label">Trucks verified &amp; ready at launch</div>
   </div>
   <div class="stat">
-    <div class="stat-num">16</div>
+    <div class="stat-num" id="stat-cities">16</div>
     <div class="stat-label">Cities served across SW Florida</div>
   </div>
   <div class="stat">
@@ -1492,7 +1492,27 @@ async function initNavAuth(){
   }catch(e){console.warn('Nav auth:',e);}
 }
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
-if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
+
+// Load live stats from Supabase
+async function loadStats(){
+  if(!window.supabase)return;
+  try{
+    // Get truck count
+    const{count:truckCount}=await window.supabase.from('trucks').select('id',{count:'exact'}).eq('is_active',true);
+    if(truckCount!==null){
+      document.getElementById('stat-trucks').textContent=truckCount+'+';
+    }
+
+    // Get distinct cities count
+    const{data:trucks}=await window.supabase.from('trucks').select('city',{head:1000});
+    if(trucks){
+      const cities=new Set(trucks.map(t=>t.city).filter(Boolean));
+      document.getElementById('stat-cities').textContent=cities.size;
+    }
+  }catch(e){console.warn('Load stats:',e);}
+}
+
+if(window.supabase){initNavAuth();loadStats();}else{document.addEventListener('supabase-ready',function(){initNavAuth();loadStats();});}
 </script>
 </body>
 </html>
