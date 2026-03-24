@@ -46,6 +46,21 @@ Deno.serve(async (req) => {
     const token = authHeader.substring(7); // Remove "Bearer " prefix
     console.log("Authorization token received, length:", token.length);
 
+    // Verify JWT using Supabase auth
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      console.error("Auth verification failed:", authError?.message || "No user found");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: Invalid or expired token" }),
+        {
+          status: 401,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    console.log("Auth verified for user:", user.id);
+
     const { price_id, plan_name, user_id, user_email } = await req.json();
 
     // Create Stripe checkout session
