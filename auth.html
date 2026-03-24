@@ -543,13 +543,9 @@ async function handleAuth(){
         verification_status: 'unverified',
       };
 
-      // Set trial dates for truck and service_provider roles
+      // Store intended plan for truck and service_provider roles
+      // Database trigger will automatically set trial_starts_at and trial_ends_at
       if(role === 'truck' || role === 'service_provider'){
-        const now = new Date();
-        const trialEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days from now
-        profileData.trial_starts_at = now.toISOString();
-        profileData.trial_ends_at = trialEnd.toISOString();
-        profileData.trial_converted = false;
         profileData.intended_plan = role === 'truck' ? (planParam || 'standard') : 'standard';
       }
 

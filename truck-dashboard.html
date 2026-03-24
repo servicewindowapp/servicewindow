@@ -2161,13 +2161,19 @@ async function displayTrialBanner(userId) {
 
     if (!profile || !profile.trial_ends_at) return;
 
-    const now = new Date();
-    const trialEnd = new Date(profile.trial_ends_at);
-    const isTrialActive = trialEnd > now && !profile.trial_converted;
-    const isTrialExpired = trialEnd <= now && !profile.trial_converted;
-
     const bannerEl = document.getElementById('trialStatusBanner');
     const messageEl = document.getElementById('trialMessage');
+
+    // Hide banner if user already subscribed
+    if (profile.trial_converted) {
+      bannerEl.style.display = 'none';
+      return;
+    }
+
+    const now = new Date();
+    const trialEnd = new Date(profile.trial_ends_at);
+    const isTrialActive = trialEnd > now;
+    const isTrialExpired = trialEnd <= now;
 
     if (isTrialActive) {
       const daysRemaining = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
@@ -2177,7 +2183,7 @@ async function displayTrialBanner(userId) {
       bannerEl.style.background = '#DCFCE7';
       bannerEl.style.borderBottomColor = '#86EFAC';
     } else if (isTrialExpired) {
-      messageEl.innerHTML = '<strong>Your trial has ended</strong> — add a payment method to keep your listing active.';
+      messageEl.innerHTML = '<strong>Subscribe to continue</strong> — your trial has ended. <a href="pricing.html" style="color:var(--fire);font-weight:700;text-decoration:none;">View plans</a>';
       bannerEl.style.display = 'block';
       bannerEl.style.background = '#FEF3C7';
       bannerEl.style.borderBottomColor = '#FCD34D';
