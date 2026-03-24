@@ -199,6 +199,13 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
 .auth-submit.loading .btn-text{display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .hidden{display:none!important;}
+.trial-promo-banner{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--green-pale);border:1px solid #BBEC5C;border-radius:var(--r-sm);
+  padding:14px 16px;font-size:.88rem;color:var(--smoke);line-height:1.5;
+  margin-top:8px;
+}
+.trial-promo-banner strong{font-weight:700;display:block;margin-bottom:2px;}
 </style>
 </head>
 <body class="has-bottom-nav">
@@ -307,6 +314,14 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
           <option value="venue">Venue</option>
           <option value="other">Other</option>
         </select>
+      </div>
+
+      <div class="trial-promo-banner hidden" id="firstMonthFreeNote">
+        <span style="font-size: 18px; margin-right: 8px;">🎉</span>
+        <div>
+          <strong>First month free</strong>
+          <p style="font-size: 13px; color: #666; margin: 4px 0 0 0;">No credit card required. Billing begins on your 30-day anniversary.</p>
+        </div>
       </div>
 
       <div class="form-group hidden" id="nameGroup">
@@ -426,6 +441,7 @@ function selectRole(el){
   const role = el.dataset.role;
   document.getElementById('selectedRole').value = role;
   document.getElementById('organizerTypeGroup').classList.toggle('hidden', role !== 'organizer');
+  document.getElementById('firstMonthFreeNote').classList.toggle('hidden', !['truck', 'service_provider'].includes(role));
 }
 
 // ── Mode toggle ───────────────────────────────────────────────────────────
