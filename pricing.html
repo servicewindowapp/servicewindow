@@ -493,15 +493,27 @@ async function handleCheckout(planId) {
       return;
     }
 
-    // Redirect to Stripe Checkout
-    const stripeResult = await stripe.redirectToCheckout({ sessionId: result.sessionId });
-    if (stripeResult.error) {
-      console.error('Stripe error:', stripeResult.error);
-      alert('Payment error: ' + stripeResult.error.message);
+    // Redirect to Stripe Checkout using v3 API
+    console.log('Redirecting to Stripe checkout with sessionId:', result.sessionId);
+
+    if (!stripe) {
+      alert('Payment system not ready. Please refresh and try again.');
+      return;
     }
+
+    // Use the standard Stripe v3 redirectToCheckout method
+    stripe.redirectToCheckout({ sessionId: result.sessionId }).then(function(result) {
+      if (result.error) {
+        console.error('Stripe redirect error:', result.error);
+        alert('Payment error: ' + result.error.message);
+      }
+    }).catch(function(err) {
+      console.error('Checkout redirect error:', err);
+      alert('Unable to redirect to checkout. Please try again.');
+    });
   } catch (err) {
     console.error('Checkout error:', err);
-    alert('Unable to start checkout. Please try again. Error: ' + err.message);
+    alert('Unable to start checkout. Please try again.');
   }
 }
 </script>
