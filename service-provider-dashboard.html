@@ -1645,12 +1645,12 @@ async function displayTrialBanner(userId){
     if(isTrialActive){
       const daysRemaining=Math.ceil((trialEnd-now)/(1000*60*60*24));
       const trialEndDate=trialEnd.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      messageEl.innerHTML=`<strong>Your free trial is active</strong> — ${daysRemaining} days remaining. Add a payment method before ${trialEndDate} to keep your listing live.`;
+      messageEl.innerHTML=`<strong>Free trial active</strong> — ${daysRemaining} days remaining. No payment needed until ${trialEndDate}.`;
       bannerEl.style.display='block';
       bannerEl.style.background='#DCFCE7';
       bannerEl.style.borderBottomColor='#86EFAC';
     }else if(isTrialExpired){
-      messageEl.innerHTML='<strong>Subscribe to continue</strong> — your trial has ended. <a href="pricing.html" style="color:var(--fire);font-weight:700;text-decoration:none;">View plans</a>';
+      messageEl.innerHTML='<strong>Your free trial has ended.</strong> <a href="pricing.html" style="color:var(--fire);font-weight:700;text-decoration:none;margin-left:6px;">Upgrade to keep access →</a>';
       bannerEl.style.display='block';
       bannerEl.style.background='#FEF3C7';
       bannerEl.style.borderBottomColor='#FCD34D';
