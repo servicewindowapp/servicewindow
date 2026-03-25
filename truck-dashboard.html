@@ -2851,36 +2851,44 @@ async function uploadAvatar(event) {
   const file = event.target.files[0];
   if (!file || !window.supabase) return;
 
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    showToast('Please upload an image file.', 'error');
+    event.target.value = '';
+    return;
+  }
+
   const { data: { user } } = await window.supabase.auth.getUser();
   if (!user) { showToast('Please sign in first.', 'error'); return; }
 
   const ext = file.name.split('.').pop();
-  const filePath = `trucks/${user.id}.${ext}`;
+  const filename = `trucks/${user.id}.${ext}`;
 
   try {
-    // Upload to storage
-    const { error: uploadError } = await window.supabase.storage
-      .from('avatars')
-      .upload(filePath, file, { upsert: true });
+    // Step 1: Request presigned URL from Edge Function
+    const { uploadUrl, publicUrl } = await getPresignedUploadUrl(filename, file.type);
+    if (!uploadUrl) throw new Error('Failed to get upload URL');
 
-    if (uploadError) throw uploadError;
+    // Step 2: Upload directly to R2 using presigned URL
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': file.type },
+      body: file,
+    });
+    if (!uploadResponse.ok) throw new Error(`R2 upload failed: ${uploadResponse.statusText}`);
 
-    // Get public URL
-    const { data } = window.supabase.storage.from('avatars').getPublicUrl(filePath);
-    const avatarUrl = data?.publicUrl;
-
-    // Update trucks table with avatar URL
+    // Step 3: Get truck ID and update database
     const { data: existing } = await window.supabase
       .from('trucks').select('id').eq('owner_id', user.id).single();
 
     if (existing) {
-      await window.supabase.from('trucks').update({ avatar_url: avatarUrl }).eq('id', existing.id);
+      await window.supabase.from('trucks').update({ avatar_url: publicUrl }).eq('id', existing.id);
     }
 
-    // Display uploaded image
+    // Step 4: Display uploaded image
     document.getElementById('profileAvatar').textContent = '';
     const img = document.createElement('img');
-    img.src = avatarUrl + '?t=' + Date.now();
+    img.src = publicUrl + '?t=' + Date.now();
     img.style.width = '100%';
     img.style.height = '100%';
     img.style.objectFit = 'cover';
