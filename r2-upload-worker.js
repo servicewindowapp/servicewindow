@@ -24,22 +24,19 @@
  * 7. Update avatar-upload.js with the worker URL
  */
 
-const CORS_ORIGIN = "https://servicewindow.app";
-
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": CORS_ORIGIN,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  };
-}
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://servicewindow.app',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': '*',
+};
 
 export default {
   async fetch(request, env, ctx) {
     // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return new Response("ok", {
-        headers: corsHeaders(),
+        status: 200,
+        headers: corsHeaders,
       });
     }
 
@@ -49,7 +46,7 @@ export default {
         status: 405,
         headers: {
           "Content-Type": "application/json",
-          ...corsHeaders(),
+          ...corsHeaders,
         },
       });
     }
@@ -68,7 +65,7 @@ export default {
             status: 400,
             headers: {
               "Content-Type": "application/json",
-              ...corsHeaders(),
+              ...corsHeaders,
             },
           }
         );
@@ -84,7 +81,7 @@ export default {
             status: 500,
             headers: {
               "Content-Type": "application/json",
-              ...corsHeaders(),
+              ...corsHeaders,
             },
           }
         );
@@ -100,7 +97,7 @@ export default {
             status: 500,
             headers: {
               "Content-Type": "application/json",
-              ...corsHeaders(),
+              ...corsHeaders,
             },
           }
         );
@@ -135,7 +132,7 @@ export default {
           status: 200,
           headers: {
             "Content-Type": "application/json",
-            ...corsHeaders(),
+            ...corsHeaders,
           },
         }
       );
@@ -150,7 +147,7 @@ export default {
           status: 500,
           headers: {
             "Content-Type": "application/json",
-            ...corsHeaders(),
+            ...corsHeaders,
           },
         }
       );
