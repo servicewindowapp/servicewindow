@@ -46,10 +46,15 @@ function generateEmailHTML(
     <style>
       body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
       .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+      .branded-header { background: white; padding: 20px; text-align: center; border-bottom: 2px solid #FF5400; }
+      .branded-header h1 { color: #FF5400; font-size: 24px; margin: 0 0 5px 0; font-weight: bold; }
+      .branded-header .tagline { color: #666; font-size: 14px; margin: 0; }
       .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 20px 0; }
       .header { background: linear-gradient(135deg, #FF5400 0%, #FF7A33 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
       .button { display: inline-block; background: #FF5400; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0; }
       .footer { text-align: center; font-size: 12px; color: #888; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; }
+      .footer a { color: #FF5400; text-decoration: none; }
+      .footer a:hover { text-decoration: underline; }
       h2 { color: #1E3A5F; }
       .event-details { background: #f0f0f0; padding: 15px; border-radius: 6px; margin: 10px 0; }
     </style>
@@ -62,6 +67,10 @@ function generateEmailHTML(
         html: `
           ${baseStyles}
           <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Connecting Food Trucks with Events in SW Florida</p>
+            </div>
             <div class="card">
               <div class="header">
                 <h1>🎉 New Booking Request</h1>
@@ -78,7 +87,7 @@ function generateEmailHTML(
               <p>Log in to ServiceWindow to review and accept or decline this request.</p>
               <a href="https://servicewindow.app/truck-dashboard.html" class="button">Review Request</a>
               <div class="footer">
-                <p>ServiceWindow - Connecting Food Trucks with Events</p>
+                <p><a href="https://servicewindow.app">ServiceWindow - Connecting Food Trucks with Events</a></p>
               </div>
             </div>
           </div>
@@ -91,6 +100,10 @@ function generateEmailHTML(
         html: `
           ${baseStyles}
           <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Connecting Food Trucks with Events in SW Florida</p>
+            </div>
             <div class="card">
               <div class="header">
                 <h1>✅ Request Accepted</h1>
@@ -106,7 +119,7 @@ function generateEmailHTML(
               <p>You can now contact the truck operator to finalize the details.</p>
               <a href="https://servicewindow.app/planner-dashboard.html" class="button">View Details</a>
               <div class="footer">
-                <p>ServiceWindow - Connecting Food Trucks with Events</p>
+                <p><a href="https://servicewindow.app">ServiceWindow - Connecting Food Trucks with Events</a></p>
               </div>
             </div>
           </div>
@@ -119,6 +132,10 @@ function generateEmailHTML(
         html: `
           ${baseStyles}
           <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Connecting Food Trucks with Events in SW Florida</p>
+            </div>
             <div class="card">
               <div class="header">
                 <h1>Request Update</h1>
@@ -132,7 +149,7 @@ function generateEmailHTML(
               <p>Don't worry! You can browse other available food trucks or submit another request for your event.</p>
               <a href="https://servicewindow.app/find-trucks.html" class="button">Find Another Truck</a>
               <div class="footer">
-                <p>ServiceWindow - Connecting Food Trucks with Events</p>
+                <p><a href="https://servicewindow.app">ServiceWindow - Connecting Food Trucks with Events</a></p>
               </div>
             </div>
           </div>
@@ -145,6 +162,10 @@ function generateEmailHTML(
         html: `
           ${baseStyles}
           <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Connecting Food Trucks with Events in SW Florida</p>
+            </div>
             <div class="card">
               <div class="header">
                 <h1>💬 New Message</h1>
@@ -159,7 +180,7 @@ function generateEmailHTML(
               </div>
               <a href="https://servicewindow.app/truck-dashboard.html" class="button">View Message</a>
               <div class="footer">
-                <p>ServiceWindow - Connecting Food Trucks with Events</p>
+                <p><a href="https://servicewindow.app">ServiceWindow - Connecting Food Trucks with Events</a></p>
               </div>
             </div>
           </div>
@@ -172,6 +193,10 @@ function generateEmailHTML(
         html: `
           ${baseStyles}
           <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Connecting Food Trucks with Events in SW Florida</p>
+            </div>
             <div class="card">
               <div class="header">
                 <h1>🎉 Account Verified</h1>
@@ -187,7 +212,7 @@ function generateEmailHTML(
               </ul>
               <a href="https://servicewindow.app/marketplace.html" class="button">Start Browsing Trucks</a>
               <div class="footer">
-                <p>ServiceWindow - Connecting Food Trucks with Events</p>
+                <p><a href="https://servicewindow.app">ServiceWindow - Connecting Food Trucks with Events</a></p>
               </div>
             </div>
           </div>
@@ -200,6 +225,10 @@ function generateEmailHTML(
         html: `
           ${baseStyles}
           <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Connecting Food Trucks with Events in SW Florida</p>
+            </div>
             <div class="card">
               <div class="header">
                 <h1>Welcome to ServiceWindow</h1>
@@ -213,10 +242,10 @@ function generateEmailHTML(
                 <li><strong>Message Operators:</strong> Communicate directly with truck owners</li>
                 <li><strong>Complete Your Profile:</strong> Add photos and details to stand out</li>
               </ul>
-              <a href="https://servicewindow.app/marketplace.html" class="button">Get Started</a>
+              <a href="https://servicewindow.app/auth.html" class="button">Get Started</a>
               <p>If you have any questions, please don't hesitate to contact our support team.</p>
               <div class="footer">
-                <p>ServiceWindow - Connecting Food Trucks with Events</p>
+                <p><a href="https://servicewindow.app">ServiceWindow - Connecting Food Trucks with Events</a></p>
               </div>
             </div>
           </div>

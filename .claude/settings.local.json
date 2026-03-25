@@ -93,7 +93,8 @@
       "Bash($env:SUPABASE_ACCESS_TOKEN=\"sbp_916de0a596c8dc15d9c5d350538d830b00511431\")",
       "Bash(export SUPABASE_ACCESS_TOKEN=\"sbp_916de0a596c8dc15d9c5d350538d830b00511431\")",
       "Bash(supabase functions:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(npx supabase:*)"
     ]
   }
 }
