@@ -94,7 +94,13 @@
       "Bash(export SUPABASE_ACCESS_TOKEN=\"sbp_916de0a596c8dc15d9c5d350538d830b00511431\")",
       "Bash(supabase functions:*)",
       "Bash(cd:*)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(xargs -I {} basename {})",
+      "Bash(xargs basename:*)",
+      "Bash(then)",
+      "Bash(echo \"$f: needs update\")",
+      "Bash(else)",
+      "Bash(echo \"$f: check manually\")"
     ]
   }
 }
