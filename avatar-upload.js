@@ -1,7 +1,10 @@
 // Generic avatar upload utility for ServiceWindow dashboards
-// Uses Cloudflare R2 for photo storage via presigned URLs
+// Uses Cloudflare R2 for photo storage via Cloudflare Worker proxy
 // Usage: uploadProfileAvatar(event, userRole, tableName)
 // Example: <input type="file" onchange="uploadProfileAvatar(event, 'service_provider', 'profiles')">
+// Worker URL should be set in R2_UPLOAD_WORKER_URL constant below
+
+const R2_UPLOAD_WORKER_URL = 'https://r2-upload.servicewindow.workers.dev';
 
 async function uploadProfileAvatar(event, userRole, tableName = 'profiles') {
   const file = event.target.files[0];
@@ -25,30 +28,28 @@ async function uploadProfileAvatar(event, userRole, tableName = 'profiles') {
   const filename = `${userRole}/${user.id}.${ext}`;
 
   try {
-    // Step 1: Request presigned URL from Edge Function
-    const { uploadUrl, publicUrl } = await getPresignedUploadUrl(
-      filename,
-      file.type
-    );
+    // Step 1: Upload directly to R2 via Cloudflare Worker
+    const uploadUrl = new URL(R2_UPLOAD_WORKER_URL);
+    uploadUrl.searchParams.set('filename', filename);
+    uploadUrl.searchParams.set('contentType', file.type);
 
-    if (!uploadUrl) {
-      throw new Error('Failed to get upload URL');
-    }
-
-    // Step 2: Upload directly to R2 using presigned URL
-    const uploadResponse = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': file.type,
-      },
+    const uploadResponse = await fetch(uploadUrl.toString(), {
+      method: 'POST',
       body: file,
     });
 
     if (!uploadResponse.ok) {
-      throw new Error(`R2 upload failed: ${uploadResponse.statusText}`);
+      throw new Error(`Upload failed: ${uploadResponse.statusText}`);
     }
 
-    // Step 3: Save public URL to database
+    const uploadResult = await uploadResponse.json();
+    if (!uploadResult.success || !uploadResult.url) {
+      throw new Error('Upload returned invalid response');
+    }
+
+    const publicUrl = uploadResult.url;
+
+    // Step 2: Save public URL to database
     const { error: dbError } = await window.supabase
       .from(tableName)
       .update({ avatar_url: publicUrl })
@@ -56,7 +57,7 @@ async function uploadProfileAvatar(event, userRole, tableName = 'profiles') {
 
     if (dbError) throw dbError;
 
-    // Step 4: Display uploaded image
+    // Step 3: Display uploaded image
     const avatarElement = event.target.closest('[data-avatar-container]')?.querySelector('[data-avatar-image]');
     if (avatarElement) {
       avatarElement.innerHTML = '';
@@ -77,35 +78,6 @@ async function uploadProfileAvatar(event, userRole, tableName = 'profiles') {
 
   // Reset file input
   event.target.value = '';
-}
-
-// Helper function to get presigned upload URL from Edge Function
-async function getPresignedUploadUrl(filename, contentType) {
-  try {
-    const response = await fetch(
-      'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/get-upload-url',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await window.supabase.auth.getSession()).data.session?.access_token || ''}`,
-        },
-        body: JSON.stringify({
-          filename,
-          contentType,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Edge Function error: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (err) {
-    console.error('Error getting presigned URL:', err);
-    throw err;
-  }
 }
 
 // Helper function to display avatar from URL or initials

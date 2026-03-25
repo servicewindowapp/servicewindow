@@ -2868,19 +2868,23 @@ async function uploadAvatar(event) {
   const filename = `trucks/${user.id}.${ext}`;
 
   try {
-    // Step 1: Request presigned URL from Edge Function
-    const { uploadUrl, publicUrl } = await getPresignedUploadUrl(filename, file.type);
-    if (!uploadUrl) throw new Error('Failed to get upload URL');
+    // Step 1: Upload directly to R2 via Cloudflare Worker
+    const uploadUrl = new URL('https://r2-upload.servicewindow.workers.dev');
+    uploadUrl.searchParams.set('filename', filename);
+    uploadUrl.searchParams.set('contentType', file.type);
 
-    // Step 2: Upload directly to R2 using presigned URL
-    const uploadResponse = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': file.type },
+    const uploadResponse = await fetch(uploadUrl.toString(), {
+      method: 'POST',
       body: file,
     });
-    if (!uploadResponse.ok) throw new Error(`R2 upload failed: ${uploadResponse.statusText}`);
+    if (!uploadResponse.ok) throw new Error(`Upload failed: ${uploadResponse.statusText}`);
 
-    // Step 3: Get truck ID and update database
+    const uploadResult = await uploadResponse.json();
+    if (!uploadResult.success || !uploadResult.url) throw new Error('Upload returned invalid response');
+
+    const publicUrl = uploadResult.url;
+
+    // Step 2: Get truck ID and update database
     const { data: existing } = await window.supabase
       .from('trucks').select('id').eq('owner_id', user.id).single();
 
@@ -2888,7 +2892,7 @@ async function uploadAvatar(event) {
       await window.supabase.from('trucks').update({ avatar_url: publicUrl }).eq('id', existing.id);
     }
 
-    // Step 4: Display uploaded image
+    // Step 3: Display uploaded image
     document.getElementById('profileAvatar').textContent = '';
     const img = document.createElement('img');
     img.src = publicUrl + '?t=' + Date.now();
