@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Terms of Service — ServiceWindow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* DESIGN TOKENS */
+:root{
+  --fire:#FF5400;--fire-lt:#FF7A33;--fire-pale:#FFF0E8;
+  --navy:#1E3A5F;--smoke:#1C1917;--charcoal:#292524;
+  --warm-gray:#57534E;--mid-gray:#A8A29E;
+  --border:#E7E5E4;--bg:#FAFAF9;--white:#FFFFFF;
+  --green:#16A34A;--green-pale:#F0FDF4;
+  --amber:#D97706;--amber-pale:#FFFBEB;
+  --r:16px;--r-sm:10px;
+  --sh-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
+  --sh-lg:0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+}
+
+/* RESET & BASE */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+img{max-width:100%;height:auto;display:block;}
+a{text-decoration:none;color:var(--fire);}
+
+/* TOP NAV */
+.sw-nav{
+  position:sticky;top:0;z-index:100;
+  background:#fff;border-bottom:1px solid var(--border);
+  padding:12px 20px;display:flex;justify-content:space-between;align-items:center;
+}
+.sw-nav-logo{height:28px;width:auto;}
+.sw-hamburger{
+  background:none;border:none;cursor:pointer;font-size:1.4rem;
+  color:var(--smoke);padding:4px;display:none;
+}
+@media(max-width:767px){.sw-hamburger{display:block;}}
+.sw-menu{
+  position:fixed;top:56px;left:0;width:100%;height:calc(100vh - 56px);
+  background:#fff;z-index:99;transform:translateX(-100%);transition:transform .3s;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sw-menu.open{transform:translateX(0);}
+.sw-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);
+  z-index:98;display:none;
+}
+.sw-overlay.open{display:block;}
+.sw-menu-item{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  color:var(--smoke);font-weight:500;
+}
+.sw-menu-item:hover{background:var(--fire-pale);color:var(--fire);}
+.sw-menu-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);}
+@media(min-width:768px){
+  .sw-nav{padding:12px 40px;}
+  .sw-menu{all:unset;display:flex;gap:24px;position:static;background:transparent;height:auto;}
+  .sw-menu-item{all:unset;padding:0;border:none;color:var(--smoke);font-weight:500;cursor:pointer;transition:color .2s;}
+  .sw-menu-item:hover{background:none;color:var(--fire);}
+  .sw-menu-footer{all:unset;}
+  .sw-overlay{display:none;}
+}
+
+/* PAGE HEADER */
+.page-header{
+  background:var(--smoke);padding:40px 20px;text-align:center;color:#fff;
+}
+.page-header h1{
+  font-family:'Lora',serif;
+  font-size:clamp(1.8rem,6vw,2.4rem);
+  font-weight:700;line-height:1.2;margin-bottom:10px;
+  letter-spacing:-.3px;
+}
+.page-header p{
+  font-size:.95rem;color:rgba(255,255,255,.7);max-width:500px;margin:0 auto;
+}
+@media(min-width:768px){
+  .page-header{padding:48px 40px;}
+}
+
+/* CONTENT SECTION */
+.legal-content{
+  max-width:800px;margin:0 auto;padding:40px 20px;
+}
+.legal-section{
+  margin-bottom:36px;
+}
+.legal-section h2{
+  font-family:'Lora',serif;font-size:1.35rem;
+  font-weight:700;color:var(--navy);margin-bottom:14px;
+}
+.legal-section p{
+  font-family:'Lora',serif;font-size:.95rem;
+  line-height:1.7;margin-bottom:14px;color:var(--warm-gray);
+}
+.legal-section ul{
+  margin:14px 0 14px 20px;padding:0;
+}
+.legal-section li{
+  font-family:'Lora',serif;font-size:.95rem;
+  line-height:1.7;margin-bottom:10px;color:var(--warm-gray);
+}
+@media(min-width:768px){
+  .legal-content{padding:48px 40px;}
+}
+
+/* FOOTER */
+.sw-footer{background:var(--charcoal);padding:36px 16px 28px;}
+@media(min-width:768px){.sw-footer{padding:48px 40px 36px;}}
+.sw-footer-logo{height:30px;width:auto;filter:brightness(0) invert(1);margin-bottom:14px;}
+.sw-footer-tagline{
+  font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:20px;
+}
+.sw-footer-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-bottom:24px;
+}
+@media(min-width:480px){.sw-footer-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:768px){.sw-footer-grid{grid-template-columns:repeat(4,1fr);}}
+.sw-footer-link{
+  font-size:.8rem;color:rgba(255,255,255,.42);
+  transition:color .2s;cursor:pointer;
+}
+.sw-footer-link:hover{color:rgba(255,255,255,.85);}
+.sw-footer-bottom{
+  border-top:1px solid rgba(255,255,255,.08);padding-top:16px;
+  font-size:.7rem;color:rgba(255,255,255,.3);
+}
+
+/* UTILITY */
+.hidden-desktop{display:block;}
+@media(min-width:768px){.hidden-desktop{display:none;}}
+.hidden-mobile{display:none;}
+@media(min-width:768px){.hidden-mobile{display:block;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="sw-nav">
+  <a href="index.html"><img class="sw-nav-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjwhLS1BcnRib2FyZCBjb21tZW50IC0tPjxkZWZzPjwvZGVmcz48Zz48L2c+PHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmb250LWZhbWlseT0iU29yYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0MCIgZmlsbD0iIzAwMGAwMCIgZm9udC13ZWlnaHQ9IjcwMCI+U1c8L3RleHQ+PC9zdmc+Cg==" alt="ServiceWindow"></a>
+  <button class="sw-hamburger" id="swHamburger" onclick="openMenu()">☰</button>
+  <div class="sw-menu" id="swMenu">
+    <a href="index.html" class="sw-menu-item">Home</a>
+    <a href="marketplace.html" class="sw-menu-item">Browse</a>
+    <a href="truck-dashboard.html" class="sw-menu-item">Dashboard</a>
+    <a href="terms.html" class="sw-menu-item">Terms</a>
+    <a href="privacy.html" class="sw-menu-item">Privacy</a>
+  </div>
+</nav>
+<div class="sw-overlay" id="swOverlay" onclick="closeMenu()"></div>
+
+<!-- HEADER SECTION -->
+<header class="page-header">
+  <h1>Terms of Service</h1>
+  <p>ServiceWindow marketplace agreements and policies</p>
+</header>
+
+<!-- CONTENT SECTION -->
+<section class="legal-content">
+
+<div class="legal-section">
+  <h2>1. Platform Description</h2>
+  <p>ServiceWindow is a digital marketplace that connects food truck operators with event organizers, planners, venues, and other service providers in Southwest Florida. ServiceWindow facilitates connections and communications between users but is not a party to any transaction, agreement, or dispute that may arise between users. ServiceWindow does not guarantee bookings, deliveries, services, or outcomes.</p>
+</div>
+
+<div class="legal-section">
+  <h2>2. User Eligibility & Account Responsibilities</h2>
+  <p>You represent and warrant that:</p>
+  <ul>
+    <li>You are at least 18 years of age</li>
+    <li>You have the authority to enter into this agreement and use the platform</li>
+    <li>All information you provide during registration is accurate and current</li>
+    <li>You will maintain the confidentiality of your account credentials</li>
+    <li>You are responsible for all activity under your account</li>
+  </ul>
+</div>
+
+<div class="legal-section">
+  <h2>3. Truck Operator Obligations</h2>
+  <p>As a food truck operator using ServiceWindow, you agree to:</p>
+  <ul>
+    <li>Maintain accurate and current business information, including hours, menu, and pricing</li>
+    <li>Hold all required permits and licenses for food service operations</li>
+    <li>Comply with all local, state, and federal health and food safety regulations</li>
+    <li>Maintain valid food handler certifications for all staff members</li>
+    <li>Respond to booking requests in a timely and professional manner</li>
+    <li>Honor confirmed bookings or notify organizers immediately of any cancellations</li>
+  </ul>
+</div>
+
+<div class="legal-section">
+  <h2>4. Organizer Obligations</h2>
+  <p>As an event organizer or planner using ServiceWindow, you agree to:</p>
+  <ul>
+    <li>Provide accurate information about your event, including date, time, location, and expected guest count</li>
+    <li>Communicate clearly and honestly with food truck operators</li>
+    <li>Not submit fraudulent, spam, or malicious booking requests</li>
+    <li>Provide reasonable notice (typically 2 weeks) before events</li>
+    <li>Honor agreements made with truck operators or provide honest notice of cancellation</li>
+  </ul>
+</div>
+
+<div class="legal-section">
+  <h2>5. Booking & Cancellation</h2>
+  <p>ServiceWindow facilitates bookings between users but does not guarantee completion, acceptance, or satisfaction of any booking. Each user is responsible for:</p>
+  <ul>
+    <li>Negotiating terms, pricing, and menu details directly with the other party</li>
+    <li>Confirming all details before the event date</li>
+    <li>Following the cancellation policies agreed upon between the parties</li>
+  </ul>
+  <p>ServiceWindow does not mediate disputes between users or handle refunds.</p>
+</div>
+
+<div class="legal-section">
+  <h2>6. Payment & Subscription Terms</h2>
+  <p>ServiceWindow operates on a subscription basis. Payment terms are:</p>
+  <ul>
+    <li>Monthly subscription plans are billed automatically each month</li>
+    <li>Lifetime founding memberships are charged once at purchase</li>
+    <li>All billing is processed securely through Stripe</li>
+    <li>Refunds are issued within 30 days of request if the service has not been used</li>
+    <li>Subscription cancellations are effective at the end of your current billing period</li>
+  </ul>
+</div>
+
+<div class="legal-section">
+  <h2>7. Prohibited Conduct</h2>
+  <p>You agree not to:</p>
+  <ul>
+    <li>Use the platform for spam, harassment, or abusive communication</li>
+    <li>Post fake, fraudulent, or misleading listings or information</li>
+    <li>Impersonate another user or entity</li>
+    <li>Attempt to bypass payment systems or commit fraud</li>
+    <li>Share login credentials or allow unauthorized access to your account</li>
+    <li>Engage in any illegal activity or violate local, state, or federal laws</li>
+    <li>Solicit contact information to circumvent ServiceWindow's platform</li>
+  </ul>
+  <p>Violations of these terms may result in account suspension or permanent ban.</p>
+</div>
+
+<div class="legal-section">
+  <h2>8. Limitation of Liability</h2>
+  <p>ServiceWindow is provided "as is" without warranties of any kind. To the maximum extent permitted by law:</p>
+  <ul>
+    <li>ServiceWindow is not liable for disputes, disagreements, or breaches between users</li>
+    <li>ServiceWindow is not liable for food quality, safety, or compliance issues</li>
+    <li>ServiceWindow is not liable for cancelled or unfulfilled bookings</li>
+    <li>ServiceWindow is not liable for personal injury, property damage, or other losses arising from user interactions</li>
+    <li>Your sole remedy for any issue is termination of your account and refund of unused subscription fees</li>
+  </ul>
+</div>
+
+<div class="legal-section">
+  <h2>9. Governing Law & Jurisdiction</h2>
+  <p>These terms are governed by the laws of the State of Florida, without regard to conflict of law principles. Any legal action or proceeding shall be brought exclusively in the state or federal courts located in Collier County, Florida, and you consent to the jurisdiction and venue of those courts.</p>
+</div>
+
+<div class="legal-section">
+  <h2>10. Contact & Support</h2>
+  <p>For legal inquiries, contact us at <a href="mailto:legal@servicewindow.app">legal@servicewindow.app</a></p>
+  <p>These terms were last updated January 1, 2025.</p>
+</div>
+
+</section>
+
+<!-- FOOTER SECTION -->
+<footer class="sw-footer">
+  <img class="sw-footer-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjwhLS1BcnRib2FyZCBjb21tZW50IC0tPjxkZWZzPjwvZGVmcz48Zz48L2c+PHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmb250LWZhbWlseT0iU29yYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0MCIgZmlsbD0iI2ZmZmZmZiIgZm9udC13ZWlnaHQ9IjcwMCI+U1c8L3RleHQ+PC9zdmc+Cg==" alt="ServiceWindow">
+  <p class="sw-footer-tagline">Connecting Food Trucks with Events in SW Florida</p>
+  <div class="sw-footer-grid">
+    <a href="index.html" class="sw-footer-link">Home</a>
+    <a href="marketplace.html" class="sw-footer-link">Browse</a>
+    <a href="truck-dashboard.html" class="sw-footer-link">Dashboard</a>
+    <a href="terms.html" class="sw-footer-link">Terms</a>
+    <a href="privacy.html" class="sw-footer-link">Privacy</a>
+    <a href="mailto:legal@servicewindow.app" class="sw-footer-link">Contact Legal</a>
+  </div>
+  <div class="sw-footer-bottom">
+    <p>&copy; 2025 ServiceWindow, Inc. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Nav and menu scripts -->
+<script>
+function openMenu(){
+  document.getElementById('swMenu').classList.add('open');
+  document.getElementById('swOverlay').classList.add('open');
+  document.getElementById('swHamburger').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMenu(){
+  document.getElementById('swMenu').classList.remove('open');
+  document.getElementById('swOverlay').classList.remove('open');
+  const h=document.getElementById('swHamburger');
+  if(h)h.classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
+</script>
+</body>
+</html>

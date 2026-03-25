@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Privacy Policy — ServiceWindow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* DESIGN TOKENS */
+:root{
+  --fire:#FF5400;--fire-lt:#FF7A33;--fire-pale:#FFF0E8;
+  --navy:#1E3A5F;--smoke:#1C1917;--charcoal:#292524;
+  --warm-gray:#57534E;--mid-gray:#A8A29E;
+  --border:#E7E5E4;--bg:#FAFAF9;--white:#FFFFFF;
+  --green:#16A34A;--green-pale:#F0FDF4;
+  --amber:#D97706;--amber-pale:#FFFBEB;
+  --r:16px;--r-sm:10px;
+  --sh-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
+  --sh-lg:0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+}
+
+/* RESET & BASE */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+img{max-width:100%;height:auto;display:block;}
+a{text-decoration:none;color:var(--fire);}
+
+/* TOP NAV */
+.sw-nav{
+  position:sticky;top:0;z-index:100;
+  background:#fff;border-bottom:1px solid var(--border);
+  padding:12px 20px;display:flex;justify-content:space-between;align-items:center;
+}
+.sw-nav-logo{height:28px;width:auto;}
+.sw-hamburger{
+  background:none;border:none;cursor:pointer;font-size:1.4rem;
+  color:var(--smoke);padding:4px;display:none;
+}
+@media(max-width:767px){.sw-hamburger{display:block;}}
+.sw-menu{
+  position:fixed;top:56px;left:0;width:100%;height:calc(100vh - 56px);
+  background:#fff;z-index:99;transform:translateX(-100%);transition:transform .3s;
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sw-menu.open{transform:translateX(0);}
+.sw-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);
+  z-index:98;display:none;
+}
+.sw-overlay.open{display:block;}
+.sw-menu-item{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  color:var(--smoke);font-weight:500;
+}
+.sw-menu-item:hover{background:var(--fire-pale);color:var(--fire);}
+.sw-menu-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);}
+@media(min-width:768px){
+  .sw-nav{padding:12px 40px;}
+  .sw-menu{all:unset;display:flex;gap:24px;position:static;background:transparent;height:auto;}
+  .sw-menu-item{all:unset;padding:0;border:none;color:var(--smoke);font-weight:500;cursor:pointer;transition:color .2s;}
+  .sw-menu-item:hover{background:none;color:var(--fire);}
+  .sw-menu-footer{all:unset;}
+  .sw-overlay{display:none;}
+}
+
+/* PAGE HEADER */
+.page-header{
+  background:var(--smoke);padding:40px 20px;text-align:center;color:#fff;
+}
+.page-header h1{
+  font-family:'Lora',serif;
+  font-size:clamp(1.8rem,6vw,2.4rem);
+  font-weight:700;line-height:1.2;margin-bottom:10px;
+  letter-spacing:-.3px;
+}
+.page-header p{
+  font-size:.95rem;color:rgba(255,255,255,.7);max-width:500px;margin:0 auto;
+}
+@media(min-width:768px){
+  .page-header{padding:48px 40px;}
+}
+
+/* CONTENT SECTION */
+.legal-content{
+  max-width:800px;margin:0 auto;padding:40px 20px;
+}
+.legal-section{
+  margin-bottom:36px;
+}
+.legal-section h2{
+  font-family:'Lora',serif;font-size:1.35rem;
+  font-weight:700;color:var(--navy);margin-bottom:14px;
+}
+.legal-section p{
+  font-family:'Lora',serif;font-size:.95rem;
+  line-height:1.7;margin-bottom:14px;color:var(--warm-gray);
+}
+.legal-section ul{
+  margin:14px 0 14px 20px;padding:0;
+}
+.legal-section li{
+  font-family:'Lora',serif;font-size:.95rem;
+  line-height:1.7;margin-bottom:10px;color:var(--warm-gray);
+}
+@media(min-width:768px){
+  .legal-content{padding:48px 40px;}
+}
+
+/* FOOTER */
+.sw-footer{background:var(--charcoal);padding:36px 16px 28px;}
+@media(min-width:768px){.sw-footer{padding:48px 40px 36px;}}
+.sw-footer-logo{height:30px;width:auto;filter:brightness(0) invert(1);margin-bottom:14px;}
+.sw-footer-tagline{
+  font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:20px;
+}
+.sw-footer-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-bottom:24px;
+}
+@media(min-width:480px){.sw-footer-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:768px){.sw-footer-grid{grid-template-columns:repeat(4,1fr);}}
+.sw-footer-link{
+  font-size:.8rem;color:rgba(255,255,255,.42);
+  transition:color .2s;cursor:pointer;
+}
+.sw-footer-link:hover{color:rgba(255,255,255,.85);}
+.sw-footer-bottom{
+  border-top:1px solid rgba(255,255,255,.08);padding-top:16px;
+  font-size:.7rem;color:rgba(255,255,255,.3);
+}
+
+/* UTILITY */
+.hidden-desktop{display:block;}
+@media(min-width:768px){.hidden-desktop{display:none;}}
+.hidden-mobile{display:none;}
+@media(min-width:768px){.hidden-mobile{display:block;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="sw-nav">
+  <a href="index.html"><img class="sw-nav-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjwhLS1BcnRib2FyZCBjb21tZW50IC0tPjxkZWZzPjwvZGVmcz48Zz48L2c+PHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmb250LWZhbWlseT0iU29yYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0MCIgZmlsbD0iIzAwMDAwMCIgZm9udC13ZWlnaHQ9IjcwMCI+U1c8L3RleHQ+PC9zdmc+Cg==" alt="ServiceWindow"></a>
+  <button class="sw-hamburger" id="swHamburger" onclick="openMenu()">☰</button>
+  <div class="sw-menu" id="swMenu">
+    <a href="index.html" class="sw-menu-item">Home</a>
+    <a href="marketplace.html" class="sw-menu-item">Browse</a>
+    <a href="truck-dashboard.html" class="sw-menu-item">Dashboard</a>
+    <a href="terms.html" class="sw-menu-item">Terms</a>
+    <a href="privacy.html" class="sw-menu-item">Privacy</a>
+  </div>
+</nav>
+<div class="sw-overlay" id="swOverlay" onclick="closeMenu()"></div>
+
+<!-- HEADER SECTION -->
+<header class="page-header">
+  <h1>Privacy Policy</h1>
+  <p>How we collect, use, and protect your information</p>
+</header>
+
+<!-- CONTENT SECTION -->
+<section class="legal-content">
+
+<div class="legal-section">
+  <h2>1. What Data We Collect</h2>
+  <p>ServiceWindow collects and processes the following data:</p>
+  <ul>
+    <li><strong>Account Information:</strong> Name, email, phone number, business name, location, and role (truck operator, planner, organizer, etc.)</li>
+    <li><strong>Profile Information:</strong> Avatar image, business description, cuisine type, certifications, and service details</li>
+    <li><strong>Usage Data:</strong> Pages visited, features used, interaction patterns, and time spent on the platform</li>
+    <li><strong>Communication Data:</strong> Messages sent through the platform, support requests, and feedback</li>
+    <li><strong>Transaction Data:</strong> Booking history, subscription plan, billing information (processed by Stripe)</li>
+  </ul>
+</div>
+
+<div class="legal-section">
+  <h2>2. How We Use Your Data</h2>
+  <p>We use the data we collect for the following purposes:</p>
+  <ul>
+    <li>Provide and improve the ServiceWindow platform</li>
+    <li>Send important notifications about bookings, messages, and account activity</li>
+    <li>Process subscription payments and billing</li>
+    <li>Analyze platform usage to identify trends and improvements</li>
+    <li>Prevent fraud, abuse, and security threats</li>
+    <li>Comply with legal obligations and court orders</li>
+    <li>Respond to user inquiries and support requests</li>
+  </ul>
+</div>
+
+<div class="legal-section">
+  <h2>3. Data Sharing & Third Parties</h2>
+  <p>ServiceWindow does not sell, rent, or trade your personal data. However, we share data with the following service providers:</p>
+  <ul>
+    <li><strong>Stripe:</strong> Payment processing for subscriptions and billing</li>
+    <li><strong>Supabase:</strong> Database and storage services that host your account and profile data</li>
+    <li><strong>Resend:</strong> Email delivery service for notifications and communications</li>
+  </ul>
+  <p>These service providers are contractually bound to keep your data confidential and use it only for the purposes we specify.</p>
+</div>
+
+<div class="legal-section">
+  <h2>4. Your Data Rights</h2>
+  <p>You have the right to:</p>
+  <ul>
+    <li>Access your personal data and request a copy of it</li>
+    <li>Correct inaccurate or incomplete information</li>
+    <li>Request deletion of your account and associated data</li>
+    <li>Opt out of marketing communications</li>
+    <li>Export your data in a portable format</li>
+  </ul>
+  <p>To exercise any of these rights, contact us at <a href="mailto:privacy@servicewindow.app">privacy@servicewindow.app</a></p>
+</div>
+
+<div class="legal-section">
+  <h2>5. Cookie Policy</h2>
+  <p>ServiceWindow uses cookies and similar tracking technologies to:</p>
+  <ul>
+    <li>Remember your login information and preferences</li>
+    <li>Analyze how you use the platform</li>
+    <li>Improve user experience and platform functionality</li>
+  </ul>
+  <p>Cookies are small files stored on your device. You can disable cookies in your browser settings, but this may limit platform functionality. We do not use cookies to track you across third-party websites.</p>
+</div>
+
+<div class="legal-section">
+  <h2>6. Data Security</h2>
+  <p>We implement industry-standard security measures to protect your data from unauthorized access, including:</p>
+  <ul>
+    <li>Encrypted data transmission (HTTPS)</li>
+    <li>Secure password storage</li>
+    <li>Regular security audits</li>
+    <li>Limited access to personal information</li>
+  </ul>
+  <p>However, no security system is completely secure. You are responsible for maintaining the confidentiality of your login credentials.</p>
+</div>
+
+<div class="legal-section">
+  <h2>7. Data Retention</h2>
+  <p>We retain your data for as long as your account is active. Upon account deletion, we remove your personal information within 30 days, except where required by law or for legitimate business purposes.</p>
+</div>
+
+<div class="legal-section">
+  <h2>8. Children's Privacy</h2>
+  <p>ServiceWindow is not directed to users under 18 years of age. We do not knowingly collect personal information from children. If we learn we have collected data from a minor, we will delete it immediately.</p>
+</div>
+
+<div class="legal-section">
+  <h2>9. Changes to This Policy</h2>
+  <p>We may update this privacy policy to reflect changes in our practices or legal requirements. We will notify you of material changes by email or by posting a notice on the platform. Your continued use of ServiceWindow constitutes acceptance of the updated policy.</p>
+</div>
+
+<div class="legal-section">
+  <h2>10. Contact & Data Protection Officer</h2>
+  <p>For privacy inquiries or data protection concerns, contact us at <a href="mailto:privacy@servicewindow.app">privacy@servicewindow.app</a></p>
+  <p>This privacy policy was last updated January 1, 2025.</p>
+</div>
+
+</section>
+
+<!-- FOOTER SECTION -->
+<footer class="sw-footer">
+  <img class="sw-footer-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjwhLS1BcnRib2FyZCBjb21tZW50IC0tPjxkZWZzPjwvZGVmcz48Zz48L2c+PHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmb250LWZhbWlseT0iU29yYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0MCIgZmlsbD0iI2ZmZmZmZiIgZm9udC13ZWlnaHQ9IjcwMCI+U1c8L3RleHQ+PC9zdmc+Cg==" alt="ServiceWindow">
+  <p class="sw-footer-tagline">Connecting Food Trucks with Events in SW Florida</p>
+  <div class="sw-footer-grid">
+    <a href="index.html" class="sw-footer-link">Home</a>
+    <a href="marketplace.html" class="sw-footer-link">Browse</a>
+    <a href="truck-dashboard.html" class="sw-footer-link">Dashboard</a>
+    <a href="terms.html" class="sw-footer-link">Terms</a>
+    <a href="privacy.html" class="sw-footer-link">Privacy</a>
+    <a href="mailto:privacy@servicewindow.app" class="sw-footer-link">Contact Privacy</a>
+  </div>
+  <div class="sw-footer-bottom">
+    <p>&copy; 2025 ServiceWindow, Inc. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Nav and menu scripts -->
+<script>
+function openMenu(){
+  document.getElementById('swMenu').classList.add('open');
+  document.getElementById('swOverlay').classList.add('open');
+  document.getElementById('swHamburger').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMenu(){
+  document.getElementById('swMenu').classList.remove('open');
+  document.getElementById('swOverlay').classList.remove('open');
+  const h=document.getElementById('swHamburger');
+  if(h)h.classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
+</script>
+</body>
+</html>
