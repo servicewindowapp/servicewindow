@@ -20,7 +20,7 @@ async function signRequest(
   console.log("[signRequest] service:", service);
   const region = "auto";
   console.log("[signRequest] region:", region);
-  const host = `${R2_ACCOUNT_ID}.r2.googleapis.com`;
+  const host = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
   console.log("[signRequest] host:", host);
   const credentialScope = `${new Date().toISOString().split("T")[0]}/${region}/${service}/aws4_request`;
   console.log("[signRequest] credentialScope:", credentialScope);
@@ -231,7 +231,7 @@ serve(async (req) => {
     console.log("[get-upload-url] expirationTime:", expirationTime);
     const path = `/${R2_BUCKET_NAME}/${filename}`;
     console.log("[get-upload-url] path:", path);
-    const host = `${R2_ACCOUNT_ID}.r2.googleapis.com`;
+    const host = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
     console.log("[get-upload-url] host:", host);
 
     const headers: Record<string, string> = {
