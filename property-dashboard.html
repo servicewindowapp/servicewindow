@@ -467,9 +467,32 @@ tr:hover td{background:var(--bg);}
   border:none;border-radius:7px;font-size:.74rem;font-weight:700;
   flex-shrink:0;cursor:pointer;
 }
+
+/* ═══════════════════════════════════════
+   BOTTOM NAV BAR (mobile)
+═══════════════════════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:80;
+  height:60px;background:#fff;border-top:1px solid var(--border);
+  display:none;flex-direction:row;width:100%;padding:0;margin:0;
+}
+@media(max-width:767px){
+  .bottom-nav{display:flex;}
+  body.has-bottom-nav{padding-bottom:60px;}
+}
+.bn-tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:4px 0;color:var(--warm-gray);text-decoration:none;
+  font-size:.65rem;font-weight:600;cursor:pointer;transition:color .2s;
+  min-height:44px;gap:2px;border:none;background:none;
+}
+.bn-tab:hover{color:var(--fire);}
+.bn-tab.active{color:var(--fire);}
+.bn-icon{font-size:1.4rem;line-height:1;}
+.bn-label{white-space:nowrap;}
 </style>
 </head>
-<body>
+<body class="has-bottom-nav">
 
 <div class="app">
 
@@ -1958,5 +1981,15 @@ if (window.supabase) {
 }
 </script>
 <script src="avatar-upload.js"></script>
+
+<!-- BOTTOM NAV (property-dashboard) -->
+<nav class="bottom-nav" aria-label="Dashboard navigation">
+  <a class="bn-tab active" href="#" onclick="setPanel('home');return false;"><span class="bn-icon">📊</span><span class="bn-label">Dashboard</span></a>
+  <a class="bn-tab" href="#" onclick="setPanel('requests');return false;"><span class="bn-icon">📬</span><span class="bn-label">Requests</span></a>
+  <a class="bn-tab" href="#" onclick="setPanel('messages');return false;"><span class="bn-icon">💬</span><span class="bn-label">Messages</span></a>
+  <a class="bn-tab" href="#" onclick="setPanel('listings');return false;"><span class="bn-icon">📋</span><span class="bn-label">Listings</span></a>
+  <a class="bn-tab" href="#" onclick="setPanel('profile');return false;"><span class="bn-icon">👤</span><span class="bn-label">Profile</span></a>
+</nav>
+
 </body>
 </html>

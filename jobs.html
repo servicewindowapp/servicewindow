@@ -628,6 +628,29 @@ textarea.form-input{height:auto;padding:12px 14px;resize:vertical;min-height:90p
 ═══════════════════════════════════════════════════ */
 button,a{transition:opacity .15s,transform .15s,background .15s,color .15s,border-color .15s;}
 button:active{opacity:.85;transform:scale(.98);}
+
+/* ═══════════════════════════════════════
+   BOTTOM NAV BAR (mobile)
+═══════════════════════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:80;
+  height:60px;background:#fff;border-top:1px solid var(--border);
+  display:none;flex-direction:row;width:100%;padding:0;margin:0;
+}
+@media(max-width:767px){
+  .bottom-nav{display:flex;}
+  body.has-bottom-nav{padding-bottom:60px;}
+}
+.bn-tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:4px 0;color:var(--warm-gray);text-decoration:none;
+  font-size:.65rem;font-weight:600;cursor:pointer;transition:color .2s;
+  min-height:44px;gap:2px;border:none;background:none;
+}
+.bn-tab:hover{color:var(--fire);}
+.bn-tab.active{color:var(--fire);}
+.bn-icon{font-size:1.4rem;line-height:1;}
+.bn-label{white-space:nowrap;}
 </style>
 </head>
 <body class="has-bottom-nav">
@@ -1605,5 +1628,15 @@ async function initNavAuth(){
 async function navSignOut(){if(window.supabase)await window.supabase.auth.signOut();window.location.href='index.html';}
 if(window.supabase){initNavAuth();}else{document.addEventListener('supabase-ready',initNavAuth);}
 </script>
+
+<!-- BOTTOM NAV (jobs) -->
+<nav class="bottom-nav" aria-label="Main navigation">
+  <a class="bn-tab" href="index.html"><span class="bn-icon">🏠</span><span class="bn-label">Home</span></a>
+  <a class="bn-tab" href="find-trucks.html"><span class="bn-icon">🚚</span><span class="bn-label">Trucks</span></a>
+  <a class="bn-tab" href="marketplace.html"><span class="bn-icon">📋</span><span class="bn-label">Marketplace</span></a>
+  <a class="bn-tab active" href="jobs.html"><span class="bn-icon">✏️</span><span class="bn-label">Jobs</span></a>
+  <a class="bn-tab" href="auth.html"><span class="bn-icon">👤</span><span class="bn-label">Account</span></a>
+</nav>
+
 </body>
 </html>
