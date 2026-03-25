@@ -83,7 +83,7 @@ async function uploadProfileAvatar(event, userRole, tableName = 'profiles') {
 async function getPresignedUploadUrl(filename, contentType) {
   try {
     const response = await fetch(
-      new URL('/functions/v1/get-upload-url', window.location.origin).toString(),
+      'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/get-upload-url',
       {
         method: 'POST',
         headers: {
