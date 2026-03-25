@@ -605,7 +605,7 @@ async function handleForgotPassword(e){
   if(!email){ showError('Enter your email address above, then click Forgot password.'); return; }
   if(!window.supabase){ showError('Not connected. Try again in a moment.'); return; }
   setLoading(true);
-  const { error } = await window.supabase.auth.resetPasswordForEmail(email);
+  const { error } = await window.supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://servicewindow.app/reset-password.html' });
   setLoading(false);
   if(error){ showError(error.message); return; }
   clearError();
