@@ -111,8 +111,16 @@ async function signHmac(key: string | ArrayBuffer, data: string): Promise<string
 }
 
 serve(async (req) => {
-  // Handle CORS
-  if (req.method === "OPTIONS") {
+  // Log environment variables at the start
+  console.log("[get-upload-url] Starting request - Environment variables check:");
+  console.log("[get-upload-url] R2_ACCOUNT_ID exists:", !!Deno.env.get("R2_ACCOUNT_ID"));
+  console.log("[get-upload-url] R2_ACCESS_KEY_ID exists:", !!Deno.env.get("R2_ACCESS_KEY_ID"));
+  console.log("[get-upload-url] R2_SECRET_ACCESS_KEY exists:", !!Deno.env.get("R2_SECRET_ACCESS_KEY"));
+  console.log("[get-upload-url] R2_PUBLIC_URL_BASE exists:", !!Deno.env.get("R2_PUBLIC_URL_BASE"));
+
+  try {
+    // Handle CORS
+    if (req.method === "OPTIONS") {
     return new Response("ok", {
       headers: {
         "Access-Control-Allow-Origin": "https://servicewindow.app",
@@ -134,7 +142,6 @@ serve(async (req) => {
     });
   }
 
-  try {
     if (!R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_PUBLIC_URL_BASE) {
       return new Response(
         JSON.stringify({
@@ -233,11 +240,13 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error("Error generating presigned URL:", error);
+    console.error("[get-upload-url] Caught error:", error);
+    console.error("[get-upload-url] Error message:", error instanceof Error ? error.message : String(error));
+    console.error("[get-upload-url] Error stack:", error instanceof Error ? error.stack : "No stack trace");
     return new Response(
       JSON.stringify({
         error: "Failed to generate presigned URL",
-        message: error.message,
+        message: error instanceof Error ? error.message : String(error),
       }),
       {
         status: 500,
