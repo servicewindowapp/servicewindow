@@ -4,7 +4,7 @@
 // Example: <input type="file" onchange="uploadProfileAvatar(event, 'service_provider', 'profiles')">
 // Worker URL should be set in R2_UPLOAD_WORKER_URL constant below
 
-const R2_UPLOAD_WORKER_URL = 'https://r2-upload.servicewindow.workers.dev';
+const R2_UPLOAD_WORKER_URL = 'https://r2-upload.servicewindowapp.workers.dev';
 
 async function uploadProfileAvatar(event, userRole, tableName = 'profiles') {
   const file = event.target.files[0];

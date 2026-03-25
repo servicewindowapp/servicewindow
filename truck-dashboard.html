@@ -2869,7 +2869,7 @@ async function uploadAvatar(event) {
 
   try {
     // Step 1: Upload directly to R2 via Cloudflare Worker
-    const uploadUrl = new URL('https://r2-upload.servicewindow.workers.dev');
+    const uploadUrl = new URL('https://r2-upload.servicewindowapp.workers.dev');
     uploadUrl.searchParams.set('filename', filename);
     uploadUrl.searchParams.set('contentType', file.type);
 
