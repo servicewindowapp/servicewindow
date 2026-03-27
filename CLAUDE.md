@@ -201,6 +201,17 @@ After all three files are updated:
 
 ---
 
+## Known Issues & Browser Fixes
+
+### Brave Mobile Auth
+Brave browser on mobile blocks localStorage and cookies aggressively. The auth system handles this with:
+- **supabase-client.js**: Initialized with `detectSessionInUrl: true`, `persistSession: true`, `flowType: 'implicit'`
+- **auth.html**: Uses `getSession()` + 800ms delay before redirect to ensure session is persisted
+- **Dashboard guards**: Try `getSession()` first (Chrome), then fall back to `onAuthStateChange` listener (Brave extracts session from URL hash), with 5-second hard timeout
+- **Do not change** these settings — they ensure auth works across Chrome, Brave, Firefox, and Safari mobile
+
+---
+
 ## Delivery
 When complete, run:
   git add -A

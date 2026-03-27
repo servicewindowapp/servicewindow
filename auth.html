@@ -504,44 +504,58 @@ async function redirectByRole(userId, userEmail){
   try {
     console.log('✓ [AUTH] Redirecting user:', userId, 'email:', userEmail);
 
-    // Email fallback: force admin dashboard for wesfitz72@gmail.com
-    if(userEmail === 'wesfitz72@gmail.com'){
-      console.log('✓ [AUTH] Admin email detected — forcing admin-dashboard.html');
-      // Flush session and wait before redirecting
-      await window.supabase.auth.getSession();
-      await new Promise(resolve => setTimeout(resolve, 500));
-      window.location.href = 'admin-dashboard.html';
+    // Get the full session (includes token in case Brave blocked localStorage)
+    const { data: { session }, error: sessionErr } = await window.supabase.auth.getSession();
+    if(sessionErr || !session){
+      console.warn('✗ [AUTH] Session not found after sign-in:', sessionErr?.message);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      window.location.replace('truck-dashboard.html');
       return;
     }
 
-    const { data: profile, error } = await window.supabase
+    // Email fallback: force admin dashboard for wesfitz72@gmail.com
+    if(userEmail === 'wesfitz72@gmail.com'){
+      console.log('✓ [AUTH] Admin email detected — forcing admin-dashboard.html');
+      await new Promise(resolve => setTimeout(resolve, 800));
+      window.location.replace('admin-dashboard.html');
+      return;
+    }
+
+    // Fetch profile to determine role
+    const { data: profile, error: profileErr } = await window.supabase
       .from('profiles')
       .select('role')
-      .eq('id', userId)
+      .eq('id', session.user.id)
       .single();
 
-    if(error){
-      console.warn('✗ [AUTH] Profile fetch error:', error.message);
+    if(profileErr){
+      console.warn('✗ [AUTH] Profile fetch error:', profileErr.message);
     } else {
       console.log('✓ [AUTH] Profile fetched — role:', profile?.role);
     }
 
-    // If profile lookup fails, default to truck-dashboard
+    // Determine destination dashboard
     const role = (profile && profile.role) || 'truck';
-    const dest = ROLE_DASHBOARDS[role] || 'truck-dashboard.html';
+    const dashboardMap = {
+      admin: 'admin-dashboard.html',
+      truck: 'truck-dashboard.html',
+      venue: 'venue-dashboard.html',
+      organizer: 'planner-dashboard.html',
+      property: 'property-dashboard.html',
+      service_provider: 'service-provider-dashboard.html',
+      job_seeker: 'jobs-dashboard.html'
+    };
+    const destination = dashboardMap[role] || 'truck-dashboard.html';
 
-    console.log('✓ [AUTH] Redirecting to:', dest);
+    console.log('✓ [AUTH] Redirecting to:', destination);
 
-    // Flush session and wait before redirecting to ensure cookie is written
-    await window.supabase.auth.getSession();
-    await new Promise(resolve => setTimeout(resolve, 500));
-    window.location.href = dest;
+    // Give browser time to write session to storage (Brave takes longer)
+    await new Promise(resolve => setTimeout(resolve, 800));
+    window.location.replace(destination);
   } catch(err) {
-    // Profile doesn't exist yet or error — redirect to truck dashboard
     console.error('✗ [AUTH] Redirect failed:', err.message);
-    await window.supabase.auth.getSession();
-    await new Promise(resolve => setTimeout(resolve, 500));
-    window.location.href = 'truck-dashboard.html';
+    await new Promise(resolve => setTimeout(resolve, 800));
+    window.location.replace('truck-dashboard.html');
   }
 }
 

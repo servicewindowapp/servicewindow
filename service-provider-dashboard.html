@@ -1701,53 +1701,53 @@ async function displayTrialBanner(userId){
 
 
 // Initialize with auth state listener to prevent redirect loops
-function setupAuth() {
-  console.log('[PROVIDER] Setting up auth guard with onAuthStateChange');
+async function checkAuth() {
+  console.log('[PROVIDER] Checking auth — trying getSession first');
 
-  let initialSessionHandled = false;
+  // First try getSession (works on Chrome + stored sessions)
+  const { data: { session } } = await window.supabase.auth.getSession();
+  if (session) {
+    console.log('[PROVIDER] Session found via getSession — initializing');
+    await initDashboard(session.user);
+    return;
+  }
 
-  window.supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log('[PROVIDER] Auth state changed:', event, 'session:', !!session);
+  console.log('[PROVIDER] No session via getSession — listening for auth state change (Brave fallback)');
 
-    // Skip initial null session — real session will follow
-    if (event === 'INITIAL_SESSION' && !session) {
-      console.log('[PROVIDER] Initial session check (no session yet — waiting)');
-      return;
+  // Fallback: listen for auth state change (Brave/Firefox may get session from URL hash)
+  let authStateHandled = false;
+  const { data: { subscription } } = window.supabase.auth.onAuthStateChange(
+    async (event, session) => {
+      console.log('[PROVIDER] Auth state change:', event, 'session:', !!session);
+
+      if (session && !authStateHandled) {
+        authStateHandled = true;
+        subscription.unsubscribe();
+        console.log('[PROVIDER] Session received via auth state change — initializing');
+        await initDashboard(session.user);
+      } else if (event === 'SIGNED_OUT') {
+        window.location.replace('auth.html');
+      }
     }
+  );
 
-    // User logged out
-    if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
-      console.log('[PROVIDER] User logged out or session expired');
-      window.location.href = 'auth.html';
-      return;
+  // Hard timeout: if no session after 5 seconds, redirect to login
+  setTimeout(async () => {
+    if (!authStateHandled) {
+      console.log('[PROVIDER] Auth timeout — checking session one more time');
+      const { data: { session } } = await window.supabase.auth.getSession();
+      if (!session) {
+        console.log('[PROVIDER] No session after timeout — redirecting to auth');
+        window.location.replace('auth.html');
+      }
     }
-
-    // Session confirmed (real session received)
-    if (session && !initialSessionHandled) {
-      initialSessionHandled = true;
-      console.log('[PROVIDER] Session confirmed, initializing dashboard');
-      await initDashboard(session.user);
-    }
-  });
-
-  // Fallback: if no auth state fires in 3 seconds, check manually
-  setTimeout(() => {
-    if (!initialSessionHandled) {
-      console.log('[PROVIDER] Auth timeout fallback triggered');
-      window.supabase.auth.getSession().then(({ data: { session } }) => {
-        if (!session) {
-          console.log('[PROVIDER] No session found after timeout');
-          window.location.href = 'auth.html';
-        }
-      });
-    }
-  }, 3000);
+  }, 5000);
 }
 
 if(window.supabase){
-  setupAuth();
+  checkAuth();
 }else{
-  document.addEventListener('supabase-ready',setupAuth);
+  document.addEventListener('supabase-ready',checkAuth);
 }
 </script>
 <!-- Nav auth state -->
