@@ -809,10 +809,10 @@ img,video{max-width:100%;height:auto;}
   </div>
 
   <!-- TRIAL STATUS BANNER -->
-  <div id="trialStatusBanner" style="display:none;padding:14px 20px;background:#EFF6FF;border-bottom:1px solid #BFDBFE;font-size:.9rem;">
+  <div id="trialStatusBanner" style="display:none;padding:14px 20px;background:#111f2e;border-bottom:1px solid rgba(255,255,255,0.1);font-size:.9rem;color:rgba(255,255,255,0.7);">
     <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;">
       <div id="trialMessage"></div>
-      <a href="pricing.html" style="color:#1D4ED8;font-weight:700;white-space:nowrap;text-decoration:underline;">View Plans →</a>
+      <a href="pricing.html" style="color:var(--fire);font-weight:700;white-space:nowrap;text-decoration:underline;">View Plans →</a>
     </div>
   </div>
 
@@ -2223,13 +2223,13 @@ async function displayTrialBanner(userId) {
       const trialEndDate = trialEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       messageEl.innerHTML = `<strong>Your free trial ends on ${trialEndDate}</strong> — ${daysRemaining} days remaining. Add payment info before then to avoid interruption.`;
       bannerEl.style.display = 'block';
-      bannerEl.style.background = '#DCFCE7';
-      bannerEl.style.borderBottomColor = '#86EFAC';
+      bannerEl.style.background = '#111f2e';
+      bannerEl.style.borderBottomColor = 'rgba(255,255,255,0.1)';
     } else if (isTrialExpired) {
       messageEl.innerHTML = '<strong>Your trial has ended.</strong> <a href="pricing.html" style="color:var(--fire);font-weight:700;text-decoration:none;margin-left:6px;">Upgrade to continue using ServiceWindow →</a>';
       bannerEl.style.display = 'block';
-      bannerEl.style.background = '#FEF3C7';
-      bannerEl.style.borderBottomColor = '#FCD34D';
+      bannerEl.style.background = '#111f2e';
+      bannerEl.style.borderBottomColor = 'rgba(255,255,255,0.1)';
     }
   } catch (err) {
     console.warn('Error checking trial status:', err);
