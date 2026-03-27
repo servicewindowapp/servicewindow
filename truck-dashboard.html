@@ -705,6 +705,7 @@ img,video{max-width:100%;height:auto;}
 .bn-icon{font-size:1.4rem;line-height:1;}
 .bn-label{white-space:nowrap;}
 
+.admin-switcher{position:sticky;top:0;z-index:999;background:#07111a;border-bottom:1px solid rgba(255,107,53,0.3);padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}.admin-switcher-label{color:var(--fire);font-family:DM Mono,monospace;font-size:12px;font-weight:600;margin-right:8px;white-space:nowrap;}.switcher-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);text-decoration:none;padding:5px 12px;border-radius:6px;font-family:Sora,sans-serif;font-size:12px;font-weight:500;transition:all 0.15s ease;white-space:nowrap;}.switcher-btn:hover{background:rgba(255,107,53,0.15);border-color:var(--fire);color:white;}.switcher-btn.active{background:var(--fire);border-color:var(--fire);color:white;}
 </style>
 
 </head>
@@ -794,6 +795,17 @@ img,video{max-width:100%;height:auto;}
         <button class="topbar-btn" onclick="navSignOut()">Logout</button>
       </span>
     </div>
+  </div>
+
+  <div class="admin-switcher">
+    <span class="admin-switcher-label">👁 View As:</span>
+    <a href="truck-dashboard.html" class="switcher-btn active">🚚 Truck</a>
+    <a href="venue-dashboard.html" class="switcher-btn">🏢 Venue</a>
+    <a href="planner-dashboard.html" class="switcher-btn">🎉 Organizer</a>
+    <a href="property-dashboard.html" class="switcher-btn">🏠 Property</a>
+    <a href="service-provider-dashboard.html" class="switcher-btn">🔧 Provider</a>
+    <a href="jobs-dashboard.html" class="switcher-btn">💼 Jobs</a>
+    <a href="admin-dashboard.html" class="switcher-btn">⚙️ Admin</a>
   </div>
 
   <!-- TRIAL STATUS BANNER -->
