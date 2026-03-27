@@ -24,25 +24,25 @@
 /* RESET & BASE */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:'Sora',sans-serif;background:#0d1f2d;color:#ffffff;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 img{max-width:100%;height:auto;display:block;}
 a{text-decoration:none;color:var(--fire);}
 
 /* TOP NAV */
 .sw-nav{
   position:sticky;top:0;z-index:100;
-  background:#fff;border-bottom:1px solid var(--border);
+  background:#0d1f2d;border-bottom:1px solid var(--border);
   padding:12px 20px;display:flex;justify-content:space-between;align-items:center;
 }
 .sw-nav-logo{height:28px;width:auto;}
 .sw-hamburger{
   background:none;border:none;cursor:pointer;font-size:1.4rem;
-  color:var(--smoke);padding:4px;display:none;
+  color:#ffffff;padding:4px;display:none;
 }
 @media(max-width:767px){.sw-hamburger{display:block;}}
 .sw-menu{
   position:fixed;top:56px;left:0;width:100%;height:calc(100vh - 56px);
-  background:#fff;z-index:99;transform:translateX(-100%);transition:transform .3s;
+  background:#0d1f2d;z-index:99;transform:translateX(-100%);transition:transform .3s;
   overflow-y:auto;display:flex;flex-direction:column;
 }
 .sw-menu.open{transform:translateX(0);}
@@ -53,14 +53,14 @@ a{text-decoration:none;color:var(--fire);}
 .sw-overlay.open{display:block;}
 .sw-menu-item{
   padding:16px 20px;border-bottom:1px solid var(--border);
-  color:var(--smoke);font-weight:500;
+  color:#ffffff;font-weight:500;
 }
 .sw-menu-item:hover{background:var(--fire-pale);color:var(--fire);}
 .sw-menu-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);}
 @media(min-width:768px){
   .sw-nav{padding:12px 40px;}
   .sw-menu{all:unset;display:flex;gap:24px;position:static;background:transparent;height:auto;}
-  .sw-menu-item{all:unset;padding:0;border:none;color:var(--smoke);font-weight:500;cursor:pointer;transition:color .2s;}
+  .sw-menu-item{all:unset;padding:0;border:none;color:#ffffff;font-weight:500;cursor:pointer;transition:color .2s;}
   .sw-menu-item:hover{background:none;color:var(--fire);}
   .sw-menu-footer{all:unset;}
   .sw-overlay{display:none;}
@@ -68,7 +68,7 @@ a{text-decoration:none;color:var(--fire);}
 
 /* PAGE HEADER */
 .page-header{
-  background:var(--smoke);padding:40px 20px;text-align:center;color:#fff;
+  background:#0d1f2d;padding:40px 20px;text-align:center;color:#fff;
 }
 .page-header h1{
   font-family:'Lora',serif;
@@ -96,25 +96,25 @@ a{text-decoration:none;color:var(--fire);}
 }
 .legal-section p{
   font-family:'Lora',serif;font-size:.95rem;
-  line-height:1.7;margin-bottom:14px;color:var(--warm-gray);
+  line-height:1.7;margin-bottom:14px;color:rgba(255,255,255,0.85);
 }
 .legal-section ul{
   margin:14px 0 14px 20px;padding:0;
 }
 .legal-section li{
   font-family:'Lora',serif;font-size:.95rem;
-  line-height:1.7;margin-bottom:10px;color:var(--warm-gray);
+  line-height:1.7;margin-bottom:10px;color:rgba(255,255,255,0.85);
 }
 @media(min-width:768px){
   .legal-content{padding:48px 40px;}
 }
 
 /* FOOTER */
-.sw-footer{background:var(--charcoal);padding:36px 16px 28px;}
+.sw-footer{background:#0d1f2d;padding:36px 16px 28px;}
 @media(min-width:768px){.sw-footer{padding:48px 40px 36px;}}
 .sw-footer-logo{height:30px;width:auto;filter:brightness(0) invert(1);margin-bottom:14px;}
 .sw-footer-tagline{
-  font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:20px;
+  font-size:.8rem;color:rgba(255,255,255,0.5);margin-bottom:20px;
 }
 .sw-footer-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:10px;
@@ -271,7 +271,6 @@ a{text-decoration:none;color:var(--fire);}
 
 <!-- FOOTER SECTION -->
 <footer class="sw-footer">
-  <img class="sw-footer-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjwhLS1BcnRib2FyZCBjb21tZW50IC0tPjxkZWZzPjwvZGVmcz48Zz48L2c+PHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmb250LWZhbWlseT0iU29yYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0MCIgZmlsbD0iI2ZmZmZmZiIgZm9udC13ZWlnaHQ9IjcwMCI+U1c8L3RleHQ+PC9zdmc+Cg==" alt="ServiceWindow">
   <p class="sw-footer-tagline">Connecting Food Trucks with Events in SW Florida</p>
   <div class="sw-footer-grid">
     <a href="index.html" class="sw-footer-link">Home</a>

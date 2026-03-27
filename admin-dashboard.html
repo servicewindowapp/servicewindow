@@ -26,7 +26,7 @@
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:'Sora',sans-serif;background:#0d1f2d;color:#ffffff;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 img{max-width:100%;height:auto;display:block;}
 a{text-decoration:none;color:inherit;}
 button{font-family:'Sora',sans-serif;cursor:pointer;}
@@ -37,7 +37,7 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 /* SIDEBAR */
 .sidebar{
   width:var(--sidebar-w);flex-shrink:0;
-  background:#fff;border-right:1px solid var(--border);
+  background:#0d1f2d;border-right:1px solid var(--border);
   display:flex;flex-direction:column;
   height:100vh;overflow-y:auto;overflow-x:hidden;
   scrollbar-width:none;z-index:50;
@@ -54,10 +54,10 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 .sidebar-item{
   display:flex;align-items:center;gap:9px;
   padding:9px 10px;border-radius:var(--r-sm);
-  font-size:.8rem;font-weight:600;color:var(--warm-gray);
+  font-size:.8rem;font-weight:600;color:rgba(255,255,255,0.85);
   cursor:pointer;transition:all .15s;
 }
-.sidebar-item:hover{background:var(--bg);color:var(--smoke);}
+.sidebar-item:hover{background:#0d1f2d;color:#ffffff;}
 .sidebar-item.active{background:var(--fire-pale);color:var(--fire);}
 .sidebar-icon{font-size:.9rem;flex-shrink:0;width:18px;text-align:center;}
 .sidebar-badge{
@@ -66,7 +66,7 @@ input,textarea,select{font-family:'Sora',sans-serif;}
   border-radius:10px;font-family:'DM Mono',monospace;
 }
 .sidebar-item.active .sidebar-badge{background:var(--fire);}
-.sidebar-item:not(.active) .sidebar-badge{background:var(--smoke);}
+.sidebar-item:not(.active) .sidebar-badge{background:#0d1f2d;}
 .sidebar-footer{
   margin-top:auto;padding:12px 8px;
   border-top:1px solid var(--border);flex-shrink:0;
@@ -75,30 +75,30 @@ input,textarea,select{font-family:'Sora',sans-serif;}
   display:flex;align-items:center;gap:10px;padding:10px;
   border-radius:var(--r-sm);cursor:pointer;transition:background .15s;
 }
-.user-chip:hover{background:var(--bg);}
+.user-chip:hover{background:#0d1f2d;}
 .avatar{
   width:34px;height:34px;border-radius:50%;flex-shrink:0;
   background:var(--fire);color:#fff;
   display:flex;align-items:center;justify-content:center;
   font-size:.72rem;font-weight:800;
 }
-.user-name{font-size:.8rem;font-weight:700;color:var(--smoke);}
-.user-plan{font-size:.66rem;color:var(--warm-gray);}
+.user-name{font-size:.8rem;font-weight:700;color:#ffffff;}
+.user-plan{font-size:.66rem;color:rgba(255,255,255,0.85);}
 .settings-icon{margin-left:auto;font-size:.8rem;color:var(--mid-gray);}
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .topbar{
   flex-shrink:0;height:56px;
-  background:#fff;border-bottom:1px solid var(--border);
+  background:#0d1f2d;border-bottom:1px solid var(--border);
   display:flex;align-items:center;padding:0 20px;gap:12px;
 }
-.topbar-menu-btn{display:none;background:none;border:none;font-size:1.2rem;color:var(--warm-gray);padding:4px;}
+.topbar-menu-btn{display:none;background:none;border:none;font-size:1.2rem;color:rgba(255,255,255,0.85);padding:4px;}
 @media(max-width:767px){.topbar-menu-btn{display:flex;}}
-.topbar-title{flex:1;font-size:.95rem;font-weight:700;color:var(--smoke);}
+.topbar-title{flex:1;font-size:.95rem;font-weight:700;color:#ffffff;}
 .topbar-btn{
-  height:36px;padding:0 16px;background:var(--bg);border:1px solid var(--border);
-  border-radius:var(--r-sm);font-size:.78rem;font-weight:600;color:var(--warm-gray);
+  height:36px;padding:0 16px;background:#0d1f2d;border:1px solid var(--border);
+  border-radius:var(--r-sm);font-size:.78rem;font-weight:600;color:rgba(255,255,255,0.85);
   transition:all .2s;
 }
 .topbar-btn:hover{background:var(--white);border-color:var(--fire);color:var(--fire);}
@@ -113,30 +113,30 @@ input,textarea,select{font-family:'Sora',sans-serif;}
   gap:12px;margin-bottom:20px;
 }
 .stat-card{
-  background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);
+  background:#0d1f2d;border:1px solid var(--border);border-radius:var(--r-sm);
   padding:16px;
 }
-.stat-label{font-size:.72rem;font-weight:700;color:var(--warm-gray);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+.stat-label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
 .stat-value{font-size:1.8rem;font-weight:800;color:var(--fire);font-family:'Lora',serif;}
 .stat-sub{font-size:.7rem;color:var(--mid-gray);margin-top:4px;}
 
 /* CARDS & TABLES */
-.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;}
-.card-title{font-size:.95rem;font-weight:700;color:var(--smoke);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.card{background:#0d1f2d;border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;}
+.card-title{font-size:.95rem;font-weight:700;color:#ffffff;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
 .card-title-link{font-size:.74rem;font-weight:600;color:var(--fire);cursor:pointer;}
 
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;}
 th{
   text-align:left;padding:12px;border-bottom:2px solid var(--border);
-  font-size:.75rem;font-weight:700;text-transform:uppercase;color:var(--warm-gray);
+  font-size:.75rem;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.85);
   font-family:'DM Mono',monospace;
 }
 td{
   padding:12px;border-bottom:1px solid var(--border);
-  font-size:.85rem;color:var(--smoke);
+  font-size:.85rem;color:#ffffff;
 }
-tbody tr:hover{background:var(--bg);}
+tbody tr:hover{background:#0d1f2d;}
 
 /* BADGES & STATUS */
 .badge{
@@ -149,7 +149,7 @@ tbody tr:hover{background:var(--bg);}
 .badge-blue{background:var(--blue-pale);color:var(--blue);}
 .badge-fire{background:var(--fire-pale);color:var(--fire);}
 .badge-red{background:var(--red-pale);color:var(--red);}
-.badge-gray{background:var(--bg);color:var(--mid-gray);border:1px solid var(--border);}
+.badge-gray{background:#0d1f2d;color:var(--mid-gray);border:1px solid var(--border);}
 
 /* BUTTONS */
 .btn{
@@ -165,15 +165,15 @@ tbody tr:hover{background:var(--bg);}
 .btn-green:hover{background:#15803D;}
 .btn-red{background:var(--red);color:#fff;}
 .btn-red:hover{background:#991B1B;}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--smoke);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:#ffffff;}
 .btn-outline:hover{border-color:var(--fire);color:var(--fire);}
 
 /* FORMS */
 .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
-.form-label{font-size:.72rem;font-weight:700;color:var(--warm-gray);text-transform:uppercase;letter-spacing:.4px;}
+.form-label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:.4px;}
 .form-input{
   height:44px;border:1.5px solid var(--border);border-radius:var(--r-sm);
-  padding:0 12px;font-size:.88rem;background:#fff;color:var(--smoke);outline:none;
+  padding:0 12px;font-size:.88rem;background:#0d1f2d;color:#ffffff;outline:none;
   transition:border-color .2s;
 }
 .form-input:focus{border-color:var(--fire);box-shadow:0 0 0 3px rgba(255,84,0,.12);}
@@ -183,11 +183,11 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
 /* MODALS */
 .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end;}
 .modal-backdrop.open{display:flex;}
-.modal-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px;animation:slideUp .3s ease;}
+.modal-sheet{background:#0d1f2d;border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px;animation:slideUp .3s ease;}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
 .modal-header h2{font-size:1.2rem;font-weight:700;}
-.modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--warm-gray);}
+.modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:rgba(255,255,255,0.85);}
 .modal-form{display:flex;flex-direction:column;gap:12px;}
 
 /* LOADING & EMPTY STATES */
@@ -209,7 +209,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
 /* TOAST */
 .toast{
   position:fixed;bottom:20px;right:20px;
-  background:var(--smoke);color:#fff;
+  background:#0d1f2d;color:#fff;
   padding:14px 20px;border-radius:var(--r-sm);
   font-size:.85rem;z-index:1000;
   animation:slideIn .3s ease;
@@ -301,7 +301,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <div class="panel active" id="panel-stats">
         <div style="margin-bottom:20px;">
           <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:4px;">Platform Overview</h1>
-          <p style="font-size:.85rem;color:var(--warm-gray);">Real-time metrics and activity</p>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);">Real-time metrics and activity</p>
         </div>
 
         <div class="stats-bar">
@@ -375,7 +375,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <div class="panel" id="panel-verify">
         <div style="margin-bottom:20px;">
           <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:4px;">Verification Queue</h1>
-          <p style="font-size:.85rem;color:var(--warm-gray);">Pending organizer verification requests</p>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);">Pending organizer verification requests</p>
         </div>
 
         <div id="verify-list"></div>
@@ -385,7 +385,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <div class="panel" id="panel-trucks">
         <div style="margin-bottom:20px;">
           <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:4px;">Truck Approvals</h1>
-          <p style="font-size:.85rem;color:var(--warm-gray);">New food trucks pending admin approval</p>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);">New food trucks pending admin approval</p>
         </div>
 
         <div class="table-wrap">
@@ -412,7 +412,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <div class="panel" id="panel-users">
         <div style="margin-bottom:20px;">
           <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:4px;">User Management</h1>
-          <p style="font-size:.85rem;color:var(--warm-gray);">All registered users on the platform</p>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);">All registered users on the platform</p>
         </div>
 
         <div class="search-bar">
@@ -443,7 +443,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <div class="panel" id="panel-activity">
         <div style="margin-bottom:20px;">
           <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:4px;">Recent Activity</h1>
-          <p style="font-size:.85rem;color:var(--warm-gray);">Last 20 booking requests across the platform</p>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);">Last 20 booking requests across the platform</p>
         </div>
 
         <div class="table-wrap">
@@ -469,7 +469,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <div class="panel" id="panel-waitlist">
         <div style="margin-bottom:20px;">
           <h1 style="font-size:1.5rem;font-weight:700;margin-bottom:4px;">Waitlist</h1>
-          <p style="font-size:.85rem;color:var(--warm-gray);">All signup requests from new users</p>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);">All signup requests from new users</p>
         </div>
 
         <div class="table-wrap">
@@ -676,12 +676,12 @@ async function loadVerificationQueue() {
             <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Contact</div>
             <div style="font-size:.85rem;margin-bottom:4px;">📱 ${r.phone || '—'}</div>
             <div style="font-size:.85rem;margin-bottom:4px;">🌐 ${r.website || '—'}</div>
-            <div style="font-size:.85rem;color:var(--warm-gray);">Submitted ${formatDate(r.created_at)}</div>
+            <div style="font-size:.85rem;color:rgba(255,255,255,0.85);">Submitted ${formatDate(r.created_at)}</div>
           </div>
         </div>
         <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
           <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:8px;">Description</div>
-          <p style="font-size:.85rem;color:var(--warm-gray);line-height:1.6;">${r.description || 'No description provided'}</p>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);line-height:1.6;">${r.description || 'No description provided'}</p>
         </div>
         <div style="display:flex;gap:10px;">
           <button class="btn btn-green" onclick="approveVerification('${r.id}')">✓ Approve</button>

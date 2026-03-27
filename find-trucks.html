@@ -31,7 +31,7 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:'Sora',sans-serif;background:#0d1f2d;color:#ffffff;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 img{max-width:100%;height:auto;display:block;}
 a{text-decoration:none;}
 
@@ -54,7 +54,7 @@ a{text-decoration:none;}
 }
 @media(min-width:768px){.sw-nav-desktop-links{display:flex;}}
 .sw-nav-link{
-  font-size:.82rem;font-weight:600;color:var(--warm-gray);
+  font-size:.82rem;font-weight:600;color:rgba(255,255,255,0.85);
   transition:color .2s;text-decoration:none;
 }
 .sw-nav-link:hover,.sw-nav-link.active{color:var(--fire);}
@@ -72,20 +72,20 @@ a{text-decoration:none;}
 }
 @media(min-width:768px){.sw-hamburger{display:none;}}
 .sw-hamburger span{
-  width:18px;height:2px;background:var(--smoke);
+  width:18px;height:2px;background:#0d1f2d;
   border-radius:2px;transition:all .25s;display:block;
 }
 .sw-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
 .sw-hamburger.open span:nth-child(2){opacity:0;}
 .sw-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 .sw-overlay{
-  position:fixed;inset:0;background:rgba(28,25,23,.55);
+  position:fixed;inset:0;background:#0d1f2d,.55);
   z-index:199;display:none;
 }
 .sw-overlay.open{display:block;}
 .sw-menu{
   position:fixed;top:0;right:-100%;width:min(300px,88vw);
-  height:100%;background:#fff;z-index:200;
+  height:100%;background:#0d1f2d;z-index:200;
   transition:right .28s ease;
   overflow-y:auto;display:flex;flex-direction:column;
   box-shadow:var(--sh-lg);
@@ -98,9 +98,9 @@ a{text-decoration:none;}
 }
 .sw-menu-logo{height:26px;width:auto;}
 .sw-menu-close{
-  width:36px;height:36px;border:none;background:var(--bg);
+  width:36px;height:36px;border:none;background:#0d1f2d;
   border-radius:50%;font-size:1.1rem;cursor:pointer;
-  color:var(--warm-gray);display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;
 }
 .sw-menu-section{padding:12px 10px 4px;}
 .sw-menu-label{
@@ -111,7 +111,7 @@ a{text-decoration:none;}
 .sw-menu-item{
   display:flex;align-items:center;gap:10px;
   padding:12px 12px;border-radius:10px;
-  font-size:.88rem;font-weight:600;color:var(--warm-gray);
+  font-size:.88rem;font-weight:600;color:rgba(255,255,255,0.85);
   cursor:pointer;transition:all .15s;text-decoration:none;
   min-height:44px;
 }
@@ -140,7 +140,7 @@ a{text-decoration:none;}
   font-weight:700;
   line-height:1.2;
   margin-bottom:20px;
-  color:var(--smoke);
+  color:#ffffff;
 }
 .search-box{
   display:grid;
@@ -150,13 +150,13 @@ a{text-decoration:none;}
 }
 .search-input{
   height:48px;
-  border:1.5px solid var(--border);
+  border:1px solid rgba(255,255,255,0.2);
   border-radius:var(--r-sm);
   padding:0 16px;
   font-family:'Sora',sans-serif;
   font-size:.88rem;
-  color:var(--smoke);
-  background:#fff;
+  color:#ffffff;
+  background:#0d1f2d;
   outline:none;
   transition:border-color .2s;
 }
@@ -183,7 +183,7 @@ a{text-decoration:none;}
 ═══════════════════════════════════════ */
 .filter-bar{
   position:sticky;top:56px;z-index:99;
-  background:#fff;
+  background:#0d1f2d;
   border-bottom:1px solid var(--border);
   padding:12px 16px;
   display:flex;
@@ -194,12 +194,12 @@ a{text-decoration:none;}
 .filter-select{
   height:44px;
   padding:0 12px;
-  border:1.5px solid var(--border);
+  border:1px solid rgba(255,255,255,0.2);
   border-radius:var(--r-sm);
   font-family:'Sora',sans-serif;
   font-size:.8rem;
-  color:var(--smoke);
-  background:#fff;
+  color:#ffffff;
+  background:#0d1f2d;
   cursor:pointer;
   outline:none;
   transition:border-color .2s;
@@ -213,12 +213,12 @@ a{text-decoration:none;}
   gap:6px;
   height:44px;
   padding:0 12px;
-  border:1.5px solid var(--border);
+  border:1px solid rgba(255,255,255,0.2);
   border-radius:var(--r-sm);
-  background:#fff;
+  background:#0d1f2d;
   font-size:.8rem;
   font-weight:600;
-  color:var(--warm-gray);
+  color:rgba(255,255,255,0.85);
   cursor:pointer;
   transition:all .2s;
   white-space:nowrap;
@@ -251,7 +251,7 @@ a{text-decoration:none;}
   }
 }
 .truck-card{
-  background:#fff;
+  background:#0d1f2d;
   border-radius:var(--r);
   overflow:hidden;
   box-shadow:var(--sh);
@@ -288,12 +288,12 @@ a{text-decoration:none;}
 .truck-name{
   font-size:.95rem;
   font-weight:700;
-  color:var(--smoke);
+  color:#ffffff;
   margin-bottom:4px;
 }
 .truck-cuisine{
   font-size:.75rem;
-  color:var(--warm-gray);
+  color:rgba(255,255,255,0.85);
   margin-bottom:8px;
 }
 .truck-badges{
@@ -326,7 +326,7 @@ a{text-decoration:none;}
   gap:4px;
   font-size:.8rem;
   margin-bottom:8px;
-  color:var(--warm-gray);
+  color:rgba(255,255,255,0.85);
 }
 .truck-stars{
   display:flex;
@@ -353,7 +353,7 @@ a{text-decoration:none;}
 .empty-state{
   text-align:center;
   padding:60px 20px;
-  color:var(--warm-gray);
+  color:rgba(255,255,255,0.85);
 }
 .empty-state-icon{
   font-size:3rem;
@@ -362,7 +362,7 @@ a{text-decoration:none;}
 .empty-state-title{
   font-size:1.1rem;
   font-weight:700;
-  color:var(--smoke);
+  color:#ffffff;
   margin-bottom:8px;
 }
 .empty-state-text{
@@ -376,7 +376,7 @@ a{text-decoration:none;}
 .modal-overlay{
   position:fixed;
   inset:0;
-  background:rgba(28,25,23,.6);
+  background:#0d1f2d,.6);
   z-index:300;
   display:none;
   align-items:flex-end;
@@ -389,7 +389,7 @@ a{text-decoration:none;}
 }
 .modal-overlay.open{display:flex;}
 .modal{
-  background:#fff;
+  background:#0d1f2d;
   width:100%;
   max-height:90vh;
   border-radius:0;
@@ -416,11 +416,11 @@ a{text-decoration:none;}
   width:36px;
   height:36px;
   border:none;
-  background:var(--bg);
+  background:#0d1f2d;
   border-radius:50%;
   font-size:1.2rem;
   cursor:pointer;
-  color:var(--warm-gray);
+  color:rgba(255,255,255,0.85);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -443,11 +443,11 @@ a{text-decoration:none;}
   font-size:1.5rem;
   font-weight:700;
   margin-bottom:8px;
-  color:var(--smoke);
+  color:#ffffff;
 }
 .modal-subtitle{
   font-size:.9rem;
-  color:var(--warm-gray);
+  color:rgba(255,255,255,0.85);
   margin-bottom:16px;
 }
 .modal-section{
@@ -464,7 +464,7 @@ a{text-decoration:none;}
 .modal-text{
   font-size:.88rem;
   line-height:1.5;
-  color:var(--warm-gray);
+  color:rgba(255,255,255,0.85);
   margin-bottom:8px;
 }
 .modal-info-row{
@@ -481,7 +481,7 @@ a{text-decoration:none;}
   font-weight:500;
 }
 .modal-info-value{
-  color:var(--smoke);
+  color:#ffffff;
   font-weight:700;
 }
 .modal-badges{
@@ -513,7 +513,7 @@ a{text-decoration:none;}
 /* ═══════════════════════════════════════
    FOOTER
 ═══════════════════════════════════════ */
-.sw-footer{background:var(--charcoal);padding:36px 16px 28px;}
+.sw-footer{background:#0d1f2d;padding:36px 16px 28px;}
 @media(min-width:768px){.sw-footer{padding:48px 40px 36px;}}
 .sw-footer-logo{height:30px;width:auto;filter:brightness(0) invert(1);margin-bottom:14px;}
 .sw-footer-tagline{
@@ -550,7 +550,7 @@ input,select,.form-input{
 ═══════════════════════════════════════ */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:80;
-  height:60px;background:#fff;border-top:1px solid var(--border);
+  height:60px;background:#0d1f2d;border-top:1px solid var(--border);
   display:none;flex-direction:row;width:100%;padding:0;margin:0;
 }
 @media(max-width:767px){
@@ -559,7 +559,7 @@ input,select,.form-input{
 }
 .bn-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:4px 0;color:var(--warm-gray);text-decoration:none;
+  padding:4px 0;color:rgba(255,255,255,0.85);text-decoration:none;
   font-size:.65rem;font-weight:600;cursor:pointer;transition:color .2s;
   min-height:44px;gap:2px;border:none;background:none;
 }
@@ -641,7 +641,7 @@ input,select,.form-input{
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
-      <h2 style="flex:1;font-size:1.2rem;font-weight:700;color:var(--smoke);">Truck Details</h2>
+      <h2 style="flex:1;font-size:1.2rem;font-weight:700;color:#ffffff;">Truck Details</h2>
       <button class="modal-close" id="modalCloseBtn">✕</button>
     </div>
     <div class="modal-photo" id="modalPhoto">🚚</div>
@@ -701,7 +701,6 @@ input,select,.form-input{
 
 <!-- ═══ FOOTER ═══ -->
 <footer class="sw-footer">
-  <img class="sw-footer-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjE1MzZweCIgaGVpZ2h0PSIxMDI0cHgiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgo8Zz48cGF0aCBzdHlsZT0ib3BhY2l0eToxIiBmaWxsPSIjMDAxZjQzIiBkPSJNIDU2My41LDM2OS41IEMgNTc3Ljk5MiwzNzEuNDI3IDU5Mi4zMjYsMzc0LjA5MyA2MDYuNSwzNzcuNUMgNjA2LjY0OSwzNzguNTUyIDYwNi40ODMsMzc5LjU1MiA2MDYsMzgwLjVDIDYwNC4yNzMsMzc5LjYyNiA2MDIuNDQsMzc5Ljc5MyA2MDAuNSwzODFDIDYwMS4zMjgsMzgxLjkxNSA2MDIuMzI4LDM4Mi41ODEgNjAzLjUsMzgzQyA1OTYuNTg4LDM4My43NzYgNTg5Ljc1NCwzODMuNjEgNTgzLDM4Mi41QyA1ODAuMDU5LDM4My4wNTkgNTc3LjIyNSwzODMuODkzIDU3NC41LDM4NUMgNTc1LjAyMiwzODUuNTYxIDU3NS4zNTUsMzg2LjIyOCA1NzUuNSwzODdDIDU3NC4xNzYsMzkyLjk0MiA1NzMuMTc2LDM5OC45NDIgNTcyLjUsNDA1QyA1NzIuNjYsNDA5LjgxNSA1NzMuODI3LDQxNC4zMTUgNTc2LDQxOC41QyA1NzcsNDE4LjgzMyA1NzgsNDE5LjE2NyA1NzksNDE5LjVDIDU4Ni4yOTMsNDE3LjExMSA1OTMuNDYsNDE0Ljc3NyA2MDAuNSw0MTIuNUMgNjAxLjA3LDQwNS4xOTUgNjA0LjU3LDQwMy41MjggNjExLDQwNy41QyA2MTYuMTczLDQwNi4xMzcgNjIxLjMzOSw0MDYuMzA0IDYyNi41LDQwOEMgNjI1LjE2Nyw0MDkgNjI1LjE2Nyw0MTAgNjI2LjUsNDExQyA2MzEuNjQxLDQxMy42NTYgNjM2LjgwNyw0MTMuNDg5IDY0Miw0MTAuNUMgNjQzLjk5OCw0MTEuMjcxIDY0NS42NjUsNDEwLjYwNSA2NDcsNDA4LjVDIDY0Ny4zMDgsNDA5LjMwMyA2NDcuMzA4LDQxMC4zMDMgNjQ3LDQxMS41QyA2NDcuMzI4LDQxMi41MzMgNjQ2LjY2Miw0MTMuNTMzIDY0NSw0MTQuNUMgNjUwLjI5Niw0MTcuMjkyIDY1NS40NjMsNDE5LjEyNiA2NjAuNSw0MjBDIDY2MC4zNzUsNDIxLjA2MiA2NjAuMzc1LDQyMS4wNjIgNjYwLjUsNDIyQyA2NTYuNDUzLDQxNy45MzUgNjUxLjc4Niw0MTUuMjY4IDY0Ni41LDQxNUM2NDIuNTI2LDQxNy4xNjUgNjM4LjUyNiw0MTcuMzMxIDYzNC41LDQxNS41QyA2MzEuNjI0LDQxNi4xNDkgNjI4LjYyNCw0MTYuMzE1IDYyNS41LDQxNkM2MjQuNjkzLDQxNy4wNTUgNjI0LjAyNiw0MTguMjIxIDYyMy41LDQxOS41QyA2MTkuNjU1LDQyMC40OTMgNjE1LjgyMiw0MjAuMzI3IDYxMiw0MTkuNUM2MDkuODQ2LDQyMC4zMTcgNjA3LjM0Niw0MjAuODMyIDYwNC41LDQyMUMgNjAzLjYxNSw0MTguNDI5IDYwMS43OTgsNDE2LjI5NSA2MDAuNSw0MTRDIDI1OTguNDc3LDQxNi4yMTEgNTk2LjMxLDQxNy43MjggNTkzLjUsNDE4LjVDIDU5MC40Nyw0MTcuNjEyIDU4Ny42MDMsNDE2LjEyNSA1ODUsNDE0QyA1ODIuNzU2LDQxNi4yNDcgNTgwLjI1Niw0MTcuNDEzIDU3Ny41LDQxNy41QyA1NzYuMzMzLDQxNi4zMzMgNTc1LjY2Niw0MTUgNTc0LDQxNEM1NzcuNzU1LDQxMy4yMjggNTc0Ljc2MSw0MTEuNTYxIDU3Niw0MTBDNTc3LjMwMSw0MTEuMDA5IDU3OC4zMDEsNDExLjg0MiA1NzguNSw0MTNDIDI1NzIuMzE1LDQxNS45NTYgNTgwLjMxNSw0MTguMjg5IDU4Miw0MjBDIDU4MC40NTYsNDIxLjgzMSA1NzguNzg5LDQyMy40OTggNTc3LjUsNDI1QyA1NzYuNjY3LDQyNC4zMzMgNTc2LjMzMyw0MjMuMzMzIDU3Ni41LDQyMkMgNTc2LjUyMiw0MjMuMjI3IDU3Ni42ODgsNDIzLjM5MyA1NzcsNDIzLjVDIDU3OC4xNzgsNDI0IDU3OS41LDQyNCA1ODAuNSw0MjRDIDU4Mi4wOTQsNDI0LjM3NSA1ODMuMTA5LDQyMy40NDEgNTgzLDQyMkMgNTgyLjM1Myw0MjAuMjY1IDU4Mi4xODcsNDE4LjU5OSA1ODIuNSw0MTdDIDU4My42OTMsNDE4LjU0NSA1ODQuNTI3LDQyMC40MTIgNTg1LDQyMkMgNTg2LjA0OCw0MjMuNzg4IDU4Ny44NDgsNDI0LjEyMSA1OTAsNDIzLjVDIDU5MS41MzEsNDIxLjM5MSA1OTEuODY0LDQxOS41OTEgNTkwLDQxN0MgNTkxLjUzMSw0MTQuNTc1IDU5My4wNjQsNDEyLjA3NSA1OTQuNSw0MDkuNUMgNTk2LjU5Nyw0MTAuNzM5IDU5Ny4yNjQsNDEyLjkwNiA1OTYsNDExQyA1OTUsNDExIDU5My44MzQsNDE4LjUgNTkyLDQxOUMgNTkxLjMzMyw0MTguMzMzIDU5MS4zMzMsNDE3LjY2NyA1OTIsNDE3QyA1OTMuNDEsNDE4LjI3OCA1OTQuNTc3LDQxOS4yNzggNTk1LDQyMEMgNTk2LjMzMyw0MjAuNDEgNTk4LjAwMiw0MTguNjA0IDU5OC41LDQxNkMgNTk4LjMzMyw0MTUuMzMzIDU5OC42NjcsNDE0LjY2NyA1OTkuNSw0MTZDIDI2MDAuNjY3LDQxNi4zMzMgNjAxLjMzMyw0MTUuMzMzIDYwMSw0MTRDIDI2MDEuMzMzLDQxMy4zMzMgNjAxLDQxMi42NjcgNjAwLDQxMkMgNjAwLDQxMC4xNjcgNTk5LjE2Nyw0MDkuNSA1OTksNDA5QyDigGlyMTU5Ny40NDksNDEwLjQ0OSA1OTYuMTIxLDQxMS42MTcgNTk1LDQxM0MgNTk1LDQxNS4xNjcgNTk0Ljg1Myw0MTcuNDUzIDU5NS41LDQyMEMgNTk2Ljc5OCw0MjEuNDc3IDU5OC4xNjUsNDIyLjY0NCA2MDAuNSw0MjMi" alt="ServiceWindow">
   <p class="sw-footer-tagline">ServiceWindow connects food trucks with event planners and venues across Southwest Florida.</p>
   <div class="sw-footer-grid">
     <a href="index.html" class="sw-footer-link">Home</a>

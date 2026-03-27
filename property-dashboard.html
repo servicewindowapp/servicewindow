@@ -24,7 +24,7 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:'Sora',sans-serif;background:#0d1f2d;color:#ffffff;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 img{max-width:100%;height:auto;display:block;}
 a{text-decoration:none;color:inherit;}
 button{font-family:'Sora',sans-serif;cursor:pointer;}
@@ -34,7 +34,7 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 /* SIDEBAR */
 .sidebar{
   width:var(--sidebar-w);flex-shrink:0;
-  background:#fff;border-right:1px solid var(--border);
+  background:#0d1f2d;border-right:1px solid var(--border);
   display:flex;flex-direction:column;
   height:100vh;overflow-y:auto;overflow-x:hidden;
   scrollbar-width:none;z-index:50;
@@ -52,8 +52,8 @@ input,textarea,select{font-family:'Sora',sans-serif;}
   display:flex;align-items:center;justify-content:center;
   font-size:.78rem;font-weight:700;flex-shrink:0;
 }
-.sidebar-name{font-size:.82rem;font-weight:700;color:var(--smoke);line-height:1.2;}
-.sidebar-role{font-size:.64rem;color:var(--warm-gray);margin-top:1px;}
+.sidebar-name{font-size:.82rem;font-weight:700;color:#ffffff;line-height:1.2;}
+.sidebar-role{font-size:.64rem;color:rgba(255,255,255,0.85);margin-top:1px;}
 .sidebar-plan{
   font-size:.62rem;font-weight:700;letter-spacing:.4px;
   color:var(--purple);background:var(--purple-pale);
@@ -67,7 +67,7 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 .sidebar-item{
   display:flex;align-items:center;gap:10px;
   padding:10px 12px;border-radius:10px;
-  font-size:.84rem;font-weight:600;color:var(--warm-gray);
+  font-size:.84rem;font-weight:600;color:rgba(255,255,255,0.85);
   cursor:pointer;transition:all .15s;min-height:44px;margin-bottom:2px;
 }
 .sidebar-item:hover{background:var(--fire-pale);color:var(--fire);}
@@ -88,16 +88,16 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
 .topbar{
-  height:56px;flex-shrink:0;background:#fff;border-bottom:1px solid var(--border);
+  height:56px;flex-shrink:0;background:#0d1f2d;border-bottom:1px solid var(--border);
   display:flex;align-items:center;padding:0 20px;gap:12px;
 }
 .topbar-menu-btn{
-  width:40px;height:40px;border:none;background:var(--bg);border-radius:8px;
+  width:40px;height:40px;border:none;background:#0d1f2d;border-radius:8px;
   display:none;align-items:center;justify-content:center;font-size:1.1rem;
   cursor:pointer;flex-shrink:0;
 }
 @media(max-width:767px){.topbar-menu-btn{display:flex;}}
-.topbar-title{font-size:1rem;font-weight:700;color:var(--smoke);flex:1;}
+.topbar-title{font-size:1rem;font-weight:700;color:#ffffff;flex:1;}
 .topbar-actions{display:flex;align-items:center;gap:8px;}
 .topbar-btn{
   height:36px;padding:0 14px;border-radius:8px;
@@ -114,20 +114,20 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 .panel.active{display:block;}
 
 /* BOX */
-.box{background:#fff;border-radius:var(--r);border:1px solid var(--border);padding:18px;margin-bottom:16px;}
-.box-title{font-size:.88rem;font-weight:700;color:var(--smoke);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.box{background:#0d1f2d;border-radius:var(--r);border:1px solid var(--border);padding:18px;margin-bottom:16px;}
+.box-title{font-size:.88rem;font-weight:700;color:#ffffff;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .box-title-link{font-size:.74rem;font-weight:600;color:var(--fire);cursor:pointer;}
 
 /* KPI GRID */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
 @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
 .kpi-card{
-  background:#fff;border:1px solid var(--border);
+  background:#0d1f2d;border:1px solid var(--border);
   border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:6px;
 }
 .kpi-icon{font-size:1.4rem;}
-.kpi-value{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--smoke);line-height:1;}
-.kpi-label{font-size:.7rem;font-weight:600;color:var(--warm-gray);letter-spacing:.2px;}
+.kpi-value{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:#ffffff;line-height:1;}
+.kpi-label{font-size:.7rem;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:.2px;}
 .kpi-delta{font-size:.68rem;font-weight:700;}
 .kpi-delta.up{color:var(--green);}
 .kpi-delta.warn{color:var(--amber);}
@@ -141,11 +141,11 @@ input,textarea,select{font-family:'Sora',sans-serif;}
   display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;
 }
 .owner-banner-icon{font-size:2rem;flex-shrink:0;}
-.owner-banner-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--smoke);}
-.owner-banner-sub{font-size:.78rem;color:var(--warm-gray);margin-top:3px;line-height:1.5;}
+.owner-banner-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:#ffffff;}
+.owner-banner-sub{font-size:.78rem;color:rgba(255,255,255,0.85);margin-top:3px;line-height:1.5;}
 .owner-banner-stats{
   margin-left:auto;display:flex;gap:16px;flex-shrink:0;
-  background:#fff;border:1.5px solid var(--purple-border);
+  background:#0d1f2d;border:1.5px solid var(--purple-border);
   border-radius:var(--r-sm);padding:10px 16px;
 }
 .obs-item{text-align:center;}
@@ -156,9 +156,9 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;min-width:480px;}
 th{font-size:.68rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--mid-gray);padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
-td{font-size:.82rem;color:var(--smoke);padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+td{font-size:.82rem;color:#ffffff;padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:var(--bg);}
+tr:hover td{background:#0d1f2d;}
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:50px;}
@@ -166,12 +166,12 @@ tr:hover td{background:var(--bg);}
 .badge-amber{background:var(--amber-pale);color:var(--amber);}
 .badge-blue{background:var(--blue-pale);color:var(--blue);}
 .badge-fire{background:var(--fire-pale);color:var(--fire);}
-.badge-gray{background:var(--bg);color:var(--mid-gray);border:1px solid var(--border);}
+.badge-gray{background:#0d1f2d;color:var(--mid-gray);border:1px solid var(--border);}
 .badge-purple{background:var(--purple-pale);color:var(--purple);}
 
 /* PROPERTY CARDS */
 .prop-card{
-  background:#fff;border:1px solid var(--border);border-radius:var(--r);
+  background:#0d1f2d;border:1px solid var(--border);border-radius:var(--r);
   padding:18px;margin-bottom:14px;
 }
 .pc-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;}
@@ -182,23 +182,23 @@ tr:hover td{background:var(--bg);}
 .pc-icon-purple{background:var(--purple-pale);}
 .pc-icon-blue{background:var(--blue-pale);}
 .pc-icon-amber{background:var(--amber-pale);}
-.pc-title{font-size:.92rem;font-weight:700;color:var(--smoke);}
-.pc-address{font-size:.74rem;color:var(--warm-gray);margin-top:2px;}
+.pc-title{font-size:.92rem;font-weight:700;color:#ffffff;}
+.pc-address{font-size:.74rem;color:rgba(255,255,255,0.85);margin-top:2px;}
 .pc-board{font-size:.68rem;font-weight:700;color:var(--purple);margin-top:3px;}
 .pc-status{margin-left:auto;flex-shrink:0;}
 .pc-stats{
   display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
-  padding:14px;background:var(--bg);border-radius:var(--r-sm);margin-bottom:14px;
+  padding:14px;background:#0d1f2d;border-radius:var(--r-sm);margin-bottom:14px;
 }
 @media(max-width:560px){.pc-stats{grid-template-columns:1fr 1fr;}}
 .pc-stat-label{font-size:.62rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--mid-gray);}
-.pc-stat-val{font-size:.86rem;font-weight:700;color:var(--smoke);margin-top:3px;}
-.pc-desc{font-size:.78rem;color:var(--warm-gray);line-height:1.6;margin-bottom:14px;}
+.pc-stat-val{font-size:.86rem;font-weight:700;color:#ffffff;margin-top:3px;}
+.pc-desc{font-size:.78rem;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:14px;}
 .pc-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
 
 /* TENANT CARDS */
 .tenant-card{
-  background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);
+  background:#0d1f2d;border:1px solid var(--border);border-radius:var(--r-sm);
   padding:16px;margin-bottom:10px;
 }
 .tc-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
@@ -206,23 +206,23 @@ tr:hover td{background:var(--bg);}
   width:44px;height:44px;border-radius:10px;background:var(--fire-pale);
   display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;
 }
-.tc-name{font-size:.88rem;font-weight:700;color:var(--smoke);}
-.tc-meta{font-size:.72rem;color:var(--warm-gray);margin-top:2px;}
+.tc-name{font-size:.88rem;font-weight:700;color:#ffffff;}
+.tc-meta{font-size:.72rem;color:rgba(255,255,255,0.85);margin-top:2px;}
 .tc-lease-bar{
-  background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);
+  background:#0d1f2d;border:1px solid var(--border);border-radius:var(--r-sm);
   padding:12px 14px;margin-bottom:12px;
   display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
 }
 @media(max-width:500px){.tc-lease-bar{grid-template-columns:1fr 1fr;}}
 .tc-lease-label{font-size:.62rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--mid-gray);}
-.tc-lease-val{font-size:.82rem;font-weight:700;color:var(--smoke);margin-top:3px;}
+.tc-lease-val{font-size:.82rem;font-weight:700;color:#ffffff;margin-top:3px;}
 .tc-lease-val.good{color:var(--green);}
 .tc-lease-val.warn{color:var(--amber);}
 .tc-foot{display:flex;gap:8px;flex-wrap:wrap;}
 
 /* LEASE PROGRESS */
 .lease-progress{
-  background:var(--bg);border-radius:50px;height:6px;
+  background:#0d1f2d;border-radius:50px;height:6px;
   margin-top:6px;overflow:hidden;
 }
 .lease-progress-fill{height:100%;border-radius:50px;background:var(--green);}
@@ -230,7 +230,7 @@ tr:hover td{background:var(--bg);}
 
 /* INQUIRY CARDS */
 .inq-card{
-  background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);
+  background:#0d1f2d;border:1px solid var(--border);border-radius:var(--r-sm);
   padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;
 }
 .inq-avatar{
@@ -238,9 +238,9 @@ tr:hover td{background:var(--bg);}
   display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;
 }
 .inq-body{flex:1;min-width:0;}
-.inq-name{font-size:.86rem;font-weight:700;color:var(--smoke);}
-.inq-meta{font-size:.72rem;color:var(--warm-gray);margin-top:2px;}
-.inq-msg{font-size:.76rem;color:var(--warm-gray);line-height:1.5;margin-top:6px;padding:8px 10px;background:var(--bg);border-radius:6px;border:1px solid var(--border);}
+.inq-name{font-size:.86rem;font-weight:700;color:#ffffff;}
+.inq-meta{font-size:.72rem;color:rgba(255,255,255,0.85);margin-top:2px;}
+.inq-msg{font-size:.76rem;color:rgba(255,255,255,0.85);line-height:1.5;margin-top:6px;padding:8px 10px;background:#0d1f2d;border-radius:6px;border:1px solid var(--border);}
 .inq-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
 .inq-time{font-size:.64rem;color:var(--mid-gray);font-family:'DM Mono',monospace;flex-shrink:0;margin-top:2px;white-space:nowrap;}
 
@@ -259,7 +259,7 @@ tr:hover td{background:var(--bg);}
 .activity-list{display:flex;flex-direction:column;gap:10px;}
 .activity-item{
   display:flex;align-items:center;gap:12px;
-  padding:12px 14px;background:var(--bg);
+  padding:12px 14px;background:#0d1f2d;
   border-radius:var(--r-sm);border:1px solid var(--border);
 }
 .activity-icon{
@@ -271,8 +271,8 @@ tr:hover td{background:var(--bg);}
 .ai-amber{background:var(--amber-pale);}
 .ai-blue{background:var(--blue-pale);}
 .activity-body{flex:1;min-width:0;}
-.activity-title{font-size:.82rem;font-weight:700;color:var(--smoke);}
-.activity-sub{font-size:.72rem;color:var(--warm-gray);margin-top:2px;}
+.activity-title{font-size:.82rem;font-weight:700;color:#ffffff;}
+.activity-sub{font-size:.72rem;color:rgba(255,255,255,0.85);margin-top:2px;}
 .activity-time{font-size:.68rem;color:var(--mid-gray);font-family:'DM Mono',monospace;white-space:nowrap;flex-shrink:0;}
 
 /* CALENDAR STRIP */
@@ -280,34 +280,34 @@ tr:hover td{background:var(--bg);}
 .cal-strip::-webkit-scrollbar{display:none;}
 .cal-day{
   flex-shrink:0;width:52px;text-align:center;padding:10px 6px;
-  border-radius:10px;border:1.5px solid var(--border);background:#fff;cursor:pointer;
+  border-radius:10px;border:1.5px solid var(--border);background:#0d1f2d;cursor:pointer;
   transition:all .15s;
 }
 .cal-day:hover{border-color:var(--fire);background:var(--fire-pale);}
 .cal-day.today{border-color:var(--fire);background:var(--fire-pale);}
 .cal-day.has-tenant{border-color:var(--purple);background:var(--purple-pale);}
 .cal-day-name{font-size:.58rem;font-weight:700;text-transform:uppercase;color:var(--mid-gray);}
-.cal-day.today .cal-day-name,.cal-day.has-tenant .cal-day-name{color:var(--smoke);}
-.cal-day-num{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--smoke);line-height:1.2;}
+.cal-day.today .cal-day-name,.cal-day.has-tenant .cal-day-name{color:#ffffff;}
+.cal-day-num{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:#ffffff;line-height:1.2;}
 .cal-day-dot{width:5px;height:5px;border-radius:50%;background:var(--purple);margin:4px auto 0;}
 .cal-day-dot.fire{background:var(--fire);}
 
 /* MESSAGES */
 .messages-layout{display:flex;height:100%;gap:0;}
-.msg-list{width:260px;flex-shrink:0;overflow-y:auto;border-right:1px solid var(--border);background:#fff;}
-.msg-list-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:.82rem;font-weight:700;color:var(--smoke);}
+.msg-list{width:260px;flex-shrink:0;overflow-y:auto;border-right:1px solid var(--border);background:#0d1f2d;}
+.msg-list-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:.82rem;font-weight:700;color:#ffffff;}
 .msg-thread{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;min-height:44px;}
-.msg-thread:hover{background:var(--bg);}
+.msg-thread:hover{background:#0d1f2d;}
 .msg-thread.active{background:var(--fire-pale);}
-.msg-thread-name{font-size:.82rem;font-weight:700;color:var(--smoke);}
-.msg-thread-preview{font-size:.72rem;color:var(--warm-gray);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.msg-thread-name{font-size:.82rem;font-weight:700;color:#ffffff;}
+.msg-thread-preview{font-size:.72rem;color:rgba(255,255,255,0.85);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .msg-thread-time{font-size:.62rem;color:var(--mid-gray);float:right;}
 .msg-unread{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fire);margin-left:6px;vertical-align:middle;}
-.msg-main{flex:1;display:flex;flex-direction:column;background:#fff;}
-.msg-main-head{padding:14px 16px;border-bottom:1px solid var(--border);font-size:.88rem;font-weight:700;color:var(--smoke);flex-shrink:0;}
+.msg-main{flex:1;display:flex;flex-direction:column;background:#0d1f2d;}
+.msg-main-head{padding:14px 16px;border-bottom:1px solid var(--border);font-size:.88rem;font-weight:700;color:#ffffff;flex-shrink:0;}
 .msg-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
 .msg-bubble{max-width:75%;padding:10px 14px;border-radius:16px;font-size:.82rem;line-height:1.55;}
-.msg-bubble.them{background:var(--bg);border:1px solid var(--border);color:var(--smoke);border-radius:4px 16px 16px 16px;align-self:flex-start;}
+.msg-bubble.them{background:#0d1f2d;border:1px solid var(--border);color:#ffffff;border-radius:4px 16px 16px 16px;align-self:flex-start;}
 .msg-bubble.me{background:var(--fire);color:#fff;border-radius:16px 4px 16px 16px;align-self:flex-end;}
 .msg-bubble-time{font-size:.62rem;color:var(--mid-gray);margin-top:3px;}
 .msg-input-row{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
@@ -320,12 +320,12 @@ tr:hover td{background:var(--bg);}
 @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-group.full{grid-column:1/-1;}
-.form-label{font-size:.74rem;font-weight:700;color:var(--smoke);}
+.form-label{font-size:.74rem;font-weight:700;color:#ffffff;}
 .form-input,.form-select,.form-textarea{
   height:44px;padding:0 12px;
   border:1.5px solid var(--border);border-radius:var(--r-xs);
-  font-family:'Sora',sans-serif;font-size:.84rem;color:var(--smoke);
-  background:#fff;outline:none;width:100%;
+  font-family:'Sora',sans-serif;font-size:.84rem;color:#ffffff;
+  background:#0d1f2d;outline:none;width:100%;
   transition:border-color .15s,box-shadow .15s;min-height:44px;
 }
 .form-input:focus,.form-select:focus,.form-textarea:focus{
@@ -338,8 +338,8 @@ tr:hover td{background:var(--bg);}
 .chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
 .chip-toggle{
   height:34px;padding:0 14px;border-radius:50px;
-  border:1.5px solid var(--border);background:#fff;
-  font-size:.76rem;font-weight:600;color:var(--warm-gray);cursor:pointer;
+  border:1.5px solid var(--border);background:#0d1f2d;
+  font-size:.76rem;font-weight:600;color:rgba(255,255,255,0.85);cursor:pointer;
   display:inline-flex;align-items:center;gap:5px;transition:all .15s;min-height:34px;
 }
 .chip-toggle.active{background:var(--fire-pale);border-color:var(--fire);color:var(--fire);}
@@ -351,12 +351,12 @@ tr:hover td{background:var(--bg);}
 .rating-display-large{display:flex;align-items:center;gap:12px;}
 .rating-value{font-size:1.8rem;font-weight:700;}
 .rating-stars{font-size:1rem;letter-spacing:2px;}
-.rating-meta{font-size:.75rem;color:var(--warm-gray);font-family:'DM Mono',monospace;display:block;margin-top:4px;}
+.rating-meta{font-size:.75rem;color:rgba(255,255,255,0.85);font-family:'DM Mono',monospace;display:block;margin-top:4px;}
 
 /* FILTER */
 .filter-bar-row{display:flex;gap:8px;padding:10px 0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .filter-bar-row::-webkit-scrollbar{display:none;}
-.filter-chip{flex-shrink:0;height:36px;padding:0 14px;border:1.5px solid var(--border);border-radius:50px;background:#fff;font-size:.76rem;font-weight:600;color:var(--warm-gray);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;min-height:36px;}
+.filter-chip{flex-shrink:0;height:36px;padding:0 14px;border:1.5px solid var(--border);border-radius:50px;background:#0d1f2d;font-size:.76rem;font-weight:600;color:rgba(255,255,255,0.85);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;min-height:36px;}
 .filter-chip.active{background:var(--fire-pale);border-color:var(--fire);color:var(--fire);}
 .filter-chip:hover{border-color:var(--fire);color:var(--fire);}
 
@@ -367,9 +367,9 @@ tr:hover td{background:var(--bg);}
 .btn-lg{height:48px;padding:0 24px;border-radius:var(--r-sm);font-size:.9rem;font-weight:700;}
 .btn-fire{background:var(--fire);color:#fff;}
 .btn-fire:hover{background:var(--fire-lt);}
-.btn-outline{background:#fff;color:var(--smoke);border:1.5px solid var(--border);}
-.btn-outline:hover{border-color:var(--smoke);}
-.btn-ghost{background:var(--bg);color:var(--warm-gray);}
+.btn-outline{background:#0d1f2d;color:#ffffff;border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:#ffffff;}
+.btn-ghost{background:#0d1f2d;color:rgba(255,255,255,0.85);}
 .btn-ghost:hover{background:var(--border);}
 .btn-green{background:var(--green);color:#fff;}
 .btn-green:hover{background:#15803D;}
@@ -377,23 +377,23 @@ tr:hover td{background:var(--bg);}
 .btn-purple:hover{background:#6D28D9;}
 
 /* MODAL */
-.modal-backdrop{position:fixed;inset:0;background:rgba(28,25,23,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-backdrop{position:fixed;inset:0;background:#07111a,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
 .modal-backdrop.open{display:flex;}
-.modal{background:#fff;border-radius:var(--r);width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-lg);}
-.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:1;}
-.modal-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--smoke);}
-.modal-close{width:34px;height:34px;border-radius:50%;border:none;background:var(--bg);color:var(--warm-gray);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modal{background:#0d1f2d;border-radius:var(--r);width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-lg);}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#0d1f2d;z-index:1;}
+.modal-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:#ffffff;}
+.modal-close{width:34px;height:34px;border-radius:50%;border:none;background:#0d1f2d;color:rgba(255,255,255,0.85);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .modal-body{padding:20px;}
-.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:#fff;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:#0d1f2d;}
 
 /* SUCCESS */
 .success-state{text-align:center;padding:32px 20px;display:none;}
 .success-icon{font-size:3rem;margin-bottom:12px;}
 .success-state h3{font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;}
-.success-state p{font-size:.84rem;color:var(--warm-gray);line-height:1.6;}
+.success-state p{font-size:.84rem;color:rgba(255,255,255,0.85);line-height:1.6;}
 
 /* SIDEBAR OVERLAY */
-.sidebar-overlay{position:fixed;inset:0;background:rgba(28,25,23,.55);z-index:49;display:none;}
+.sidebar-overlay{position:fixed;inset:0;background:#07111a,.55);z-index:49;display:none;}
 .sidebar-overlay.open{display:block;}
 @media(max-width:767px){
   .sidebar{position:fixed;left:-100%;top:0;height:100vh;z-index:200;transition:left .28s ease;}
@@ -411,7 +411,7 @@ tr:hover td{background:var(--bg);}
 
 /* TOAST */
 #toastWrap{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
-.toast{background:var(--charcoal);color:#fff;padding:10px 18px;border-radius:50px;font-size:.8rem;font-weight:600;box-shadow:var(--sh-lg);pointer-events:none;animation:toastIn .25s ease;}
+.toast{background:#07111a;color:#fff;padding:10px 18px;border-radius:50px;font-size:.8rem;font-weight:600;box-shadow:var(--sh-lg);pointer-events:none;animation:toastIn .25s ease;}
 .toast.success{background:var(--green);}
 .toast.warning{background:var(--amber);}
 @keyframes toastIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
@@ -421,7 +421,7 @@ tr:hover td{background:var(--bg);}
 @media(max-width:767px){
   .bottom-nav{
     display:flex;position:fixed;bottom:0;left:0;right:0;z-index:150;
-    background:#fff;border-top:1px solid var(--border);
+    background:#0d1f2d;border-top:1px solid var(--border);
     height:62px;align-items:stretch;
     box-shadow:0 -4px 20px rgba(0,0,0,.07);
     padding-bottom:env(safe-area-inset-bottom);
@@ -443,12 +443,12 @@ tr:hover td{background:var(--bg);}
 @media(max-width:480px){.amenity-grid{grid-template-columns:1fr;}}
 .amenity-item{
   display:flex;align-items:center;gap:10px;
-  padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);
+  padding:10px 12px;background:#0d1f2d;border-radius:var(--r-sm);
   border:1.5px solid var(--border);cursor:pointer;transition:all .15s;min-height:44px;
 }
 .amenity-item.on{background:var(--fire-pale);border-color:var(--fire);}
 .amenity-icon{font-size:1rem;flex-shrink:0;}
-.amenity-label{font-size:.78rem;font-weight:600;color:var(--warm-gray);}
+.amenity-label{font-size:.78rem;font-weight:600;color:rgba(255,255,255,0.85);}
 .amenity-item.on .amenity-label{color:var(--fire);}
 .amenity-check{margin-left:auto;font-size:.8rem;color:var(--fire);display:none;}
 .amenity-item.on .amenity-check{display:block;}
@@ -460,8 +460,8 @@ tr:hover td{background:var(--bg);}
   border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;
 }
 .renewal-alert-icon{font-size:1.1rem;flex-shrink:0;}
-.renewal-alert-text{flex:1;font-size:.78rem;font-weight:600;color:var(--smoke);}
-.renewal-alert-sub{font-size:.7rem;color:var(--warm-gray);font-weight:400;margin-top:1px;}
+.renewal-alert-text{flex:1;font-size:.78rem;font-weight:600;color:#ffffff;}
+.renewal-alert-sub{font-size:.7rem;color:rgba(255,255,255,0.85);font-weight:400;margin-top:1px;}
 .renewal-alert-btn{
   height:32px;padding:0 12px;background:var(--amber);color:#fff;
   border:none;border-radius:7px;font-size:.74rem;font-weight:700;
@@ -473,7 +473,7 @@ tr:hover td{background:var(--bg);}
 ═══════════════════════════════════════ */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:80;
-  height:60px;background:#fff;border-top:1px solid var(--border);
+  height:60px;background:#0d1f2d;border-top:1px solid var(--border);
   display:none;flex-direction:row;width:100%;padding:0;margin:0;
 }
 @media(max-width:767px){
@@ -482,7 +482,7 @@ tr:hover td{background:var(--bg);}
 }
 .bn-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:4px 0;color:var(--warm-gray);text-decoration:none;
+  padding:4px 0;color:rgba(255,255,255,0.85);text-decoration:none;
   font-size:.65rem;font-weight:600;cursor:pointer;transition:color .2s;
   min-height:44px;gap:2px;border:none;background:none;
 }
@@ -559,7 +559,7 @@ tr:hover td{background:var(--bg);}
       <div class="topbar-actions">
         <button class="topbar-btn topbar-btn-primary" onclick="openModal('modal-add-property')">&#43; List Property</button>
         <span id="navUserArea" style="display:none;align-items:center;gap:8px;">
-          <span id="navUserName" style="font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:var(--smoke);white-space:nowrap;"></span>
+          <span id="navUserName" style="font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:#ffffff;white-space:nowrap;"></span>
           <button class="topbar-btn" onclick="navSignOut()">Logout</button>
         </span>
       </div>
@@ -639,19 +639,19 @@ tr:hover td{background:var(--bg);}
                 <button class="renewal-alert-btn" onclick="showToast('Renewal notice sent to Taco Loco.','success')">Notify</button>
               </div>
               <div style="display:flex;flex-direction:column;gap:8px;">
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);border:1px solid var(--border);">
                   <span style="font-size:1rem;">&#127829;</span>
                   <div style="flex:1;">
                     <div style="font-size:.8rem;font-weight:700;">Smoke &amp; Soul BBQ</div>
-                    <div style="font-size:.7rem;color:var(--warm-gray);">Parking lot &middot; Renews Jun 1</div>
+                    <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Parking lot &middot; Renews Jun 1</div>
                   </div>
                   <span class="badge badge-green">Auto-renews</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);border:1px solid var(--border);">
                   <span style="font-size:1rem;">&#127831;</span>
                   <div style="flex:1;">
                     <div style="font-size:.8rem;font-weight:700;">Gulf Coast Catch</div>
-                    <div style="font-size:.7rem;color:var(--warm-gray);">Parking lot &middot; Renews Jun 1</div>
+                    <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Parking lot &middot; Renews Jun 1</div>
                   </div>
                   <span class="badge badge-green">Auto-renews</span>
                 </div>
@@ -687,7 +687,7 @@ tr:hover td{background:var(--bg);}
                 </div>
               </div>
               <div style="display:flex;justify-content:space-between;margin-top:10px;">
-                <div style="font-size:.72rem;color:var(--warm-gray);">&#9632; <span style="color:var(--purple);">Past months</span> &nbsp; &#9632; <span style="color:var(--fire);">Current month</span></div>
+                <div style="font-size:.72rem;color:rgba(255,255,255,0.85);">&#9632; <span style="color:var(--purple);">Past months</span> &nbsp; &#9632; <span style="color:var(--fire);">Current month</span></div>
                 <div style="font-family:'DM Mono',monospace;font-size:.8rem;font-weight:700;color:var(--green);">&#8593; 9% MoM</div>
               </div>
             </div>
@@ -700,27 +700,27 @@ tr:hover td{background:var(--bg);}
                 <span class="box-title-link" onclick="setPanel('inquiries',document.getElementById('nav-inquiries'))">View all &rarr;</span>
               </div>
               <div style="display:flex;flex-direction:column;gap:8px;">
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);border:1px solid var(--border);">
                   <span style="font-size:1rem;">&#127790;</span>
                   <div style="flex:1;min-width:0;">
                     <div style="font-size:.8rem;font-weight:700;">Nacho Mama's</div>
-                    <div style="font-size:.7rem;color:var(--warm-gray);">Commercial Parking Lot &middot; Monthly</div>
+                    <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Commercial Parking Lot &middot; Monthly</div>
                   </div>
                   <button class="btn btn-sm btn-fire" onclick="setPanel('inquiries',document.getElementById('nav-inquiries'))">Review</button>
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);border:1px solid var(--border);">
                   <span style="font-size:1rem;">&#127828;</span>
                   <div style="flex:1;min-width:0;">
                     <div style="font-size:.8rem;font-weight:700;">Burger Barn SWFL</div>
-                    <div style="font-size:.7rem;color:var(--warm-gray);">Commissary Kitchen &middot; Weekly</div>
+                    <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Commissary Kitchen &middot; Weekly</div>
                   </div>
                   <button class="btn btn-sm btn-fire" onclick="setPanel('inquiries',document.getElementById('nav-inquiries'))">Review</button>
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);border:1px solid var(--border);">
                   <span style="font-size:1rem;">&#129473;</span>
                   <div style="flex:1;min-width:0;">
                     <div style="font-size:.8rem;font-weight:700;">Sweet Surrender</div>
-                    <div style="font-size:.7rem;color:var(--warm-gray);">Storage Unit &middot; Monthly</div>
+                    <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Storage Unit &middot; Monthly</div>
                   </div>
                   <button class="btn btn-sm btn-fire" onclick="setPanel('inquiries',document.getElementById('nav-inquiries'))">Review</button>
                 </div>
@@ -774,7 +774,7 @@ tr:hover td{background:var(--bg);}
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
           <div>
             <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;">My Properties</div>
-            <div style="font-size:.78rem;color:var(--warm-gray);">All spaces listed on the Parking &amp; Real Estate board.</div>
+            <div style="font-size:.78rem;color:rgba(255,255,255,0.85);">All spaces listed on the Parking &amp; Real Estate board.</div>
           </div>
           <button class="btn btn-md btn-fire" onclick="openModal('modal-add-property')">&#43; List a Property</button>
         </div>
@@ -919,7 +919,7 @@ tr:hover td{background:var(--bg);}
       <div class="panel" id="panel-tenants">
         <div style="margin-bottom:16px;">
           <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;">Tenants</div>
-          <div style="font-size:.78rem;color:var(--warm-gray);">Manage active leases and track payment status.</div>
+          <div style="font-size:.78rem;color:rgba(255,255,255,0.85);">Manage active leases and track payment status.</div>
         </div>
 
         <div class="filter-bar-row">
@@ -969,7 +969,7 @@ tr:hover td{background:var(--bg);}
           </div>
           <div style="margin-bottom:12px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-              <span style="font-size:.7rem;font-weight:600;color:var(--warm-gray);">Lease progress</span>
+              <span style="font-size:.7rem;font-weight:600;color:rgba(255,255,255,0.85);">Lease progress</span>
               <span style="font-size:.7rem;font-weight:700;color:var(--green);">Auto-renewal on</span>
             </div>
             <div class="lease-progress"><div class="lease-progress-fill" style="width:68%"></div></div>
@@ -1014,7 +1014,7 @@ tr:hover td{background:var(--bg);}
           </div>
           <div style="margin-bottom:12px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-              <span style="font-size:.7rem;font-weight:600;color:var(--warm-gray);">Lease progress</span>
+              <span style="font-size:.7rem;font-weight:600;color:rgba(255,255,255,0.85);">Lease progress</span>
               <span style="font-size:.7rem;font-weight:700;color:var(--green);">Auto-renewal on</span>
             </div>
             <div class="lease-progress"><div class="lease-progress-fill" style="width:52%"></div></div>
@@ -1058,7 +1058,7 @@ tr:hover td{background:var(--bg);}
           </div>
           <div style="margin-bottom:12px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-              <span style="font-size:.7rem;font-weight:600;color:var(--warm-gray);">Lease progress</span>
+              <span style="font-size:.7rem;font-weight:600;color:rgba(255,255,255,0.85);">Lease progress</span>
               <span style="font-size:.7rem;font-weight:700;color:var(--mid-gray);">New tenant</span>
             </div>
             <div class="lease-progress"><div class="lease-progress-fill" style="width:8%"></div></div>
@@ -1102,7 +1102,7 @@ tr:hover td{background:var(--bg);}
           </div>
           <div style="margin-bottom:12px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-              <span style="font-size:.7rem;font-weight:600;color:var(--warm-gray);">Lease progress</span>
+              <span style="font-size:.7rem;font-weight:600;color:rgba(255,255,255,0.85);">Lease progress</span>
               <span style="font-size:.7rem;font-weight:700;color:var(--amber);">Expires in 10 days</span>
             </div>
             <div class="lease-progress"><div class="lease-progress-fill warn" style="width:96%"></div></div>
@@ -1195,7 +1195,7 @@ tr:hover td{background:var(--bg);}
       <div class="panel" id="panel-inquiries">
         <div style="margin-bottom:16px;">
           <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;">Truck Inquiries</div>
-          <div style="font-size:.78rem;color:var(--warm-gray);">Food trucks interested in your properties.</div>
+          <div style="font-size:.78rem;color:rgba(255,255,255,0.85);">Food trucks interested in your properties.</div>
         </div>
 
         <div class="filter-bar-row">
@@ -1332,12 +1332,12 @@ tr:hover td{background:var(--bg);}
       <div class="panel" id="panel-account">
         <div style="margin-bottom:16px;">
           <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;">Account Settings</div>
-          <div style="font-size:.78rem;color:var(--warm-gray);">Manage your profile and subscription.</div>
+          <div style="font-size:.78rem;color:rgba(255,255,255,0.85);">Manage your profile and subscription.</div>
         </div>
 
         <!-- Property Owner Rating -->
         <div class="rating-section-property">
-          <div style="font-size:.85rem;font-weight:700;color:var(--smoke);margin-bottom:10px;">Your Rating from Food Trucks</div>
+          <div style="font-size:.85rem;font-weight:700;color:#ffffff;margin-bottom:10px;">Your Rating from Food Trucks</div>
           <div class="rating-display-large">
             <div>
               <div class="rating-value" style="color:var(--purple);">4.9</div>
@@ -1356,7 +1356,7 @@ tr:hover td{background:var(--bg);}
             <div style="font-size:1.4rem;flex-shrink:0;">&#128176;</div>
             <div style="flex:1;">
               <div style="font-size:.88rem;font-weight:700;">Standard Plan</div>
-              <div style="font-size:.74rem;color:var(--warm-gray);margin-top:2px;">$49/month &middot; 3 listings active &middot; Unlimited inquiries</div>
+              <div style="font-size:.74rem;color:rgba(255,255,255,0.85);margin-top:2px;">$49/month &middot; 3 listings active &middot; Unlimited inquiries</div>
             </div>
             <button class="btn btn-md btn-fire" onclick="openModal('modal-upgrade')">Upgrade to Pro</button>
           </div>
@@ -1408,31 +1408,31 @@ tr:hover td{background:var(--bg);}
         <div class="box">
           <div class="box-title">Notification Preferences</div>
           <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:var(--r-sm);min-height:44px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);min-height:44px;">
               <div>
                 <div style="font-size:.82rem;font-weight:700;">New Inquiries</div>
-                <div style="font-size:.7rem;color:var(--warm-gray);">Get notified when a truck inquires about your property</div>
+                <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Get notified when a truck inquires about your property</div>
               </div>
               <button class="chip-toggle active" onclick="this.classList.toggle('active');showToast(this.classList.contains('active')?'Notifications on.':'Notifications off.')">On</button>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:var(--r-sm);min-height:44px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);min-height:44px;">
               <div>
                 <div style="font-size:.82rem;font-weight:700;">Lease Renewals (30-day)</div>
-                <div style="font-size:.7rem;color:var(--warm-gray);">Reminder 30 days before a tenant's lease expires</div>
+                <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Reminder 30 days before a tenant's lease expires</div>
               </div>
               <button class="chip-toggle active" onclick="this.classList.toggle('active');showToast(this.classList.contains('active')?'Notifications on.':'Notifications off.')">On</button>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:var(--r-sm);min-height:44px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);min-height:44px;">
               <div>
                 <div style="font-size:.82rem;font-weight:700;">Payment Reminders</div>
-                <div style="font-size:.7rem;color:var(--warm-gray);">Alert when a tenant's payment is overdue</div>
+                <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Alert when a tenant's payment is overdue</div>
               </div>
               <button class="chip-toggle active" onclick="this.classList.toggle('active');showToast(this.classList.contains('active')?'Notifications on.':'Notifications off.')">On</button>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:var(--r-sm);min-height:44px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#0d1f2d;border-radius:var(--r-sm);min-height:44px;">
               <div>
                 <div style="font-size:.82rem;font-weight:700;">New Messages</div>
-                <div style="font-size:.7rem;color:var(--warm-gray);">Get notified when a tenant sends a message</div>
+                <div style="font-size:.7rem;color:rgba(255,255,255,0.85);">Get notified when a tenant sends a message</div>
               </div>
               <button class="chip-toggle active" onclick="this.classList.toggle('active');showToast(this.classList.contains('active')?'Notifications on.':'Notifications off.')">On</button>
             </div>
@@ -1477,7 +1477,7 @@ tr:hover td{background:var(--bg);}
       <button class="modal-close" onclick="closeModal('modal-add-property')">&#10005;</button>
     </div>
     <div class="modal-body" id="add-prop-form">
-      <div style="background:var(--smoke);border-left:3px solid var(--navy);border-radius:6px;padding:12px 14px;margin-bottom:16px;font-size:.78rem;line-height:1.55;color:var(--charcoal);">
+      <div style="background:#0d1f2d;border-left:3px solid var(--navy);border-radius:6px;padding:12px 14px;margin-bottom:16px;font-size:.78rem;line-height:1.55;color:var(--charcoal);">
         <strong>Marketplace Disclaimer:</strong> ServiceWindow is a marketplace platform only. All rental, parking, and space agreements are made directly between food truck operators and property owners. ServiceWindow is not a party to any transaction, agreement, or dispute between these parties. Use your own judgment and conduct due diligence before entering into any agreement.
       </div>
       <div class="form-grid">
@@ -1595,7 +1595,7 @@ tr:hover td{background:var(--bg);}
       <div style="text-align:center;padding:20px 0 10px;">
         <div style="font-size:2rem;margin-bottom:10px;">&#128640;</div>
         <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;margin-bottom:6px;">Pro Plan — $79/mo</div>
-        <div style="font-size:.78rem;color:var(--warm-gray);line-height:1.6;margin-bottom:16px;">Unlock unlimited listings, priority placement in search, advanced analytics, and a dedicated account manager.</div>
+        <div style="font-size:.78rem;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:16px;">Unlock unlimited listings, priority placement in search, advanced analytics, and a dedicated account manager.</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--green-pale);border-radius:var(--r-sm);">

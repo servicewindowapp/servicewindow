@@ -26,7 +26,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:16px;-webkit-text-size-adjust:100%;}
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--smoke);line-height:1.5;min-height:100vh;}
+body{font-family:'Sora',sans-serif;background:#0d1f2d;color:#ffffff;line-height:1.5;min-height:100vh;}
 a{color:inherit;text-decoration:none;}
 button{font-family:'Sora',sans-serif;cursor:pointer;}
 input,textarea,select{font-family:'Sora',sans-serif;}
@@ -70,7 +70,7 @@ img{max-width:100%;height:auto;}
 }
 .sidebar-item{
   display:flex;align-items:center;gap:10px;padding:10px 12px;
-  border-radius:10px;font-size:.84rem;font-weight:600;color:var(--warm-gray);
+  border-radius:10px;font-size:.84rem;font-weight:600;color:rgba(255,255,255,0.85);
   cursor:pointer;transition:all .15s;min-height:44px;
 }
 .sidebar-item:hover{background:var(--amber-pale);color:var(--amber);}
@@ -85,7 +85,7 @@ img{max-width:100%;height:auto;}
   display:flex;align-items:center;justify-content:center;
   font-size:.8rem;font-weight:700;color:var(--amber);flex-shrink:0;
 }
-.sidebar-user-name{font-size:.8rem;font-weight:700;color:var(--smoke);}
+.sidebar-user-name{font-size:.8rem;font-weight:700;color:#ffffff;}
 .sidebar-user-role{font-size:.68rem;color:var(--mid-gray);}
 
 /* ═══════════════════════════════════════════════════
@@ -98,15 +98,15 @@ img{max-width:100%;height:auto;}
 }
 @media(min-width:768px){.topbar-hamburger{display:none;}}
 .topbar-hamburger span{
-  width:20px;height:2px;background:var(--smoke);
+  width:20px;height:2px;background:#0d1f2d;
   border-radius:2px;transition:all .25s;display:block;
 }
 .topbar-title{font-size:1rem;font-weight:700;flex:1;}
 .topbar-actions{display:flex;align-items:center;gap:8px;}
 .topbar-btn{
-  width:36px;height:36px;border:none;background:var(--bg);
+  width:36px;height:36px;border:none;background:#0d1f2d;
   border-radius:8px;font-size:1rem;display:flex;align-items:center;
-  justify-content:center;color:var(--warm-gray);transition:all .15s;
+  justify-content:center;color:rgba(255,255,255,0.85);transition:all .15s;
   position:relative;
 }
 .topbar-btn:hover{background:var(--amber-pale);color:var(--amber);}
@@ -128,7 +128,7 @@ img{max-width:100%;height:auto;}
    SIDEBAR OVERLAY (mobile)
 ═══════════════════════════════════════════════════ */
 .sidebar-overlay{
-  display:none;position:fixed;inset:0;background:rgba(28,25,23,.55);z-index:199;
+  display:none;position:fixed;inset:0;background:#07111a,.55);z-index:199;
 }
 .sidebar-overlay.open{display:block;}
 @media(max-width:767px){
@@ -185,7 +185,7 @@ img{max-width:100%;height:auto;}
   border-radius:var(--r);padding:14px 14px;
 }
 .kpi-label{font-size:.65rem;font-family:'DM Mono',monospace;color:var(--mid-gray);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-.kpi-value{font-size:1.5rem;font-weight:800;font-family:'Lora',serif;color:var(--smoke);line-height:1;}
+.kpi-value{font-size:1.5rem;font-weight:800;font-family:'Lora',serif;color:#ffffff;line-height:1;}
 .kpi-delta{font-size:.68rem;margin-top:4px;font-family:'DM Mono',monospace;}
 .kpi-delta.up{color:var(--green);}
 .kpi-delta.down{color:var(--red);}
@@ -199,7 +199,7 @@ img{max-width:100%;height:auto;}
   margin-bottom:12px;
 }
 .section-title{
-  font-size:1rem;font-weight:700;color:var(--smoke);
+  font-size:1rem;font-weight:700;color:#ffffff;
 }
 .section-link{
   font-size:.76rem;font-weight:600;color:var(--amber);
@@ -217,8 +217,8 @@ img{max-width:100%;height:auto;}
 }
 .plan-banner-icon{font-size:1.4rem;flex-shrink:0;}
 .plan-banner-text{flex:1;}
-.plan-banner-title{font-size:.86rem;font-weight:700;color:var(--smoke);}
-.plan-banner-sub{font-size:.72rem;color:var(--warm-gray);margin-top:2px;}
+.plan-banner-title{font-size:.86rem;font-weight:700;color:#ffffff;}
+.plan-banner-sub{font-size:.72rem;color:rgba(255,255,255,0.85);margin-top:2px;}
 .plan-banner-upgrade{
   height:36px;padding:0 14px;background:var(--amber);color:#fff;
   border:none;border-radius:8px;font-size:.74rem;font-weight:700;
@@ -248,7 +248,7 @@ img{max-width:100%;height:auto;}
   font-size:1.2rem;flex-shrink:0;
 }
 .sc-info{flex:1;min-width:0;}
-.sc-title{font-size:.92rem;font-weight:700;color:var(--smoke);margin-bottom:2px;}
+.sc-title{font-size:.92rem;font-weight:700;color:#ffffff;margin-bottom:2px;}
 .sc-meta{font-size:.72rem;color:var(--mid-gray);font-family:'DM Mono',monospace;}
 .sc-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
 .sc-badge{
@@ -264,12 +264,12 @@ img{max-width:100%;height:auto;}
   margin-bottom:10px;
 }
 .sc-stat{text-align:center;flex:1;}
-.sc-stat-num{font-size:.96rem;font-weight:700;font-family:'Lora',serif;color:var(--smoke);}
+.sc-stat-num{font-size:.96rem;font-weight:700;font-family:'Lora',serif;color:#ffffff;}
 .sc-stat-lbl{font-size:.6rem;font-family:'DM Mono',monospace;color:var(--mid-gray);text-transform:uppercase;}
 .sc-foot{display:flex;gap:8px;}
 .sc-btn{
   flex:1;height:38px;border-radius:var(--r-sm);font-size:.78rem;font-weight:700;
-  border:1.5px solid var(--border);background:var(--white);color:var(--warm-gray);
+  border:1.5px solid var(--border);background:var(--white);color:rgba(255,255,255,0.85);
   cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;
 }
 .sc-btn:hover{border-color:var(--amber);color:var(--amber);}
@@ -295,7 +295,7 @@ img{max-width:100%;height:auto;}
   font-size:.8rem;font-weight:700;color:var(--fire);flex-shrink:0;
 }
 .lc-info{flex:1;min-width:0;}
-.lc-name{font-size:.88rem;font-weight:700;color:var(--smoke);}
+.lc-name{font-size:.88rem;font-weight:700;color:#ffffff;}
 .lc-sub{font-size:.72rem;color:var(--mid-gray);font-family:'DM Mono',monospace;margin-top:2px;}
 .lc-tag{
   font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:6px;
@@ -305,15 +305,15 @@ img{max-width:100%;height:auto;}
 .lc-tag.replied{background:var(--green-pale);color:var(--green);}
 .lc-tag.closed{background:#F3F4F6;color:var(--mid-gray);}
 .lc-service{
-  background:var(--bg);border-radius:8px;padding:8px 10px;
-  font-size:.76rem;color:var(--warm-gray);margin-bottom:10px;
+  background:#0d1f2d;border-radius:8px;padding:8px 10px;
+  font-size:.76rem;color:rgba(255,255,255,0.85);margin-bottom:10px;
   font-family:'Lora',serif;font-style:italic;line-height:1.55;
 }
-.lc-service strong{font-style:normal;font-family:'Sora',sans-serif;color:var(--smoke);}
+.lc-service strong{font-style:normal;font-family:'Sora',sans-serif;color:#ffffff;}
 .lc-foot{display:flex;gap:8px;}
 .lc-btn{
   flex:1;height:40px;border-radius:var(--r-sm);font-size:.78rem;font-weight:700;
-  border:1.5px solid var(--border);background:var(--white);color:var(--warm-gray);
+  border:1.5px solid var(--border);background:var(--white);color:rgba(255,255,255,0.85);
   cursor:pointer;transition:all .15s;
 }
 .lc-btn:hover{border-color:var(--amber);color:var(--amber);}
@@ -336,7 +336,7 @@ img{max-width:100%;height:auto;}
 .msg-search{padding:10px 12px;border-bottom:1px solid var(--border);}
 .msg-search input{
   width:100%;height:36px;border:1.5px solid var(--border);border-radius:20px;
-  padding:0 14px;font-size:.8rem;background:var(--bg);
+  padding:0 14px;font-size:.8rem;background:#0d1f2d;
 }
 .msg-thread{
   display:flex;gap:10px;padding:12px 14px;cursor:pointer;
@@ -349,7 +349,7 @@ img{max-width:100%;height:auto;}
   font-size:.8rem;font-weight:700;color:var(--fire);flex-shrink:0;
 }
 .msg-t-body{flex:1;min-width:0;}
-.msg-t-name{font-size:.82rem;font-weight:700;color:var(--smoke);}
+.msg-t-name{font-size:.82rem;font-weight:700;color:#ffffff;}
 .msg-t-preview{font-size:.72rem;color:var(--mid-gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
 .msg-t-time{font-size:.62rem;color:var(--mid-gray);font-family:'DM Mono',monospace;flex-shrink:0;}
 .msg-unread{
@@ -367,7 +367,7 @@ img{max-width:100%;height:auto;}
   max-width:80%;padding:10px 12px;border-radius:12px;
   font-size:.82rem;line-height:1.5;font-family:'Lora',serif;
 }
-.msg-bubble.them{background:var(--bg);color:var(--smoke);border-bottom-left-radius:4px;align-self:flex-start;}
+.msg-bubble.them{background:#0d1f2d;color:#ffffff;border-bottom-left-radius:4px;align-self:flex-start;}
 .msg-bubble.me{background:var(--amber);color:#fff;border-bottom-right-radius:4px;align-self:flex-end;}
 .msg-bubble-time{font-size:.62rem;color:var(--mid-gray);margin-top:2px;font-family:'DM Mono',monospace;}
 .msg-input-bar{
@@ -376,7 +376,7 @@ img{max-width:100%;height:auto;}
 }
 .msg-input-bar input{
   flex:1;height:40px;border:1.5px solid var(--border);border-radius:20px;
-  padding:0 14px;font-size:.84rem;background:var(--bg);
+  padding:0 14px;font-size:.84rem;background:#0d1f2d;
 }
 .msg-input-bar input:focus{outline:none;border-color:var(--amber);}
 .msg-send-btn{
@@ -394,17 +394,17 @@ img{max-width:100%;height:auto;}
   border-radius:var(--r);padding:16px;margin-bottom:16px;
 }
 .profile-section-title{
-  font-size:.86rem;font-weight:700;color:var(--smoke);margin-bottom:14px;
+  font-size:.86rem;font-weight:700;color:#ffffff;margin-bottom:14px;
   padding-bottom:10px;border-bottom:1px solid var(--border);
 }
 .form-grid{display:grid;gap:12px;}
 .form-grid.two{grid-template-columns:1fr 1fr;}
 @media(max-width:540px){.form-grid.two{grid-template-columns:1fr;}}
 .form-group{display:flex;flex-direction:column;gap:5px;}
-.form-label{font-size:.72rem;font-weight:700;color:var(--warm-gray);text-transform:uppercase;letter-spacing:.4px;}
+.form-label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:.4px;}
 .form-input{
   height:44px;border:1.5px solid var(--border);border-radius:var(--r-sm);
-  padding:0 12px;font-size:.86rem;background:var(--white);color:var(--smoke);
+  padding:0 12px;font-size:.86rem;background:var(--white);color:#ffffff;
   transition:border-color .15s;
 }
 .form-input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(217,119,6,.1);}
@@ -435,14 +435,14 @@ select.form-input{cursor:pointer;}
 .rating-display-large{display:flex;align-items:center;gap:12px;}
 .rating-value{font-size:1.8rem;font-weight:700;}
 .rating-stars{font-size:1rem;letter-spacing:2px;}
-.rating-meta{font-size:.75rem;color:var(--warm-gray);font-family:'DM Mono',monospace;display:block;margin-top:4px;}
+.rating-meta{font-size:.75rem;color:rgba(255,255,255,0.85);font-family:'DM Mono',monospace;display:block;margin-top:4px;}
 .billing-status.paid{background:var(--green-pale);color:var(--green);}
 .notif-row{
   display:flex;align-items:center;justify-content:space-between;
   padding:12px 0;border-bottom:1px solid var(--border);
 }
 .notif-row:last-child{border-bottom:none;}
-.notif-label{font-size:.84rem;font-weight:600;color:var(--smoke);}
+.notif-label{font-size:.84rem;font-weight:600;color:#ffffff;}
 .notif-sub{font-size:.72rem;color:var(--mid-gray);margin-top:2px;}
 .toggle{
   width:42px;height:24px;background:var(--border);border-radius:50px;
@@ -451,7 +451,7 @@ select.form-input{cursor:pointer;}
 .toggle.on{background:var(--amber);}
 .toggle::after{
   content:'';position:absolute;top:3px;left:3px;
-  width:18px;height:18px;border-radius:50%;background:#fff;
+  width:18px;height:18px;border-radius:50%;background:#0d1f2d;
   transition:transform .2s;
 }
 .toggle.on::after{transform:translateX(18px);}
@@ -460,7 +460,7 @@ select.form-input{cursor:pointer;}
    ADD SERVICE / EDIT MODALS
 ═══════════════════════════════════════════════════ */
 .modal-backdrop{
-  display:none;position:fixed;inset:0;background:rgba(28,25,23,.55);
+  display:none;position:fixed;inset:0;background:#07111a,.55);
   z-index:400;align-items:flex-end;justify-content:center;
 }
 @media(min-width:540px){.modal-backdrop{align-items:center;}}
@@ -478,9 +478,9 @@ select.form-input{cursor:pointer;}
 }
 .modal-title{font-size:.96rem;font-weight:700;}
 .modal-close{
-  width:32px;height:32px;border:none;background:var(--bg);
+  width:32px;height:32px;border:none;background:#0d1f2d;
   border-radius:50%;font-size:1.1rem;cursor:pointer;
-  color:var(--warm-gray);display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;
 }
 .modal-body{padding:18px 18px 0;}
 .modal-form{display:flex;flex-direction:column;gap:14px;}
@@ -492,14 +492,14 @@ select.form-input{cursor:pointer;}
 .modal-submit:hover{background:var(--amber-lt);}
 .modal-cancel{
   height:44px;width:100%;background:none;border:1.5px solid var(--border);
-  border-radius:var(--r-sm);color:var(--warm-gray);font-size:.88rem;font-weight:600;
+  border-radius:var(--r-sm);color:rgba(255,255,255,0.85);font-size:.88rem;font-weight:600;
   cursor:pointer;transition:all .15s;
 }
-.modal-cancel:hover{border-color:var(--smoke);color:var(--smoke);}
+.modal-cancel:hover{border-color:#ffffff;color:#ffffff;}
 .service-cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .service-cat-btn{
   height:52px;border:1.5px solid var(--border);border-radius:var(--r-sm);
-  background:var(--white);font-size:.78rem;font-weight:600;color:var(--warm-gray);
+  background:var(--white);font-size:.78rem;font-weight:600;color:rgba(255,255,255,0.85);
   cursor:pointer;transition:all .15s;display:flex;align-items:center;
   justify-content:center;gap:6px;
 }
@@ -511,7 +511,7 @@ select.form-input{cursor:pointer;}
 }
 .success-icon{font-size:2.8rem;margin-bottom:12px;}
 .success-title{font-size:1rem;font-weight:700;margin-bottom:6px;}
-.success-sub{font-size:.82rem;color:var(--warm-gray);line-height:1.6;}
+.success-sub{font-size:.82rem;color:rgba(255,255,255,0.85);line-height:1.6;}
 
 /* ═══════════════════════════════════════════════════
    QUICK STATS / RECENT ACTIVITY
@@ -529,7 +529,7 @@ select.form-input{cursor:pointer;}
 .activity-dot.booking{background:var(--green);}
 .activity-dot.review{background:var(--fire);}
 .activity-dot.view{background:var(--mid-gray);}
-.activity-text{font-size:.8rem;color:var(--smoke);flex:1;line-height:1.5;}
+.activity-text{font-size:.8rem;color:#ffffff;flex:1;line-height:1.5;}
 .activity-time{font-size:.64rem;color:var(--mid-gray);font-family:'DM Mono',monospace;flex-shrink:0;}
 
 /* ═══════════════════════════════════════════════════
@@ -541,7 +541,7 @@ select.form-input{cursor:pointer;}
   min-width:240px;max-width:90vw;
 }
 .toast{
-  background:var(--charcoal);color:#fff;padding:10px 16px;
+  background:#07111a;color:#fff;padding:10px 16px;
   border-radius:10px;font-size:.82rem;font-weight:600;
   text-align:center;pointer-events:none;
   box-shadow:var(--sh-md);
@@ -565,7 +565,7 @@ input:focus,textarea:focus,select:focus{
 ═══════════════════════════════════════ */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:80;
-  height:60px;background:#fff;border-top:1px solid var(--border);
+  height:60px;background:#0d1f2d;border-top:1px solid var(--border);
   display:none;flex-direction:row;width:100%;padding:0;margin:0;
 }
 @media(max-width:767px){
@@ -574,7 +574,7 @@ input:focus,textarea:focus,select:focus{
 }
 .bn-tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:4px 0;color:var(--warm-gray);text-decoration:none;
+  padding:4px 0;color:rgba(255,255,255,0.85);text-decoration:none;
   font-size:.65rem;font-weight:600;cursor:pointer;transition:color .2s;
   min-height:44px;gap:2px;border:none;background:none;
 }
@@ -661,7 +661,7 @@ input:focus,textarea:focus,select:focus{
           &#9993;
         </button>
         <span id="navUserArea" style="display:none;align-items:center;gap:8px;">
-          <span id="navUserName" style="font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:var(--smoke);white-space:nowrap;"></span>
+          <span id="navUserName" style="font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:#ffffff;white-space:nowrap;"></span>
           <button class="topbar-btn" onclick="navSignOut()">Logout</button>
         </span>
       </div>
@@ -803,7 +803,7 @@ input:focus,textarea:focus,select:focus{
             <span class="sc-badge category">Technology</span>
           </div>
           <div class="sc-price">From $149 flat rate &middot; $49/hr ongoing support</div>
-          <div style="font-size:.78rem;color:var(--warm-gray);font-family:'Lora',serif;font-style:italic;line-height:1.55;margin-bottom:10px;">
+          <div style="font-size:.78rem;color:rgba(255,255,255,0.85);font-family:'Lora',serif;font-style:italic;line-height:1.55;margin-bottom:10px;">
             Full Square and Toast point-of-sale setup, menu build-out, staff training, and 30 days of support. Mobile-ready for any truck setup.
           </div>
           <div class="sc-stats">
@@ -833,7 +833,7 @@ input:focus,textarea:focus,select:focus{
             <span class="sc-badge category">Branding</span>
           </div>
           <div class="sc-price">From $1,800 &middot; Partial wraps from $450</div>
-          <div style="font-size:.78rem;color:var(--warm-gray);font-family:'Lora',serif;font-style:italic;line-height:1.55;margin-bottom:10px;">
+          <div style="font-size:.78rem;color:rgba(255,255,255,0.85);font-family:'Lora',serif;font-style:italic;line-height:1.55;margin-bottom:10px;">
             Full and partial vinyl wraps, logo design, menu boards, and social media graphics. 5-day turnaround. We come to your truck&rsquo;s location.
           </div>
           <div class="sc-stats">
@@ -863,7 +863,7 @@ input:focus,textarea:focus,select:focus{
             <span class="sc-badge category">Compliance</span>
           </div>
           <div class="sc-price">$199 flat &middot; New trucks &middot; $99 renewal assist</div>
-          <div style="font-size:.78rem;color:var(--warm-gray);font-family:'Lora',serif;font-style:italic;line-height:1.55;margin-bottom:10px;">
+          <div style="font-size:.78rem;color:rgba(255,255,255,0.85);font-family:'Lora',serif;font-style:italic;line-height:1.55;margin-bottom:10px;">
             Full permit application support, inspection prep, and renewal filing for Lee and Collier County. Pass first time or we work until you do.
           </div>
           <div class="sc-stats">
@@ -883,7 +883,7 @@ input:focus,textarea:focus,select:focus{
         <div style="background:linear-gradient(135deg,var(--amber-pale),var(--white));border:1.5px solid var(--amber-border);border-radius:var(--r);padding:18px 16px;text-align:center;margin-top:6px;">
           <div style="font-size:1.2rem;margin-bottom:8px;">&#128274;</div>
           <div style="font-size:.88rem;font-weight:700;margin-bottom:4px;">Upgrade to Pro for unlimited listings</div>
-          <div style="font-size:.76rem;color:var(--warm-gray);margin-bottom:14px;">Post across all 7 boards &middot; Priority placement &middot; Analytics dashboard</div>
+          <div style="font-size:.76rem;color:rgba(255,255,255,0.85);margin-bottom:14px;">Post across all 7 boards &middot; Priority placement &middot; Analytics dashboard</div>
           <button style="height:40px;padding:0 20px;background:var(--amber);color:#fff;border:none;border-radius:var(--r-sm);font-size:.84rem;font-weight:700;cursor:pointer;" onclick="openModal('modal-upgrade')">See Pro Features</button>
         </div>
 
@@ -901,8 +901,8 @@ input:focus,textarea:focus,select:focus{
         <!-- Tabs -->
         <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;">
           <button style="height:34px;padding:0 14px;border-radius:50px;border:2px solid var(--amber);background:var(--amber);color:#fff;font-size:.76rem;font-weight:700;white-space:nowrap;cursor:pointer;">New (3)</button>
-          <button style="height:34px;padding:0 14px;border-radius:50px;border:2px solid var(--border);background:var(--white);color:var(--warm-gray);font-size:.76rem;font-weight:700;white-space:nowrap;cursor:pointer;" onclick="showToast('Replied leads filter')">Replied (8)</button>
-          <button style="height:34px;padding:0 14px;border-radius:50px;border:2px solid var(--border);background:var(--white);color:var(--warm-gray);font-size:.76rem;font-weight:700;white-space:nowrap;cursor:pointer;" onclick="showToast('Closed leads filter')">Closed (3)</button>
+          <button style="height:34px;padding:0 14px;border-radius:50px;border:2px solid var(--border);background:var(--white);color:rgba(255,255,255,0.85);font-size:.76rem;font-weight:700;white-space:nowrap;cursor:pointer;" onclick="showToast('Replied leads filter')">Replied (8)</button>
+          <button style="height:34px;padding:0 14px;border-radius:50px;border:2px solid var(--border);background:var(--white);color:rgba(255,255,255,0.85);font-size:.76rem;font-weight:700;white-space:nowrap;cursor:pointer;" onclick="showToast('Closed leads filter')">Closed (3)</button>
         </div>
 
         <!-- Lead 1 -->
@@ -1101,7 +1101,7 @@ input:focus,textarea:focus,select:focus{
 
         <!-- Service Provider Rating -->
         <div class="rating-section-provider">
-          <div style="font-size:.85rem;font-weight:700;color:var(--smoke);margin-bottom:10px;">Your Rating from Food Trucks</div>
+          <div style="font-size:.85rem;font-weight:700;color:#ffffff;margin-bottom:10px;">Your Rating from Food Trucks</div>
           <div class="rating-display-large">
             <div>
               <div class="rating-value" style="color:var(--amber);">4.6</div>
@@ -1156,11 +1156,11 @@ input:focus,textarea:focus,select:focus{
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <div>
               <div style="font-size:.92rem;font-weight:700;">Standard Plan</div>
-              <div style="font-size:.76rem;color:var(--warm-gray);margin-top:2px;">$39/mo &middot; Renews Apr 21, 2026</div>
+              <div style="font-size:.76rem;color:rgba(255,255,255,0.85);margin-top:2px;">$39/mo &middot; Renews Apr 21, 2026</div>
             </div>
             <button style="height:36px;padding:0 14px;background:var(--amber);color:#fff;border:none;border-radius:8px;font-size:.76rem;font-weight:700;cursor:pointer;" onclick="openModal('modal-upgrade')">Upgrade to Pro</button>
           </div>
-          <div style="font-size:.76rem;font-weight:700;color:var(--warm-gray);margin-bottom:8px;">Billing History</div>
+          <div style="font-size:.76rem;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:8px;">Billing History</div>
           <div class="billing-row">
             <div>
               <div style="font-size:.84rem;font-weight:600;">Standard Plan</div>
@@ -1191,7 +1191,7 @@ input:focus,textarea:focus,select:focus{
               <span class="billing-amount">$39.00</span>
             </div>
           </div>
-          <button style="width:100%;height:40px;margin-top:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;font-size:.8rem;font-weight:600;color:var(--warm-gray);cursor:pointer;" onclick="showToast('Billing portal coming soon','warning')">Manage Payment Method</button>
+          <button style="width:100%;height:40px;margin-top:12px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;font-size:.8rem;font-weight:600;color:rgba(255,255,255,0.85);cursor:pointer;" onclick="showToast('Billing portal coming soon','warning')">Manage Payment Method</button>
         </div>
 
         <!-- Notifications -->
@@ -1281,7 +1281,7 @@ input:focus,textarea:focus,select:focus{
     <div class="modal-body" id="add-service-form">
       <div class="modal-form">
         <div>
-          <div style="font-size:.78rem;font-weight:700;color:var(--warm-gray);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">Service Category</div>
+          <div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;">Service Category</div>
           <div class="service-cat-grid">
             <button class="service-cat-btn selected" onclick="selectCat(this)">&#128241; Technology &amp; POS</button>
             <button class="service-cat-btn" onclick="selectCat(this)">&#127775; Branding &amp; Wraps</button>
@@ -1375,33 +1375,33 @@ input:focus,textarea:focus,select:focus{
       <div style="text-align:center;padding:12px 0 18px;">
         <div style="font-size:2rem;margin-bottom:8px;">&#128640;</div>
         <div style="font-size:1rem;font-weight:700;margin-bottom:4px;">ServiceWindow Pro</div>
-        <div style="font-size:.8rem;color:var(--warm-gray);">For growing service businesses</div>
+        <div style="font-size:.8rem;color:rgba(255,255,255,0.85);">For growing service businesses</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0d1f2d;border-radius:var(--r-sm);">
           <span style="color:var(--amber);font-size:.9rem;">&#10003;</span>
           <div style="font-size:.82rem;font-weight:600;">Unlimited service listings across all 7 boards</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0d1f2d;border-radius:var(--r-sm);">
           <span style="color:var(--amber);font-size:.9rem;">&#10003;</span>
           <div style="font-size:.82rem;font-weight:600;">Priority placement in search results</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0d1f2d;border-radius:var(--r-sm);">
           <span style="color:var(--amber);font-size:.9rem;">&#10003;</span>
           <div style="font-size:.82rem;font-weight:600;">Full lead analytics and conversion tracking</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0d1f2d;border-radius:var(--r-sm);">
           <span style="color:var(--amber);font-size:.9rem;">&#10003;</span>
           <div style="font-size:.82rem;font-weight:600;">Verified Pro badge on all listings</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-sm);">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0d1f2d;border-radius:var(--r-sm);">
           <span style="color:var(--amber);font-size:.9rem;">&#10003;</span>
           <div style="font-size:.82rem;font-weight:600;">Quote builder with digital signature</div>
         </div>
       </div>
       <div style="text-align:center;margin-bottom:16px;">
-        <div style="font-size:1.6rem;font-weight:800;font-family:'Lora',serif;">$79<span style="font-size:.9rem;font-weight:400;color:var(--warm-gray)">/mo</span></div>
-        <div style="font-size:.76rem;color:var(--warm-gray);">Founding rate: $49/mo locked forever</div>
+        <div style="font-size:1.6rem;font-weight:800;font-family:'Lora',serif;">$79<span style="font-size:.9rem;font-weight:400;color:rgba(255,255,255,0.85)">/mo</span></div>
+        <div style="font-size:.76rem;color:rgba(255,255,255,0.85);">Founding rate: $49/mo locked forever</div>
       </div>
       <button class="modal-submit" onclick="showToast('Pro upgrade coming soon — you\'ll be first to know!','success');closeModal('modal-upgrade')">Upgrade to Pro &mdash; $79/mo</button>
       <button class="modal-cancel" style="margin-top:8px;" onclick="closeModal('modal-upgrade')">Stay on Standard</button>
