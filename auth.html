@@ -500,24 +500,42 @@ const ROLE_DASHBOARDS = {
   job_seeker:       'jobs-dashboard.html',
 };
 
-async function redirectByRole(userId){
+async function redirectByRole(userId, userEmail){
   try {
+    console.log('✓ [AUTH] Redirecting user:', userId, 'email:', userEmail);
+
+    // Email fallback: force admin dashboard for wesfitz72@gmail.com
+    if(userEmail === 'wesfitz72@gmail.com'){
+      console.log('✓ [AUTH] Admin email detected — forcing admin-dashboard.html');
+      sessionStorage.setItem('_sw_auth_redirected', 'true');
+      window.location.href = 'admin-dashboard.html';
+      return;
+    }
+
     const { data: profile, error } = await window.supabase
       .from('profiles')
       .select('role')
       .eq('id', userId)
       .single();
 
+    if(error){
+      console.warn('✗ [AUTH] Profile fetch error:', error.message);
+    } else {
+      console.log('✓ [AUTH] Profile fetched — role:', profile?.role);
+    }
+
     // If profile lookup fails, default to truck-dashboard
     const role = (profile && profile.role) || 'truck';
     const dest = ROLE_DASHBOARDS[role] || 'truck-dashboard.html';
+
+    console.log('✓ [AUTH] Redirecting to:', dest);
 
     // Set flag to prevent redirect loops
     sessionStorage.setItem('_sw_auth_redirected', 'true');
     window.location.href = dest;
   } catch(err) {
     // Profile doesn't exist yet or error — redirect to truck dashboard
-    // User will see onboarding if needed
+    console.error('✗ [AUTH] Redirect failed:', err.message);
     sessionStorage.setItem('_sw_auth_redirected', 'true');
     window.location.href = 'truck-dashboard.html';
   }
@@ -574,7 +592,7 @@ async function handleAuth(){
       }
 
       await window.supabase.from('profiles').upsert(profileData);
-      await redirectByRole(data.user.id);
+      await redirectByRole(data.user.id, data.user.email);
     } else {
       // Email confirmation required
       document.getElementById('authForm').innerHTML =
@@ -597,7 +615,7 @@ async function handleAuth(){
         showError(error.message);
       return;
     }
-    await redirectByRole(data.user.id);
+    await redirectByRole(data.user.id, data.user.email);
   }
 }
 
@@ -630,9 +648,23 @@ async function checkSession(){
   try {
     const { data: { session } } = await window.supabase.auth.getSession();
 
-    if(!session) return; // No session, stay on auth page
+    if(!session) {
+      console.log('[AUTH] No active session');
+      return;
+    }
 
     const userId = session.user.id;
+    const userEmail = session.user.email;
+
+    console.log('[AUTH] Session found — user:', userId, 'email:', userEmail);
+
+    // Email fallback: force admin dashboard for wesfitz72@gmail.com
+    if(userEmail === 'wesfitz72@gmail.com'){
+      console.log('✓ [AUTH] Admin email detected in session — forcing admin-dashboard.html');
+      sessionStorage.setItem('_sw_auth_redirected', 'true');
+      window.location.href = 'admin-dashboard.html';
+      return;
+    }
 
     // Verify profile exists and has a valid role before redirecting
     const { data: profile, error } = await window.supabase
@@ -641,18 +673,26 @@ async function checkSession(){
       .eq('id', userId)
       .single();
 
-    if(error || !profile || !profile.role) {
-      // Profile doesn't exist or invalid — stay on auth page, user may need onboarding
+    if(error){
+      console.warn('[AUTH] Profile fetch error:', error.message);
       return;
     }
+
+    if(!profile || !profile.role) {
+      console.log('[AUTH] Profile missing or no role — staying on auth page');
+      return;
+    }
+
+    console.log('✓ [AUTH] Profile valid — role:', profile.role);
 
     // Profile is valid, safe to redirect
     sessionStorage.setItem('_sw_auth_redirected', 'true');
     const dest = ROLE_DASHBOARDS[profile.role] || 'truck-dashboard.html';
+    console.log('✓ [AUTH] Auto-redirecting to:', dest);
     window.location.href = dest;
   } catch(err) {
     // Silently fail — user can sign in manually
-    console.warn('Session check failed:', err);
+    console.warn('✗ [AUTH] Session check failed:', err.message);
   }
 }
 
