@@ -1839,6 +1839,36 @@ if(window.supabase){
 }else{
   document.addEventListener('supabase-ready',checkAuth);
 }
+
+// FIX A: Close sidebar when nav link is clicked on mobile
+document.querySelectorAll('.sidebar a, .sidebar button, .sidebar-nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      const sidebar = document.querySelector('.sidebar, .sw-sidebar');
+      if (sidebar) sidebar.classList.remove('open', 'active', 'show');
+      const overlay = document.querySelector('.sidebar-overlay, .overlay');
+      if (overlay) overlay.classList.remove('active', 'show');
+      document.body.classList.remove('sidebar-open', 'menu-open');
+    }
+  });
+});
+
+// FIX B: Close sidebar when tapping outside on mobile
+document.addEventListener('click', (e) => {
+  if (window.innerWidth > 768) return;
+  const sidebar = document.querySelector('.sidebar, .sw-sidebar');
+  const menuBtn = document.querySelector('.topbar-menu-btn');
+  if (!sidebar || !menuBtn) return;
+  const sidebarOpen = sidebar.classList.contains('open') ||
+                      sidebar.classList.contains('active') ||
+                      document.body.classList.contains('sidebar-open');
+  if (sidebarOpen && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+    sidebar.classList.remove('open', 'active', 'show');
+    const overlay = document.querySelector('.sidebar-overlay, .overlay');
+    if (overlay) overlay.classList.remove('active', 'show');
+    document.body.classList.remove('sidebar-open', 'menu-open');
+  }
+});
 </script>
 <!-- Nav auth state -->
 <script>

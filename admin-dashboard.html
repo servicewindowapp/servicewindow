@@ -302,15 +302,6 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <a href="jobs-dashboard.html" class="switcher-btn">💼 Jobs</a>
       <a href="admin-dashboard.html" class="switcher-btn active">⚙️ Admin</a>
     </div>
-
-    <!-- TRIAL STATUS BANNER -->
-    <div id="trialStatusBanner" style="display:none;padding:14px 20px;background:#EFF6FF;border-bottom:1px solid #BFDBFE;font-size:.9rem;">
-      <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-        <div id="trialMessage"></div>
-        <a href="pricing.html" style="color:#1D4ED8;font-weight:700;white-space:nowrap;text-decoration:underline;">View Plans →</a>
-      </div>
-    </div>
-
     <!-- PANELS -->
     <div class="panels">
       <!-- STATS PANEL -->
@@ -585,31 +576,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   } else {
     checkAuth();
   }
-});
 
-function displayTrialBanner(profile) {
-  if (!profile || !profile.trial_ends_at) return;
-  const bannerEl = document.getElementById('trialStatusBanner');
-  const messageEl = document.getElementById('trialMessage');
-  if (profile.trial_converted) { bannerEl.style.display = 'none'; return; }
-  const now = new Date();
-  const trialEnd = new Date(profile.trial_ends_at);
-  const isTrialActive = trialEnd > now;
-  const isTrialExpired = trialEnd <= now;
-  if (isTrialActive) {
-    const daysRemaining = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
-    const trialEndDate = trialEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    messageEl.innerHTML = `<strong>Free trial active</strong> — ${daysRemaining} days remaining. No payment needed until ${trialEndDate}.`;
-    bannerEl.style.display = 'block';
-    bannerEl.style.background = '#DCFCE7';
-    bannerEl.style.borderBottomColor = '#86EFAC';
-  } else if (isTrialExpired) {
-    messageEl.innerHTML = '<strong>Your free trial has ended.</strong> <a href="pricing.html" style="color:var(--fire);font-weight:700;text-decoration:none;margin-left:6px;">Upgrade to keep access →</a>';
-    bannerEl.style.display = 'block';
-    bannerEl.style.background = '#FEF3C7';
-    bannerEl.style.borderBottomColor = '#FCD34D';
-  }
-}
+  // FIX A: Close sidebar when nav link is clicked on mobile
+  document.querySelectorAll('.sidebar a, .sidebar button, .sidebar-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        const sidebar = document.querySelector('.sidebar, .sw-sidebar');
+        if (sidebar) sidebar.classList.remove('open', 'active', 'show');
+        const overlay = document.querySelector('.sidebar-overlay, .overlay');
+        if (overlay) overlay.classList.remove('active', 'show');
+        document.body.classList.remove('sidebar-open', 'menu-open');
+      }
+    });
+  });
+
+  // FIX B: Close sidebar when tapping outside on mobile
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth > 768) return;
+    const sidebar = document.querySelector('.sidebar, .sw-sidebar');
+    const menuBtn = document.querySelector('.topbar-menu-btn');
+    if (!sidebar || !menuBtn) return;
+    const sidebarOpen = sidebar.classList.contains('open') ||
+                        sidebar.classList.contains('active') ||
+                        document.body.classList.contains('sidebar-open');
+    if (sidebarOpen && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+      sidebar.classList.remove('open', 'active', 'show');
+      const overlay = document.querySelector('.sidebar-overlay, .overlay');
+      if (overlay) overlay.classList.remove('active', 'show');
+      document.body.classList.remove('sidebar-open', 'menu-open');
+    }
+  });
+});
 
 async function initAdmin(user) {
   try {
@@ -640,8 +637,6 @@ async function initAdmin(user) {
     currentUser = { ...user, ...profile };
     document.getElementById('userName').textContent = profile.full_name || 'Admin';
     document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
-
-    displayTrialBanner(profile);
 
     loadStats();
     loadVerificationQueue();
