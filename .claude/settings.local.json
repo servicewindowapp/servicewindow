@@ -102,7 +102,13 @@
       "Bash(else)",
       "Bash(echo \"$f: check manually\")",
       "Read(//e//**)",
-      "Bash(mkdir -p \".claude/skills/sw-design-system\" \".claude/skills/sw-supabase\" \".claude/skills/sw-stack\")"
+      "Bash(mkdir -p \".claude/skills/sw-design-system\" \".claude/skills/sw-supabase\" \".claude/skills/sw-stack\")",
+      "Bash(unzip -l \"final logos.zip\")",
+      "Bash(unzip -o \"final logos.zip\")",
+      "Bash(sed -n '873,880p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
+      "Bash(sed -n '599,606p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
+      "Bash(sed -n '872,878p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
+      "Bash(sed -n '599,609p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")"
     ]
   }
 }
