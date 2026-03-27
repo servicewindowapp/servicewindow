@@ -1742,10 +1742,10 @@ async function loadMessages(){
 
 function displayTrialBanner(profile){if(!profile||!profile.trial_ends_at)return;const bannerEl=document.getElementById('trialStatusBanner');const messageEl=document.getElementById('trialMessage');if(profile.trial_converted){bannerEl.style.display='none';return;}const now=new Date();const trialEnd=new Date(profile.trial_ends_at);const isTrialActive=trialEnd>now;const isTrialExpired=trialEnd<=now;if(isTrialActive){const daysRemaining=Math.ceil((trialEnd-now)/(1000*60*60*24));const trialEndDate=trialEnd.toLocaleDateString('en-US',{month:'short',day:'numeric'});messageEl.innerHTML=`<strong>Free trial active</strong> — ${daysRemaining} days remaining. No payment needed until ${trialEndDate}.`;bannerEl.style.display='block';bannerEl.style.background='#DCFCE7';bannerEl.style.borderBottomColor='#86EFAC';}else if(isTrialExpired){messageEl.innerHTML='<strong>Your free trial has ended.</strong> <a href="pricing.html" style="color:var(--fire);font-weight:700;text-decoration:none;margin-left:6px;">Upgrade to keep access →</a>';bannerEl.style.display='block';bannerEl.style.background='#FEF3C7';bannerEl.style.borderBottomColor='#FCD34D';}}
 
-async function initDashboard(){
-  const{data:{user}}=await window.supabase.auth.getUser();
-  if(!user){window.location.href='auth.html';return;}
-  currentUserId=user.id;
+async function initDashboard(user){
+  try {
+    if(!user){window.location.href='auth.html';return;}
+    currentUserId=user.id;
   const{data:profile}=await window.supabase.from('profiles').select('trial_ends_at,trial_converted').eq('id',user.id).single();
   if(profile)displayTrialBanner(profile);
   const{data:venues}=await window.supabase.from('venues').select('id,rating,is_active').eq('owner_id',currentUserId);
@@ -1771,13 +1771,61 @@ async function initDashboard(){
     });
   }
   await loadMessages();
+  } catch(err) {
+    console.error('[VENUE] Dashboard init error:', err.message);
+    window.location.href = 'auth.html';
+  }
 }
 
 
+// Initialize with auth state listener to prevent redirect loops
+function setupAuth() {
+  console.log('[VENUE] Setting up auth guard with onAuthStateChange');
+
+  let initialSessionHandled = false;
+
+  window.supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log('[VENUE] Auth state changed:', event, 'session:', !!session);
+
+    // Skip initial null session — real session will follow
+    if (event === 'INITIAL_SESSION' && !session) {
+      console.log('[VENUE] Initial session check (no session yet — waiting)');
+      return;
+    }
+
+    // User logged out
+    if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
+      console.log('[VENUE] User logged out or session expired');
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    // Session confirmed (real session received)
+    if (session && !initialSessionHandled) {
+      initialSessionHandled = true;
+      console.log('[VENUE] Session confirmed, initializing dashboard');
+      await initDashboard(session.user);
+    }
+  });
+
+  // Fallback: if no auth state fires in 3 seconds, check manually
+  setTimeout(() => {
+    if (!initialSessionHandled) {
+      console.log('[VENUE] Auth timeout fallback triggered');
+      window.supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+          console.log('[VENUE] No session found after timeout');
+          window.location.href = 'auth.html';
+        }
+      });
+    }
+  }, 3000);
+}
+
 if(window.supabase){
-  initDashboard();
+  setupAuth();
 }else{
-  document.addEventListener('supabase-ready',initDashboard);
+  document.addEventListener('supabase-ready',setupAuth);
 }
 </script>
 <!-- Nav auth state -->

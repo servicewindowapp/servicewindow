@@ -535,12 +535,55 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
 let currentUser = null;
 let currentRejectId = null;
 
-// Initialize
+// Initialize with auth state listener to prevent redirect loops
 document.addEventListener('DOMContentLoaded', async () => {
+  function setupAuth() {
+    console.log('[ADMIN] Setting up auth guard with onAuthStateChange');
+
+    let initialSessionHandled = false;
+
+    window.supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[ADMIN] Auth state changed:', event, 'session:', !!session);
+
+      // Skip initial null session — real session will follow
+      if (event === 'INITIAL_SESSION' && !session) {
+        console.log('[ADMIN] Initial session check (no session yet — waiting)');
+        return;
+      }
+
+      // User logged out
+      if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
+        console.log('[ADMIN] User logged out or session expired');
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      // Session confirmed (real session received)
+      if (session && !initialSessionHandled) {
+        initialSessionHandled = true;
+        console.log('[ADMIN] Session confirmed, initializing dashboard');
+        await initAdmin(session.user);
+      }
+    });
+
+    // Fallback: if no auth state fires in 3 seconds, check manually
+    setTimeout(() => {
+      if (!initialSessionHandled) {
+        console.log('[ADMIN] Auth timeout fallback triggered');
+        window.supabase.auth.getSession().then(({ data: { session } }) => {
+          if (!session) {
+            console.log('[ADMIN] No session found after timeout');
+            window.location.href = 'auth.html';
+          }
+        });
+      }
+    }, 3000);
+  }
+
   if (!window.supabase) {
-    document.addEventListener('supabase-ready', initAdmin);
+    document.addEventListener('supabase-ready', setupAuth);
   } else {
-    initAdmin();
+    setupAuth();
   }
 });
 
@@ -568,36 +611,39 @@ function displayTrialBanner(profile) {
   }
 }
 
-async function initAdmin() {
-  const { data: { user } } = await window.supabase.auth.getUser();
-  if (!user) {
+async function initAdmin(user) {
+  try {
+    // Session is already confirmed by onAuthStateChange, just validate role
+    const { data: profile } = await window.supabase
+      .from('profiles')
+      .select('role, full_name, trial_ends_at, trial_converted')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile || profile.role !== 'admin') {
+      console.log('[ADMIN] User is not admin, redirecting');
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    console.log('[ADMIN] Admin profile confirmed, loading dashboard');
+
+    currentUser = { ...user, ...profile };
+    document.getElementById('userName').textContent = profile.full_name || 'Admin';
+    document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+    displayTrialBanner(profile);
+
+    loadStats();
+    loadVerificationQueue();
+    loadTruckApprovalQueue();
+    loadUsers();
+    loadActivity();
+    loadWaitlist();
+  } catch(err) {
+    console.error('[ADMIN] Init error:', err.message);
     window.location.href = 'auth.html';
-    return;
   }
-
-  const { data: profile } = await window.supabase
-    .from('profiles')
-    .select('role, full_name, trial_ends_at, trial_converted')
-    .eq('id', user.id)
-    .single();
-
-  if (!profile || profile.role !== 'admin') {
-    window.location.href = 'auth.html';
-    return;
-  }
-
-  currentUser = { ...user, ...profile };
-  document.getElementById('userName').textContent = profile.full_name || 'Admin';
-  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
-
-  displayTrialBanner(profile);
-
-  loadStats();
-  loadVerificationQueue();
-  loadTruckApprovalQueue();
-  loadUsers();
-  loadActivity();
-  loadWaitlist();
 }
 
 // ── STATS ────────────────────────────────────────────────────────

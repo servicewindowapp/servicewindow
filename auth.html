@@ -507,7 +507,9 @@ async function redirectByRole(userId, userEmail){
     // Email fallback: force admin dashboard for wesfitz72@gmail.com
     if(userEmail === 'wesfitz72@gmail.com'){
       console.log('✓ [AUTH] Admin email detected — forcing admin-dashboard.html');
-      sessionStorage.setItem('_sw_auth_redirected', 'true');
+      // Flush session and wait before redirecting
+      await window.supabase.auth.getSession();
+      await new Promise(resolve => setTimeout(resolve, 500));
       window.location.href = 'admin-dashboard.html';
       return;
     }
@@ -530,13 +532,15 @@ async function redirectByRole(userId, userEmail){
 
     console.log('✓ [AUTH] Redirecting to:', dest);
 
-    // Set flag to prevent redirect loops
-    sessionStorage.setItem('_sw_auth_redirected', 'true');
+    // Flush session and wait before redirecting to ensure cookie is written
+    await window.supabase.auth.getSession();
+    await new Promise(resolve => setTimeout(resolve, 500));
     window.location.href = dest;
   } catch(err) {
     // Profile doesn't exist yet or error — redirect to truck dashboard
     console.error('✗ [AUTH] Redirect failed:', err.message);
-    sessionStorage.setItem('_sw_auth_redirected', 'true');
+    await window.supabase.auth.getSession();
+    await new Promise(resolve => setTimeout(resolve, 500));
     window.location.href = 'truck-dashboard.html';
   }
 }

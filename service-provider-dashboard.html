@@ -1654,15 +1654,19 @@ async function loadMessages(){
 }
 
 
-async function initDashboard(){
-  const{data:{user}}=await window.supabase.auth.getUser();
-  if(!user){window.location.href='auth.html';return;}
-  currentUserId=user.id;
+async function initDashboard(user){
+  try {
+    if(!user){window.location.href='auth.html';return;}
+    currentUserId=user.id;
   await displayTrialBanner(user.id);
   const{data:unread}=await window.supabase.from('messages').select('id').eq('recipient_id',currentUserId).eq('is_read',false);
   const kpiGrid=document.getElementById('kpiGrid');
   if(kpiGrid){const vals=kpiGrid.querySelectorAll('.kpi-value');if(vals[1])vals[1].textContent=(unread||[]).length;}
   await loadMessages();
+  } catch(err) {
+    console.error('[PROVIDER] Dashboard init error:', err.message);
+    window.location.href = 'auth.html';
+  }
 }
 
 // ── Trial Banner ─────────────────────────────────────────────────────────
@@ -1696,10 +1700,54 @@ async function displayTrialBanner(userId){
 }
 
 
+// Initialize with auth state listener to prevent redirect loops
+function setupAuth() {
+  console.log('[PROVIDER] Setting up auth guard with onAuthStateChange');
+
+  let initialSessionHandled = false;
+
+  window.supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log('[PROVIDER] Auth state changed:', event, 'session:', !!session);
+
+    // Skip initial null session — real session will follow
+    if (event === 'INITIAL_SESSION' && !session) {
+      console.log('[PROVIDER] Initial session check (no session yet — waiting)');
+      return;
+    }
+
+    // User logged out
+    if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
+      console.log('[PROVIDER] User logged out or session expired');
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    // Session confirmed (real session received)
+    if (session && !initialSessionHandled) {
+      initialSessionHandled = true;
+      console.log('[PROVIDER] Session confirmed, initializing dashboard');
+      await initDashboard(session.user);
+    }
+  });
+
+  // Fallback: if no auth state fires in 3 seconds, check manually
+  setTimeout(() => {
+    if (!initialSessionHandled) {
+      console.log('[PROVIDER] Auth timeout fallback triggered');
+      window.supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+          console.log('[PROVIDER] No session found after timeout');
+          window.location.href = 'auth.html';
+        }
+      });
+    }
+  }, 3000);
+}
+
 if(window.supabase){
-  initDashboard();
+  setupAuth();
 }else{
-  document.addEventListener('supabase-ready',initDashboard);
+  document.addEventListener('supabase-ready',setupAuth);
 }
 </script>
 <!-- Nav auth state -->
