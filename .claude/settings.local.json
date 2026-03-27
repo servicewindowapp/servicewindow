@@ -108,7 +108,11 @@
       "Bash(sed -n '873,880p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
       "Bash(sed -n '599,606p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
       "Bash(sed -n '872,878p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
-      "Bash(sed -n '599,609p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")"
+      "Bash(sed -n '599,609p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\index.html\")",
+      "Bash(sed -n '213,220p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\auth.html\")",
+      "Bash(sed -n '250,260p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\auth.html\")",
+      "Bash(sed -n '240,250p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\auth.html\")",
+      "Bash(sed -n '370,380p' \"C:\\\\Users\\\\wesfi\\\\OneDrive\\\\Desktop\\\\Food Truck App\\\\auth.html\")"
     ]
   }
 }
