@@ -2634,9 +2634,12 @@ async function initDashboard(user) {
     if (!user) {
       console.log('[TRUCK] No user provided, redirecting');
       sessionStorage.removeItem('_sw_auth_redirected');
-      window.location.href = 'auth.html';
+      window.location.replace('auth.html');
       return;
     }
+    // Allow admin email to access dashboard for testing/support
+    const isAdmin = user.email === 'wesfitz72@gmail.com';
+    if(isAdmin) console.log('[TRUCK] Admin access via email bypass for user:', user.email);
     currentUserId = user.id;
     console.log('[TRUCK] Dashboard initializing for user:', user.id);
 

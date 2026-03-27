@@ -2217,7 +2217,10 @@ function displayTrialBanner(profile){
 
 async function initDashboard(user){
   try {
-    if(!user){window.location.href='auth.html';return;}
+    if(!user){window.location.replace('auth.html');return;}
+    // Allow admin email to access dashboard for testing/support
+    const isAdmin = user.email === 'wesfitz72@gmail.com';
+    if(isAdmin) console.log('[PLANNER] Admin access via email bypass for user:', user.email);
     currentUserId=user.id;
 
   // Verification banner & trial status

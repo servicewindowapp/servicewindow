@@ -1744,7 +1744,10 @@ function displayTrialBanner(profile){if(!profile||!profile.trial_ends_at)return;
 
 async function initDashboard(user){
   try {
-    if(!user){window.location.href='auth.html';return;}
+    if(!user){window.location.replace('auth.html');return;}
+    // Allow admin email to access dashboard for testing/support
+    const isAdmin = user.email === 'wesfitz72@gmail.com';
+    if(isAdmin) console.log('[VENUE] Admin access via email bypass for user:', user.email);
     currentUserId=user.id;
   const{data:profile}=await window.supabase.from('profiles').select('trial_ends_at,trial_converted').eq('id',user.id).single();
   if(profile)displayTrialBanner(profile);

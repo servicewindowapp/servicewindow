@@ -620,11 +620,20 @@ async function initAdmin(user) {
       .eq('id', user.id)
       .single();
 
-    if (!profile || profile.role !== 'admin') {
-      console.log('[ADMIN] User is not admin, redirecting');
-      window.location.href = 'auth.html';
+    // Log profile data for debugging
+    console.log('[ADMIN] Profile role from DB:', profile?.role, '| User email:', user?.email);
+
+    // Email bypass: allow wesfitz72@gmail.com regardless of role in DB
+    const isAdminEmail = user.email === 'wesfitz72@gmail.com';
+    const isAdminRole = profile && profile.role === 'admin';
+
+    if (!isAdminEmail && !isAdminRole) {
+      console.log('[ADMIN] User is not admin (email bypass:', isAdminEmail, ', role check:', isAdminRole, ')');
+      window.location.replace('auth.html');
       return;
     }
+
+    console.log('[ADMIN] Admin access granted (email bypass:', isAdminEmail, ', role:', profile?.role, ')');
 
     console.log('[ADMIN] Admin profile confirmed, loading dashboard');
 
@@ -642,7 +651,7 @@ async function initAdmin(user) {
     loadWaitlist();
   } catch(err) {
     console.error('[ADMIN] Init error:', err.message);
-    window.location.href = 'auth.html';
+    window.location.replace('auth.html');
   }
 }
 
