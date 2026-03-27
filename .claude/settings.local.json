@@ -100,7 +100,9 @@
       "Bash(then)",
       "Bash(echo \"$f: needs update\")",
       "Bash(else)",
-      "Bash(echo \"$f: check manually\")"
+      "Bash(echo \"$f: check manually\")",
+      "Read(//e//**)",
+      "Bash(mkdir -p \".claude/skills/sw-design-system\" \".claude/skills/sw-supabase\" \".claude/skills/sw-stack\")"
     ]
   }
 }
