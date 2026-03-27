@@ -316,6 +316,18 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
         </select>
       </div>
 
+      <div class="form-group hidden" id="organizerEducationGroup" style="background:var(--fire-pale);border-radius:10px;padding:16px;border:1px solid var(--fire-border,rgba(255,107,53,0.2));">
+        <div style="font-weight:700;color:var(--fire);margin-bottom:10px;font-size:.95rem;">Before You Book a Food Truck</div>
+        <div style="font-size:.85rem;color:var(--charcoal);line-height:1.6;">
+          <div style="margin-bottom:8px;"><strong>Food trucks are mobile restaurants.</strong> Most require a minimum of 75–150 guests to make an appearance worthwhile.</div>
+          <div style="margin-bottom:8px;"><strong>Expect a minimum spend guarantee</strong> — typically $500–$1,500 depending on the truck and event type.</div>
+          <div style="margin-bottom:8px;"><strong>Travel radius matters.</strong> Trucks in SWFL generally serve within 30–60 miles of their home base.</div>
+          <div style="margin-bottom:8px;"><strong>For private parties under 50 people,</strong> consider whether a food truck is the right fit — catering may be more cost-effective.</div>
+          <div style="margin-bottom:12px;"><strong>55+ communities, HOA events, and corporate gatherings</strong> are ideal — trucks love recurring, high-volume stops.</div>
+        </div>
+        <button type="button" class="btn btn-sm" style="background:var(--fire);color:#fff;border:none;cursor:pointer;font-weight:600;padding:6px 14px;border-radius:6px;font-size:.85rem;" onclick="document.getElementById('organizerEducationGroup').style.display='none';">Got it, continue</button>
+      </div>
+
       <div class="trial-promo-banner hidden" id="firstMonthFreeNote">
         <span style="font-size: 18px; margin-right: 8px;">🎉</span>
         <div>
@@ -442,6 +454,7 @@ function selectRole(el){
   const role = el.dataset.role;
   document.getElementById('selectedRole').value = role;
   document.getElementById('organizerTypeGroup').classList.toggle('hidden', role !== 'organizer');
+  document.getElementById('organizerEducationGroup').classList.toggle('hidden', role !== 'organizer');
   document.getElementById('firstMonthFreeNote').classList.toggle('hidden', !['truck', 'service_provider'].includes(role));
 }
 

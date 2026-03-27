@@ -251,6 +251,8 @@ tr:hover td{background:var(--bg);}
 .profile-badge.verified{background:var(--green-pale);color:var(--green);}
 .profile-badge.plan{background:var(--fire-pale);color:var(--fire);}
 .profile-badge.founding{background:var(--amber-pale);color:var(--amber);}
+.profile-badge.fundraiser{background:#E8F5E9;color:#2E7D32;}
+.profile-badge.veteran{background:#E3F2FD;color:#1565C0;}
 
 /* Badge toggles */
 .badge-toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
@@ -1354,6 +1356,8 @@ img,video{max-width:100%;height:auto;}
             <span class="profile-badge verified">&#10003; Verified</span>
             <span class="profile-badge plan">Standard Plan</span>
             <span class="profile-badge founding">Founding Member</span>
+            <span class="profile-badge fundraiser" id="badge-display-fundraiser" style="display:none;background:var(--fire-pale);color:var(--fire);">&#10003; Fundraiser Friendly</span>
+            <span class="profile-badge veteran" id="badge-display-veteran" style="display:none;background:var(--navy-pale);color:var(--navy);">&#127988; Veteran Owned</span>
           </div>
         </div>
         <div class="profile-cta">
@@ -2985,7 +2989,9 @@ async function saveProfile(e) {
       has_license:           document.getElementById('cred-license').checked,
       has_food_handler_cert: document.getElementById('cred-food-handler').checked,
       is_school_approved:    document.getElementById('cred-school').checked,
-      license_expiry:        document.getElementById('p-license-expiry').value || null
+      license_expiry:        document.getElementById('p-license-expiry').value || null,
+      is_fundraiser_friendly: document.getElementById('badge-fundraiser').checked,
+      is_veteran_owned:       document.getElementById('badge-veteran').checked
     };
 
     const { data: existing } = await window.supabase
@@ -3006,6 +3012,35 @@ async function saveProfile(e) {
     btn.disabled = false;
   }
 }
+
+// Badge display updater
+function updateBadgeDisplay() {
+  const fundraiserBadge = document.getElementById('badge-display-fundraiser');
+  const veteranBadge = document.getElementById('badge-display-veteran');
+  const fundraiserCheckbox = document.getElementById('badge-fundraiser');
+  const veteranCheckbox = document.getElementById('badge-veteran');
+
+  if (fundraiserBadge && fundraiserCheckbox) {
+    fundraiserBadge.style.display = fundraiserCheckbox.checked ? 'inline-flex' : 'none';
+  }
+  if (veteranBadge && veteranCheckbox) {
+    veteranBadge.style.display = veteranCheckbox.checked ? 'inline-flex' : 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const fundraiserCheckbox = document.getElementById('badge-fundraiser');
+  const veteranCheckbox = document.getElementById('badge-veteran');
+
+  if (fundraiserCheckbox) {
+    fundraiserCheckbox.addEventListener('change', updateBadgeDisplay);
+  }
+  if (veteranCheckbox) {
+    veteranCheckbox.addEventListener('change', updateBadgeDisplay);
+  }
+
+  updateBadgeDisplay();
+});
 
 if (window.supabase) {
   window.supabase.auth.getUser().then(({ data: { user } }) => { if (user) loadProfile(); });
