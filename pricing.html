@@ -32,7 +32,7 @@ html{scroll-behavior:smooth;}
 body{font-family:'Sora',sans-serif;background:#0d1f2d;color:#ffffff;overflow-x:hidden;}
 img{max-width:100%;height:auto;display:block;}
 a{text-decoration:none;color:inherit;}
-.sw-nav{position:sticky;top:0;z-index:100;background:#0d1f2d,.97);border-bottom:1px solid var(--border);height:56px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.sw-nav{position:sticky;top:0;z-index:100;background:#0d1f2d;border-bottom:1px solid rgba(255,255,255,0.1);height:56px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 @media(min-width:768px){.sw-nav{padding:0 40px;}}
 .sw-nav-logo{height:30px;width:auto;flex-shrink:0;font-size:1.2rem;font-weight:700;color:var(--fire);text-decoration:none;}
 .sw-nav-desktop-links{display:none;align-items:center;gap:20px;}
@@ -49,31 +49,31 @@ a{text-decoration:none;color:inherit;}
 .sw-menu a{display:block;padding:12px 16px;font-size:.9rem;color:#ffffff;text-decoration:none;border-bottom:1px solid var(--border);}
 .sw-menu a:hover{color:var(--fire);}
 .sw-menu a.active{color:var(--fire);font-weight:700;}
-.pricing-hero{padding:40px 20px;text-align:center;background:var(--white);}
-.promo-banner{background:linear-gradient(135deg,#FFF0E8 0%,#FFFAF7 100%);border:1.5px solid var(--fire);border-radius:var(--r);padding:24px 20px;margin-bottom:32px;text-align:center;max-width:600px;margin-left:auto;margin-right:auto;}
+.pricing-hero{padding:40px 20px;text-align:center;background:#0d1f2d;}
+.promo-banner{background:rgba(255,107,53,0.08);border:1.5px solid var(--fire);border-radius:var(--r);padding:24px 20px;margin-bottom:32px;text-align:center;max-width:600px;margin-left:auto;margin-right:auto;}
 .promo-banner-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--fire);margin-bottom:8px;}
 .promo-banner h2{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--fire);margin-bottom:8px;}
 .promo-banner p{font-size:.95rem;color:rgba(255,255,255,0.85);line-height:1.6;}
-.pricing-hero h1{font-family:'Lora',serif;font-size:clamp(1.8rem,6vw,2.4rem);font-weight:700;margin-bottom:10px;}
+.pricing-hero h1{font-family:'Lora',serif;font-size:clamp(1.8rem,6vw,2.4rem);font-weight:700;margin-bottom:10px;color:#ffffff;}
 .pricing-hero p{font-size:.95rem;color:rgba(255,255,255,0.85);max-width:500px;margin:0 auto;}
-.tier-section{padding:44px 20px;background:var(--white);}
+.tier-section{padding:44px 20px;background:#0d1f2d;}
 .tier-section:nth-child(odd){background:#0d1f2d;}
-.tier-title{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;margin-bottom:28px;margin-top:0;}
+.tier-title{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;margin-bottom:28px;margin-top:0;color:#ffffff;}
 .tier-subtitle{font-size:.9rem;color:rgba(255,255,255,0.85);margin-bottom:20px;max-width:600px;}
 .tier-cards{display:grid;grid-template-columns:1fr;gap:16px;max-width:1200px;margin:0 auto;}
 @media(min-width:768px){.tier-cards{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}}
-.tier-card{background:#0d1f2d;border:1px solid rgba(255,255,255,0.2);border-radius:var(--r);padding:28px 24px;position:relative;}
-.tier-card.featured{border-color:var(--fire);background:linear-gradient(135deg,#FFFAF7 0%,#fff 100%);}
-.tier-card.free-tier{background:var(--green-pale);border:1px solid #BBF7D0;}
+.tier-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:28px 24px;position:relative;}
+.tier-card.featured{border-color:var(--fire);background:rgba(255,255,255,0.06);}
+.tier-card.free-tier{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);}
 .badge{display:inline-block;position:absolute;top:14px;right:14px;font-size:.65rem;font-weight:700;padding:6px 12px;border-radius:50px;text-transform:uppercase;letter-spacing:.4px;}
 .badge-founding{background:var(--fire);color:#fff;}
-.badge-trial{background:var(--green);color:#fff;right:100px;}
-.tier-card h3{font-family:'Lora',serif;font-size:1.3rem;font-weight:700;margin-bottom:8px;}
+.badge-trial{background:rgba(255,107,53,0.2);color:var(--fire);border:1px solid rgba(255,107,53,0.3);right:100px;}
+.tier-card h3{font-family:'Lora',serif;font-size:1.3rem;font-weight:700;margin-bottom:8px;color:#ffffff;}
 .tier-desc{font-size:.85rem;color:rgba(255,255,255,0.85);margin-bottom:18px;line-height:1.5;}
 .price-display{margin:20px 0;display:flex;align-items:baseline;gap:14px;}
 .price-month1{display:flex;flex-direction:column;}
 .price-label{font-size:.7rem;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;margin-bottom:4px;}
-.price-amount{font-size:1.8rem;font-weight:700;color:var(--fire);}
+.price-amount{font-size:1.8rem;font-weight:700;color:#ffffff;}
 .price-then{display:flex;flex-direction:column;}
 .price-future{font-size:1.2rem;font-weight:700;color:rgba(255,255,255,0.85);}
 .price-struck{font-size:.75rem;color:rgba(255,255,255,0.4);text-decoration:line-through;}
@@ -82,11 +82,11 @@ a{text-decoration:none;color:inherit;}
 .tier-features{list-style:none;margin:20px 0;padding:0;}
 .tier-features li{display:flex;align-items:flex-start;gap:10px;font-size:.84rem;color:rgba(255,255,255,0.85);margin-bottom:10px;line-height:1.4;}
 .tier-features li:before{content:'✓';color:var(--fire);font-weight:700;flex-shrink:0;}
-.tier-card.free-tier .tier-features li:before{color:var(--green);}
+.tier-card.free-tier .tier-features li:before{color:var(--fire);}
 .tier-cta{width:100%;height:48px;background:var(--fire);color:#fff;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:background .2s;margin-top:8px;}
 .tier-cta:hover{background:var(--fire-lt);}
-.tier-card.free-tier .tier-cta{background:var(--green);}
-.tier-card.free-tier .tier-cta:hover{background:#15803D;}
+.tier-card.free-tier .tier-cta{background:var(--fire);}
+.tier-card.free-tier .tier-cta:hover{background:var(--fire-lt);}
 footer{background:#0d1f2d;padding:40px 20px 32px;color:#fff;}
 .footer-logo{height:32px;width:auto;filter:brightness(0) invert(1);margin-bottom:14px;}
 .footer-tagline{font-size:.75rem;color:rgba(255,255,255,0.5);line-height:1.6;max-width:280px;margin-bottom:20px;}
@@ -100,7 +100,7 @@ footer{background:#0d1f2d;padding:40px 20px 32px;color:#fff;}
 </head>
 <body>
 <nav class="sw-nav">
-  <a href="index.html" class="sw-nav-logo">ServiceWindow</a>
+  <a href="index.html" class="sw-nav-logo"><img src="logo-final-nav.png" alt="ServiceWindow" style="height:44px;width:auto;display:block;"></a>
   <div class="sw-nav-desktop-links">
     <a href="index.html" class="sw-nav-link">Home</a>
     <a href="find-trucks.html" class="sw-nav-link">Find Trucks</a>
