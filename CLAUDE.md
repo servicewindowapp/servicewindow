@@ -1,5 +1,10 @@
 # ServiceWindow — Claude Code SYSTEM PROMPT
 
+## Working Directory
+- **Windows path**: `C:\Users\wesfi\OneDrive\Desktop\Food Truck App`
+- **CRITICAL**: Always use this path. Always quote it — spaces will break commands.
+- `cd "C:\Users\wesfi\OneDrive\Desktop\Food Truck App"`
+
 ## Project Identity
 ServiceWindow (servicewindow.app) — verified two-sided food truck marketplace 
 for Southwest Florida. GitHub Pages hosted. Cloudflare DNS. Static HTML/CSS/JS 

@@ -1439,7 +1439,6 @@
         <div class="notif-bell" onclick="showToast('You have 2 new messages and 1 bid accepted.')">
           🔔 <div class="notif-dot"></div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="showModal('modal-respond')">+ Post a Shift</button>
       </div>
     </div>
 
@@ -1852,14 +1851,10 @@
       </div>
 
       <div id="shifts-mine" style="display:none;">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:20px;">
-          <button class="btn btn-primary" onclick="showModal('modal-post-shift')">+ Post a Shift</button>
-        </div>
         <div class="empty-state">
           <div class="big">🔄</div>
-          <h3>No shifts posted yet</h3>
-          <p>Have a conflict? Post your shift and let another truck cover it.</p>
-          <button class="btn btn-primary" onclick="showModal('modal-post-shift')">Post My First Shift</button>
+          <h3>Shift Marketplace</h3>
+          <p>Available on your truck dashboard when signed in.</p>
         </div>
       </div>
     </div>
@@ -2777,56 +2772,6 @@
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-respond')">Cancel</button>
       <button class="btn btn-primary" onclick="closeModal('modal-respond');showToast('Bid submitted. You\'ll be notified when the planner responds.','success')">Submit Bid →</button>
-    </div>
-  </div>
-</div>
-
-<!-- Post Shift Modal -->
-<div class="modal-overlay" id="modal-post-shift">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">Post a Shift</div>
-      <button class="modal-close" onclick="closeModal('modal-post-shift')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Event / Spot Name</label>
-        <input class="form-input" placeholder="Cape Coral Bike Night, Brewery Rotation, etc.">
-      </div>
-      <div class="form-row">
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Date</label>
-          <input class="form-input" type="date">
-        </div>
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Time</label>
-          <input class="form-input" placeholder="5pm – 9pm">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Location</label>
-        <input class="form-input" placeholder="Cape Coral, FL">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Compensation Type</label>
-        <select class="form-select">
-          <option>Full transfer (keep all revenue)</option>
-          <option>Revenue split (specify %)</option>
-          <option>Flat payout to covering truck</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Estimated Revenue / Flat Amount ($)</label>
-        <input class="form-input" type="number" placeholder="500">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Reason / Notes</label>
-        <textarea class="form-textarea" placeholder="Family conflict, equipment issue, etc. The more context you give, the faster someone picks this up."></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-post-shift')">Cancel</button>
-      <button class="btn btn-primary" onclick="closeModal('modal-post-shift');showToast('Shift posted. Other operators can now see and pick it up.','success')">Post Shift →</button>
     </div>
   </div>
 </div>
