@@ -596,6 +596,24 @@ async function handleAuth(){
       }
 
       await window.supabase.from('profiles').upsert(profileData);
+
+      // Create verification request for roles that require approval
+      const rolesRequiringApproval = ['truck', 'organizer', 'venue', 'property', 'service_provider'];
+      if(rolesRequiringApproval.includes(role)){
+        const { error: vrError } = await window.supabase
+          .from('verification_requests')
+          .insert({
+            user_id: data.user.id,
+            status: 'pending',
+            role,
+            business_name: null,
+            email,
+            contact_name: name,
+            city: null
+          });
+        if(vrError) console.error('Verification request error:', vrError);
+      }
+
       await redirectByRole(data.user.id, data.user.email);
     } else {
       // Email confirmation required

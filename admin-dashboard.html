@@ -731,23 +731,23 @@ async function loadVerificationQueue() {
       <div class="card">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
           <div>
-            <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Organization</div>
-            <div style="font-size:.95rem;font-weight:700;margin-bottom:12px;">${r.org_name}</div>
+            <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Contact Name</div>
+            <div style="font-size:.95rem;font-weight:700;margin-bottom:12px;">${r.contact_name || r.full_name || '—'}</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <span class="badge badge-blue">${r.org_type}</span>
+              <span class="badge badge-blue">${r.role ? r.role.charAt(0).toUpperCase() + r.role.slice(1) : 'User'}</span>
               <span class="badge badge-amber">Pending</span>
             </div>
           </div>
           <div>
-            <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Contact</div>
-            <div style="font-size:.85rem;margin-bottom:4px;">📱 ${r.phone || '—'}</div>
-            <div style="font-size:.85rem;margin-bottom:4px;">🌐 ${r.website || '—'}</div>
-            <div style="font-size:.85rem;color:rgba(255,255,255,0.85);">Submitted ${formatDate(r.created_at)}</div>
+            <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Contact Info</div>
+            <div style="font-size:.85rem;margin-bottom:4px;">📧 ${r.email || '—'}</div>
+            <div style="font-size:.85rem;margin-bottom:4px;">📍 ${r.city || '—'}</div>
+            <div style="font-size:.85rem;color:rgba(255,255,255,0.85);">Submitted ${formatDate(r.submitted_at || r.created_at)}</div>
           </div>
         </div>
         <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
-          <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:8px;">Description</div>
-          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);line-height:1.6;">${r.description || 'No description provided'}</p>
+          <div style="font-size:.75rem;color:var(--mid-gray);text-transform:uppercase;font-weight:700;margin-bottom:8px;">Business Name</div>
+          <p style="font-size:.85rem;color:rgba(255,255,255,0.85);line-height:1.6;">${r.business_name || r.org_name || 'Not provided'}</p>
         </div>
         <div style="display:flex;gap:10px;">
           <button class="btn btn-green" onclick="approveVerification('${r.id}')">✓ Approve</button>
@@ -947,7 +947,13 @@ function renderUserList(users) {
       <td><strong>${u.full_name || u.email}</strong><br><span style="font-size:.75rem;color:var(--mid-gray);">${u.email}</span></td>
       <td><span class="badge badge-fire">${u.role || 'user'}</span></td>
       <td>
-        ${u.verification_status === 'verified' ? '<span class="badge badge-green">✓ Verified</span>' : '<span class="badge badge-gray">Not verified</span>'}
+        ${
+          u.verification_status === 'verified'
+            ? '<span class="badge badge-green">✓ Verified</span>'
+            : u.verification_status === 'rejected'
+            ? '<span class="badge badge-red">✕ Rejected</span>'
+            : '<span class="badge badge-amber">⊙ Pending</span>'
+        }
       </td>
       <td>${u.subscription_tier || 'free'}</td>
       <td>${trialStatus}</td>
