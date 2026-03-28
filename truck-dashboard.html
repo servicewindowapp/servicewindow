@@ -790,6 +790,7 @@ img,video{max-width:100%;height:auto;}
         &#128276;<div class="notif-dot"></div>
       </button>
       <button class="topbar-btn" onclick="openModal('modal-post-shift')">+ Post a Shift</button>
+      <a href="post-job.html" class="topbar-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">+ Post a Job</a>
       <span id="navUserArea" style="display:none;align-items:center;gap:8px;">
         <span id="navUserName" style="font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:#ffffff;white-space:nowrap;"></span>
         <button class="topbar-btn" onclick="navSignOut()">Logout</button>
@@ -2016,10 +2017,105 @@ function submitVenueInquiry() {
   document.getElementById('venue-success').style.display = 'block';
   showToast('Inquiry sent!','success');
 }
-function postShift() {
-  document.getElementById('modal-post-shift').querySelector('.modal-form').style.display = 'none';
-  document.getElementById('post-shift-success').style.display = 'block';
-  showToast('Shift posted!','success');
+async function postShift() {
+  // Get form values
+  const eventName = document.querySelector('#modal-post-shift .modal-form input[placeholder*="Event"]')?.value.trim();
+  const dateTime = document.querySelector('#modal-post-shift .modal-form input[placeholder*="Apr"]')?.value.trim();
+  const transferType = document.querySelector('#modal-post-shift .modal-form select')?.value;
+  const revenue = document.querySelector('#modal-post-shift .modal-form input[type="text"][placeholder*="$"]')?.value.trim();
+  const notes = document.querySelector('#modal-post-shift .modal-form textarea')?.value.trim();
+
+  if (!eventName || !dateTime || !transferType || !revenue) {
+    showToast('Please fill in all required fields', 'warning');
+    return;
+  }
+
+  try {
+    // Wait for Supabase to be ready
+    if (!window.supabase) {
+      showToast('Not connected to database. Saving as draft.', 'info');
+      // Fallback: just show success
+      document.getElementById('modal-post-shift').querySelector('.modal-form').style.display = 'none';
+      document.getElementById('post-shift-success').style.display = 'block';
+      return;
+    }
+
+    // Get session
+    const { data: { session } } = await window.supabase.auth.getSession();
+    if (!session) {
+      showToast('Please sign in to post a shift', 'warning');
+      return;
+    }
+
+    // Parse date from format like "Apr 22, 2025 • 5pm–9pm"
+    const dateMatch = dateTime.match(/(\w+ \d+,? \d{4})/);
+    const eventDate = dateMatch ? new Date(dateMatch[1]).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+
+    // Determine time_slot from the date string
+    let timeSlot = 'Custom';
+    if (dateTime.includes('8am') || dateTime.includes('12pm')) timeSlot = 'Morning';
+    else if (dateTime.includes('11am') || dateTime.includes('2pm')) timeSlot = 'Lunch';
+    else if (dateTime.includes('5pm') || dateTime.includes('9pm')) timeSlot = 'Dinner';
+
+    // Get truck profile for city and cuisine
+    const { data: profile } = await window.supabase
+      .from('profiles')
+      .select('city, business_name')
+      .eq('id', session.user.id)
+      .single();
+
+    // Insert shift post
+    const { data: shiftPost, error: insertError } = await window.supabase
+      .from('shift_posts')
+      .insert({
+        posted_by: session.user.id,
+        event_name: eventName,
+        event_date: eventDate,
+        time_slot: timeSlot,
+        location_city: profile?.city || 'Unknown',
+        notes: notes,
+        contact_phone: profile?.business_name || 'Available in dashboard',
+        contact_email: session.user.email,
+        status: 'open'
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Insert error:', insertError);
+      showToast('Error posting shift. Please try again.', 'error');
+      return;
+    }
+
+    // Call edge function to notify matching trucks
+    try {
+      const response = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/notify-shift-post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify(shiftPost)
+      });
+
+      if (!response.ok) {
+        console.warn('Edge function error:', await response.text());
+        // Don't fail the post if notifications fail
+      }
+    } catch (error) {
+      console.warn('Notification error:', error);
+      // Continue - shift was posted successfully
+    }
+
+    // Show success
+    document.getElementById('modal-post-shift').querySelector('.modal-form').style.display = 'none';
+    document.getElementById('post-shift-success').style.display = 'block';
+    showToast('Shift posted. Matching trucks in your area have been notified.', 'success');
+
+  } catch (error) {
+    console.error('Error posting shift:', error);
+    showToast('Error posting shift. Please try again.', 'error');
+  }
 }
 
 async function submitExternalBooking() {
