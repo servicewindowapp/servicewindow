@@ -149,7 +149,7 @@ img{max-width:100%;height:auto;}
 @media(max-width:767px){
   .bottom-nav{
     display:flex;position:fixed;bottom:0;left:0;right:0;z-index:150;
-    background:var(--white);border-top:1px solid var(--border);
+    background:#0d1f2d;border-top:1px solid rgba(255,255,255,0.1);
     height:62px;align-items:stretch;
     box-shadow:0 -4px 20px rgba(0,0,0,.07);
     padding-bottom:env(safe-area-inset-bottom);
@@ -181,7 +181,7 @@ img{max-width:100%;height:auto;}
 }
 @media(min-width:540px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
 .kpi-card{
-  background:var(--white);border:1px solid var(--border);
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
   border-radius:var(--r);padding:14px 14px;
 }
 .kpi-label{font-size:.65rem;font-family:'DM Mono',monospace;color:var(--mid-gray);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
@@ -210,9 +210,9 @@ img{max-width:100%;height:auto;}
    PLAN BANNER
 ═══════════════════════════════════════════════════ */
 .plan-banner{
-  background:linear-gradient(135deg,var(--amber-pale),var(--white));
-  border:1.5px solid var(--amber-border);
-  border-radius:var(--r);padding:14px 16px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;padding:14px 16px;
   display:flex;align-items:center;gap:12px;margin-bottom:16px;
 }
 .plan-banner-icon{font-size:1.4rem;flex-shrink:0;}
@@ -229,8 +229,8 @@ img{max-width:100%;height:auto;}
    CARDS — GENERAL
 ═══════════════════════════════════════════════════ */
 .card{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:var(--r);padding:16px;margin-bottom:10px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r);padding:16px;margin-bottom:10px;color:rgba(255,255,255,0.85);
 }
 .card:last-child{margin-bottom:0;}
 
@@ -238,7 +238,7 @@ img{max-width:100%;height:auto;}
    SERVICE LISTINGS
 ═══════════════════════════════════════════════════ */
 .service-card{
-  background:var(--white);border:1px solid var(--border);
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
   border-radius:var(--r);padding:16px;margin-bottom:10px;
 }
 .sc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
@@ -284,7 +284,7 @@ img{max-width:100%;height:auto;}
    LEADS / INQUIRY CARDS
 ═══════════════════════════════════════════════════ */
 .lead-card{
-  background:var(--white);border:1px solid var(--border);
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
   border-radius:var(--r);padding:16px;margin-bottom:10px;
 }
 .lead-card.new{border-left:3px solid var(--amber);}
@@ -326,8 +326,8 @@ img{max-width:100%;height:auto;}
 .messages-layout{display:flex;height:calc(100vh - 116px);gap:0;}
 @media(min-width:601px){.messages-layout{height:calc(100vh - 80px);}}
 .msg-list{
-  width:100%;max-width:300px;border-right:1px solid var(--border);
-  overflow-y:auto;flex-shrink:0;background:var(--white);
+  width:100%;max-width:300px;border-right:1px solid rgba(255,255,255,0.1);
+  overflow-y:auto;flex-shrink:0;background:#0d1f2d;
 }
 @media(max-width:600px){
   .messages-layout{flex-direction:column;}
@@ -356,9 +356,9 @@ img{max-width:100%;height:auto;}
   width:8px;height:8px;background:var(--amber);border-radius:50%;
   margin-top:4px;flex-shrink:0;
 }
-.msg-main{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--white);}
+.msg-main{flex:1;display:flex;flex-direction:column;min-height:0;background:#0d1f2d;}
 .msg-main-head{
-  height:52px;border-bottom:1px solid var(--border);
+  height:52px;border-bottom:1px solid rgba(255,255,255,0.1);
   display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;
 }
 .msg-main-name{font-size:.88rem;font-weight:700;flex:1;}
@@ -372,7 +372,7 @@ img{max-width:100%;height:auto;}
 .msg-bubble-time{font-size:.62rem;color:var(--mid-gray);margin-top:2px;font-family:'DM Mono',monospace;}
 .msg-input-bar{
   display:flex;gap:8px;padding:10px 12px;
-  border-top:1px solid var(--border);flex-shrink:0;background:var(--white);
+  border-top:1px solid rgba(255,255,255,0.1);flex-shrink:0;background:#0d1f2d;
 }
 .msg-input-bar input{
   flex:1;height:40px;border:1.5px solid var(--border);border-radius:20px;
@@ -390,7 +390,7 @@ img{max-width:100%;height:auto;}
    PROFILE / ACCOUNT PANEL
 ═══════════════════════════════════════════════════ */
 .profile-section{
-  background:var(--white);border:1px solid var(--border);
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
   border-radius:var(--r);padding:16px;margin-bottom:16px;
 }
 .profile-section-title{
@@ -466,15 +466,15 @@ select.form-input{cursor:pointer;}
 @media(min-width:540px){.modal-backdrop{align-items:center;}}
 .modal-backdrop.open{display:flex;}
 .modal{
-  background:var(--white);width:100%;max-width:520px;
+  background:#0d1f2d;width:100%;max-width:520px;
   border-radius:20px 20px 0 0;max-height:90vh;overflow-y:auto;
   padding:0 0 32px;
 }
 @media(min-width:540px){.modal{border-radius:var(--r);max-height:85vh;}}
 .modal-head{
   display:flex;align-items:center;justify-content:space-between;
-  padding:16px 18px;border-bottom:1px solid var(--border);
-  position:sticky;top:0;background:var(--white);z-index:1;
+  padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.1);
+  position:sticky;top:0;background:#0d1f2d;z-index:1;
 }
 .modal-title{font-size:.96rem;font-weight:700;}
 .modal-close{
