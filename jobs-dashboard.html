@@ -598,7 +598,8 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--indigo) 
 .bn-tab.active{color:var(--fire);}
 .bn-icon{font-size:1.4rem;line-height:1;}
 .bn-label{white-space:nowrap;}
-.admin-switcher{position:sticky;top:0;z-index:999;background:#07111a;border-bottom:1px solid rgba(255,107,53,0.3);padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}.admin-switcher-label{color:var(--fire);font-family:DM Mono,monospace;font-size:12px;font-weight:600;margin-right:8px;white-space:nowrap;}.switcher-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);text-decoration:none;padding:5px 12px;border-radius:6px;font-family:Sora,sans-serif;font-size:12px;font-weight:500;transition:all 0.15s ease;white-space:nowrap;}.switcher-btn:hover{background:rgba(255,107,53,0.15);border-color:var(--fire);color:white;}.switcher-btn.active{background:var(--fire);border-color:var(--fire);color:white;}
+.admin-view-as{border-top:1px solid rgba(255,107,53,0.2);padding-top:8px;margin-top:4px;}
+.admin-view-as .sidebar-section-label{color:rgba(255,107,53,0.6);}
 </style>
 </head>
 <body class="has-bottom-nav">
@@ -640,6 +641,18 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--indigo) 
     <a class="sidebar-item" href="service-provider-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🔧</span> Provider Dashboard</a>
     <a class="sidebar-item active" href="jobs-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">💼</span> Jobs Dashboard</a>
   </div>
+
+  <div class="sidebar-section admin-view-as" id="adminViewAs" style="display:none;">
+    <div class="sidebar-section-label">View As</div>
+    <a class="sidebar-item" href="truck-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🚚</span>Truck</a>
+    <a class="sidebar-item" href="planner-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🎉</span>Organizer</a>
+    <a class="sidebar-item" href="venue-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🏢</span>Venue</a>
+    <a class="sidebar-item" href="property-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🏠</span>Property</a>
+    <a class="sidebar-item" href="service-provider-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🔧</span>Services</a>
+    <a class="sidebar-item" href="jobs-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">💼</span>Jobs</a>
+    <a class="sidebar-item" href="admin-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">⚙️</span>Admin</a>
+  </div>
+
   <div class="sidebar-footer">
       <div class="sidebar-user">
         <div class="sidebar-avatar">JR</div>
@@ -669,17 +682,6 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--indigo) 
         </span>
       </div>
     </header>
-
-  <div class="admin-switcher">
-    <span class="admin-switcher-label">👁 View As:</span>
-    <a href="truck-dashboard.html" class="switcher-btn">🚚 Truck</a>
-    <a href="venue-dashboard.html" class="switcher-btn">🏢 Venue</a>
-    <a href="planner-dashboard.html" class="switcher-btn">🎉 Organizer</a>
-    <a href="property-dashboard.html" class="switcher-btn">🏠 Property</a>
-    <a href="service-provider-dashboard.html" class="switcher-btn">🔧 Provider</a>
-    <a href="jobs-dashboard.html" class="switcher-btn active">💼 Jobs</a>
-    <a href="admin-dashboard.html" class="switcher-btn">⚙️ Admin</a>
-  </div>
 
     <div class="panels">
 
@@ -1763,6 +1765,13 @@ async function initDashboard(user){
     // Allow admin email to access dashboard for testing/support
     const isAdmin = user.email === 'wesfitz72@gmail.com';
     if(isAdmin) console.log('[JOBS] Admin access via email bypass for user:', user.email);
+
+    // Show View As section for admin users
+    if (isAdmin) {
+      const el = document.getElementById('adminViewAs');
+      if (el) el.style.display = 'block';
+    }
+
     currentUserId=user.id;
   const{data:unread}=await window.supabase.from('messages').select('id').eq('recipient_id',currentUserId).eq('is_read',false);
   const kpiGrid=document.getElementById('kpiGrid');

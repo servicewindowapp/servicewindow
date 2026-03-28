@@ -224,11 +224,8 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
   .sidebar.open{left:0;}
   .stats-bar{grid-template-columns:1fr 1fr;}
 }
-.admin-switcher{position:sticky;top:0;z-index:999;background:#07111a;border-bottom:1px solid rgba(255,107,53,0.3);padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.admin-switcher-label{color:var(--fire);font-family:DM Mono,monospace;font-size:12px;font-weight:600;margin-right:8px;white-space:nowrap;}
-.switcher-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);text-decoration:none;padding:5px 12px;border-radius:6px;font-family:Sora,sans-serif;font-size:12px;font-weight:500;transition:all 0.15s ease;white-space:nowrap;}
-.switcher-btn:hover{background:rgba(255,107,53,0.15);border-color:var(--fire);color:white;}
-.switcher-btn.active{background:var(--fire);border-color:var(--fire);color:white;}
+.admin-view-as{border-top:1px solid rgba(255,107,53,0.2);padding-top:8px;margin-top:4px;}
+.admin-view-as .sidebar-section-label{color:rgba(255,107,53,0.6);}
 </style>
 </head>
 <body>
@@ -273,6 +270,17 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       </div>
     </div>
 
+    <div class="sidebar-section admin-view-as" id="adminViewAs" style="display:none;">
+      <div class="sidebar-section-label">View As</div>
+      <a class="sidebar-item" href="truck-dashboard.html"><span class="sidebar-icon">🚚</span>Truck</a>
+      <a class="sidebar-item" href="planner-dashboard.html"><span class="sidebar-icon">🎉</span>Organizer</a>
+      <a class="sidebar-item" href="venue-dashboard.html"><span class="sidebar-icon">🏢</span>Venue</a>
+      <a class="sidebar-item" href="property-dashboard.html"><span class="sidebar-icon">🏠</span>Property</a>
+      <a class="sidebar-item" href="service-provider-dashboard.html"><span class="sidebar-icon">🔧</span>Services</a>
+      <a class="sidebar-item" href="jobs-dashboard.html"><span class="sidebar-icon">💼</span>Jobs</a>
+      <a class="sidebar-item active" href="admin-dashboard.html"><span class="sidebar-icon">⚙️</span>Admin</a>
+    </div>
+
     <div class="sidebar-footer">
       <div class="user-chip" onclick="navSignOut()">
         <div class="avatar" id="userAvatar">A</div>
@@ -292,16 +300,6 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
       <div class="topbar-title">Admin Dashboard</div>
     </div>
 
-    <div class="admin-switcher">
-      <span class="admin-switcher-label">👁 View As:</span>
-      <a href="truck-dashboard.html" class="switcher-btn">🚚 Truck</a>
-      <a href="venue-dashboard.html" class="switcher-btn">🏢 Venue</a>
-      <a href="planner-dashboard.html" class="switcher-btn">🎉 Organizer</a>
-      <a href="property-dashboard.html" class="switcher-btn">🏠 Property</a>
-      <a href="service-provider-dashboard.html" class="switcher-btn">🔧 Provider</a>
-      <a href="jobs-dashboard.html" class="switcher-btn">💼 Jobs</a>
-      <a href="admin-dashboard.html" class="switcher-btn active">⚙️ Admin</a>
-    </div>
     <!-- PANELS -->
     <div class="panels">
       <!-- STATS PANEL -->
@@ -637,6 +635,12 @@ async function initAdmin(user) {
     currentUser = { ...user, ...profile };
     document.getElementById('userName').textContent = profile.full_name || 'Admin';
     document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+    // Show View As section for admin users
+    if (profile.role === 'admin') {
+      const el = document.getElementById('adminViewAs');
+      if (el) el.style.display = 'block';
+    }
 
     loadStats();
     loadVerificationQueue();
