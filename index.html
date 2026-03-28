@@ -640,7 +640,7 @@ footer{background:var(--charcoal);padding:40px 20px 32px;}
 .sw-overlay.open{display:block;}
 .sw-menu{
   position:fixed;top:0;right:-100%;width:min(300px,88vw);
-  height:100%;background:#fff;z-index:200;
+  height:100%;background:#0D1B2A;z-index:200;
   transition:right .28s ease;
   overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;
   box-shadow:var(--sh-lg);max-width:100vw;
@@ -648,31 +648,31 @@ footer{background:var(--charcoal);padding:40px 20px 32px;}
 .sw-menu.open{right:0;}
 .sw-menu-head{
   display:flex;align-items:center;justify-content:space-between;
-  padding:16px 18px;border-bottom:1px solid var(--border);
+  padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.1);
   flex-shrink:0;
 }
 .sw-menu-logo{height:26px;width:auto;}
 .sw-menu-close{
-  width:36px;height:36px;border:none;background:var(--bg);
+  width:36px;height:36px;border:none;background:transparent;
   border-radius:50%;font-size:1.1rem;cursor:pointer;
-  color:var(--warm-gray);display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;
 }
 .sw-menu-section{padding:12px 10px 4px;}
 .sw-menu-label{
   font-size:.62rem;font-weight:700;letter-spacing:.8px;
-  text-transform:uppercase;color:var(--mid-gray);
+  text-transform:uppercase;color:rgba(255,255,255,0.45);
   padding:0 10px;margin-bottom:4px;
 }
 .sw-menu-item{
   display:flex;align-items:center;gap:10px;
   padding:12px 12px;border-radius:10px;
-  font-size:.88rem;font-weight:600;color:var(--warm-gray);
+  font-size:.88rem;font-weight:600;color:rgba(255,255,255,0.8);
   cursor:pointer;transition:all .15s;text-decoration:none;
   min-height:44px;
 }
-.sw-menu-item:hover,.sw-menu-item.active{background:var(--fire-pale);color:var(--fire);}
+.sw-menu-item:hover,.sw-menu-item.active{background:rgba(255,255,255,0.08);color:#ffffff;}
 .sw-menu-icon{font-size:1rem;flex-shrink:0;width:20px;text-align:center;}
-.sw-menu-footer{margin-top:auto;padding:16px 16px 24px;border-top:1px solid var(--border);flex-shrink:0;}
+.sw-menu-footer{margin-top:auto;padding:16px 16px 24px;border-top:1px solid rgba(255,255,255,0.1);flex-shrink:0;}
 .sw-menu-cta{
   display:block;width:100%;height:48px;
   background:var(--fire);color:#fff;border:none;
@@ -898,22 +898,12 @@ img,video{max-width:100%;height:auto;}
     <div class="sw-menu-label">Explore</div>
     <a class="sw-menu-item active" href="index.html"><span class="sw-menu-icon">🏠</span>Home</a>
     <a class="sw-menu-item" href="find-trucks.html"><span class="sw-menu-icon">🚚</span>Find Trucks</a>
-    <a class="sw-menu-item" href="marketplace.html"><span class="sw-menu-icon">🍽️</span>Marketplace</a>
     <a class="sw-menu-item" href="jobs.html"><span class="sw-menu-icon">💼</span>Browse Jobs</a>
     <a class="sw-menu-item" href="venues.html"><span class="sw-menu-icon">🏛️</span>For Venues</a>
     <a class="sw-menu-item" href="property.html"><span class="sw-menu-icon">🏠</span>Parking &amp; Space</a>
     <a class="sw-menu-item" href="pricing.html"><span class="sw-menu-icon">💰</span>Pricing</a>
     <a class="sw-menu-item" href="about.html"><span class="sw-menu-icon">👋</span>About</a>
     <a class="sw-menu-item" href="contact.html"><span class="sw-menu-icon">✉️</span>Contact</a>
-  </div>
-  <div class="sw-menu-section">
-    <div class="sw-menu-label">Dashboards</div>
-    <a class="sw-menu-item" href="truck-dashboard.html"><span class="sw-menu-icon">🚚</span>Truck Dashboard</a>
-    <a class="sw-menu-item" href="planner-dashboard.html"><span class="sw-menu-icon">📋</span>Organizer Dashboard</a>
-    <a class="sw-menu-item" href="venue-dashboard.html"><span class="sw-menu-icon">🏛️</span>Venue Dashboard</a>
-    <a class="sw-menu-item" href="property-dashboard.html"><span class="sw-menu-icon">🏠</span>Property Dashboard</a>
-    <a class="sw-menu-item" href="service-provider-dashboard.html"><span class="sw-menu-icon">🔧</span>Provider Dashboard</a>
-    <a class="sw-menu-item" href="jobs-dashboard.html"><span class="sw-menu-icon">💼</span>Jobs Dashboard</a>
   </div>
   <div class="sw-menu-footer">
     <a class="sw-menu-cta" href="index.html#waitlist" onclick="closeMenu()">Join Free &#8594;</a>
@@ -1320,18 +1310,10 @@ img,video{max-width:100%;height:auto;}
     <a class="sw-footer-link" href="pricing.html">Pricing</a>
       <a class="sw-footer-link" href="about.html">About</a>
       <a class="sw-footer-link" href="contact.html">Contact</a>
-    <a class="sw-footer-link" href="truck-dashboard.html">Truck Dashboard</a>
-    <a class="sw-footer-link" href="planner-dashboard.html">Organizer Dashboard</a>
-    <a class="sw-footer-link" href="venue-dashboard.html">Venue Dashboard</a>
-    <a class="sw-footer-link" href="property-dashboard.html">Property Owner Dashboard</a>
-    <a class="sw-footer-link" href="service-provider-dashboard.html">Provider Dashboard</a>
-    <a class="sw-footer-link" href="jobs-dashboard.html">Jobs Dashboard</a>
     <a class="sw-footer-link" href="jobs.html">Browse Jobs</a>
     <a class="sw-footer-link" href="venues.html">For Venues</a>
     <a class="sw-footer-link" href="property.html">Parking &amp; Space</a>
     <a class="sw-footer-link" href="index.html#waitlist">Join the Waitlist</a>
-    <a class="sw-footer-link" href="marketplace.html">Request a Truck</a>
-    <a class="sw-footer-link" href="marketplace.html">Venues &amp; Parking</a>
     <a class="sw-footer-link" href="terms.html">Terms</a>
     <a class="sw-footer-link" href="privacy.html">Privacy</a>
     <a class="sw-footer-link" href="mailto:hello@servicewindow.app">Contact</a>
