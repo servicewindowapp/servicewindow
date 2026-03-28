@@ -724,22 +724,23 @@ footer{background:var(--charcoal);padding:40px 20px 32px;}
 /* ═══════════════════════════════════════
    SHARED FOOTER
 ═══════════════════════════════════════ */
-.sw-footer{background:#0d1f2d;padding:36px 16px 28px;}
-@media(min-width:768px){.sw-footer{padding:48px 40px 36px;}}
-.sw-footer-tagline{
-  font-size:.76rem;color:rgba(255,255,255,.45);
-  line-height:1.65;max-width:320px;margin-bottom:20px;
+.sw-footer{background:#07111a;padding:48px 24px 32px;border-top:1px solid rgba(255,255,255,.07);}
+@media(min-width:768px){.sw-footer{padding:64px 48px 40px;}}
+.sw-footer-cols{
+  display:flex;flex-direction:row;gap:40px;
+  margin-bottom:40px;flex-wrap:wrap;
 }
-.sw-footer-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  margin-bottom:24px;
+@media(min-width:600px){.sw-footer-cols{gap:64px;}}
+.sw-footer-col{display:flex;flex-direction:column;gap:10px;min-width:120px;}
+.sw-footer-col-label{
+  font-family:'DM Mono',monospace;font-size:.68rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-bottom:4px;
 }
-@media(min-width:480px){.sw-footer-grid{grid-template-columns:repeat(3,1fr);}}
-@media(min-width:768px){.sw-footer-grid{grid-template-columns:repeat(4,1fr);}}
 .sw-footer-link{
-  font-size:.8rem;color:rgba(255,255,255,.42);
-  transition:color .2s;text-decoration:none;
-  padding:3px 0;display:block;
+  font-family:'Sora',sans-serif;font-size:.82rem;
+  color:rgba(255,255,255,.45);transition:color .18s;
+  text-decoration:none;padding:2px 0;display:block;
 }
 .sw-footer-link:hover{color:rgba(255,255,255,.85);}
 .sw-footer-bottom{
@@ -919,14 +920,14 @@ img,video{max-width:100%;height:auto;}
     <img src="logo-final.png" alt="ServiceWindow — Where Events Find Their Truck">
   </div>
 
+  <h1>Where Events<br><em>Find Their Truck</em></h1>
+
+  <p class="hero-sub">The verified marketplace connecting food trucks, organizers, venues, and property owners across Southwest Florida.</p>
+
   <div class="eyebrow">
     <span class="eyebrow-dot"></span>
     Now Accepting Founding Members · SWFL
   </div>
-
-  <h1>Where Events<br><em>Find Their Truck</em></h1>
-
-  <p class="hero-sub">The verified marketplace connecting food trucks, organizers, venues, and property owners across Southwest Florida.</p>
 
   <form class="waitlist-form" id="heroForm">
     <input type="hidden" name="role" id="heroRole" value="Truck">
@@ -945,16 +946,6 @@ img,video{max-width:100%;height:auto;}
     </div>
   </form>
 
-  <div class="proof-row">
-    <div class="avatars">
-      <div class="av" style="background:#FF5400">P</div>
-      <div class="av" style="background:#2563EB">B</div>
-      <div class="av" style="background:#16A34A">K</div>
-      <div class="av" style="background:#D97706">D</div>
-      <div class="av" style="background:#7C3AED">M</div>
-    </div>
-    <span class="proof-text"><strong>83+ trucks</strong> already in our database</span>
-  </div>
 </section>
 
 <!-- ═══ STATS ═══ -->
@@ -1304,19 +1295,24 @@ img,video{max-width:100%;height:auto;}
 
 <!-- ═══ FOOTER ═══ -->
 <footer class="sw-footer">
-  <p class="sw-footer-tagline">Southwest Florida&#8217;s verified food truck marketplace. Fort Myers &middot; Cape Coral &middot; Naples and beyond.</p>
-  <div class="sw-footer-grid">
-    <a class="sw-footer-link" href="marketplace.html">Browse Marketplace</a>
-    <a class="sw-footer-link" href="pricing.html">Pricing</a>
+  <div class="sw-footer-cols">
+    <div class="sw-footer-col">
+      <div class="sw-footer-col-label">Platform</div>
+      <a class="sw-footer-link" href="pricing.html">Pricing</a>
       <a class="sw-footer-link" href="about.html">About</a>
       <a class="sw-footer-link" href="contact.html">Contact</a>
-    <a class="sw-footer-link" href="jobs.html">Browse Jobs</a>
-    <a class="sw-footer-link" href="venues.html">For Venues</a>
-    <a class="sw-footer-link" href="property.html">Parking &amp; Space</a>
-    <a class="sw-footer-link" href="index.html#waitlist">Join the Waitlist</a>
-    <a class="sw-footer-link" href="terms.html">Terms</a>
-    <a class="sw-footer-link" href="privacy.html">Privacy</a>
-    <a class="sw-footer-link" href="mailto:hello@servicewindow.app">Contact</a>
+    </div>
+    <div class="sw-footer-col">
+      <div class="sw-footer-col-label">Explore</div>
+      <a class="sw-footer-link" href="jobs.html">Browse Jobs</a>
+      <a class="sw-footer-link" href="venues.html">For Venues</a>
+      <a class="sw-footer-link" href="property.html">Parking &amp; Space</a>
+    </div>
+    <div class="sw-footer-col">
+      <div class="sw-footer-col-label">Legal</div>
+      <a class="sw-footer-link" href="terms.html">Terms of Service</a>
+      <a class="sw-footer-link" href="privacy.html">Privacy Policy</a>
+    </div>
   </div>
   <div class="sw-footer-bottom">
     <span>&copy; 2026 ServiceWindow &middot; servicewindow.app</span>
@@ -1522,4 +1518,4 @@ async function loadStats(){
 if(window.supabase){initNavAuth();loadStats();}else{document.addEventListener('supabase-ready',function(){initNavAuth();loadStats();});}
 </script>
 </body>
-</html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
