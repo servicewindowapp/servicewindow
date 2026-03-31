@@ -7,6 +7,8 @@
   <url><loc>https://servicewindow.app/jobs.html</loc><priority>0.6</priority></url>
   <url><loc>https://servicewindow.app/pricing.html</loc><priority>0.7</priority></url>
   <url><loc>https://servicewindow.app/about.html</loc><priority>0.5</priority></url>
+  <url><loc>https://servicewindow.app/fort-myers-food-trucks.html</loc><priority>0.8</priority></url>
+  <url><loc>https://servicewindow.app/cape-coral-food-trucks.html</loc><priority>0.8</priority></url>
 </urlset>
 ```
 

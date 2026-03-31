@@ -11,10 +11,42 @@ for Southwest Florida. GitHub Pages hosted. Cloudflare DNS. Static HTML/CSS/JS
 only — no backend, no build system, no package.json.
 
 ## Repo Structure
-- index.html — landing page, Formspree waitlist (endpoint: mbdzyold)
-- marketplace.html — public marketplace interactive demo
-- truck-dashboard.html — food truck operator dashboard interactive demo
-- CNAME — servicewindow.app
+
+### Root (deployed by GitHub Pages / Cloudflare Pages — do NOT move HTML files)
+- `*.html` — all 23 active pages served from root
+- `CNAME` — servicewindow.app
+- `wrangler.jsonc` — Cloudflare Pages config (assets.directory = ".")
+- `CLAUDE.md` — this file
+- `.env` — local secrets (gitignored)
+
+### assets/
+- `assets/js/supabase-client.js` — Supabase auth client (referenced in all HTML pages)
+- `assets/js/avatar-upload.js` — avatar upload handler (referenced in 6 dashboard pages)
+- `assets/logos/` — all logo variants (logo-final.png, logo-final-nav.png, logo-transparent.png, etc.)
+- `assets/images/` — reference/stock images (not directly referenced in deployed HTML)
+
+### supabase/
+- `supabase/functions/` — Edge Functions (Stripe, Resend, R2, notifications)
+- `supabase/migrations/` — versioned schema migrations
+- `supabase/snippets/` — ad-hoc SQL queries (dev use only)
+- `supabase/config.toml` — project config
+
+### database/
+- `database/schema.sql` — full schema snapshot
+- `database/RESEND_EMAIL_TRIGGERS.sql` — email trigger definitions
+
+### workers/
+- `workers/r2-upload-worker.js` — Cloudflare R2 upload worker
+
+### docs/
+- `docs/README.md` — project readme
+- `docs/STRIPE_SETUP.md` — Stripe integration notes
+
+### Market Research/
+- Daily automated scrape reports (market-research-YYYY-MM-DD.txt)
+
+### _archive/
+- Old drafts and prior landing page versions (not deployed)
 
 ## Design System (locked — never deviate)
 Fonts: Sora (headings), Lora (body/accent), DM Mono (labels/data)

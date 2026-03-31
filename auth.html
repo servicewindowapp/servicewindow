@@ -390,7 +390,7 @@ textarea.form-control{height:auto;padding:12px 14px;resize:none;}
 </nav>
 
 <!-- Supabase client -->
-<script src="supabase-client.js"></script>
+<script src="assets/js/supabase-client.js"></script>
 
 <script>
 // ── Trial & Plan Capture ──────────────────────────────────────────────────
@@ -721,6 +721,45 @@ async function checkSession(){
 // ── Enter key submit ──────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && document.activeElement.closest('#authForm')) handleAuth();
+});
+
+// ── URL params: pre-select role and show founding banner ────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const preRole = urlParams.get('role');
+  const prePlan = urlParams.get('plan');
+
+  // Pre-select role from URL
+  if (preRole) {
+    const roleMap = {
+      'truck': 'Truck',
+      'organizer': 'Organizer',
+      'venue': 'Venue',
+      'property': 'Property',
+      'service_provider': 'Service Provider',
+      'job_seeker': 'Job Seeker'
+    };
+    const roleLabel = roleMap[preRole.toLowerCase()];
+    if (roleLabel) {
+      // Find and click the matching role tab
+      document.querySelectorAll('.role-tab, [data-role]').forEach(tab => {
+        if (tab.textContent.trim().includes(roleLabel) || tab.dataset.role === preRole) {
+          tab.click();
+        }
+      });
+    }
+  }
+
+  // Show founding member banner if plan=founding
+  if (prePlan === 'founding') {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);border-radius:8px;padding:10px 14px;font-family:DM Mono,monospace;font-size:.78rem;color:rgba(255,255,255,0.85);margin-bottom:16px;text-align:center;';
+    banner.textContent = '🔥 Founding Member rate locked in — complete signup to claim it';
+    const form = document.querySelector('.auth-form, form, #authForm');
+    if (form && form.parentNode) {
+      form.parentNode.insertBefore(banner, form);
+    }
+  }
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────
