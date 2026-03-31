@@ -1,0 +1,167 @@
+User-agent: *
+Allow: /
+Disallow: /truck-dashboard.html
+Disallow: /planner-dashboard.html
+Disallow: /venue-dashboard.html
+Disallow: /admin-dashboard.html
+Disallow: /property-dashboard.html
+Disallow: /service-provider-dashboard.html
+Disallow: /jobs-dashboard.html
+Disallow: /auth.html
+Disallow: /reset-password.html
+Disallow: /success.html
+Disallow: /cancel.html
+Sitemap: https://servicewindow.app/sitemap.xml
+You don't want Google indexing your dashboards, auth flows, or legacy files. Only index public content pages.
+3. Submit to Google Search Console.
+Go to search.google.com/search-console. Add servicewindow.app as a property. Verify ownership via the DNS TXT record method in Cloudflare (add a TXT record to your DNS — Google walks you through it). Once verified, submit your sitemap URL. This tells Google you exist and what to crawl. Free, takes 15 minutes.
+4. Submit to Bing Webmaster Tools.
+Bing feeds data to several AI engines including Copilot. Same process — bingwebmastertools.com. You can import from Google Search Console after you set that up.
+
+Phase 2: On-Page SEO — Keywords That Match Real Searches
+Your current pages almost certainly have generic title tags and thin meta descriptions. Every public-facing page needs surgery.
+The target keyword clusters for ServiceWindow:
+Primary: food trucks Southwest Florida, SWFL food trucks, food trucks for hire Fort Myers, food trucks Cape Coral, food truck events Fort Myers
+Secondary: food truck catering Fort Myers, book a food truck SWFL, Fort Myers food truck schedule, Cape Coral food truck events, Naples food truck catering
+Long-tail (high intent, low competition): how to hire a food truck for an event in Fort Myers, food truck rental Cape Coral FL, food truck marketplace Southwest Florida
+For each public HTML page, update the <head> section:
+index.html example:
+html<title>ServiceWindow — Food Truck Marketplace for Southwest Florida</title>
+<meta name="description" content="Connect with food trucks in Fort Myers, Cape Coral, Naples, and across SWFL. Book catering, find events, and hire local food trucks — free for planners and venues.">
+<meta name="keywords" content="food trucks Fort Myers, Cape Coral food trucks, SWFL food truck marketplace, food truck catering Southwest Florida">
+<link rel="canonical" href="https://servicewindow.app/">
+find-trucks.html example:
+html<title>Find Food Trucks Near You — Fort Myers & Cape Coral SWFL</title>
+<meta name="description" content="Browse verified food trucks in Fort Myers, Cape Coral, Bonita Springs, Naples, and all of Southwest Florida. Live availability, menus, and booking.">
+marketplace.html:
+html<title>Food Truck Marketplace — Book & Hire Trucks in Southwest Florida</title>
+<meta name="description" content="SWFL's only verified two-sided food truck marketplace. Post events, find trucks, fill catering slots — Fort Myers, Cape Coral, Naples, Bonita Springs.">
+Every page gets a unique title and description. No duplicate meta tags across pages.
+Add OG tags for social sharing (also helps AI parsing):
+html<meta property="og:title" content="ServiceWindow — SWFL Food Truck Marketplace">
+<meta property="og:description" content="Southwest Florida's food truck marketplace. Book, hire, and connect.">
+<meta property="og:url" content="https://servicewindow.app/">
+<meta property="og:type" content="website">
+
+Phase 3: Schema Markup — The AI Engine Signal
+Schema is structured data that tells both Google and AI engines exactly what your site is. This is the single biggest thing you can do to get cited by AI search results. It's invisible to users, lives in a <script> tag in your HTML head.
+Add this to index.html:
+html<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ServiceWindow",
+  "url": "https://servicewindow.app",
+  "description": "Southwest Florida's verified food truck marketplace connecting food trucks, event planners, venues, and property owners.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://servicewindow.app/find-trucks.html?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "ServiceWindow",
+  "url": "https://servicewindow.app",
+  "description": "Food truck marketplace for Southwest Florida — Fort Myers, Cape Coral, Naples, Bonita Springs.",
+  "areaServed": [
+    {"@type": "City", "name": "Fort Myers", "addressRegion": "FL"},
+    {"@type": "City", "name": "Cape Coral", "addressRegion": "FL"},
+    {"@type": "City", "name": "Naples", "addressRegion": "FL"},
+    {"@type": "City", "name": "Bonita Springs", "addressRegion": "FL"},
+    {"@type": "City", "name": "Estero", "addressRegion": "FL"},
+    {"@type": "City", "name": "Marco Island", "addressRegion": "FL"}
+  ],
+  "serviceType": "Food Truck Marketplace",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "ServiceWindow Marketplace Plans",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "name": "Standard Plan",
+        "price": "49",
+        "priceCurrency": "USD",
+        "description": "Food truck operator listing — founding rate $29/mo"
+      }
+    ]
+  }
+}
+</script>
+Add this to find-trucks.html and marketplace.html:
+html<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Food Trucks in Southwest Florida",
+  "description": "Verified food trucks available for hire in Fort Myers, Cape Coral, and across SWFL",
+  "url": "https://servicewindow.app/marketplace.html"
+}
+</script>
+```
+
+---
+
+## Phase 4: Content — The Long Game That Actually Wins
+
+Right now you have zero blog or article content. That's the main reason you won't rank for competitive terms yet. Google and AI engines need *text that directly answers search queries* to surface you.
+
+You need a `/blog` or `/resources` section. Since you're on static GitHub Pages with no CMS, you build these as individual HTML files.
+
+**Create these pages first — highest search volume, lowest competition for your niche:**
+
+1. `fort-myers-food-trucks.html` — "Food Trucks in Fort Myers, FL: A Complete Guide" — list every truck you know, events they do, how to hire them, link to your marketplace
+2. `cape-coral-food-trucks.html` — same treatment for Cape Coral
+3. `swfl-food-truck-catering.html` — "How to Hire a Food Truck for Your Event in Southwest Florida"
+4. `food-truck-events-fort-myers.html` — "Food Truck Events in Fort Myers: What's Coming Up"
+
+Each page should be 800-1,200 words minimum. Use the city name + "food trucks" naturally throughout the text — not stuffed, just written the way a human would. These pages become the answer when someone asks ChatGPT "where can I find food trucks in Fort Myers."
+
+**Page structure for each:**
+- H1: Exact keyword phrase (e.g., "Food Trucks in Fort Myers, FL")
+- H2s: Subtopics (How to Book, Upcoming Events, Types of Cuisine, FAQ)
+- Internal links back to your marketplace and find-trucks pages
+- A CTA to sign up or browse
+
+For AI engines specifically: include an FAQ section at the bottom of each page in Q&A format. AI tools almost always pull FAQ-structured content when generating answers. Example for the Fort Myers page:
+```
+Q: How do I hire a food truck for an event in Fort Myers?
+A: Post your event on ServiceWindow's Request Marketplace at servicewindow.app. Food truck operators across SWFL browse open requests and respond with availability and pricing. It's free for event planners.
+
+Q: How many food trucks operate in Fort Myers?
+A: Southwest Florida has 80+ active food trucks across Fort Myers, Cape Coral, and surrounding cities, many of which are bookable through the ServiceWindow marketplace.
+
+Phase 5: Google Business Profile
+Go to business.google.com. Create a free Google Business Profile for ServiceWindow. Category: "Online Marketplace" or "Event Planning Service." This gets you into the Google local pack for relevant searches and feeds directly into Google's AI Overviews (the AI summaries at the top of results).
+ServiceWindow is a digital platform so you'll use the "online business" option — no physical address required. Add your URL, a description loaded with SWFL + food truck keywords, and your service area cities.
+
+Phase 6: Link Building — The Authority Signal
+Without other sites linking to you, Google has no reason to trust you over established competitors. Here's how to get links for free:
+Local citations: Submit servicewindow.app to every free business directory with SWFL relevance. Start with: Yelp (create a business listing), Alignable (local business network), Chamber of Commerce sites for Fort Myers and Cape Coral (both have free member directories or resource pages), Lee County EDC, Nextdoor Business.
+Food truck owner outreach: When you onboard a truck to ServiceWindow, ask them to add your link to their social bios or website. 83 trucks x even 20% compliance = 16 backlinks from relevant local businesses. Those links carry real weight because they're topically related.
+Local press: The Fort Myers News-Press and Gulfshore Business both cover local tech and food businesses. One press mention with a link is worth 50 directory submissions. Write a short pitch email — "SWFL startup launches first verified food truck marketplace, connecting 80+ local trucks with event planners and venues." Send to their business desk. This costs nothing.
+Reddit: Post in r/FortMyers and r/Florida food-related threads when relevant. Not spam — genuine answers to "where can I find food trucks" questions that mention ServiceWindow. Reddit content gets indexed and cited by AI engines heavily.
+
+Timeline Reality Check
+
+Week 1: Technical fixes (sitemap, robots.txt, meta tags, schema). Submit to Search Console and Bing. Zero cost, highest ROI.
+Month 1: Write and publish the 4 city/topic pages. Set up GBP.
+Months 2-3: Start link outreach as trucks onboard. Submit to directories.
+Months 3-6: Google starts indexing and ranking the content pages. AI engine citations begin appearing.
+
+You won't hit page 1 for "food trucks Fort Myers" overnight — established sites with years of history and hundreds of backlinks sit there. But for long-tail terms like "food truck marketplace Cape Coral" or "hire food truck for event Fort Myers," you can rank in the top 3 within 60-90 days with the content pages done right.
+The AI engine piece moves faster. Perplexity and ChatGPT pull from indexed content — a well-structured page with FAQ schema can get cited within weeks of indexing.
+
+Priority Order If You're Time-Constrained
+
+sitemap.xml + robots.txt — 20 minutes, commit and push
+Google Search Console setup + sitemap submission — 30 minutes
+Meta tags and schema on index.html, find-trucks.html, marketplace.html — 2 hours
+Google Business Profile — 30 minutes
+Write fort-myers-food-trucks.html — this is your biggest ranking lever, do it first
+
+Everything else builds on that foundation.
