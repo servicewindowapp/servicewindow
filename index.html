@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="msvalidate.01" content="8EB54A4EF79FF29BC9619E6560AA8463" />
 <title>ServiceWindow — Where Events Find Their Truck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -160,6 +161,11 @@ a{text-decoration:none;}
   cursor:pointer;transition:background .2s;white-space:nowrap;
 }
 .form-btn:hover{background:var(--fire-lt);}
+.hero-cta-group{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:360px;margin:0 auto;}
+.hero-cta-primary{display:block;width:100%;text-align:center;padding:16px 24px;background:var(--fire);color:white;border-radius:10px;font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;text-decoration:none;box-shadow:0 4px 16px rgba(255,84,0,.3);transition:background .2s;}
+.hero-cta-primary:hover{background:#e55a2b;}
+.hero-cta-secondary{display:block;width:100%;text-align:center;padding:14px 24px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.15);border-radius:10px;font-family:'Sora',sans-serif;font-weight:600;font-size:.9rem;text-decoration:none;transition:background .2s,color .2s;}
+.hero-cta-secondary:hover{background:rgba(255,255,255,0.1);color:white;}
 .proof-row{
   display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
 }
@@ -929,22 +935,11 @@ img,video{max-width:100%;height:auto;}
     Now Accepting Founding Members · SWFL
   </div>
 
-  <form class="waitlist-form" id="heroForm">
-    <input type="hidden" name="role" id="heroRole" value="Truck">
-    <div class="role-tabs">
-      <button type="button" class="role-tab active" onclick="setRole(this,'heroRole')">🚚 Truck</button>
-      <button type="button" class="role-tab" onclick="setRole(this,'heroRole')">🎉 Organizer</button>
-      <button type="button" class="role-tab" onclick="setRole(this,'heroRole')">🏢 Venue</button>
-    </div>
-    <div class="form-row" style="gap:8px;margin-bottom:8px;">
-      <input class="form-input" type="text" name="business_name" id="heroBiz" placeholder="Business name (optional)" style="flex:1;">
-      <input class="form-input" type="text" name="city" id="heroCity" placeholder="City (optional)" style="flex:1;">
-    </div>
-    <div class="form-row">
-      <input class="form-input" type="email" name="email" placeholder="your@email.com" id="heroEmail" required>
-      <button type="submit" class="form-btn" id="heroSubmitBtn">Join →</button>
-    </div>
-  </form>
+  <div class="hero-cta-group">
+    <a href="auth.html?role=truck" class="hero-cta-primary">🚚 Join as a Truck</a>
+    <a href="auth.html?role=organizer" class="hero-cta-secondary">🎉 Join as an Organizer</a>
+    <a href="auth.html" class="hero-cta-secondary">Sign In</a>
+  </div>
 
 </section>
 
@@ -1283,14 +1278,8 @@ img,video{max-width:100%;height:auto;}
     <div class="offer-pill">Standard: $29/mo <s>$49</s></div>
     <div class="offer-pill">Pro: $49/mo <s>$79</s></div>
   </div>
-  <form class="founding-form" id="foundingForm" action="https://formspree.io/f/mbdzyold" method="POST">
-    <input type="hidden" name="_subject" value="New ServiceWindow Founding Member Signup">
-    <input type="hidden" name="form_location" value="Founding Member CTA">
-    <input type="hidden" name="role" value="Founding Member">
-    <input class="founding-input" type="email" name="email" placeholder="your@email.com" id="foundingEmail" required>
-    <button type="submit" class="founding-btn">Lock In My Founding Rate →</button>
-    <div class="founding-note">⏳ <strong style="color:#fff;">47 founding spots remaining</strong> &mdash; offer ends 90 days after public launch</div>
-  </form>
+  <a href="auth.html?plan=founding" class="founding-btn" style="display:block;text-align:center;text-decoration:none;">Lock In My Founding Rate →</a>
+  <div class="founding-note">⏳ <strong style="color:#fff;">47 founding spots remaining</strong> &mdash; offer ends 90 days after public launch</div>
 </div>
 
 <!-- ═══ FOOTER ═══ -->
@@ -1376,66 +1365,6 @@ async function submitForm(formEl, successHTML) {
   });
 }
 
-// ── Hero waitlist form → Supabase
-(function() {
-  const form = document.getElementById('heroForm');
-  if (!form) return;
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('heroSubmitBtn');
-    const email        = (document.getElementById('heroEmail').value || '').trim();
-    const role         = (document.getElementById('heroRole').value  || 'Truck').trim();
-    const business_name = (document.getElementById('heroBiz').value  || '').trim() || null;
-    const city         = (document.getElementById('heroCity').value  || '').trim() || null;
-    if (!email) return;
-    btn.textContent = 'Joining…';
-    btn.disabled = true;
-    const doInsert = async () => {
-      const { error } = await window.supabase.from('waitlist').insert({
-        email, role, business_name, city, source: 'landing'
-      });
-      if (error) {
-        const isDupe = error.code === '23505'
-          || (error.message||'').toLowerCase().includes('unique')
-          || (error.message||'').toLowerCase().includes('duplicate');
-        form.innerHTML = isDupe
-          ? `<div style="background:var(--green-pale);border:1px solid #BBF7D0;border-radius:var(--r);padding:24px;text-align:center;">
-               <div style="font-size:2rem;margin-bottom:8px;">✅</div>
-               <div style="font-weight:700;color:var(--green);font-size:1rem;margin-bottom:4px;">You're already on the list!</div>
-               <div style="font-size:.82rem;color:#166534;">We'll reach out when ServiceWindow opens in your area.</div>
-             </div>`
-          : null;
-        if (!isDupe) {
-          btn.textContent = 'Join →';
-          btn.disabled = false;
-          console.error('Waitlist insert failed:', error);
-          alert('Something went wrong. Please email hello@servicewindow.app');
-        }
-        return;
-      }
-      form.innerHTML = `<div style="background:var(--green-pale);border:1px solid #BBF7D0;border-radius:var(--r);padding:24px;text-align:center;">
-        <div style="font-size:2rem;margin-bottom:8px;">✅</div>
-        <div style="font-weight:700;color:var(--green);font-size:1rem;margin-bottom:4px;">You're on the list!</div>
-        <div style="font-size:.82rem;color:#166534;">We'll reach out when ServiceWindow opens in your area.</div>
-      </div>`;
-    };
-    if (window.supabase) {
-      await doInsert();
-    } else {
-      document.addEventListener('supabase-ready', doInsert, { once: true });
-    }
-  });
-})();
-
-submitForm(
-  document.getElementById('foundingForm'),
-  `<div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:var(--r);padding:24px;text-align:center;">
-    <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
-    <div style="font-weight:700;color:#fff;font-size:1rem;margin-bottom:4px;">Founding rate locked!</div>
-    <div style="font-size:.82rem;color:rgba(255,255,255,.8);">Check your inbox for confirmation.</div>
-  </div>`
-);
-
 // ── Scroll reveal (progressive enhancement — content visible without JS)
 document.querySelectorAll('.reveal').forEach(el => el.classList.add('will-animate'));
 const observer = new IntersectionObserver(
@@ -1471,7 +1400,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </a>
 </nav>
 <!-- Nav auth state -->
-<script src="supabase-client.js"></script>
+<script src="assets/js/supabase-client.js"></script>
 <script>
 async function initNavAuth(){
   if(!window.supabase)return;
