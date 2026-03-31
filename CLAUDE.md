@@ -13,7 +13,7 @@ only — no backend, no build system, no package.json.
 ## Repo Structure
 
 ### Root (deployed by GitHub Pages / Cloudflare Pages — do NOT move HTML files)
-- `*.html` — all 23 active pages served from root
+- `*.html` — all 27 active pages served from root
 - `CNAME` — servicewindow.app
 - `wrangler.jsonc` — Cloudflare Pages config (assets.directory = ".")
 - `CLAUDE.md` — this file
@@ -117,6 +117,37 @@ Auth, Supabase, Stripe, Resend all wired and functional.
 Dark theme uniformity pass complete across all dashboards.
 shift_posts table + notify-shift-post Edge Function deployed.
 post-job.html built. Services dashboard rebranded.
+
+### SEO — March 31 2026 (session complete, push pending)
+Google Search Console verified (verification processing, ~5 days).
+Bing Webmaster Tools verified via msvalidate.01 meta tag on index.html.
+sitemap.xml and robots.txt live at repo root.
+
+SEO pages built (all have canonical, OG tags, FAQPage schema, dark theme, internal links):
+- fort-myers-food-trucks.html — "food trucks Fort Myers FL"
+- cape-coral-food-trucks.html — "food trucks Cape Coral FL"
+- swfl-food-truck-catering.html — "food truck catering Fort Myers / SWFL"
+- food-truck-events-fort-myers.html — "food truck events Fort Myers"
+
+OG tags added to: find-trucks.html, marketplace.html, and all 4 SEO pages.
+ItemList schema enriched on find-trucks.html and marketplace.html.
+
+PENDING — run from PowerShell to deploy:
+  Remove-Item .git\HEAD.lock -Force
+  git add swfl-food-truck-catering.html food-truck-events-fort-myers.html sitemap.xml
+  git commit -m "feat: add catering and events SEO landing pages"
+  git push origin main
+  Then purge Cloudflare cache.
+
+PENDING — Search Console (reminder set for April 3):
+  1. Submit sitemap.xml via Sitemaps panel
+  2. Request indexing for all 4 SEO pages via URL Inspection
+
+SEO backlog (not started):
+- Directory submissions: Yelp, Alignable, Fort Myers Chamber, Cape Coral Chamber, Lee County EDC
+- Press outreach: News-Press, Gulfshore Business
+- Backlink outreach: 83-truck list
+- Future pages: naples-food-trucks.html, bonita-springs-food-trucks.html
 
 ---
 
