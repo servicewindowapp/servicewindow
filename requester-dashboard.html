@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Dashboard — ServiceWindow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fire:#FF5400;--fire-lt:#FF7A33;--fire-pale:#FFF0E8;
+  --navy:#1E3A5F;--smoke:#1C1917;--charcoal:#292524;
+  --warm-gray:#57534E;--mid-gray:#A8A29E;
+  --border:#E7E5E4;--bg:#FAFAF9;--white:#FFFFFF;
+  --green:#16A34A;--green-pale:#F0FDF4;--green-border:#BBF7D0;
+  --amber:#D97706;--amber-pale:#FFFBEB;
+  --blue:#1D4ED8;--blue-pale:#EFF6FF;
+  --purple:#7C3AED;--purple-pale:#F3E8FF;
+  --r:16px;--r-sm:10px;--r-xs:6px;
+  --sh-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
+  --sh-lg:0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+  --sidebar-w:240px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Sora',sans-serif;background:#0d1f2d;color:#ffffff;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+img{max-width:100%;height:auto;display:block;}
+a{text-decoration:none;color:inherit;}
+button{font-family:'Sora',sans-serif;cursor:pointer;}
+input,textarea,select{font-family:'Sora',sans-serif;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:#0d1f2d;border-right:1px solid rgba(255,255,255,0.1);
+  display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:none;z-index:50;
+}
+.sidebar::-webkit-scrollbar{display:none;}
+.sidebar-head{padding:18px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0;}
+.sidebar-logo{height:28px;width:auto;cursor:pointer;filter:brightness(0) invert(1);}
+.sidebar-user{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0;
+}
+.sidebar-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--fire);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:800;flex-shrink:0;
+}
+.sidebar-name{font-size:.82rem;font-weight:700;color:#ffffff;line-height:1.2;}
+.sidebar-role-pill{
+  font-size:.6rem;font-weight:700;letter-spacing:.4px;
+  color:var(--fire);background:var(--fire-pale);
+  padding:2px 7px;border-radius:50px;display:inline-block;margin-top:2px;
+}
+.sidebar-nav{flex:1;padding:12px 10px;}
+.sidebar-section-label{
+  font-size:.6rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:rgba(255,255,255,0.4);padding:8px 10px 4px;
+}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  font-size:.84rem;font-weight:600;color:rgba(255,255,255,0.75);
+  cursor:pointer;transition:all .15s;
+  min-height:44px;margin-bottom:2px;
+}
+.sidebar-item:hover{background:rgba(255,255,255,0.07);color:#ffffff;}
+.sidebar-item.active{background:var(--fire-pale);color:var(--fire);}
+.sidebar-item-icon{font-size:1rem;flex-shrink:0;width:20px;text-align:center;}
+.sidebar-item-badge{
+  margin-left:auto;font-size:.62rem;font-weight:700;
+  background:var(--fire);color:#fff;
+  padding:2px 6px;border-radius:50px;
+}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,0.1);flex-shrink:0;}
+.sidebar-signout{
+  display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;
+  border:none;background:rgba(255,255,255,0.05);border-radius:var(--r-sm);
+  font-size:.8rem;font-weight:600;color:rgba(255,255,255,0.6);
+  transition:all .15s;
+}
+.sidebar-signout:hover{background:rgba(255,255,255,0.1);color:#ffffff;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(7,17,26,.6);z-index:49;}
+@media(max-width:767px){
+  .sidebar{position:fixed;left:-100%;top:0;transition:left .25s;}
+  .sidebar.open{left:0;}
+  .sidebar-overlay.open{display:block;}
+}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{
+  height:56px;flex-shrink:0;
+  background:#0d1f2d;border-bottom:1px solid rgba(255,255,255,0.1);
+  display:flex;align-items:center;padding:0 20px;gap:12px;
+}
+.topbar-menu-btn{
+  width:40px;height:40px;border:none;background:rgba(255,255,255,0.06);border-radius:8px;
+  display:none;align-items:center;justify-content:center;font-size:1.1rem;color:#ffffff;
+  cursor:pointer;flex-shrink:0;
+}
+@media(max-width:767px){.topbar-menu-btn{display:flex;}}
+.topbar-title{font-family:'Lora',serif;font-size:1rem;font-weight:700;color:#ffffff;flex:1;}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.topbar-btn{
+  height:36px;padding:0 14px;border-radius:8px;
+  font-size:.78rem;font-weight:700;border:none;
+  display:inline-flex;align-items:center;gap:6px;
+  cursor:pointer;transition:all .15s;
+}
+.topbar-btn-primary{background:var(--fire);color:#fff;}
+.topbar-btn-primary:hover{background:var(--fire-lt);}
+.topbar-btn-ghost{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.12);}
+.topbar-btn-ghost:hover{background:rgba(255,255,255,0.12);color:#ffffff;}
+.notif-btn{
+  position:relative;width:36px;height:36px;border:none;
+  background:rgba(255,255,255,0.07);border-radius:8px;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,0.12);
+}
+.notif-dot{
+  position:absolute;top:6px;right:6px;width:7px;height:7px;
+  background:var(--fire);border-radius:50%;border:2px solid #0d1f2d;
+}
+
+/* ── PANELS ── */
+.panels{flex:1;overflow:hidden;position:relative;}
+.panel{
+  position:absolute;inset:0;overflow-y:auto;padding:24px 20px;
+  display:none;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.15) transparent;
+}
+.panel.active{display:block;}
+@media(min-width:768px){.panel{padding:28px 32px;}}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+@media(min-width:640px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
+.kpi-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:16px;}
+.kpi-label{font-size:.7rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;}
+.kpi-value{font-family:'Lora',serif;font-size:1.65rem;font-weight:700;color:#ffffff;line-height:1;margin-bottom:4px;}
+.kpi-sub{font-size:.68rem;color:rgba(255,255,255,0.5);}
+
+/* ── CARDS ── */
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);margin-bottom:16px;overflow:hidden;}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.card-hd-title{font-size:.88rem;font-weight:700;color:#ffffff;}
+.card-hd-sub{font-size:.72rem;color:rgba(255,255,255,0.5);margin-top:2px;}
+.card-body{padding:16px 18px;}
+.two-col{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;}
+@media(min-width:640px){.two-col{grid-template-columns:1fr 1fr;}}
+
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.78rem;}
+th{text-align:left;padding:10px 14px;font-size:.68rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:.3px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.08);white-space:nowrap;}
+td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.06);vertical-align:middle;color:rgba(255,255,255,0.85);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.03);}
+.td-primary{font-weight:700;color:#ffffff;}
+.td-muted{color:rgba(255,255,255,0.5);}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;gap:3px;font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;font-family:'DM Mono',monospace;}
+.tag-pending{background:var(--amber-pale);color:var(--amber);}
+.tag-confirmed{background:var(--green-pale);color:var(--green);}
+.tag-declined{background:rgba(220,38,38,0.1);color:#DC2626;}
+.tag-active{background:var(--blue-pale);color:var(--blue);}
+.tag-draft{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);}
+
+/* ── BUTTONS ── */
+.btn{height:44px;padding:0 16px;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--fire);color:#fff;}
+.btn-primary:hover{background:var(--fire-lt);}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);}
+.btn-outline:hover{border-color:var(--fire);color:var(--fire);}
+.btn-ghost{background:transparent;color:rgba(255,255,255,0.7);}
+.btn-ghost:hover{color:#ffffff;}
+.btn-sm{height:34px;padding:0 12px;font-size:.72rem;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#15803D;}
+
+/* ── FORM ELEMENTS ── */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:.72rem;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;}
+.form-input,.form-textarea,.form-select{
+  width:100%;padding:10px 12px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:var(--r-sm);
+  font-family:'Sora',sans-serif;font-size:.84rem;
+  color:#ffffff;transition:border-color .15s;
+}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--fire);}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(255,255,255,0.3);}
+.form-textarea{resize:vertical;min-height:90px;}
+.form-select option{background:#0d1f2d;color:#ffffff;}
+
+/* ── LISTING CARDS ── */
+.truck-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:600px){.truck-grid{grid-template-columns:1fr 1fr;}}
+@media(min-width:960px){.truck-grid{grid-template-columns:1fr 1fr 1fr;}}
+.truck-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:10px;}
+.truck-card:hover{border-color:var(--fire);transform:translateY(-1px);box-shadow:var(--sh);}
+.truck-card-name{font-size:.9rem;font-weight:700;color:#ffffff;}
+.truck-card-meta{font-size:.74rem;color:rgba(255,255,255,0.55);}
+.truck-card-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.truck-card-actions{display:flex;gap:8px;margin-top:auto;padding-top:4px;}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:48px 20px;}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;opacity:.5;}
+.empty-title{font-size:1rem;font-weight:700;color:#ffffff;margin-bottom:6px;}
+.empty-sub{font-size:.82rem;color:rgba(255,255,255,0.5);margin-bottom:20px;}
+
+/* ── SECTION HEADER ── */
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.section-hd-left h1{font-family:'Lora',serif;font-size:1.4rem;font-weight:700;color:#ffffff;margin-bottom:4px;}
+.section-hd-left p{font-size:.8rem;color:rgba(255,255,255,0.5);}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1a2e42;border:1px solid rgba(255,255,255,0.12);
+  color:#fff;padding:10px 20px;border-radius:var(--r-sm);
+  font-size:.82rem;font-weight:600;pointer-events:none;
+  opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.success{border-color:var(--green);background:#0f2318;}
+#toast.error{border-color:#DC2626;background:#2a0d0d;}
+
+/* ── AD CARDS ── */
+.ad-card{background:rgba(255,107,53,0.07);border:1px solid rgba(255,107,53,0.2);border-radius:var(--r);padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+.ad-card-title{font-size:.88rem;font-weight:700;color:#ffffff;margin-bottom:4px;}
+.ad-card-meta{font-size:.74rem;color:rgba(255,255,255,0.55);}
+.ad-card-stat{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--fire);font-weight:700;}
+
+/* ── FILTERS ── */
+.filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-chip{flex-shrink:0;height:34px;padding:0 12px;border:1px solid rgba(255,255,255,0.12);border-radius:50px;background:rgba(255,255,255,0.04);font-size:.72rem;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;transition:all .15s;}
+.filter-chip:hover,.filter-chip.active{background:var(--fire-pale);border-color:var(--fire);color:var(--fire);}
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav{display:none;}
+@media(max-width:767px){
+  .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:150;background:#07111a;border-top:1px solid rgba(255,255,255,0.1);height:62px;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);}
+  body{padding-bottom:62px;}
+}
+.bn-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;cursor:pointer;transition:color .15s;color:rgba(255,255,255,0.45);text-decoration:none;padding:6px 2px;}
+.bn-tab.active,.bn-tab:hover{color:var(--fire);}
+.bn-icon{font-size:1.15rem;line-height:1;}
+.bn-label{font-size:.55rem;font-weight:700;letter-spacing:.3px;text-transform:uppercase;}
+
+/* ── ROLE-GATED ITEMS ── */
+.role-only{display:none;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<div class="app">
+  <!-- ═══════════════════════════════════════════════════════ SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <img class="sidebar-logo" src="assets/logos/logo-final-nav.png" alt="ServiceWindow" onclick="window.location.href='index.html'" onerror="this.style.display='none'">
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarInitials">--</div>
+      <div>
+        <div class="sidebar-name" id="sidebarName">Loading…</div>
+        <div class="sidebar-role-pill" id="sidebarRolePill">Requester</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <!-- ALWAYS VISIBLE -->
+      <div class="sidebar-section-label">Overview</div>
+      <div class="sidebar-item active" onclick="showPanel('overview')" id="nav-overview">
+        <span class="sidebar-item-icon">📊</span> Dashboard
+      </div>
+      <div class="sidebar-item" onclick="showPanel('messages')" id="nav-messages">
+        <span class="sidebar-item-icon">💬</span> Messages
+        <span class="sidebar-item-badge" id="msgBadge" style="display:none">0</span>
+      </div>
+
+      <!-- ORGANIZER (event planner) -->
+      <div class="sidebar-section-label role-only role-organizer">Events</div>
+      <div class="sidebar-item role-only role-organizer" onclick="showPanel('post-event')" id="nav-post-event">
+        <span class="sidebar-item-icon">✏️</span> Post an Event
+      </div>
+      <div class="sidebar-item role-only role-organizer" onclick="showPanel('my-events')" id="nav-my-events">
+        <span class="sidebar-item-icon">📅</span> My Events
+      </div>
+      <div class="sidebar-item role-only role-organizer" onclick="showPanel('browse-trucks')" id="nav-browse-trucks">
+        <span class="sidebar-item-icon">🚚</span> Browse Trucks
+      </div>
+      <div class="sidebar-item role-only role-organizer" onclick="showPanel('bookings')" id="nav-bookings">
+        <span class="sidebar-item-icon">📬</span> Booking Requests
+        <span class="sidebar-item-badge" id="bookingBadge" style="display:none">0</span>
+      </div>
+
+      <!-- VENUE -->
+      <div class="sidebar-section-label role-only role-venue">Venue</div>
+      <div class="sidebar-item role-only role-venue" onclick="showPanel('my-venue')" id="nav-my-venue">
+        <span class="sidebar-item-icon">🏟️</span> My Venue
+      </div>
+      <div class="sidebar-item role-only role-venue" onclick="showPanel('venue-inquiries')" id="nav-venue-inquiries">
+        <span class="sidebar-item-icon">📩</span> Truck Inquiries
+        <span class="sidebar-item-badge" id="inquiryBadge" style="display:none">0</span>
+      </div>
+
+      <!-- PROPERTY / STORAGE -->
+      <div class="sidebar-section-label role-only role-property">Property</div>
+      <div class="sidebar-item role-only role-property" onclick="showPanel('my-listings')" id="nav-my-listings">
+        <span class="sidebar-item-icon">🏠</span> My Listings
+      </div>
+      <div class="sidebar-item role-only role-property" onclick="showPanel('rentals')" id="nav-rentals">
+        <span class="sidebar-item-icon">📋</span> Rental Requests
+      </div>
+
+      <!-- SERVICE PROVIDER / ADVERTISER -->
+      <div class="sidebar-section-label role-only role-service_provider">Advertising</div>
+      <div class="sidebar-item role-only role-service_provider" onclick="showPanel('my-ads')" id="nav-my-ads">
+        <span class="sidebar-item-icon">📢</span> My Ads
+      </div>
+
+      <!-- ALWAYS VISIBLE -->
+      <div class="sidebar-section-label" style="margin-top:8px;">Account</div>
+      <div class="sidebar-item" onclick="showPanel('profile')" id="nav-profile">
+        <span class="sidebar-item-icon">👤</span> Profile
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-signout" onclick="signOut()">
+        <span>↩</span> Sign Out
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- ═══════════════════════════════════════════════════════ MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="topbar-menu-btn" onclick="openSidebar()" aria-label="Open menu">☰</button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-actions">
+        <button class="notif-btn" title="Notifications" onclick="showPanel('messages')">
+          🔔<span class="notif-dot" id="notifDot" style="display:none"></span>
+        </button>
+        <!-- Organizer CTA -->
+        <button class="topbar-btn topbar-btn-primary role-only role-organizer" onclick="showPanel('post-event')">+ Post Event</button>
+        <!-- Venue CTA -->
+        <button class="topbar-btn topbar-btn-primary role-only role-venue" onclick="showPanel('my-venue')">Manage Venue</button>
+        <!-- Property CTA -->
+        <button class="topbar-btn topbar-btn-primary role-only role-property" onclick="showPanel('my-listings')">+ Add Listing</button>
+        <!-- Service Provider CTA -->
+        <button class="topbar-btn topbar-btn-primary role-only role-service_provider" onclick="showPanel('my-ads')">+ New Ad</button>
+      </div>
+    </div>
+
+    <!-- PANELS CONTAINER -->
+    <div class="panels">
+      <!-- ── OVERVIEW ───────────────────────────────────────── -->
+      <div class="panel active" id="panel-overview">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1 id="overviewGreeting">Welcome back</h1>
+            <p>Here's what's happening with your account.</p>
+          </div>
+        </div>
+        <div class="kpi-grid" id="overviewKpis">
+          <!-- Injected by JS based on role -->
+        </div>
+        <div class="card" id="overviewRecentCard">
+          <div class="card-hd">
+            <div>
+              <div class="card-hd-title" id="overviewRecentTitle">Recent Activity</div>
+              <div class="card-hd-sub">Your latest interactions on ServiceWindow</div>
+            </div>
+          </div>
+          <div class="card-body" id="overviewRecentBody">
+            <div class="empty-state">
+              <div class="empty-icon">🌀</div>
+              <div class="empty-title">Loading activity…</div>
+            </div>
+          </div>
+        </div>
+        <!-- Verification notice (shown if not verified) -->
+        <div class="card" id="verificationNotice" style="display:none;border-color:rgba(217,119,6,0.4);background:rgba(217,119,6,0.06);">
+          <div class="card-body">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <span style="font-size:1.4rem;flex-shrink:0;">⏳</span>
+              <div>
+                <div style="font-weight:700;color:#ffffff;margin-bottom:4px;">Verification Pending</div>
+                <div style="font-size:.82rem;color:rgba(255,255,255,0.6);">Your account is under review. You'll receive an email once approved — usually within 1 business day. Full dashboard access unlocks after verification.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── POST EVENT (organizer) ─────────────────────────── -->
+      <div class="panel" id="panel-post-event">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>Post an Event</h1>
+            <p>Describe your event and let trucks come to you.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-hd-title">Event Details</div></div>
+          <div class="card-body">
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Event Name *</label>
+                <input class="form-input" id="ev-name" type="text" placeholder="Annual Block Party, Corporate Lunch…">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Event Type *</label>
+                <select class="form-select" id="ev-type">
+                  <option value="">Select type</option>
+                  <option>Corporate Event</option>
+                  <option>Private Party</option>
+                  <option>Festival / Fair</option>
+                  <option>Fundraiser</option>
+                  <option>Wedding / Reception</option>
+                  <option>Community Event</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Event Date *</label>
+                <input class="form-input" id="ev-date" type="date">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Expected Guests</label>
+                <input class="form-input" id="ev-guests" type="number" placeholder="200">
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Location / City *</label>
+                <input class="form-input" id="ev-location" type="text" placeholder="Fort Myers, FL">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Budget Range</label>
+                <select class="form-select" id="ev-budget">
+                  <option value="">Prefer not to say</option>
+                  <option>Under $500</option>
+                  <option>$500–$1,000</option>
+                  <option>$1,000–$2,500</option>
+                  <option>$2,500–$5,000</option>
+                  <option>$5,000+</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description / Special Requirements</label>
+              <textarea class="form-textarea" id="ev-desc" placeholder="Tell trucks what you need — cuisine preferences, setup requirements, timing, etc."></textarea>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="submitEvent()">Post Event</button>
+              <button class="btn btn-outline" onclick="showPanel('my-events')">View My Events</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MY EVENTS (organizer) ─────────────────────────── -->
+      <div class="panel" id="panel-my-events">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>My Events</h1>
+            <p>Events you've posted on ServiceWindow.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showPanel('post-event')">+ Post Event</button>
+        </div>
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="filterEvents('all',this)">All</button>
+          <button class="filter-chip" onclick="filterEvents('active',this)">Active</button>
+          <button class="filter-chip" onclick="filterEvents('past',this)">Past</button>
+        </div>
+        <div id="eventsContainer">
+          <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <div class="empty-title">No events yet</div>
+            <div class="empty-sub">Post your first event and let food trucks reach out to you.</div>
+            <button class="btn btn-primary" onclick="showPanel('post-event')">Post an Event</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BROWSE TRUCKS (organizer) ─────────────────────── -->
+      <div class="panel" id="panel-browse-trucks">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>Browse Trucks</h1>
+            <p>Find verified food trucks in Southwest Florida.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <input class="form-input" id="truckSearchInput" style="flex:1;min-width:180px;" type="text" placeholder="Search by name or cuisine…" oninput="filterTrucks()">
+          <select class="form-select" id="truckCuisineFilter" style="width:auto;min-width:140px;" onchange="filterTrucks()">
+            <option value="">All Cuisines</option>
+            <option>American</option>
+            <option>BBQ</option>
+            <option>Mexican</option>
+            <option>Italian</option>
+            <option>Asian Fusion</option>
+            <option>Seafood</option>
+            <option>Dessert</option>
+            <option>Vegan / Vegetarian</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="truck-grid" id="trucksContainer">
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-icon">🚚</div>
+            <div class="empty-title">Loading trucks…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BOOKING REQUESTS (organizer) ──────────────────── -->
+      <div class="panel" id="panel-bookings">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>Booking Requests</h1>
+            <p>Track your outgoing requests to trucks.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-hd-title">All Requests</div></div>
+          <div class="card-body table-wrap" id="bookingsContainer">
+            <div class="empty-state">
+              <div class="empty-icon">📬</div>
+              <div class="empty-title">No requests yet</div>
+              <div class="empty-sub">Browse trucks and send a booking request to get started.</div>
+              <button class="btn btn-primary" onclick="showPanel('browse-trucks')">Browse Trucks</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MY VENUE (venue) ───────────────────────────────── -->
+      <div class="panel" id="panel-my-venue">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>My Venue</h1>
+            <p>Manage your venue profile and visibility to food trucks.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-hd-title">Venue Profile</div></div>
+          <div class="card-body">
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Venue Name *</label>
+                <input class="form-input" id="venue-name" type="text" placeholder="RAD Winery, The Pearl…">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Venue Type</label>
+                <select class="form-select" id="venue-type">
+                  <option value="">Select type</option>
+                  <option>Winery / Brewery</option>
+                  <option>Event Center</option>
+                  <option>Park / Outdoor Space</option>
+                  <option>Restaurant / Bar</option>
+                  <option>Office / Corporate</option>
+                  <option>Marina / Waterfront</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">City</label>
+                <input class="form-input" id="venue-city" type="text" placeholder="Fort Myers">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Typical Capacity</label>
+                <input class="form-input" id="venue-capacity" type="number" placeholder="150">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">About Your Venue</label>
+              <textarea class="form-textarea" id="venue-bio" placeholder="Describe your space, typical events, what you're looking for from food trucks…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Website</label>
+              <input class="form-input" id="venue-website" type="url" placeholder="https://yourvenue.com">
+            </div>
+            <button class="btn btn-primary" onclick="saveVenueProfile()">Save Venue Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── VENUE INQUIRIES ────────────────────────────────── -->
+      <div class="panel" id="panel-venue-inquiries">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>Truck Inquiries</h1>
+            <p>Food trucks that have reached out to your venue.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="venueInquiriesContainer">
+            <div class="empty-state">
+              <div class="empty-icon">📩</div>
+              <div class="empty-title">No inquiries yet</div>
+              <div class="empty-sub">Once your venue profile is live and verified, trucks will be able to contact you here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MY LISTINGS (property) ─────────────────────────── -->
+      <div class="panel" id="panel-my-listings">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>My Listings</h1>
+            <p>Parking spots and storage spaces you've listed for food trucks.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAddListing()">+ Add Listing</button>
+        </div>
+        <div id="listingsContainer">
+          <div class="empty-state">
+            <div class="empty-icon">🏠</div>
+            <div class="empty-title">No listings yet</div>
+            <div class="empty-sub">List a parking spot or commissary space. Trucks in SWFL are actively looking.</div>
+            <button class="btn btn-primary" onclick="openAddListing()">Add Your First Listing</button>
+          </div>
+        </div>
+        <!-- Add Listing Form (hidden by default) -->
+        <div class="card" id="addListingForm" style="display:none;">
+          <div class="card-hd">
+            <div class="card-hd-title">New Listing</div>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('addListingForm').style.display='none'">✕ Cancel</button>
+          </div>
+          <div class="card-body">
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Listing Type *</label>
+                <select class="form-select" id="listing-type">
+                  <option value="">Select type</option>
+                  <option value="parking">Parking / Lot Space</option>
+                  <option value="commissary">Commissary Kitchen</option>
+                  <option value="storage">Storage / Warehouse</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Monthly Rate ($)</label>
+                <input class="form-input" id="listing-rate" type="number" placeholder="250">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Address / City *</label>
+              <input class="form-input" id="listing-location" type="text" placeholder="Cape Coral, FL">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea class="form-textarea" id="listing-desc" placeholder="Paved lot, power hookup, security camera…"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="submitListing()">Post Listing</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RENTALS (property) ──────────────────────────────── -->
+      <div class="panel" id="panel-rentals">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>Rental Requests</h1>
+            <p>Trucks interested in your listed spaces.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="rentalsContainer">
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <div class="empty-title">No rental requests yet</div>
+              <div class="empty-sub">Rental inquiries will appear here once trucks contact you about your listings.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MY ADS (service_provider) ──────────────────────── -->
+      <div class="panel" id="panel-my-ads">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>My Ads</h1>
+            <p>Ads displayed to food truck operators inside their dashboard.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openCreateAd()">+ Create Ad</button>
+        </div>
+        <!-- Subscription status -->
+        <div class="card" id="adSubCard" style="border-color:rgba(255,107,53,0.3);background:rgba(255,107,53,0.05);">
+          <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+              <div style="font-weight:700;color:#ffffff;margin-bottom:4px;">Advertiser Plan — $19/mo</div>
+              <div style="font-size:.8rem;color:rgba(255,255,255,0.55);" id="adSubStatus">Loading subscription status…</div>
+            </div>
+            <button class="btn btn-primary btn-sm" id="adSubBtn" onclick="manageAdBilling()">Manage Billing</button>
+          </div>
+        </div>
+        <div id="adsContainer">
+          <div class="empty-state">
+            <div class="empty-icon">📢</div>
+            <div class="empty-title">No ads yet</div>
+            <div class="empty-sub">Create your first ad. It will appear inside the ServiceWindow Truck Dashboard, visible to all verified truck operators in SWFL.</div>
+            <button class="btn btn-primary" onclick="openCreateAd()">Create Your First Ad</button>
+          </div>
+        </div>
+        <!-- Create Ad Form -->
+        <div class="card" id="createAdForm" style="display:none;">
+          <div class="card-hd">
+            <div class="card-hd-title">New Ad</div>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('createAdForm').style.display='none'">✕ Cancel</button>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Headline *</label>
+              <input class="form-input" id="ad-headline" type="text" placeholder="Commissary space available in Fort Myers">
+            </div>
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="ad-category">
+                  <option value="">Select category</option>
+                  <option>Commissary Kitchen</option>
+                  <option>Parking / Storage</option>
+                  <option>POS / Technology</option>
+                  <option>Wrap / Branding</option>
+                  <option>Insurance</option>
+                  <option>Supplies</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Contact / Link</label>
+                <input class="form-input" id="ad-link" type="text" placeholder="https://yoursite.com or phone">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ad Body (2–3 sentences)</label>
+              <textarea class="form-textarea" id="ad-body" placeholder="Describe your offer. What makes it valuable to a food truck operator?"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="submitAd()">Submit Ad</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MESSAGES ────────────────────────────────────────── -->
+      <div class="panel" id="panel-messages">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>Messages</h1>
+            <p>Conversations with food trucks and the ServiceWindow team.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="messagesContainer">
+            <div class="empty-state">
+              <div class="empty-icon">💬</div>
+              <div class="empty-title">No messages yet</div>
+              <div class="empty-sub">Messages from trucks and inquiries will appear here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PROFILE ─────────────────────────────────────────── -->
+      <div class="panel" id="panel-profile">
+        <div class="section-hd">
+          <div class="section-hd-left">
+            <h1>My Profile</h1>
+            <p>Update your contact information and account details.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-hd-title">Account Info</div></div>
+          <div class="card-body">
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input class="form-input" id="p-full-name" type="text" placeholder="Jane Smith">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Business / Organization Name</label>
+                <input class="form-input" id="p-business-name" type="text" placeholder="Acme Events LLC">
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input class="form-input" id="p-phone" type="tel" placeholder="(239) 555-0100">
+              </div>
+              <div class="form-group">
+                <label class="form-label">City</label>
+                <input class="form-input" id="p-city" type="text" placeholder="Fort Myers">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bio / About</label>
+              <textarea class="form-textarea" id="p-bio" placeholder="Tell trucks and venues a bit about yourself…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Website</label>
+              <input class="form-input" id="p-website" type="url" placeholder="https://yoursite.com">
+            </div>
+            <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:0;">
+          <div class="card-hd"><div class="card-hd-title">Account</div></div>
+          <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+              <div style="font-weight:700;color:#ffffff;margin-bottom:2px;" id="profileEmail">—</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,0.5);">Signed-in email</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="signOut()">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <a class="bn-tab active" href="#" onclick="showPanel('overview');setBottomTab(this);return false;">
+    <span class="bn-icon">📊</span><span class="bn-label">Overview</span>
+  </a>
+  <a class="bn-tab role-only role-organizer" href="#" onclick="showPanel('my-events');setBottomTab(this);return false;">
+    <span class="bn-icon">📅</span><span class="bn-label">Events</span>
+  </a>
+  <a class="bn-tab role-only role-venue" href="#" onclick="showPanel('my-venue');setBottomTab(this);return false;">
+    <span class="bn-icon">🏟️</span><span class="bn-label">Venue</span>
+  </a>
+  <a class="bn-tab role-only role-property" href="#" onclick="showPanel('my-listings');setBottomTab(this);return false;">
+    <span class="bn-icon">🏠</span><span class="bn-label">Listings</span>
+  </a>
+  <a class="bn-tab role-only role-service_provider" href="#" onclick="showPanel('my-ads');setBottomTab(this);return false;">
+    <span class="bn-icon">📢</span><span class="bn-label">Ads</span>
+  </a>
+  <a class="bn-tab" href="#" onclick="showPanel('messages');setBottomTab(this);return false;">
+    <span class="bn-icon">💬</span><span class="bn-label">Messages</span>
+  </a>
+  <a class="bn-tab" href="#" onclick="showPanel('profile');setBottomTab(this);return false;">
+    <span class="bn-icon">👤</span><span class="bn-label">Profile</span>
+  </a>
+</nav>
+<script src="assets/js/supabase-client.js"></script>
+<script>
+// ── GLOBALS ─────────────────────────────────────────────────────────────────
+let currentUser = null;
+let currentProfile = null;
+let allTrucks = [];
+
+// ── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 3200);
+}
+
+// ── PANEL NAVIGATION ─────────────────────────────────────────────────────────
+const PANEL_TITLES = {
+  'overview': 'Dashboard',
+  'post-event': 'Post an Event',
+  'my-events': 'My Events',
+  'browse-trucks': 'Browse Trucks',
+  'bookings': 'Booking Requests',
+  'my-venue': 'My Venue',
+  'venue-inquiries': 'Truck Inquiries',
+  'my-listings': 'My Listings',
+  'rentals': 'Rental Requests',
+  'my-ads': 'My Ads',
+  'messages': 'Messages',
+  'profile': 'Profile'
+};
+
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  const navItem = document.getElementById('nav-' + id);
+  if (navItem) navItem.classList.add('active');
+  const title = PANEL_TITLES[id] || 'Dashboard';
+  document.getElementById('topbarTitle').textContent = title;
+  if (window.innerWidth <= 767) closeSidebar();
+  // Lazy load data
+  if (id === 'browse-trucks' && allTrucks.length === 0) loadTrucks();
+  if (id === 'my-events') loadEvents();
+  if (id === 'bookings') loadBookings();
+  if (id === 'messages') loadMessages();
+  if (id === 'my-ads') loadAds();
+  if (id === 'my-listings') loadListings();
+  if (id === 'venue-inquiries') loadVenueInquiries();
+  if (id === 'rentals') loadRentals();
+}
+
+function setBottomTab(el) {
+  document.querySelectorAll('.bn-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── SIDEBAR MOBILE ───────────────────────────────────────────────────────────
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// ── AUTH GUARD ───────────────────────────────────────────────────────────────
+// Allowed roles for this dashboard
+const REQUESTER_ROLES = ['organizer', 'venue', 'property', 'service_provider'];
+
+async function initDashboard() {
+  if (!window.supabase) {
+    document.addEventListener('supabase-ready', initDashboard);
+    return;
+  }
+  try {
+    // Try getSession first (Chrome), fall back to onAuthStateChange (Brave)
+    const { data: { session } } = await window.supabase.auth.getSession();
+    if (session) {
+      await onSessionReady(session.user);
+    } else {
+      window.supabase.auth.onAuthStateChange(async (event, s) => {
+        if (s) await onSessionReady(s.user);
+        else redirectToAuth();
+      });
+      // Hard timeout
+      setTimeout(() => {
+        if (!currentUser) redirectToAuth();
+      }, 5000);
+    }
+  } catch (e) {
+    console.error('[RDASH] Auth init error:', e);
+    redirectToAuth();
+  }
+}
+
+function redirectToAuth() {
+  window.location.replace('auth.html');
+}
+
+async function onSessionReady(user) {
+  currentUser = user;
+  // Load profile
+  const { data: profile, error } = await window.supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (error || !profile) { redirectToAuth(); return; }
+  currentProfile = profile;
+
+  const role = profile.role;
+
+  // Redirect trucks and admins away
+  if (role === 'truck') { window.location.replace('truck-dashboard.html'); return; }
+  if (role === 'admin') { window.location.replace('admin-dashboard.html'); return; }
+
+  // Apply role-based UI
+  applyRoleUI(role, profile);
+
+  // Load profile email
+  document.getElementById('profileEmail').textContent = user.email || '—';
+
+  // Check verification
+  if (!profile.is_verified) {
+    document.getElementById('verificationNotice').style.display = 'block';
+  }
+
+  // Load overview
+  loadOverview(role, profile);
+  // Load unread counts
+  loadUnreadCounts();
+}
+
+// ── ROLE-BASED UI ────────────────────────────────────────────────────────────
+function applyRoleUI(role, profile) {
+  const ROLE_LABELS = {
+    organizer: 'Event Planner',
+    venue: 'Venue',
+    property: 'Property Owner',
+    service_provider: 'Service Provider'
+  };
+
+  // Show role-gated sidebar items
+  document.querySelectorAll('.role-only').forEach(el => {
+    const classes = Array.from(el.classList);
+    const roleClass = classes.find(c => c.startsWith('role-') && c !== 'role-only');
+    if (roleClass) {
+      const elRole = roleClass.replace('role-', '');
+      el.style.display = (elRole === role) ? '' : 'none';
+    }
+  });
+
+  // Sidebar user info
+  const name = profile.business_name || profile.full_name || profile.contact_name || 'Account';
+  document.getElementById('sidebarName').textContent = name;
+  document.getElementById('sidebarInitials').textContent = name.slice(0, 2).toUpperCase();
+  document.getElementById('sidebarRolePill').textContent = ROLE_LABELS[role] || 'Requester';
+
+  // Greeting
+  const greeting = greetingByTime();
+  const short = name.split(' ')[0];
+  document.getElementById('overviewGreeting').textContent = greeting + ', ' + short;
+
+  // Page title
+  document.title = (ROLE_LABELS[role] || 'Dashboard') + ' — ServiceWindow';
+}
+
+function greetingByTime() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+// ── OVERVIEW ─────────────────────────────────────────────────────────────────
+async function loadOverview(role, profile) {
+  const kpiGrid = document.getElementById('overviewKpis');
+
+  if (role === 'organizer') {
+    const { count: evCount } = await window.supabase
+      .from('listings').select('*', { count: 'exact', head: true })
+      .eq('poster_id', profile.id).eq('board', 'event');
+    const { count: bkCount } = await window.supabase
+      .from('bookings').select('*', { count: 'exact', head: true })
+      .eq('requester_id', profile.id);
+    kpiGrid.innerHTML = kpiCard('Events Posted', evCount || 0, 'All time') +
+      kpiCard('Booking Requests', bkCount || 0, 'Sent to trucks') +
+      kpiCard('Trucks Available', '50+', 'In SWFL') +
+      kpiCard('Cities Served', '21', 'Southwest Florida');
+    loadRecentBookings(profile.id);
+  } else if (role === 'venue') {
+    kpiGrid.innerHTML = kpiCard('Venue Status', profile.is_verified ? 'Verified' : 'Pending', '') +
+      kpiCard('Truck Inquiries', '—', 'Coming soon') +
+      kpiCard('Cities Served', '21', 'Southwest Florida') +
+      kpiCard('Platform', 'ServiceWindow', 'SWFL Marketplace');
+    document.getElementById('overviewRecentBody').innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:.84rem;">Complete your venue profile to start receiving truck inquiries.</p>';
+  } else if (role === 'property') {
+    const { count: listCount } = await window.supabase
+      .from('listings').select('*', { count: 'exact', head: true })
+      .eq('poster_id', profile.id).eq('board', 'parking');
+    kpiGrid.innerHTML = kpiCard('Active Listings', listCount || 0, 'Parking / storage') +
+      kpiCard('Rental Requests', '—', 'Coming soon') +
+      kpiCard('Cities Served', '21', 'Southwest Florida') +
+      kpiCard('Ad Rate', '$19/mo', 'To advertise to trucks');
+    document.getElementById('overviewRecentBody').innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:.84rem;">Add a listing to start connecting with food trucks looking for parking and storage.</p>';
+  } else if (role === 'service_provider') {
+    kpiGrid.innerHTML = kpiCard('Active Ads', '—', 'Your placements') +
+      kpiCard('Impressions', '—', 'Coming soon') +
+      kpiCard('Trucks Reached', '50+', 'In SWFL') +
+      kpiCard('Ad Rate', '$19/mo', 'Truck dashboard');
+    document.getElementById('overviewRecentBody').innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:.84rem;">Create an ad to reach food truck operators across Southwest Florida.</p>';
+  }
+}
+
+function kpiCard(label, value, sub) {
+  return `<div class="kpi-card">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-value">${value}</div>
+    <div class="kpi-sub">${sub}</div>
+  </div>`;
+}
+
+async function loadRecentBookings(userId) {
+  const { data: bookings } = await window.supabase
+    .from('bookings')
+    .select('*, truck:truck_id(business_name)')
+    .eq('requester_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  const body = document.getElementById('overviewRecentBody');
+  if (!bookings || bookings.length === 0) {
+    body.innerHTML = '<p style="color:rgba(255,255,255,0.5);font-size:.84rem;">No booking requests yet. <a href="#" onclick="showPanel(\'browse-trucks\');return false;" style="color:var(--fire);">Browse trucks</a> to get started.</p>';
+    return;
+  }
+  const STATUS_TAG = { pending: 'tag-pending', accepted: 'tag-confirmed', declined: 'tag-declined', cancelled: 'tag-declined' };
+  body.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Truck</th><th>Event Date</th><th>Status</th></tr></thead>
+    <tbody>${bookings.map(b => `<tr>
+      <td class="td-primary">${b.truck?.business_name || 'Unknown'}</td>
+      <td class="td-muted">${b.event_date || '—'}</td>
+      <td><span class="tag ${STATUS_TAG[b.status] || 'tag-draft'}">${b.status}</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+// ── UNREAD COUNTS ─────────────────────────────────────────────────────────────
+async function loadUnreadCounts() {
+  if (!currentUser) return;
+  const { count } = await window.supabase
+    .from('messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('recipient_id', currentUser.id)
+    .eq('is_read', false);
+  if (count > 0) {
+    document.getElementById('msgBadge').style.display = '';
+    document.getElementById('msgBadge').textContent = count;
+    document.getElementById('notifDot').style.display = '';
+  }
+}
+
+// ── BROWSE TRUCKS ────────────────────────────────────────────────────────────
+async function loadTrucks() {
+  const container = document.getElementById('trucksContainer');
+  const { data: trucks } = await window.supabase
+    .from('profiles')
+    .select('id,business_name,cuisine_type,city,bio,is_verified,is_fundraiser_friendly,is_veteran_owned')
+    .eq('role', 'truck')
+    .eq('is_verified', true)
+    .order('business_name');
+
+  allTrucks = trucks || [];
+  renderTrucks(allTrucks);
+}
+
+function renderTrucks(trucks) {
+  const container = document.getElementById('trucksContainer');
+  if (!trucks.length) {
+    container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">🚚</div><div class="empty-title">No trucks found</div><div class="empty-sub">Try adjusting your search or filters.</div></div>';
+    return;
+  }
+  container.innerHTML = trucks.map(t => `
+    <div class="truck-card">
+      <div>
+        <div class="truck-card-name">${t.business_name || 'Unnamed Truck'}</div>
+        <div class="truck-card-meta">${t.cuisine_type || 'Cuisine TBD'} · ${t.city || 'SWFL'}</div>
+      </div>
+      ${t.bio ? `<div style="font-size:.78rem;color:rgba(255,255,255,0.55);line-height:1.5;">${t.bio.slice(0, 100)}${t.bio.length > 100 ? '…' : ''}</div>` : ''}
+      <div class="truck-card-tags">
+        ${t.is_fundraiser_friendly ? '<span class="tag tag-confirmed">Fundraiser Friendly</span>' : ''}
+        ${t.is_veteran_owned ? '<span class="tag tag-active">Veteran Owned</span>' : ''}
+      </div>
+      <div class="truck-card-actions">
+        <button class="btn btn-primary btn-sm" onclick="requestTruck('${t.id}','${(t.business_name||'').replace(/'/g,"\\'")}')">Request Booking</button>
+        <button class="btn btn-outline btn-sm" onclick="showPanel('messages')">Message</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterTrucks() {
+  const q = document.getElementById('truckSearchInput').value.toLowerCase();
+  const cuisine = document.getElementById('truckCuisineFilter').value.toLowerCase();
+  const filtered = allTrucks.filter(t => {
+    const nameMatch = !q || (t.business_name || '').toLowerCase().includes(q);
+    const cuisineMatch = !cuisine || (t.cuisine_type || '').toLowerCase().includes(cuisine);
+    return nameMatch && cuisineMatch;
+  });
+  renderTrucks(filtered);
+}
+
+async function requestTruck(truckId, truckName) {
+  if (!currentUser) { showToast('Please sign in first.', 'error'); return; }
+  const date = prompt(`Request ${truckName} — enter your event date (YYYY-MM-DD):`);
+  if (!date) return;
+  const location = prompt('Event location / city:');
+  if (!location) return;
+
+  const { error } = await window.supabase.from('bookings').insert({
+    truck_id: truckId,
+    requester_id: currentUser.id,
+    event_date: date,
+    location: location,
+    status: 'pending'
+  });
+  if (error) { showToast('Request failed: ' + error.message, 'error'); return; }
+  showToast('Booking request sent to ' + truckName + '!', 'success');
+}
+
+// ── EVENTS ───────────────────────────────────────────────────────────────────
+async function submitEvent() {
+  if (!currentUser) { showToast('Please sign in.', 'error'); return; }
+  const name = document.getElementById('ev-name').value.trim();
+  const date = document.getElementById('ev-date').value;
+  const location = document.getElementById('ev-location').value.trim();
+  if (!name || !date || !location) { showToast('Name, date, and location are required.', 'error'); return; }
+
+  const { error } = await window.supabase.from('listings').insert({
+    poster_id: currentUser.id,
+    board: 'event',
+    title: name,
+    event_date: date,
+    location: location,
+    city: location,
+    budget_range: document.getElementById('ev-budget').value,
+    description: document.getElementById('ev-desc').value.trim(),
+    status: 'active'
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Event posted!', 'success');
+  ['ev-name','ev-date','ev-location','ev-desc'].forEach(id => document.getElementById(id).value = '');
+  showPanel('my-events');
+}
+
+async function loadEvents() {
+  if (!currentUser) return;
+  const { data: events } = await window.supabase
+    .from('listings')
+    .select('*')
+    .eq('poster_id', currentUser.id)
+    .eq('board', 'event')
+    .order('event_date', { ascending: false });
+
+  const container = document.getElementById('eventsContainer');
+  if (!events || events.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No events yet</div><div class="empty-sub">Post your first event and let food trucks reach out.</div><button class="btn btn-primary" onclick="showPanel(\'post-event\')">Post an Event</button></div>';
+    return;
+  }
+  container.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Event</th><th>Date</th><th>Location</th><th>Status</th></tr></thead>
+    <tbody>${events.map(e => `<tr>
+      <td class="td-primary">${e.title}</td>
+      <td class="td-muted">${e.event_date || '—'}</td>
+      <td class="td-muted">${e.location || '—'}</td>
+      <td><span class="tag tag-${e.status === 'active' ? 'active' : 'draft'}">${e.status}</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function filterEvents(filter, btn) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  loadEvents();
+}
+
+// ── BOOKINGS ─────────────────────────────────────────────────────────────────
+async function loadBookings() {
+  if (!currentUser) return;
+  const { data: bookings } = await window.supabase
+    .from('bookings')
+    .select('*, truck:truck_id(business_name)')
+    .eq('requester_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  const container = document.getElementById('bookingsContainer');
+  if (!bookings || bookings.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📬</div><div class="empty-title">No requests yet</div><div class="empty-sub">Browse trucks and send a booking request to get started.</div><button class="btn btn-primary" onclick="showPanel(\'browse-trucks\')">Browse Trucks</button></div>';
+    return;
+  }
+  const STATUS_TAG = { pending: 'tag-pending', accepted: 'tag-confirmed', declined: 'tag-declined', cancelled: 'tag-declined' };
+  container.innerHTML = `<table>
+    <thead><tr><th>Truck</th><th>Event Date</th><th>Location</th><th>Status</th></tr></thead>
+    <tbody>${bookings.map(b => `<tr>
+      <td class="td-primary">${b.truck?.business_name || '—'}</td>
+      <td class="td-muted">${b.event_date || '—'}</td>
+      <td class="td-muted">${b.location || '—'}</td>
+      <td><span class="tag ${STATUS_TAG[b.status] || 'tag-draft'}">${b.status}</span></td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+// ── VENUE ─────────────────────────────────────────────────────────────────────
+async function saveVenueProfile() {
+  if (!currentUser) { showToast('Please sign in.', 'error'); return; }
+  const { error } = await window.supabase.from('profiles').update({
+    business_name: document.getElementById('venue-name').value.trim(),
+    city: document.getElementById('venue-city').value.trim(),
+    bio: document.getElementById('venue-bio').value.trim(),
+    website: document.getElementById('venue-website').value.trim()
+  }).eq('id', currentUser.id);
+  if (error) { showToast('Save failed: ' + error.message, 'error'); return; }
+  showToast('Venue profile saved!', 'success');
+}
+
+async function loadVenueInquiries() {
+  const container = document.getElementById('venueInquiriesContainer');
+  container.innerHTML = '<div class="empty-state"><div class="empty-icon">📩</div><div class="empty-title">No inquiries yet</div><div class="empty-sub">Inquiries appear here once your venue is live.</div></div>';
+}
+
+// ── PROPERTY LISTINGS ─────────────────────────────────────────────────────────
+function openAddListing() {
+  document.getElementById('addListingForm').style.display = 'block';
+  document.getElementById('addListingForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function submitListing() {
+  if (!currentUser) { showToast('Please sign in.', 'error'); return; }
+  const type = document.getElementById('listing-type').value;
+  const location = document.getElementById('listing-location').value.trim();
+  if (!type || !location) { showToast('Type and location are required.', 'error'); return; }
+
+  const { error } = await window.supabase.from('listings').insert({
+    poster_id: currentUser.id,
+    board: 'parking',
+    title: type + ' — ' + location,
+    location: location,
+    city: location,
+    description: document.getElementById('listing-desc').value.trim(),
+    budget_range: document.getElementById('listing-rate').value ? '$' + document.getElementById('listing-rate').value + '/mo' : '',
+    status: 'active'
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Listing posted!', 'success');
+  document.getElementById('addListingForm').style.display = 'none';
+  loadListings();
+}
+
+async function loadListings() {
+  if (!currentUser) return;
+  const { data: listings } = await window.supabase
+    .from('listings').select('*')
+    .eq('poster_id', currentUser.id).eq('board', 'parking')
+    .order('created_at', { ascending: false });
+
+  const container = document.getElementById('listingsContainer');
+  if (!listings || listings.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">🏠</div><div class="empty-title">No listings yet</div><div class="empty-sub">Add a parking spot or commissary space to attract food trucks.</div><button class="btn btn-primary" onclick="openAddListing()">Add Your First Listing</button></div>';
+    return;
+  }
+  container.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Listing</th><th>Location</th><th>Rate</th><th>Status</th></tr></thead>
+    <tbody>${listings.map(l => `<tr>
+      <td class="td-primary">${l.title}</td>
+      <td class="td-muted">${l.location || '—'}</td>
+      <td class="td-muted">${l.budget_range || '—'}</td>
+      <td><span class="tag tag-${l.status === 'active' ? 'active' : 'draft'}">${l.status}</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+async function loadRentals() {
+  const container = document.getElementById('rentalsContainer');
+  container.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No rental requests yet</div><div class="empty-sub">Rental inquiries will appear here once trucks contact you.</div></div>';
+}
+
+// ── ADS ───────────────────────────────────────────────────────────────────────
+function openCreateAd() {
+  document.getElementById('createAdForm').style.display = 'block';
+  document.getElementById('createAdForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function loadAds() {
+  const container = document.getElementById('adsContainer');
+  const subStatus = document.getElementById('adSubStatus');
+  const subBtn = document.getElementById('adSubBtn');
+
+  if (currentProfile) {
+    if (currentProfile.subscription_status === 'active') {
+      subStatus.textContent = 'Active — your ads are live in the Truck Dashboard.';
+      subBtn.textContent = 'Manage Billing';
+    } else {
+      subStatus.textContent = 'No active subscription. Subscribe to run ads.';
+      subBtn.textContent = 'Subscribe — $19/mo';
+    }
+  }
+  container.innerHTML = '<div class="empty-state"><div class="empty-icon">📢</div><div class="empty-title">No ads yet</div><div class="empty-sub">Create an ad to reach verified food truck operators across Southwest Florida.</div><button class="btn btn-primary" onclick="openCreateAd()">Create Your First Ad</button></div>';
+}
+
+async function submitAd() {
+  if (!currentUser) { showToast('Please sign in.', 'error'); return; }
+  const headline = document.getElementById('ad-headline').value.trim();
+  if (!headline) { showToast('Headline is required.', 'error'); return; }
+  // In production: save ad to a dedicated ads table. For now, toast confirmation.
+  showToast('Ad submitted for review. You\'ll hear back within 1 business day.', 'success');
+  document.getElementById('createAdForm').style.display = 'none';
+  document.getElementById('ad-headline').value = '';
+  document.getElementById('ad-body').value = '';
+}
+
+async function manageAdBilling() {
+  showToast('Redirecting to billing…');
+  try {
+    const { data: { session } } = await window.supabase.auth.getSession();
+    const resp = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-portal-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({ return_url: window.location.href })
+    });
+    const { url } = await resp.json();
+    if (url) window.location.href = url;
+    else showToast('No billing portal found. Contact support.', 'error');
+  } catch (e) {
+    showToast('Billing error: ' + e.message, 'error');
+  }
+}
+
+// ── MESSAGES ──────────────────────────────────────────────────────────────────
+async function loadMessages() {
+  if (!currentUser) return;
+  const { data: msgs } = await window.supabase
+    .from('messages')
+    .select('*, sender:sender_id(business_name,full_name)')
+    .eq('recipient_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  const container = document.getElementById('messagesContainer');
+  if (!msgs || msgs.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">No messages yet</div><div class="empty-sub">Messages from trucks and the ServiceWindow team will appear here.</div></div>';
+    return;
+  }
+  container.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>From</th><th>Message</th><th>Date</th></tr></thead>
+    <tbody>${msgs.map(m => `<tr>
+      <td class="td-primary">${m.sender?.business_name || m.sender?.full_name || 'Unknown'}</td>
+      <td class="td-muted" style="max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.content || '—'}</td>
+      <td class="td-muted">${new Date(m.created_at).toLocaleDateString()}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+
+  // Mark as read
+  await window.supabase.from('messages').update({ is_read: true }).eq('recipient_id', currentUser.id).eq('is_read', false);
+  document.getElementById('msgBadge').style.display = 'none';
+  document.getElementById('notifDot').style.display = 'none';
+}
+
+// ── PROFILE ───────────────────────────────────────────────────────────────────
+async function loadProfile() {
+  if (!currentUser) return;
+  const p = currentProfile || {};
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  set('p-full-name',     p.full_name || p.contact_name);
+  set('p-business-name', p.business_name);
+  set('p-phone',         p.phone);
+  set('p-city',          p.city);
+  set('p-bio',           p.bio);
+  set('p-website',       p.website);
+  // Venue fields
+  if (p.role === 'venue') {
+    set('venue-name',    p.business_name);
+    set('venue-city',    p.city);
+    set('venue-bio',     p.bio);
+    set('venue-website', p.website);
+  }
+}
+
+async function saveProfile() {
+  if (!currentUser) { showToast('Not signed in.', 'error'); return; }
+  const { error } = await window.supabase.from('profiles').update({
+    full_name:     document.getElementById('p-full-name').value.trim(),
+    business_name: document.getElementById('p-business-name').value.trim(),
+    phone:         document.getElementById('p-phone').value.trim(),
+    city:          document.getElementById('p-city').value.trim(),
+    bio:           document.getElementById('p-bio').value.trim(),
+    website:       document.getElementById('p-website').value.trim()
+  }).eq('id', currentUser.id);
+  if (error) { showToast('Save failed: ' + error.message, 'error'); return; }
+  showToast('Profile saved!', 'success');
+}
+
+// ── SIGN OUT ──────────────────────────────────────────────────────────────────
+async function signOut() {
+  if (window.supabase) await window.supabase.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+if (window.supabase) {
+  initDashboard();
+  // Load profile into profile panel after short delay
+  setTimeout(loadProfile, 1500);
+} else {
+  document.addEventListener('supabase-ready', () => {
+    initDashboard();
+    setTimeout(loadProfile, 1500);
+  });
+}
+</script>
+<script src="assets/js/avatar-upload.js"></script>
+</body>
+</html>

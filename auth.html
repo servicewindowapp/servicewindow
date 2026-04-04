@@ -479,11 +479,11 @@ function setLoading(on){
 const ROLE_DASHBOARDS = {
   admin:            'admin-dashboard.html',
   truck:            'truck-dashboard.html',
-  venue:            'venue-dashboard.html',
-  organizer:          'planner-dashboard.html',
-  property:         'property-dashboard.html',
-  service_provider: 'service-provider-dashboard.html',
-  job_seeker:       'jobs-dashboard.html',
+  venue:            'requester-dashboard.html',
+  organizer:        'requester-dashboard.html',
+  property:         'requester-dashboard.html',
+  service_provider: 'requester-dashboard.html',
+  job_seeker:       'requester-dashboard.html',
 };
 
 async function redirectByRole(userId, userEmail){
@@ -523,13 +523,13 @@ async function redirectByRole(userId, userEmail){
     // Determine destination dashboard
     const role = (profile && profile.role) || 'truck';
     const dashboardMap = {
-      admin: 'admin-dashboard.html',
-      truck: 'truck-dashboard.html',
-      venue: 'venue-dashboard.html',
-      organizer: 'planner-dashboard.html',
-      property: 'property-dashboard.html',
-      service_provider: 'service-provider-dashboard.html',
-      job_seeker: 'jobs-dashboard.html'
+      admin:            'admin-dashboard.html',
+      truck:            'truck-dashboard.html',
+      venue:            'requester-dashboard.html',
+      organizer:        'requester-dashboard.html',
+      property:         'requester-dashboard.html',
+      service_provider: 'requester-dashboard.html',
+      job_seeker:       'requester-dashboard.html'
     };
     const destination = dashboardMap[role] || 'truck-dashboard.html';
 

@@ -60,15 +60,45 @@ Logo: SVG embedded as base64 data URI — trailer silhouette into wordmark
 Reference: index.html (extract logo and design tokens from this file)
 
 ## Platform Architecture
-7 Boards: Request Marketplace, Event Calendar, Shift Marketplace, 
-Venue Partnership, Parking & Real Estate, Vendor Services, Jobs Board
-User types: Food Trucks, Event Planners, Venues, Property Owners, 
-Service Providers, Job Seekers
-Pricing (locked):
-  Standard $49/mo | Founding $29/life
-  Pro $79/mo | Founding $49/life
-  Service Providers $39/mo
-  Planners, Venues, Job Seekers: Free forever
+Two authenticated dashboards + Admin. Everything else is public.
+
+### Side A — Truck Dashboard (supply)
+- Food truck operators only
+- Manage profile, receive/respond to booking requests
+- Post job listings (folded in — no separate jobs dashboard)
+- Browse advertiser placements (service providers, parking/storage owners)
+- Notifications, messages, booking history
+
+### Side B — Requester Dashboard (demand)
+- Unified dashboard for: event planners, venues, property/storage owners
+- Role-based tabs show/hide based on what the user does
+- Event Planners tab: post events, browse/book trucks, manage bookings
+- Venues tab: list venue, set availability, receive truck inquiries
+- Property/Storage tab: list parking/storage, set pricing, manage rentals
+- Advertisers (service providers + property owners): ad management section lives here
+
+### Admin Dashboard
+- Verification approvals, user management, platform metrics — keep as-is
+
+### Dashboard Consolidation (active — Week 1 of launch sprint)
+Pages being merged into requester-dashboard.html:
+  planner-dashboard.html, venue-dashboard.html, property-dashboard.html,
+  service-provider-dashboard.html
+Pages being absorbed into truck-dashboard.html:
+  jobs-dashboard.html, post-job.html
+Old files move to _archive/ — do not delete.
+
+### Auth Routing
+- Truck operators → truck-dashboard.html
+- All other roles (planner, venue, property, service provider) → requester-dashboard.html
+
+### Pricing (locked)
+  Food Trucks:              $49/mo  | Founding $29/lifetime
+  Service Providers (ads):  $19/mo
+  Property/Storage (ads):   $19/mo
+  Event Planners:           Free forever
+  Venues:                   Free forever
+  30-day free trial for food trucks on signup
 
 ## File Writing Protocol (follow exactly — prevents timeouts)
 Large files (200+ lines) must be built in sections using str_replace/Edit, 
@@ -111,42 +141,71 @@ Do not commit after every single file — batch at end of session.
 - After each file is confirmed on disk, say: "[filename] done — [line count] lines"
   then proceed to the next task.
 
-## Current Status
-All pages and dashboards live at servicewindow.app.
-Auth, Supabase, Stripe, Resend all wired and functional.
-Dark theme uniformity pass complete across all dashboards.
-shift_posts table + notify-shift-post Edge Function deployed.
-post-job.html built. Services dashboard rebranded.
+## Current Status — April 4, 2026
+30-day launch sprint to May 4, 2026. Week 1 is architecture consolidation.
 
-### SEO — March 31 2026 (session complete, push pending)
-Google Search Console verified (verification processing, ~5 days).
-Bing Webmaster Tools verified via msvalidate.01 meta tag on index.html.
+### What's Built and Functional
+- 27 HTML pages deployed at servicewindow.app
+- Supabase: auth, profiles, trucks, venues, properties, requests, messages,
+  notifications, reviews, jobs, waitlist, verification_requests, shift_posts
+- 6 Edge Functions: Stripe checkout/portal/webhook, R2 upload,
+  shift-post notifications, email notifications
+- Stripe wired (checkout + customer portal)
+- Resend email triggers active
+- Auth verified across Chrome, Brave, Firefox, Safari (including mobile)
+- Dark theme applied across all dashboards
+- 4 SEO landing pages: fort-myers, cape-coral, catering, events
+- Google Search Console + Bing Webmaster verified
+- sitemap.xml and robots.txt deployed
+- Daily automated market research scraping 3 SWFL Facebook groups
+- 134 leads captured: 53 food trucks, 30 venues, 21 requesters,
+  13 service providers, 17 festivals/events
+
+### Active Sprint — Week 1 (Apr 4–10): Architecture Consolidation
+- [ ] Build requester-dashboard.html (planner + venue + property + advertiser tabs)
+- [ ] Refactor truck-dashboard.html (add job posting section + ad display area)
+- [ ] Update auth.html routing: truck → truck-dashboard, all else → requester-dashboard
+- [ ] Update Supabase role logic if needed (keep granular roles in DB, route to 2 dashboards)
+- [ ] Archive old dashboard files (planner, venue, property, service-provider, jobs dashboards)
+
+### Week 2 (Apr 11–17): Core Flow Polish
+- [ ] End-to-end test: signup → verify → dashboard → post → book → message → complete
+- [ ] Analytics (Plausible or Cloudflare Web Analytics — no Google Analytics)
+- [ ] Error tracking (Sentry free tier or Supabase error logging)
+- [ ] Advertiser placement system (service provider + property ads visible in truck dashboard)
+- [ ] Wire ad payment tier in Stripe ($19/mo)
+
+### Week 3 (Apr 18–24): Supply Seeding & Outreach
+- [ ] Personal outreach to top 20 leads (Nicole Evans, The Pearl, RAD Winery, Kevin Rueda, etc.)
+- [ ] Email drip templates for remaining 114 leads
+- [ ] Submit sitemap, request indexing for all 4 SEO pages in Search Console
+- [ ] Directory submissions: Yelp, Alignable, Fort Myers Chamber, Cape Coral Chamber
+- [ ] 3–5 testimonials or early user logos for landing page
+
+### Week 4 (Apr 25–May 1): Launch Hardening
+- [ ] Stress test auth on all mobile browsers
+- [ ] Tighten all RLS policies
+- [ ] Cloudflare cache rules + performance tuning
+- [ ] Naples and Bonita Springs SEO landing pages
+- [ ] Press outreach: News-Press, Gulfshore Business
+- [ ] Soft launch announcement in the 3 Facebook groups being scraped
+
+### SEO Status (as of March 31 2026)
+Google Search Console verified. Bing Webmaster verified via msvalidate.01 on index.html.
 sitemap.xml and robots.txt live at repo root.
 
-SEO pages built (all have canonical, OG tags, FAQPage schema, dark theme, internal links):
+SEO pages built (canonical, OG tags, FAQPage schema, dark theme, internal links):
 - fort-myers-food-trucks.html — "food trucks Fort Myers FL"
 - cape-coral-food-trucks.html — "food trucks Cape Coral FL"
 - swfl-food-truck-catering.html — "food truck catering Fort Myers / SWFL"
 - food-truck-events-fort-myers.html — "food truck events Fort Myers"
 
-OG tags added to: find-trucks.html, marketplace.html, and all 4 SEO pages.
+OG tags on: find-trucks.html, marketplace.html, all 4 SEO pages.
 ItemList schema enriched on find-trucks.html and marketplace.html.
 
-PENDING — run from PowerShell to deploy:
-  Remove-Item .git\HEAD.lock -Force
-  git add swfl-food-truck-catering.html food-truck-events-fort-myers.html sitemap.xml
-  git commit -m "feat: add catering and events SEO landing pages"
-  git push origin main
-  Then purge Cloudflare cache.
-
-PENDING — Search Console (reminder set for April 3):
-  1. Submit sitemap.xml via Sitemaps panel
-  2. Request indexing for all 4 SEO pages via URL Inspection
-
-SEO backlog (not started):
+SEO backlog:
 - Directory submissions: Yelp, Alignable, Fort Myers Chamber, Cape Coral Chamber, Lee County EDC
 - Press outreach: News-Press, Gulfshore Business
-- Backlink outreach: 83-truck list
 - Future pages: naples-food-trucks.html, bonita-springs-food-trucks.html
 
 ---

@@ -744,11 +744,11 @@ img,video{max-width:100%;height:auto;}
     <div class='sidebar-item' id='nav-venue' onclick="setPanel('venue',this)">
       <span class='sidebar-icon'>&#127977;</span> Venues &amp; Parking
     </div>
-    <div class='sidebar-item' id='nav-services' onclick="showToast('Vendor Services — available in full launch.','warning')">
-      <span class='sidebar-icon'>&#128295;</span> Vendor Services
+    <div class='sidebar-item' id='nav-ads' onclick="setPanel('ads',this)">
+      <span class='sidebar-icon'>&#128203;</span> Service Ads
     </div>
-    <div class='sidebar-item' id='nav-jobs' onclick="showToast('Jobs Board — available in full launch.','warning')">
-      <span class='sidebar-icon'>&#128188;</span> Jobs Board
+    <div class='sidebar-item' id='nav-jobs' onclick="setPanel('jobs',this)">
+      <span class='sidebar-icon'>&#128188;</span> Post a Job
     </div>
   </div>
 
@@ -1636,6 +1636,86 @@ img,video{max-width:100%;height:auto;}
       </div>
     </div>
 
+    <!-- ── PANEL: POST A JOB ─────────────────────────────────── -->
+    <div class="panel" id="panel-jobs">
+      <div style="max-width:720px;">
+        <div style="margin-bottom:24px;">
+          <h1 style="font-family:'Lora',serif;font-size:1.4rem;font-weight:700;color:#ffffff;margin-bottom:4px;">Post a Job</h1>
+          <p style="font-size:.82rem;color:rgba(255,255,255,0.5);">Hire staff for your food truck. Your listing is visible to job seekers in Southwest Florida.</p>
+        </div>
+
+        <!-- Active listings -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-hd" style="padding:14px 18px;">
+            <div class="card-hd-title">My Job Listings</div>
+            <span id="jobCountBadge" style="font-size:.7rem;font-weight:700;color:rgba(255,255,255,0.5);font-family:'DM Mono',monospace;">Loading…</span>
+          </div>
+          <div class="card-body" id="jobListingsContainer" style="padding:16px 18px;">
+            <div style="color:rgba(255,255,255,0.4);font-size:.84rem;text-align:center;padding:20px 0;">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Post new job form -->
+        <div class="card">
+          <div class="card-hd" style="padding:14px 18px;">
+            <div class="card-hd-title">New Job Listing</div>
+          </div>
+          <div class="card-body" style="padding:16px 18px;">
+            <div style="display:grid;grid-template-columns:1fr;gap:14px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div>
+                  <label style="display:block;font-size:.7rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;">Position *</label>
+                  <input id="job-title" type="text" placeholder="Line cook, cashier, prep…" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-family:'Sora',sans-serif;font-size:.84rem;color:#fff;">
+                </div>
+                <div>
+                  <label style="display:block;font-size:.7rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;">Pay (hourly or flat)</label>
+                  <input id="job-pay" type="text" placeholder="$15/hr or $120/shift" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-family:'Sora',sans-serif;font-size:.84rem;color:#fff;">
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div>
+                  <label style="display:block;font-size:.7rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;">Schedule</label>
+                  <select id="job-schedule" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-family:'Sora',sans-serif;font-size:.84rem;color:#fff;">
+                    <option value="">Select…</option>
+                    <option>Part-time weekends</option>
+                    <option>Part-time flexible</option>
+                    <option>Full-time</option>
+                    <option>Event-based / on-call</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display:block;font-size:.7rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;">City</label>
+                  <input id="job-city" type="text" placeholder="Fort Myers, Cape Coral…" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-family:'Sora',sans-serif;font-size:.84rem;color:#fff;">
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:.7rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;">Job Description</label>
+                <textarea id="job-desc" placeholder="What will they do? Experience required? Any perks?" rows="4" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-family:'Sora',sans-serif;font-size:.84rem;color:#fff;resize:vertical;"></textarea>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-primary" onclick="submitJobListing()">Post Job</button>
+                <button class="btn btn-outline btn-sm" onclick="clearJobForm()">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: SERVICE ADS ─────────────────────────────────── -->
+    <div class="panel" id="panel-ads">
+      <div style="max-width:960px;">
+        <div style="margin-bottom:24px;">
+          <h1 style="font-family:'Lora',serif;font-size:1.4rem;font-weight:700;color:#ffffff;margin-bottom:4px;">Service Ads</h1>
+          <p style="font-size:.82rem;color:rgba(255,255,255,0.5);">Commissaries, parking, wraps, POS, insurance — curated offers for SWFL food truck operators.</p>
+        </div>
+        <div id="adsGrid" style="display:grid;grid-template-columns:1fr;gap:14px;">
+          <div style="color:rgba(255,255,255,0.4);font-size:.84rem;text-align:center;padding:40px 0;">Loading ads…</div>
+        </div>
+        <p style="font-size:.72rem;color:rgba(255,255,255,0.3);margin-top:20px;font-family:'DM Mono',monospace;">Ads are paid placements from verified ServiceWindow service partners. ServiceWindow does not endorse specific vendors.</p>
+      </div>
+    </div>
+
   </div><!-- /panels -->
 </div><!-- /main -->
 
@@ -1865,7 +1945,8 @@ img,video{max-width:100%;height:auto;}
 const PANEL_TITLES = {
   home:'Dashboard', calendar:'Calendar', marketplace:'Request Marketplace',
   shifts:'Shift Marketplace', venue:'Venues & Parking',
-  messages:'Messages', profile:'My Truck Profile'
+  messages:'Messages', profile:'My Truck Profile',
+  jobs:'Post a Job', ads:'Service Ads'
 };
 
 function setPanel(id, navEl) {
@@ -1877,6 +1958,100 @@ function setPanel(id, navEl) {
   document.getElementById('panelTitle').textContent = PANEL_TITLES[id] || id;
   closeSidebar();
   if (id === 'calendar') buildCalendar();
+  if (id === 'jobs') loadJobListings();
+  if (id === 'ads') loadServiceAds();
+}
+
+// ═══════════════════════════════════
+//  JOBS — POST A JOB
+// ═══════════════════════════════════
+async function loadJobListings() {
+  const container = document.getElementById('jobListingsContainer');
+  const badge = document.getElementById('jobCountBadge');
+  if (!window.supabase) { container.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:.84rem;">Not connected.</p>'; return; }
+  try {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) return;
+    const { data: jobs, error } = await window.supabase
+      .from('listings')
+      .select('*')
+      .eq('poster_id', user.id)
+      .eq('board', 'jobs')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    if (badge) badge.textContent = jobs.length ? jobs.length + ' listing' + (jobs.length > 1 ? 's' : '') : '0 listings';
+    if (!jobs || jobs.length === 0) {
+      container.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:.84rem;text-align:center;padding:16px 0;">No job listings yet. Post your first below.</p>';
+      return;
+    }
+    container.innerHTML = jobs.map(j => `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:700;color:#ffffff;margin-bottom:2px;">${j.title}</div>
+          <div style="font-size:.76rem;color:rgba(255,255,255,0.5);">${j.location || '—'} &bull; ${j.budget_range || 'Pay TBD'}</div>
+        </div>
+        <span style="font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:6px;font-family:'DM Mono',monospace;background:${j.status==='active'?'rgba(29,78,216,.15)':'rgba(255,255,255,.07)'};color:${j.status==='active'?'#93c5fd':'rgba(255,255,255,0.4)'};">${j.status}</span>
+      </div>`).join('');
+  } catch (err) {
+    container.innerHTML = '<p style="color:rgba(220,38,38,0.8);font-size:.8rem;">Load error: ' + err.message + '</p>';
+  }
+}
+
+async function submitJobListing() {
+  if (!window.supabase) { showToast('Not connected.', 'error'); return; }
+  const title = document.getElementById('job-title').value.trim();
+  const city = document.getElementById('job-city').value.trim();
+  if (!title || !city) { showToast('Position and city are required.', 'error'); return; }
+  const { data: { user } } = await window.supabase.auth.getUser();
+  if (!user) { showToast('Please sign in.', 'error'); return; }
+  const { error } = await window.supabase.from('listings').insert({
+    poster_id: user.id,
+    board: 'jobs',
+    title: title,
+    location: city,
+    city: city,
+    budget_range: document.getElementById('job-pay').value.trim(),
+    description: document.getElementById('job-desc').value.trim(),
+    status: 'active'
+  });
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Job posted!', 'success');
+  clearJobForm();
+  loadJobListings();
+}
+
+function clearJobForm() {
+  ['job-title','job-pay','job-city','job-desc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const sel = document.getElementById('job-schedule');
+  if (sel) sel.value = '';
+}
+
+// ═══════════════════════════════════
+//  SERVICE ADS — DISPLAY AREA
+// ═══════════════════════════════════
+async function loadServiceAds() {
+  const grid = document.getElementById('adsGrid');
+  if (!grid) return;
+  // In production: query a dedicated ads table. Currently shows placeholder cards
+  // representing the types of ads service providers can place.
+  const PLACEHOLDER_ADS = [
+    { headline: 'Commissary Kitchen — Fort Myers', category: 'Commissary', body: 'Fully licensed commercial kitchen available for monthly rental. Health-dept approved. Power, water, walk-in. Starting at $350/mo.', contact: 'Contact through ServiceWindow' },
+    { headline: 'Secure Truck Parking — Cape Coral', category: 'Parking', body: 'Paved, lit lot. Power hookups available. 24/7 camera surveillance. Minutes from Cape Coral waterfront event corridor. $200/mo.', contact: 'Contact through ServiceWindow' },
+    { headline: 'Food Truck Wraps & Graphics', category: 'Branding', body: 'SWFL\'s food truck wrap specialists. Full wraps, partial wraps, and vinyl lettering. Turn your truck into a billboard. Free design consult.', contact: 'Contact through ServiceWindow' },
+    { headline: 'POS Built for Food Trucks', category: 'Technology', body: 'Square-compatible POS with offline mode, tip prompts, and end-of-day reporting. Trusted by 200+ mobile food vendors across Florida.', contact: 'Contact through ServiceWindow' },
+  ];
+  grid.innerHTML = PLACEHOLDER_ADS.map(ad => `
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:18px 20px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+        <div style="font-weight:700;color:#ffffff;font-size:.92rem;">${ad.headline}</div>
+        <span style="font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,107,53,0.15);color:#FF6B35;font-family:'DM Mono',monospace;flex-shrink:0;">${ad.category}</span>
+      </div>
+      <p style="font-size:.8rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:12px;">${ad.body}</p>
+      <div style="font-size:.72rem;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;">📩 ${ad.contact}</div>
+    </div>`).join('');
 }
 
 // ═══════════════════════════════════
