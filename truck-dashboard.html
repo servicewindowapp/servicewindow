@@ -2035,22 +2035,45 @@ function clearJobForm() {
 async function loadServiceAds() {
   const grid = document.getElementById('adsGrid');
   if (!grid) return;
-  // In production: query a dedicated ads table. Currently shows placeholder cards
-  // representing the types of ads service providers can place.
-  const PLACEHOLDER_ADS = [
-    { headline: 'Commissary Kitchen — Fort Myers', category: 'Commissary', body: 'Fully licensed commercial kitchen available for monthly rental. Health-dept approved. Power, water, walk-in. Starting at $350/mo.', contact: 'Contact through ServiceWindow' },
-    { headline: 'Secure Truck Parking — Cape Coral', category: 'Parking', body: 'Paved, lit lot. Power hookups available. 24/7 camera surveillance. Minutes from Cape Coral waterfront event corridor. $200/mo.', contact: 'Contact through ServiceWindow' },
-    { headline: 'Food Truck Wraps & Graphics', category: 'Branding', body: 'SWFL\'s food truck wrap specialists. Full wraps, partial wraps, and vinyl lettering. Turn your truck into a billboard. Free design consult.', contact: 'Contact through ServiceWindow' },
-    { headline: 'POS Built for Food Trucks', category: 'Technology', body: 'Square-compatible POS with offline mode, tip prompts, and end-of-day reporting. Trusted by 200+ mobile food vendors across Florida.', contact: 'Contact through ServiceWindow' },
-  ];
-  grid.innerHTML = PLACEHOLDER_ADS.map(ad => `
+
+  if (!window.supabase) {
+    grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:.84rem;text-align:center;padding:40px 0;">Not connected.</p>';
+    return;
+  }
+
+  const { data: ads, error } = await window.supabase
+    .from('ads')
+    .select('id,headline,category,body,contact,impressions')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    grid.innerHTML = `<p style="color:rgba(220,38,38,0.7);font-size:.82rem;text-align:center;padding:40px 0;">Load error: ${error.message}</p>`;
+    return;
+  }
+
+  if (!ads || ads.length === 0) {
+    grid.innerHTML = `
+      <div style="text-align:center;padding:48px 20px;grid-column:1/-1;">
+        <div style="font-size:2rem;opacity:.4;margin-bottom:12px;">📢</div>
+        <div style="font-weight:700;color:#ffffff;margin-bottom:6px;">No ads yet</div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,0.4);">Service provider ads will appear here once partners subscribe.</div>
+      </div>`;
+    return;
+  }
+
+  // Track impressions (fire-and-forget)
+  const ids = ads.map(a => a.id);
+  window.supabase.rpc('increment_ad_impressions', { ad_ids: ids }).catch(() => {});
+
+  grid.innerHTML = ads.map(ad => `
     <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:18px 20px;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
         <div style="font-weight:700;color:#ffffff;font-size:.92rem;">${ad.headline}</div>
-        <span style="font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,107,53,0.15);color:#FF6B35;font-family:'DM Mono',monospace;flex-shrink:0;">${ad.category}</span>
+        ${ad.category ? `<span style="font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(255,107,53,0.15);color:#FF6B35;font-family:'DM Mono',monospace;flex-shrink:0;">${ad.category}</span>` : ''}
       </div>
-      <p style="font-size:.8rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:12px;">${ad.body}</p>
-      <div style="font-size:.72rem;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;">📩 ${ad.contact}</div>
+      ${ad.body ? `<p style="font-size:.8rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:12px;">${ad.body}</p>` : ''}
+      ${ad.contact ? `<div style="font-size:.72rem;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;">📩 ${ad.contact}</div>` : ''}
     </div>`).join('');
 }
 

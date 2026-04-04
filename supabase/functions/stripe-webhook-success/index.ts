@@ -124,6 +124,7 @@ Deno.serve(async (req) => {
       truck_standard: "standard",
       truck_pro: "pro",
       service_provider_standard: "standard",
+      advertiser: "advertiser",
     };
     const plan = planMap[session.metadata?.plan_name] || "standard";
     console.log("Plan determined:", plan);

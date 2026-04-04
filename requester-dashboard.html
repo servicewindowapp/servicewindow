@@ -859,6 +859,7 @@ tr:hover td{background:rgba(255,255,255,0.03);}
     <span class="bn-icon">👤</span><span class="bn-label">Profile</span>
   </a>
 </nav>
+<script src="https://js.stripe.com/v3/"></script>
 <script src="assets/js/supabase-client.js"></script>
 <script>
 // ── GLOBALS ─────────────────────────────────────────────────────────────────
@@ -1349,37 +1350,126 @@ async function loadRentals() {
 }
 
 // ── ADS ───────────────────────────────────────────────────────────────────────
+// Stripe price ID for the $19/mo advertiser plan.
+// TODO: Replace with the real price ID after creating the product in Stripe dashboard.
+// Product name: "ServiceWindow Advertiser" | Price: $19.00/month recurring
+const ADVERTISER_PRICE_ID = 'price_ADVERTISER_19_MONTHLY';
+
 function openCreateAd() {
   document.getElementById('createAdForm').style.display = 'block';
   document.getElementById('createAdForm').scrollIntoView({ behavior: 'smooth' });
 }
 
 async function loadAds() {
+  if (!currentUser || !window.supabase) return;
   const container = document.getElementById('adsContainer');
   const subStatus = document.getElementById('adSubStatus');
   const subBtn = document.getElementById('adSubBtn');
 
-  if (currentProfile) {
-    if (currentProfile.subscription_status === 'active') {
-      subStatus.textContent = 'Active — your ads are live in the Truck Dashboard.';
-      subBtn.textContent = 'Manage Billing';
-    } else {
-      subStatus.textContent = 'No active subscription. Subscribe to run ads.';
-      subBtn.textContent = 'Subscribe — $19/mo';
-    }
+  // Subscription status banner
+  const isActive = currentProfile?.subscription_tier === 'advertiser' &&
+                   currentProfile?.subscription_status === 'active';
+  if (isActive) {
+    subStatus.textContent = 'Active — your ads are live in the Truck Dashboard.';
+    subBtn.textContent = 'Manage Billing';
+    subBtn.onclick = manageAdBilling;
+  } else {
+    subStatus.textContent = 'No active subscription. Subscribe to run ads ($19/mo).';
+    subBtn.textContent = 'Subscribe — $19/mo';
+    subBtn.onclick = startAdSubscription;
   }
-  container.innerHTML = '<div class="empty-state"><div class="empty-icon">📢</div><div class="empty-title">No ads yet</div><div class="empty-sub">Create an ad to reach verified food truck operators across Southwest Florida.</div><button class="btn btn-primary" onclick="openCreateAd()">Create Your First Ad</button></div>';
+
+  // Load this advertiser's ads from the ads table
+  const { data: ads, error } = await window.supabase
+    .from('ads')
+    .select('*')
+    .eq('poster_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    container.innerHTML = `<p style="color:rgba(220,38,38,0.8);font-size:.82rem;">Load error: ${error.message}</p>`;
+    return;
+  }
+
+  if (!ads || ads.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📢</div><div class="empty-title">No ads yet</div><div class="empty-sub">Create an ad to reach verified food truck operators across Southwest Florida.</div><button class="btn btn-primary" onclick="openCreateAd()">Create Your First Ad</button></div>';
+    return;
+  }
+
+  container.innerHTML = ads.map(ad => `
+    <div class="ad-card">
+      <div>
+        <div class="ad-card-title">${ad.headline}</div>
+        <div class="ad-card-meta">${ad.category || 'General'} · ${ad.contact || '—'}</div>
+        ${ad.body ? `<div style="font-size:.78rem;color:rgba(255,255,255,0.5);margin-top:6px;line-height:1.5;">${ad.body}</div>` : ''}
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="ad-card-stat">${ad.impressions.toLocaleString()} views</div>
+        <span class="tag ${ad.status === 'active' ? 'tag-confirmed' : ad.status === 'paused' ? 'tag-pending' : 'tag-draft'}" style="margin-top:6px;display:inline-flex;">${ad.status}</span>
+        <div style="margin-top:8px;display:flex;gap:6px;justify-content:flex-end;">
+          ${ad.status === 'active'
+            ? `<button class="btn btn-outline btn-sm" onclick="toggleAdStatus('${ad.id}','paused')">Pause</button>`
+            : `<button class="btn btn-green btn-sm" onclick="toggleAdStatus('${ad.id}','active')">Activate</button>`}
+        </div>
+      </div>
+    </div>`).join('');
 }
 
 async function submitAd() {
-  if (!currentUser) { showToast('Please sign in.', 'error'); return; }
+  if (!currentUser || !window.supabase) { showToast('Please sign in.', 'error'); return; }
   const headline = document.getElementById('ad-headline').value.trim();
+  const body = document.getElementById('ad-body').value.trim();
+  const category = document.getElementById('ad-category').value;
+  const contact = document.getElementById('ad-link').value.trim();
   if (!headline) { showToast('Headline is required.', 'error'); return; }
-  // In production: save ad to a dedicated ads table. For now, toast confirmation.
-  showToast('Ad submitted for review. You\'ll hear back within 1 business day.', 'success');
+
+  const { error } = await window.supabase.from('ads').insert({
+    poster_id: currentUser.id,
+    headline,
+    category: category || null,
+    body: body || null,
+    contact: contact || null,
+    status: 'active'
+  });
+
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  showToast('Ad is live in the Truck Dashboard!', 'success');
   document.getElementById('createAdForm').style.display = 'none';
-  document.getElementById('ad-headline').value = '';
-  document.getElementById('ad-body').value = '';
+  ['ad-headline','ad-body','ad-link'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('ad-category').value = '';
+  loadAds();
+}
+
+async function toggleAdStatus(adId, newStatus) {
+  if (!window.supabase) return;
+  const { error } = await window.supabase.from('ads').update({ status: newStatus }).eq('id', adId).eq('poster_id', currentUser.id);
+  if (error) { showToast('Update failed: ' + error.message, 'error'); return; }
+  showToast(newStatus === 'active' ? 'Ad activated.' : 'Ad paused.', 'success');
+  loadAds();
+}
+
+async function startAdSubscription() {
+  if (!currentUser) { showToast('Please sign in first.', 'error'); return; }
+  showToast('Redirecting to checkout…');
+  try {
+    const { data: { session } } = await window.supabase.auth.getSession();
+    const resp = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({
+        price_id: ADVERTISER_PRICE_ID,
+        plan_name: 'advertiser',
+        user_id: currentUser.id,
+        user_email: currentUser.email
+      })
+    });
+    const result = await resp.json();
+    if (!resp.ok || result.error) { showToast('Checkout error: ' + (result.error || resp.status), 'error'); return; }
+    const stripe = Stripe('pk_live_51TEP7tCgL5LTt01M8pluCkVsYoFxFN7aHHHXmyvJWbJqNk2VCrZnNlqP5J3I4qOyGE2x8OGBkPq7a3U5XBVEXQR00kLJXy2rO');
+    await stripe.redirectToCheckout({ sessionId: result.sessionId });
+  } catch (e) {
+    showToast('Error: ' + e.message, 'error');
+  }
 }
 
 async function manageAdBilling() {
