@@ -3455,5 +3455,27 @@ if (window.supabase) {
   <a class="bn-tab" href="#" onclick="setPanel('profile',document.getElementById('nav-profile'));updateBn('bnProfile');return false;"><span class="bn-icon">👤</span><span class="bn-label">Profile</span></a>
 </nav>
 
+<script>
+// ── ERROR LOGGER ─────────────────────────────────────────────
+(function() {
+  function logError(msg, stack) {
+    if (!window.supabase) return;
+    window.supabase.auth.getUser().then(({ data: { user } }) => {
+      window.supabase.from('error_logs').insert({
+        user_id: user?.id || null,
+        page: window.location.pathname,
+        message: String(msg).slice(0, 500),
+        stack: stack ? String(stack).slice(0, 2000) : null,
+        user_agent: navigator.userAgent.slice(0, 300)
+      }).then(() => {});
+    }).catch(() => {});
+  }
+  window.addEventListener('error', e => logError(e.message, e.error?.stack));
+  window.addEventListener('unhandledrejection', e => logError(
+    e.reason?.message || String(e.reason), e.reason?.stack
+  ));
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"PASTE_CF_TOKEN_HERE"}'></script>
 </body>
 </html>
