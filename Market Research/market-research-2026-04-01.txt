@@ -1,0 +1,235 @@
+SERVICEWINDOW MARKET RESEARCH
+Date: 2026-04-01
+Coverage window: Last 24 hours (cutoff: 2026-03-31 12:19 UTC)
+Groups: Food Truck Connection of SWFL | SWFL Food Truck Depot | Collier & Lee County Food Trucks
+Scraped: 2026-04-01 ~12:20 UTC
+============================================================
+
+NOTE ON DATA COMPLETENESS: Facebook's lazy-loading (IntersectionObserver) did not trigger
+in the automated browser environment during this run. Only posts rendered on initial page
+load were captured. Group 2 (34.8K members, described as high-volume) likely has additional
+posts within the 24h window that were not surfaced. Data below is confirmed-captured.
+
+============================================================
+
+## TOP ACTION ITEMS — IMMEDIATE
+
+1. [PRIORITY 1 — URGENT] BOOKING REQUEST: NE Cape Coral Easter Egg Hunt — April 4th
+   Poster:  Tiffany Allard (Food Truck Connection of SWFL, 23h ago)
+   Event:   Easter Egg Hunt, ~700 homes in NE Cape Coral
+   Needs:   Breakfast/brunch truck, 10am–12pm OR 1pm slot
+   Status:  Original truck CANCELED — replacement needed NOW (event is 3 days out)
+   Signal:  HIGH — confirmed booking intent, specific date/time, large attendance
+   Action:  Identify available breakfast/brunch operators for April 4 NE Cape Coral;
+            reply to Tiffany Allard directly in Group 1 thread
+
+2. [PRIORITY 2 — MONITOR] Active Operator Signal: Between The Bunz
+   Posted:  Group 2 (11.6h ago); reshared by All-star contributor Tammy Trovato (12 min ago)
+   Truck:   Full-kitchen burger truck, 45+ years hospitality experience
+   Coverage: Fort Myers, Naples, Estero, Bonita Springs, Ft Myers Beach, Babcock Ranch
+   Contact: 732-500-8327 | betweenthebunz.net
+   Signal:  MEDIUM — marketing post, not a booking request; operator actively advertising
+
+3. [INTEL] Group 3 (Collier & Lee County Food Trucks) — 0 posts in 24h window
+   Most recent post: March 30 (54h ago) — group is low-activity
+   Naples/Collier demand not surfacing here currently
+
+4. [INTEL] Group 2 scam volume: ~6 attempted scam posts per day blocked by admins
+   Indicative of high-demand, high-traffic group
+   Operators and clients should vet all coordinators before paying any advance fees
+
+5. [INTEL] Group 2 admin booking template (standard ask of event planners):
+   Date | Time/Duration | Event Type | Expected Guests | Location | Fees/Budget | Authorized Contacts
+
+============================================================
+
+## RAW FEED — ALL POSTS CAPTURED
+
+--- GROUP 1: Food Truck Connection of SWFL ---
+URL: https://www.facebook.com/groups/620795443402808
+Members: 3.4K | Signal type: Booking requests from clients/venues
+Posts captured in 24h window: 1
+
+POST G1-001
+  Type:        BOOKING REQUEST
+  Posted by:   Tiffany Allard
+  Timestamp:   23h ago (~2026-03-31 13:20 UTC)
+  Reactions:   2 likes
+  Comments:    3 total (1 visible)
+  Location:    NE Cape Coral, FL
+  Contact:     None provided in post
+
+  Full text:
+    "Looking for a Food Truck in NE Cape!
+    Our scheduled breakfast/brunch truck canceled for the April 4th Easter Egg Hunt.
+    We have about 700 homes.
+    Looking for a truck available in NE Cape for 10-12 or 1 PM.
+    Recommendations welcome - tag your favorites! Thanks!"
+
+  Visible comment:
+    Jessie Delgado (22h ago): "Lupita's Mini Pancakes has delicious mini pancakes and
+    iced coffee and matcha - check out our page"
+    (Lupita's Mini Pancakes Facebook page)
+
+  Signal assessment:
+    HIGH PRIORITY. Confirmed venue coordinator actively seeking a truck for a specific
+    event 3 days out. 700 homes = large neighborhood attendance. Breakfast/brunch window
+    (10am-12pm or 1pm). NE Cape Coral is a defined geography. Original truck canceled
+    = urgency is real. This is a live booking opportunity.
+
+--- END GROUP 1 ---
+
+
+--- GROUP 2: SWFL Food Truck Depot ---
+URL: https://www.facebook.com/groups/SWFLFoodTruckDepot
+Members: 34.8K | Signal type: Truck schedules, venue calls, operator pain points, equipment
+Posts captured in 24h window: 2 (same content; 1 original + 1 re-share)
+
+POST G2-001 (original)
+  Type:        TRUCK AVAILABLE / ANNOUNCEMENT
+  Posted by:   Between The Bunz (Facebook page: betweenthebunz69)
+  Timestamp:   11.6h ago (2026-04-01 00:39 UTC)
+  Post URL:    https://www.facebook.com/betweenthebunz69/posts/pfbid0CX1v9PyNZeyCHZvomrEuiXJEV46DNx2wAf7zDU6VHq1LokdT5YYSTnEF6QsvGszyl
+  Reactions:   0 shown
+  Comments:    0 shown
+  Location:    Fort Myers, Naples, Estero, Bonita Springs, Ft Myers Beach, Babcock Ranch
+  Contact:     732-500-8327 | betweenthebunz.net
+
+  Full text:
+    "Planning an event in Southwest Florida? Between the Bunz is ready for you.
+    Fresh burgers made to order, a full kitchen on wheels, and 45+ years of hospitality
+    experience behind every booking. We've catered festivals, corporate events, birthdays,
+    private parties, and community gatherings all across Lee and Collier County.
+    No venue kitchen? No problem. We roll up, set up, and handle everything.
+    Our calendar fills up fast, so don't wait until your date is gone.
+    Call 732-500-8327 or visit betweenthebunz.net to get started."
+
+  Image text:
+    "SOUTHWEST FLORIDA'S FAVORITE FOOD TRUCK IS READY FOR YOUR EVENT!
+     732-500-8327 | betweenthebunz.net
+     Fort Myers | Naples | Estero | Bonita Springs | Ft Myers Beach | Babcock Ranch"
+
+  Signal assessment:
+    MEDIUM. Operator actively marketing availability. Full kitchen on wheels, multi-city
+    Lee + Collier coverage. No immediate booking lead — outbound marketing from the truck.
+
+POST G2-002 (cross-post / re-share — DUPLICATE of G2-001)
+  Type:        ANNOUNCEMENT (re-share)
+  Posted by:   Tammy Trovato (All-star contributor in SWFL Food Truck Depot)
+  Timestamp:   ~12 min ago (2026-04-01 12:05 UTC)
+  Group post:  https://www.facebook.com/groups/SWFLFoodTruckDepot/posts/4388517008131439/
+  Note:        Tammy shared Between The Bunz into the group feed. Content identical to
+               G2-001. Counted once; noted as cross-post duplicate.
+
+PINNED / FEATURED (outside 24h window — captured for intel):
+  - Booking template: Event planners asked to provide Date, Time/Duration, Event Type,
+    Expected Guests, Location, Fees/Budget, Authorized Contacts
+  - Scam awareness: ~6 scam attempts per day blocked. Warns against advance vendor fee
+    payments. Advises verifying venues by phone. Active threat in this group.
+
+--- END GROUP 2 ---
+
+
+--- GROUP 3: Collier & Lee County Food Trucks ---
+URL: https://www.facebook.com/groups/1420947091617027
+Members: 1.7K | Signal type: Naples/Collier coverage needs, vendor calls, truck availability
+Posts captured in 24h window: 0
+
+RESULT: NO POSTS IN 24H WINDOW
+
+Most recent post: Deborah Lynn Hahn, March 30 at 2:21 AM ET (54h ago)
+  Text: "Must register - Sooner the better - Supplies running short"
+  Status: OUTSIDE 24h capture window. Not logged as active signal.
+
+Note: Low-activity group. Naples/Collier demand not surfacing here. Last confirmed
+activity was 54h ago.
+
+--- END GROUP 3 ---
+
+
+============================================================
+
+## CONTACT LIST
+
+Name                  | Role                      | Contact                           | Context                                         | Priority
+----------------------|---------------------------|-----------------------------------|-------------------------------------------------|----------
+Tiffany Allard        | Event coordinator         | Reply via Group 1 thread          | NE Cape Easter Egg Hunt Apr 4, 700 homes        | HIGH
+Jessie Delgado        | Truck operator            | FB: Lupita's Mini Pancakes page   | Responded to Tiffany; mini pancakes/coffee      | MEDIUM
+Between The Bunz      | Food truck operator       | 732-500-8327 / betweenthebunz.net | Burgers, full catering, Lee+Collier coverage    | MEDIUM
+Tammy Trovato         | Group 2 all-star contrib  | Facebook profile (Group 2)        | Active member, reshared Between The Bunz        | LOW
+
+
+============================================================
+
+## SIGNALS & INTEL
+
+DEMAND SIGNALS (venues/clients seeking trucks):
+  - NE Cape Easter Egg Hunt (April 4) needs breakfast/brunch truck — ACTIVE, URGENT
+    Tiffany Allard, ~700 homes, 10am-12pm or 1pm. Original truck canceled.
+    Live unmet demand signal. 3-day window before event.
+
+SUPPLY SIGNALS (trucks advertising availability):
+  - Between The Bunz: Full-kitchen burger truck, multi-city Lee + Collier. Advertising
+    actively. Phone/web contact. Calendar appears to have availability.
+
+COVERAGE NEEDS (live mismatches):
+  - NE Cape Coral, April 4, breakfast/brunch: demand exists, no confirmed match
+    (Lupita's Mini Pancakes offered in comments but not confirmed booked)
+
+PAIN POINTS:
+  - Last-minute truck cancellations exposing events: Tiffany's situation is a recurring
+    pattern — operators cancel, venues scramble. ServiceWindow opportunity: cancellation
+    coverage alerts / on-demand truck matching.
+  - Scam activity in Group 2: ~6 attempted fraudulent posts per day. Operators and
+    clients need vetting mechanisms. Trust/verification is a live pain point.
+
+GEOGRAPHIC CLUSTERS:
+  - NE Cape Coral: Active booking demand (Group 1)
+  - Lee + Collier (Fort Myers, Naples, Estero, Bonita Springs, Ft Myers Beach,
+    Babcock Ranch): Between The Bunz active coverage zone
+  - Naples/Collier: Low group signal in Group 3; demand not currently visible
+
+SCRAPER NOTES FOR FUTURE RUNS:
+  - Facebook lazy-loading does not trigger with programmatic scrolls in automated
+    sessions. Only initial viewport content captured.
+  - Group 2 (34.8K members) is likely significantly undersampled on active days.
+  - Recommend: supplementing with Facebook group email digests or notifications,
+    or testing authenticated session behavior for improved scroll loading.
+  - Group 3 is consistently low-activity; consider whether it remains worth monitoring.
+
+
+============================================================
+
+## ALL CONTACTS — MASTER LIST
+
+1. Tiffany Allard
+   Role:    Event coordinator / venue rep
+   Source:  Food Truck Connection of SWFL (Group 1)
+   Context: Seeking breakfast/brunch truck for NE Cape Easter Egg Hunt, April 4, ~700 homes
+   Reach:   Reply to her post in Group 1
+   Priority: HIGH — active booking request, 3-day urgency
+
+2. Lupita's Mini Pancakes (via Jessie Delgado)
+   Role:    Food truck operator
+   Source:  Comment on Tiffany Allard's Group 1 post
+   Context: Responded to booking request; mini pancakes + iced coffee/matcha
+   Reach:   Facebook page "Lupita's Mini Pancakes"
+   Priority: MEDIUM — potential match for April 4 event
+
+3. Between The Bunz
+   Role:    Food truck operator / full-service catering
+   Source:  SWFL Food Truck Depot (Group 2)
+   Contact: 732-500-8327 | betweenthebunz.net
+   Coverage: Fort Myers, Naples, Estero, Bonita Springs, Ft Myers Beach, Babcock Ranch
+   Cuisine: Burgers (full kitchen on wheels, 45+ years hospitality experience)
+   Priority: MEDIUM — active operator, marketing availability
+
+4. Tammy Trovato
+   Role:    SWFL Food Truck Depot All-star contributor / community connector
+   Source:  SWFL Food Truck Depot (Group 2)
+   Context: Reshared Between The Bunz post — likely a trusted group amplifier
+   Reach:   Facebook profile
+   Priority: LOW — relationship asset, not a direct booking contact
+
+============================================================
+END OF REPORT

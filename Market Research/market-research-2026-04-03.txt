@@ -1,0 +1,645 @@
+SERVICEWINDOW MARKET RESEARCH
+Date: 2026-04-03 (Friday)
+Coverage window: Last 24 hours (posts from ~Apr 2 evening through Apr 3)
+Groups scraped:
+  1. Food Truck Connection of SWFL         — 3.5K members
+  2. SWFL Food Truck Depot                 — 34.8K members
+  3. Collier & Lee County Food Trucks      — 1.7K members
+Scrape completed: automated run, chronological sort, newest-first
+============================================================
+
+## TOP ACTION ITEMS — IMMEDIATE
+(ranked by urgency and signal strength)
+
+1. [URGENT - TODAY] BRITTANY AXELSON — Brookside Beer Market Naples seeking truck TOMORROW (Sat Apr 4) 5–9PM
+   Platform: SWFL Food Truck Depot (Group 2)
+   Signal: Active venue call, covered area available for tent setups, 2 comments
+   Action: DM Brittany Axelson directly on Facebook to connect available trucks
+
+2. [URGENT - TOMORROW] JACQUI HUNTER PETRIE — Easter event at Moose Lodge 2199, needs trucks Apr 4/5, 12PM+
+   Platform: SWFL Food Truck Depot (Group 2)
+   Contact: Partial phone "Tia.610" visible in post | Papa D's Cheesecake (dessert) already responded (239-822-6468)
+   Signal: 6 comments, savory food trucks still needed
+   Action: DM Jacqui Hunter Petrie; she needs food (not dessert) options immediately
+
+3. [HIGH - MULTI-DAY] JOYCE PESSEL — North American Briard Dog Club Show, Lee Civic Center Ft Myers, April 10–12 (Fri–Sun)
+   Platform: SWFL Food Truck Depot (Group 2)
+   Signal: 38 comments, 10h ago activity. Big venue, multi-day, confirmed event. Very high demand.
+   Action: DM Joyce Pessel now. This is a 3-day recurring need — premium venue lead.
+
+4. [HIGH - RECURRING] KEVIN RUEDA / MURANO AT THREE OAKS — Fort Myers apartment community, seeking trucks April 9–30, Tue–Sat dinner + weekends
+   Platform: Food Truck Connection of SWFL (Group 1) [2d post, just outside window but still very actionable]
+   Location: 17171 Three Oaks Pkwy, Fort Myers, FL 33967
+   Signal: 14 reactions, 8 comments. Apartment property manager — recurring weekly slots available
+   Action: DM Kevin Rueda. This is a gold-tier recurring venue — exactly the kind of account ServiceWindow targets
+
+5. [HIGH - TODAY] MARJORIE REGALA HARTMAN — Seeking large batch Filipino food (lumpia/pancit) delivery for this Sunday (Apr 5)
+   Platform: Food Truck Connection of SWFL (Group 1) — 12h post
+   Signal: 7 responses. Dally Rios pointed to Filipino truck at Anarchy Ale Works. Delivery request = direct operator lead
+   Action: Filipino food truck operators should see this. Could feed into ServiceWindow directory listings.
+
+6. [MEDIUM - Apr 8] PANINIGENIE — Last-minute opening Wednesday April 8th, lunch or dinner
+   Platform: SWFL Food Truck Depot (Group 2)
+   Contact: 305-519-6433 | Paninigeniellc@gmail.com
+   Signal: Operator proactively seeking venue. Good for venue-operator matching.
+   Action: Note in operator availability database. Connect with any venues seeking lunch/dinner truck Apr 8.
+
+7. [MEDIUM - FUTURE] GRAND PALM / WELLEN PARK — Romiah Rosario expressed intent to do future events after Easter call resolved
+   Platform: SWFL Food Truck Depot (Group 2)
+   Location: Grand Palm, 1315 Observation Blvd, Wellen Park area
+   Action: Follow up with Romiah Rosario post-Easter for recurring event scheduling
+
+8. [MEDIUM - May 2] TACOS & TEQUILA FESTIVAL — CoolToday Park area, North Port, 1st Annual event
+   Platform: SWFL Food Truck Depot (Group 2)
+   Contact: springtraining@braves.com | $250 entry fee | Trucks must offer tacos
+   Signal: Legitimate venue event. Good operator outreach target.
+
+9. [SUPPLY SIGNAL] LITTLE ITALY IN THE USA — Full Italian menu, now booking April & May
+   Platform: SWFL Food Truck Depot (Group 2)
+   Contact: 239-785-5625 | www.littleitalyinthe.com
+   Signal: Active operator with contact info posted. Good for directory/scheduling tool.
+
+10. [INDUSTRY INTEL] SYSCO / RESTAURANT DEPOT $29B ACQUISITION — Shared by Jasmine Peralta
+    Platform: SWFL Food Truck Depot (Group 2)
+    Signal: If deal closes, food cost structure changes significantly for operators. Pain point to watch.
+    Note: Operators already anxious about supply costs. ServiceWindow pitch can address margin pressure.
+
+============================================================
+
+## RAW FEED — ALL POSTS CAPTURED
+
+---
+### GROUP 1: Food Truck Connection of SWFL
+https://www.facebook.com/groups/620795443402808
+3,500 members | Sorted chronologically
+
+POSTS WITHIN 24H WINDOW:
+
+POST #G1-1
+Type: DEMAND / DELIVERY REQUEST
+Posted by: Marjorie Regala Hartman
+Timestamp: ~12h ago (confirmed via comment timestamps)
+Post permalink: /groups/620795443402808/posts/1373151078167237/
+Reactions: 7 | Comments: Multiple
+Text: "Does anyone know where I can get a large batch of Filipino food, lumpia and pancit delivered for this Sunday?"
+Contact: None visible in post (FB message implied)
+Location: SWFL (unspecified)
+Comments:
+  - Dally Rios (12h): "There a Filipino food truck at Anarchy Ale Works this week. They might be able to help you." [1 reply]
+  - Drag Drop Deploy (1h): "I second this??"
+Notes: Consumer seeking catering delivery for Sunday Apr 5. Cross-post opportunity — Filipino operator at Anarchy Ale Works active this week.
+
+---
+
+POSTS OUTSIDE 24H WINDOW (recent, noted for relevance):
+
+POST #G1-A [~2 days ago — Apr 1, high relevance]
+Type: BOOKING REQUEST / URGENT
+Posted by: Tiffany Allard
+Timestamp: ~2d ago (Apr 1)
+Text: "Looking for a Food Truck in NE Cape! Our scheduled breakfast/brunch truck canceled for the April 4th Easter Egg Hunt. We have about 700 homes. Looking for a truck available in NE Cape for 10-12 or 1 PM."
+Reactions: 34 | Comments: Multiple
+Contact: None visible (FB message)
+Location: NE Cape Coral
+Notes: May already be resolved given age. Monitor thread. 700-home community = very good audience.
+
+POST #G1-B [~2d — Apr 1, recurring venue lead]
+Type: VENUE LEAD
+Posted by: Kevin Rueda
+Timestamp: ~2d ago (Apr 1)
+Text: "We are looking to bring some fresh local eats for our residents at Murano At Three Oaks in Fort Myers! We have a great community of residents who would love to see some new trucks on property for April 9-30th From Tuesday - Saturday. If any trucks are looking for a spot for upcoming dinner or weekend shifts, please reach out or tag them below!"
+Reactions: 14 | Comments: 8
+Location: 17171 Three Oaks Pkwy, Fort Myers, FL 33967
+Contact: Comment below or DM
+Notes: GOLD-TIER RECURRING SLOT. Apartment PM seeking multiple trucks Tue-Sat for 3 weeks.
+
+POST #G1-C [~2d — Apr 1, likely resolved]
+Type: BOOKING REQUEST / URGENT (same-day)
+Posted by: Lindsey Petit (at The Southerly at Heron Creek)
+Timestamp: ~2d ago (Apr 1)
+Text: "Would any food truck be able to serve our community at The Southerly at Heron Creek in North Port- THIS AFTERNOON 4PM - 7PM ?? Please let us know ASAP!! We had a last minute change of plans. We are almost 70% occupied."
+Reactions: 6 | Comments: Multiple
+Location: North Port (The Southerly at Heron Creek)
+Contact: DM
+Notes: Resolved — this was Apr 1 afternoon. Signals this property manager is active. Track for future.
+
+---
+
+### GROUP 2: SWFL Food Truck Depot
+https://www.facebook.com/groups/SWFLFoodTruckDepot
+34,800 members | Sorted chronologically | Highest volume group
+
+POSTS WITHIN 24H WINDOW:
+
+POST #G2-1
+Type: TRUCK AVAILABLE / ANNOUNCEMENT
+Posted by: Little Italy in the USA (Rising contributor)
+Timestamp: Recent (top of chronological feed Apr 3)
+Reactions: 7 | Comments: 6
+Text: "LITTLE ITALY FOOD TRUCK – FULL MENU AVAILABLE. Complete Italian menu: pizza, pasta, burgers, crepes & cannoli — all fresh and made on the spot. Great setup for communities, HOAs, breweries & private events. Fast service + menu that sells. Now booking for April & May."
+Contact: 239-785-5625 | www.littleitalyinthe.com
+Location: SWFL (unspecified base)
+Notes: Operator actively marketing. April/May booking window open. Direct contact included.
+
+POST #G2-2
+Type: ANNOUNCEMENT / SUPPLY
+Posted by: Dave's Neapolitan Pizza (Verified, Top contributor) — David Ramirez Gonzalez
+Timestamp: Apr 3 (confirmed)
+Text (post 1): "Want to know more about our Pizza classes? Send us a message or an email and let us book you and take you on a one of a kind pizza making experience."
+Text (post 2): "SWFL are we ready for the hottest summer trend and new interactive dinner show we have launched here at Dave's neapolitan pizza food truck!"
+Hashtags: #cooking #pizza #swfl #foodie #pizzaclass
+Contact: FB message or email
+Notes: Two posts same day — very active operator. Pizza class/dinner show = premium event product.
+
+POST #G2-3
+Type: VENUE LEAD / BOOKING REQUEST
+Posted by: Christina Lee (at CoolToday Park, Venice)
+Timestamp: Recent (same batch as Apr 3 posts)
+Text: "Food Trucks Needed – Festival May 2nd – North Port. Looking for food trucks for our 1st Annual Tacos & Tequila festival on May 2nd. Trucks must have a variety of tacos. Please email springtraining@braves.com for an application. $250 entry fee. If comments say any other application method, it is a scam."
+Contact: springtraining@braves.com | $250 application fee
+Location: North Port (CoolToday Park affiliated)
+Notes: Legitimate venue call. Note scam warning — prior fraudulent replies on this post.
+
+POST #G2-4
+Type: TRUCK AVAILABLE
+Posted by: Chell's Wooder Ice
+Timestamp: Recent (same batch as Apr 3)
+Reactions: 0 | Comments: 1
+Text: "Chell's Wooder Ice is ready to bring our delicious, authentic Philadelphia Italian Water Ice to your event. Sports teams, businesses, summer camps, parties, celebrations and more! 12 flavors ready + 10 in backup. Plus Philly Phrost and Philly Phloat."
+Hashtags: #CHELLSWOODERICE #phillywaterice #summercamptreat #Swfl #dessertfoodtruck
+Contact: FB DM implied
+Location: SWFL
+
+POST #G2-5
+Type: INDUSTRY INTELLIGENCE / DISCUSSION
+Posted by: Lee Caglioti (Admin, Group Expert, All-star contributor)
+Timestamp: Recent (37m/50m comments)
+Summary: Sharing Charlotte County Eats post on AI use in restaurant marketing. Active discussion. Comments from Samantha Ramirez Gonzalez (37m) and ChefRoderick B Smith (50m).
+Notes: Pain point signal — operators wrestling with practical AI use. ServiceWindow positioning opportunity.
+
+POST #G2-6
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: Marcello's Pizza LLC (Active)
+Timestamp: Recent
+Text: "Double Header Friday – Twice the Flavor, Twice the Fun!"
+Notes: Friday schedule post. Active pizza operator.
+
+POST #G2-7
+Type: ANNOUNCEMENT
+Posted by: Gloria Peralta (JNG Sweet Spot, Bonita Springs)
+Timestamp: Recent
+Text: "Hop into something sweet this Easter! JNG Sweet Spot is now selling Easter Candy Skewers. $3 each / $35 per dozen. Limited availability — Message us to order."
+Hashtags: #JNGBakes #SweetTreats #EasterSweets
+Contact: FB DM
+Location: Bonita Springs
+
+POST #G2-8
+Type: BOOKING REQUEST / URGENT — RESOLVED
+Posted by: Romiah Rosario (All-star contributor)
+Timestamp: Recent (~1-2h based on 54m/1h comment timestamps)
+Reactions: 313 | Comments: multiple
+Full text:
+  UPDATE: "My post was hijacked by a scammer. I NEVER charge to come to my events. I have got the trucks, but will reach out to everyone and see if you would like to come to the community at another time."
+  Original: "I had two food trucks cancel for TOMORROW'S Easter event. One said a tragedy in the family, the other a part needed for the truck. Now I am in NEED for two food trucks tomorrow 3 to 5pm at Grand Palm (Wellen Park area) for an event expected to bring in a good amount of families with 3 egg hunts, face painting, bounce house, etc. I already have a lemonade stand and ice cream truck... just need actual food. Grand Palm, 1315 Observation Blvd, ready to serve 3-5pm."
+Contact: FB DM
+Location: Grand Palm, 1315 Observation Blvd, Wellen Park
+Comments: Ice Cream Emergency SWFL (54m) | Danny Cortes / Danny's Food Truck Mexican (1h): "not available tomorrow but interested to come over in the future"
+Notes: RESOLVED but warm lead. Romiah runs community events and will do this again. Scam hijack confirms Group 2's active fraud problem.
+
+POST #G2-9
+Type: VENUE LEAD / BOOKING REQUEST
+Posted by: Brittany Axelson
+Timestamp: Recent (within 24h window)
+Reactions: 2 | Comments: 2
+Text: "Brookside Beer Market in Naples is looking for a food truck this Saturday from 5-9. If you don't have a truck and typically use a tent, we have an already covered area that would accommodate a flat top grill. Message me if you are available."
+Contact: FB DM
+Location: Brookside Beer Market, Naples
+Notes: HIGH SIGNAL. Named venue, specific Saturday slot, covered area accommodates non-truck setups.
+
+POST #G2-10
+Type: TRUCK AVAILABLE
+Posted by: paninigenie (Rising contributor)
+Timestamp: Recent
+Reactions: 0 | Comments: 1
+Text: "We have a last minute opening on Wednesday, April 8th for either lunch or dinner. Reach out to us if you would like to book us."
+Contact: Text 305-519-6433 | Paninigeniellc@gmail.com
+Location: SWFL (unspecified)
+
+POST #G2-11
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: Mumsy's Caribbean Grill (Active)
+Timestamp: Today (Friday)
+Text: "Friday is here facebook fam! We are open today from 2 to 9pm at the Lucky Marathon Gas Station."
+Location: Lucky Marathon Gas Station (SWFL)
+
+POST #G2-12
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: Lil' Stack Shack (Verified, All-star contributor)
+Timestamp: Today (Friday)
+Text: "HAPPY FRIDAY. Easter weekend schedule TOMORROW:
+  10AM–12PM — Grace Church Eggstravaganza (Cape Coral)
+  11AM–2PM — Easter Egg Hunt @ Equestrian Acres (Alva)
+  2:30PM — Birthday Party (Cape Coral) - Private
+  6:30PM — Birthday Party (Englewood) - Private
+  Want Lil Stack Shack at your next party, shower, school event, or celebration? Send us a message for a quote."
+Contact: FB DM for bookings
+Location: Cape Coral / Alva / Englewood
+Notes: Fully booked Easter weekend. Actively taking future event bookings.
+
+POST #G2-13
+Type: ANNOUNCEMENT
+Posted by: Quesadillas La Tapatia
+Timestamp: Apr 3 (confirmed)
+Text: "Hello My People Happy Friday!!!! HAPPY FRIDAY EVERYONE!!!!"
+Notes: Social engagement, confirms active operator.
+
+POST #G2-14
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: Firebread
+Timestamp: Recent
+Text: "Easter Weekend special item. Fr: 5pm-9pm Babcock Ranch Food Truck Night."
+Hashtags: #babcockranch #capecoralfood #leecounty #Cubano
+Location: Babcock Ranch
+
+POST #G2-15
+Type: ANNOUNCEMENT / SCHEDULE [BORDERLINE — Apr 2]
+Posted by: Windy City Chowdown
+Timestamp: Apr 2 (~24-36h ago)
+Text: "We are ready to roll, are you? Get your taste of Chicago at big top brewery on Saturday!"
+Location: Big Top Brewery, SWFL
+
+POST #G2-16
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: Roxy's Jamaican Cuisine
+Timestamp: Recent
+Text: "Fresh from the oven — Jamaican Homemade Bun. This would definitely be on our menu this coming Sunday at the Lee Memorial Hospital 2776 Cl..."
+Location: Lee Memorial Hospital, Fort Myers (~2776 Cleveland Ave area)
+Notes: Institutional venue (hospital), recurring slot. Jamaican cuisine.
+
+POST #G2-17
+Type: BOOKING REQUEST / VENUE LEAD
+Posted by: Joyce Pessel
+Timestamp: Recent (10h comment activity = within 24h)
+Reactions: ~8 | Comments: 38
+Text: "We are desperately looking for a food truck, to come to the North American Briard Dog Club show. At the Tinsel Pavillion on the grounds of the Lee Civic Center, Ft. Myers Fri-Sun, April 10-12. Please dm asap if interested."
+Contact: FB DM (Joyce Pessel)
+Location: Lee Civic Center, Fort Myers — Tinsel Pavillion
+Comments: El Toro Del Sol recommended Red Roc Cravings (Chef Hector) — 10h | John Petrus: "Dm sent" — 10h
+Notes: PREMIUM LEAD. 38 comments = very active. Multi-day, large venue. Word "desperately" suggests multiple open slots despite high response volume.
+
+POST #G2-18
+Type: INDUSTRY INTELLIGENCE
+Posted by: Jasmine Peralta (Verified, Rising contributor)
+Timestamp: Recent
+Summary: Analysis of Sysco's reported $29B acquisition of Restaurant Depot — pricing/supply chain implications for independent operators. Key point: consolidation = less negotiating power for small businesses.
+Notes: Major macro signal. Margin pressure increases operator appetite for efficiency tools.
+
+POST #G2-19
+Type: ANNOUNCEMENT
+Posted by: Nickel City Red Hots (Active)
+Timestamp: Recent
+Notes: Photo post, 1 comment. Text not fully captured.
+
+POST #G2-20
+Type: TRUCK AVAILABLE / MARKETING
+Posted by: Travelin' Tom's Coffee (Punta Gorda)
+Timestamp: Recent
+Text: "Calling all schools and PTOs! Teacher Appreciation Week is coming up, and there's no better way to celebrate than with Travelin' Tom's Coffee Truck."
+Contact: Mburns@travelintomscoffee.com | https://travelintomscoffee.com/find-a-toms-coffee-truck/
+Location: Punta Gorda area
+
+POST #G2-21
+Type: TRUCK AVAILABLE / MARKETING
+Posted by: All Fired UP BBQ n Catering (Rising contributor)
+Timestamp: Recent
+Text: "Ring, Ring. Call us for your BBQ catering needs." (video post)
+Notes: Active BBQ/catering operator.
+
+POST #G2-22
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: Buddha-Bachi Express (Cape Coral) (Active)
+Timestamp: Today
+Text: "Open tonight until 7pm. Big Buddha Bowl — steak, chicken & shrimp stacked on rice. Loaded with veggies, dripping in flavor."
+Location: Cape Coral (unspecified spot)
+
+POST #G2-23
+Type: BOOKING REQUEST / URGENT
+Posted by: Jacqui Hunter Petrie
+Timestamp: Recent (17h comment = within 24h)
+Reactions: 6 | Comments: 10
+Text: "Any food trucks available for Easter? 12-? Moose lodge 2199. Tia.610"
+Contact: FB DM | "Tia" contact | partial phone "610"
+Comments: Papa D's Cheesecake (Top contributor): "Papa D's Cheesecake would love to come out. 239-822-6468" — 17h
+Notes: Savory food trucks still needed. Moose Lodge events well-attended.
+
+POST #G2-24
+Type: SUPPLY / DELIVERY
+Posted by: Kelsey Paige / Cajun Corner
+Timestamp: Recent (Friday deadline reference)
+Text: "Saturday Crawfish delivery from Gainesville to Port Charlotte. No prepayment. No delivery fee. Text orders to 239-895-7430 by Friday at noon."
+Contact: Text 239-895-7430
+Notes: Deadline may have passed. Saturday delivery service.
+
+---
+
+### GROUP 3: Collier & Lee County Food Trucks
+https://www.facebook.com/groups/1420947091617027
+1,700 members | Naples/Collier area focus
+
+POSTS WITHIN 24H WINDOW:
+
+POST #G3-1
+Type: SUPPLY / SUSPICIOUS ACTIVITY
+Posted by: Sweeter Society
+Timestamp: Recent (18-20h comments confirm within 24h)
+Reactions: 3 | Comments: 3
+Text: "I really think this is gonna be good!! Email me at sweetersociety25@yahoo.com"
+Contact: sweetersociety25@yahoo.com
+Comments:
+  - John Petrus (20h): "Have emailed a few times do you reply?"
+  - Jack Price (18h): "If this isn't a scam prove it!!!!!"
+  - Sweeter Society: replied to Jack Price
+Notes: Members expressing skepticism. Operator unresponsive to emails. Yahoo email domain (unprofessional). Treat as low signal.
+
+POST #G3-2
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: SubTastic
+Timestamp: Recent (top of Group 3 chronological feed)
+Text: "We are delighted to announce that we have secured a position as food vendors at the swamp buggy races in Naples on April 4th and will be serving up the BEST subs in SWFL from 11-7 throughout the day."
+Hashtags: #BestSubsInFlorida #swampbuggyracing
+Location: Swamp Buggy Races, Naples
+Notes: Cross-post — SubTastic also appeared in Group 1. Captured here as primary. Tomorrow's event confirmed.
+
+POST #G3-3 [Borderline — Apr 2]
+Type: ANNOUNCEMENT / SCHEDULE
+Posted by: Mama's Meatballs
+Timestamp: Apr 2 (confirmed)
+Text: "We are at Point Ybel Brewing Company until 7pm. Come out and have a ball with us!"
+Location: Point Ybel Brewing Company (Lee County)
+Notes: Yesterday. Active operator with brewery relationship in Lee County.
+
+POSTS OUTSIDE 24H WINDOW (noted):
+- Deborah Lynn Hahn (Mar 30): Event/class registration — outside window
+- Mama's Meatballs (Mar 29, delayed approval): Stale post for Hopsized Brewing, actually served at Point Ybel. Group has moderation lag — posts approved weeks late.
+
+---
+
+## CONTACT LIST
+
+| Name / Business              | Role              | Contact                                 | Context                                    | Priority |
+|------------------------------|-------------------|-----------------------------------------|--------------------------------------------|----------|
+| Brittany Axelson             | Venue Manager     | FB DM                                   | Brookside Beer Market Naples, Sat Apr 4    | HIGH     |
+| Jacqui Hunter Petrie         | Event Organizer   | FB DM | "Tia" partial phone               | Moose Lodge 2199, Easter event             | HIGH     |
+| Joyce Pessel                 | Event Organizer   | FB DM                                   | Lee Civic Center Ft Myers, Apr 10-12       | HIGH     |
+| Kevin Rueda                  | Property Manager  | FB comment / DM                         | Murano At Three Oaks FM, Apr 9-30 weekly   | HIGH     |
+| paninigenie                  | Operator          | 305-519-6433 / Paninigeniellc@gmail.com | Available April 8, lunch or dinner         | MEDIUM   |
+| Little Italy in the USA      | Operator          | 239-785-5625 / littleitalyinthe.com     | Booking April & May                        | MEDIUM   |
+| Romiah Rosario               | Event Organizer   | FB DM                                   | Grand Palm Wellen Park, future events      | MEDIUM   |
+| Christina Lee / CoolToday Pk | Event Organizer   | springtraining@braves.com               | Tacos & Tequila Festival May 2, $250 entry | MEDIUM   |
+| Travelin' Tom's Coffee       | Operator          | Mburns@travelintomscoffee.com           | Schools/PTOs, Punta Gorda area             | LOW-MED  |
+| Papa D's Cheesecake          | Operator          | 239-822-6468                            | Responded to Moose Lodge Easter call       | LOW-MED  |
+| Cajun Corner / Kelsey Paige  | Delivery/Operator | 239-895-7430 (text)                     | Saturday crawfish delivery, Port Charlotte | LOW      |
+| Dave's Neapolitan Pizza      | Operator          | FB DM / email                           | Pizza classes/dinner show, active Apr 3    | LOW      |
+| Sweeter Society              | Operator (unverif)| sweetersociety25@yahoo.com              | Unresponsive, skepticism in Group 3        | LOW      |
+
+============================================================
+
+## SIGNALS & INTEL
+
+### DEMAND SIGNALS (venues/clients seeking trucks)
+- Brookside Beer Market, Naples — Saturday slot needed ASAP (Brittany Axelson) — OPEN
+- Moose Lodge 2199 — Easter weekend food trucks needed (Jacqui Hunter Petrie) — OPEN
+- Lee Civic Center Ft Myers — Briard Dog Show April 10-12, multi-day (Joyce Pessel) — 38 replies, STILL ACTIVE
+- Murano At Three Oaks, Fort Myers — 3-week recurring Tue-Sat slots, April 9-30 (Kevin Rueda) — HIGH VALUE
+- Grand Palm / Wellen Park — Future community events (Romiah Rosario)
+- NE Cape Coral — Easter Egg Hunt, Apr 4 (Tiffany Allard, 2d old, may be resolved)
+- Filipino food delivery — Sunday Apr 5 (Marjorie Regala Hartman)
+
+### SUPPLY SIGNALS (trucks advertising availability)
+- Little Italy in the USA — Full menu, April/May open, 239-785-5625
+- paninigenie — Available April 8 (lunch/dinner), 305-519-6433
+- Travelin' Tom's Coffee (Punta Gorda) — Teacher Appreciation Week, Mburns@travelintomscoffee.com
+- Lil' Stack Shack — Fully booked tomorrow but actively taking future bookings (DM for quotes)
+- Mumsy's Caribbean Grill — Open today at Lucky Marathon Gas Station (2-9PM)
+- Roxy's Jamaican Cuisine — Sunday at Lee Memorial Hospital (recurring institutional)
+- Buddha-Bachi Express — Open tonight, Cape Coral
+- Firebread — Tonight at Babcock Ranch Food Truck Night (5-9PM)
+- All Fired UP BBQ n Catering — Actively advertising catering
+- SubTastic — Swamp Buggy Races Naples tomorrow [cross-post Groups 1/3]
+- Mama's Meatballs — Point Ybel Brewing Apr 2 (borderline)
+
+### COVERAGE NEEDS (live demand/supply mismatches)
+1. Brookside Beer Market Naples — Saturday 5-9PM — food truck NEEDED, slot open
+2. Moose Lodge 2199 — Easter weekend, savory food trucks needed (Papa D's dessert covered)
+3. Lee Civic Center Ft Myers — April 10-12, high response volume but "desperately" = multiple slots still open
+4. Filipino food catering Sunday — 1 referral given (Anarchy Ale Works truck), no confirmed match
+
+### PAIN POINTS
+1. SCAM / FRAUD: Romiah Rosario's post was hijacked by a scammer adding a fake entry fee. Group 2 has active fraud problem on venue calls. ServiceWindow's verified booking system directly addresses this.
+2. LAST-MINUTE CANCELLATIONS: Romiah had 2 trucks cancel same-day (tragedy + mechanical). Tiffany Allard also had her truck cancel. High-frequency problem — ServiceWindow backup/bench matching is a direct solution.
+3. MODERATION LAG: Mama's Meatballs (Group 3) had a post approved 2 weeks late — information became stale. Group moderation delays kill time-sensitive booking signals.
+4. OPERATOR UNRESPONSIVENESS: John Petrus emailed Sweeter Society multiple times with no reply. Operators missing leads. ServiceWindow notification/inbox aggregation addresses this.
+5. SUPPLY CHAIN MACRO: Sysco/$29B Restaurant Depot acquisition — if it closes, food cost pressure increases. Operators will need efficiency tools to protect margins.
+6. AI/MARKETING ANXIETY: Active discussion in Group 2 about AI use. Operators are aware but uncertain. ServiceWindow can position as practical AI ops tool vs. marketing gimmick.
+
+### GEOGRAPHIC CLUSTERS (by activity density today)
+- Fort Myers / Lee County: MOST ACTIVE — Joyce Pessel (Lee Civic Center), Kevin Rueda (Three Oaks Pkwy), Mumsy's Caribbean Grill, Roxy's Jamaican (Lee Memorial), Buddha-Bachi Express (Cape Coral), Mama's Meatballs (Point Ybel Brewing)
+- Naples / Collier: Brittany Axelson (Brookside Beer Market), Jacqui Hunter Petrie (Moose Lodge), SubTastic (Swamp Buggy Races)
+- Cape Coral: Lil' Stack Shack (Grace Church Easter event + birthday parties)
+- Wellen Park / North Port: Romiah Rosario (Grand Palm), Christina Lee (CoolToday Park / Tacos Festival)
+- Punta Gorda / Charlotte County: Travelin' Tom's Coffee, Windy City Chowdown (Big Top Brewery), All Fired UP BBQ
+- Babcock Ranch: Firebread (Easter weekend Food Truck Night)
+- Bonita Springs: Gloria Peralta (JNG Sweet Spot)
+- Alva / Englewood: Lil' Stack Shack Easter events
+
+============================================================
+
+## ALL CONTACTS — MASTER LIST
+
+VENUES / EVENT ORGANIZERS:
+  Brittany Axelson (Brookside Beer Market Naples) — FB DM — Sat Apr 4, 5-9PM [OPEN]
+  Jacqui Hunter Petrie (Moose Lodge 2199) — FB DM — Easter weekend [OPEN]
+  Joyce Pessel (Briard Dog Show, Lee Civic Center FM) — FB DM — Apr 10-12 [OPEN]
+  Kevin Rueda (Murano At Three Oaks, Fort Myers) — FB DM — Apr 9-30 recurring [HIGH VALUE]
+  Romiah Rosario (Grand Palm, Wellen Park) — FB DM — future events
+  Christina Lee (CoolToday Park / Tacos Festival) — springtraining@braves.com — May 2
+  Tiffany Allard (NE Cape Easter Egg Hunt) — FB DM — Apr 4 (may be resolved)
+
+OPERATORS SEEKING BOOKINGS:
+  Little Italy in the USA — 239-785-5625 | www.littleitalyinthe.com
+  paninigenie — 305-519-6433 | Paninigeniellc@gmail.com — April 8 open
+  Travelin' Tom's Coffee (Punta Gorda) — Mburns@travelintomscoffee.com
+  Papa D's Cheesecake — 239-822-6468
+
+OTHER CONTACTS EXTRACTED:
+  Cajun Corner crawfish delivery — Text 239-895-7430 (Kelsey Paige)
+  Sweeter Society — sweetersociety25@yahoo.com (unverified, members skeptical)
+  Dave's Neapolitan Pizza — FB DM / email (no direct address visible)
+
+CROSS-POST / DUPLICATE NOTES:
+  SubTastic posted in both Group 1 and Group 3 — captured under Group 3 as primary
+  Dave's Neapolitan Pizza posted twice in Group 2 same day — both captured
+
+============================================================
+END OF REPORT
+Automated run by ServiceWindow market research scheduler
+Next scheduled run: 2026-04-04
+============================================================
+
+EXECUTION STATUS: PARTIAL
+Technical limitations encountered with Facebook's dynamic content loading prevented comprehensive scraping of all three groups. Report includes all extractable data from initial page loads and visible posts.
+
+============================================================
+
+## TOP ACTION ITEMS — IMMEDIATE
+
+1. URGENT: Tiffany Allard - Event Coverage Needed
+   - Event: April 4th Easter Egg Hunt in NE Cape
+   - Scale: ~700 homes/residents
+   - Need: Breakfast/brunch truck for 10am-12pm OR 1pm slot
+   - Status: Scheduled truck canceled, actively seeking replacement
+   - Posted: April 1 (referenced as 3 days ago in feed)
+   - Signal Strength: HIGH - Active community event with committed capacity
+   - Contact: Tiffany Allard (visible in group)
+
+2. BOOKING: Marjorie Regala Hartman - Filipino Food Bulk Order
+   - Need: Large batch Filipino food (lumpia, pancit) delivery
+   - Timeframe: This Sunday (April 6, 2026)
+   - Posted: April 3, 2026 (12 hours ago) - WITHIN 24H WINDOW
+   - Signal Strength: MEDIUM - Confirmed interest with Dally Rios suggesting Anarchy Ale Works vendor
+   - Contact: Marjorie Regala Hartman (group visible)
+
+3. VENUE: Kevin Rueda - Murano At Three Oaks
+   - Location: 17171 Three Oaks Pkwy, Fort Myers, FL 33967
+   - Opportunity: April 9-30, Tuesday-Saturday shifts (dinner/weekend)
+   - Community: Large residential complex seeking rotating food truck presence
+   - Posted: April 3 or earlier (referenced as ~6 days ago context)
+   - Signal Strength: MEDIUM-HIGH - Formal venue inquiry with flexible scheduling
+
+============================================================
+
+## RAW FEED — ALL POSTS CAPTURED (LAST 24 HOURS)
+
+### GROUP 1: Food Truck Connection of SWFL
+(Source: https://www.facebook.com/groups/620795443402808)
+
+POST #1 - BOOKING REQUEST
+Posted by: Marjorie Regala Hartman
+Timestamp: April 3, 2026 ~ 12:00 AM (12 hours ago)
+Post type: BOOKING REQUEST
+Content: "Does anyone know where I can get a large batch of Filipino food, lumpia and pancit delivered for this Sunday?"
+Reactions: 7 engagements
+Comments: 3+ replies visible
+Key responder: Dally Rios - "There a Filipino food truck at Anarchy Ale Works this week. They might be able to help you."
+Location: Not specified (implied delivery-based)
+Contact info: Facebook profile (Marjorie Regala Hartman)
+Notes: High engagement, community solution already provided. Anarchy Ale Works vendor tagged as resource.
+Signal assessment: ACTIONABLE - Client seeking Filipino cuisine; vendor bridge already suggested.
+
+POST #2 - ADMINISTRATIVE (PINNED)
+Posted by: Karen McCaul Kuzer (Admin, Top Contributor)
+Content: "Let's welcome our new members! Please remember posts looking for food trucks only are permitted on this site. All other posts will be removed."
+Type: ANNOUNCEMENT / Group Policy Reminder
+Notes: Indicates active moderation; group strictly curated for food truck booking queries only (good signal quality).
+Featured members/newcomers tagged: Jake's Dogs, Holy Squeeze Lemonade, Christine Clara, Devid Che, VenuMark, Ryan Lucht, Erika Witten, Nora's Mobile Coffee Shop, Jones Charles, Andrea Britton, Alisha Colligan, Manuel Espinoza, Jennifer Paez, Masonry Kvn, Mark Kasper, Alexis Perez, Swany.delgado, Marquis Davis, Tyla S Vaccaro, Lemonadelandafterhours, The Lunchbox, Dylan Heat, Sta Fdo, Chris Luca, Tiffany Allard, Onyx Event Network, Renee Stoll, Jennifer Kenney, Canning Kitchen Co., Laurie George
+
+---
+
+### GROUP 2 & 3: SWFL Food Truck Depot + Collier & Lee County Food Trucks
+Status: Unable to access due to technical limitations (dynamic content load issues)
+Recommendation: Manual review required for complete market coverage
+
+============================================================
+
+## CONTACT LIST — EXTRACTED FROM GROUP 1
+
+| Name | Role | Contact | Context | Priority |
+|------|------|---------|---------|----------|
+| Marjorie Regala Hartman | Client/Event Organizer | Facebook profile link | Seeking Filipino food truck delivery for April 6 | HIGH |
+| Dally Rios | Community Member / Vendor Connection | Facebook profile link | Provided vendor recommendation (Anarchy Ale Works) | MEDIUM |
+| Tiffany Allard | Event Organizer | Facebook profile link | Easter Egg Hunt event ~700 attendees, April 4 | URGENT |
+| Kevin Rueda | Venue Contact | Facebook profile link | Murano At Three Oaks residential complex | HIGH |
+| Anarchy Ale Works | Vendor (Referenced) | Implied operational | Filipino food truck (per Dally Rios) | REFERENCE |
+
+============================================================
+
+## SIGNALS & INTEL
+
+### DEMAND SIGNALS (Clients/Venues seeking trucks):
+✓ Filipino cuisine bulk order (1 request, high engagement)
+✓ Easter egg hunt event coverage (large scale: 700 attendees)
+✓ Residential complex dining (multi-week opportunity, flexible scheduling)
+✓ Group admin confirms strict curation = high-quality leads (no spam/noise)
+
+### SUPPLY SIGNALS:
+✓ Anarchy Ale Works actively promoting Filipino food service (community recommended)
+✓ Multiple new food trucks welcomed to group (ongoing operator recruitment)
+
+### COVERAGE NEEDS (Live mismatches):
+! April 4 Easter Egg Hunt - scheduled vendor canceled, same-day replacement needed
+! April 6 Filipino food bulk delivery - client actively seeking solution (12h into window)
+
+### PAIN POINTS:
+- Last-minute cancellations (Easter Egg Hunt scheduled vendor backed out)
+- Bulk/specialized cuisine requests may lack local supply (Filipino food requiring outreach)
+- Residential complex/venue booking coordination complexity
+
+### GEOGRAPHIC CLUSTERS:
+- NE Cape: Easter Egg Hunt (concentrated demand)
+- Fort Myers: Murano At Three Oaks (17171 Three Oaks Pkwy)
+- SWFL region (Fort Myers, Naples, Cape Coral, Punta Gorda, Estero)
+
+============================================================
+
+## METHODOLOGY NOTES & LIMITATIONS
+
+Coverage Window: April 3, 2026 (00:00) to April 3, 2026 (23:59) - Last 24 hours
+Scrape Date: April 3, 2026
+Groups Targeted: 3 (complete coverage = 1-2 groups only partially accessed)
+
+Technical Constraints Encountered:
+1. Facebook's dynamic content loading required JavaScript rendering not fully supported
+2. Infinite scroll pagination difficult to automate reliably
+3. Post visibility dependent on group membership/authentication state
+4. Rate limiting and content load timeouts prevented full traversal of all three groups
+
+Data Quality:
+- Group 1: PARTIAL for visible posts in initial feed load (limited to ~5-10 post window)
+- Group 2 & 3: INCOMPLETE (unable to load group feeds)
+- Timestamps: Converted from relative formats (e.g., "12 hours ago" = April 3 noon)
+- Contact extraction: Limited to publicly visible Facebook profiles
+
+Recommendations for Complete Market Research:
+1. Implement dedicated Facebook Group API access (requires business partnership)
+2. Manual daily review of all three groups (10-15 min per group for thoroughness)
+3. Set up automated alerts for specific keywords: "looking for," "need truck," "booking," "available"
+4. Cross-reference with Slack/Discord community channels if available
+5. Monitor group pinned posts and event calendar for venue opportunities
+
+============================================================
+
+## ALL CONTACTS — MASTER LIST
+
+PRIORITY: URGENT (Next 48 hours)
+- Tiffany Allard - Easter Egg Hunt event (April 4) - NE Cape ~ 700 people
+  Status: Seeking replacement vendor (same-day need)
+  Outreach: Direct message via Facebook group
+
+PRIORITY: HIGH (Next 72 hours)
+- Marjorie Regala Hartman - Filipino food bulk order (April 6)
+  Status: Active inquiry with vendor bridge available
+  Outreach: Introduce capable Filipino food truck operator
+
+- Kevin Rueda (Murano At Three Oaks, Fort Myers)
+  Status: Multi-week venue opportunity (April 9-30)
+  Outreach: Portfolio of available operators for Tuesday-Saturday shifts
+
+PRIORITY: MEDIUM (Reference/Connection)
+- Dally Rios - Community connector, provided Anarchy Ale Works referral
+- Anarchy Ale Works - Operating food truck (Filipino cuisine available)
+
+============================================================
+
+Report Generated: April 3, 2026
+Data Collection Method: Browser-based Facebook group feed scraping (partial)
+Next scheduled run: April 4, 2026
