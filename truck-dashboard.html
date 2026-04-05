@@ -2945,6 +2945,27 @@ async function initDashboard(user) {
     currentUserId = user.id;
     console.log('[TRUCK] Dashboard initializing for user:', user.id);
 
+    // Fetch profile and verify role
+    const { data: profile, error: profileErr } = await window.supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileErr || !profile) {
+      console.warn('[TRUCK] Profile fetch error or missing:', profileErr?.message);
+      localStorage.setItem('sw_auth_error', 'Profile not found: ' + (profileErr?.message || 'No profile data'));
+      window.location.replace('auth.html');
+      return;
+    }
+
+    // Role guard: only 'truck' role (and admin bypass) can access truck-dashboard
+    if (profile.role !== 'truck' && !isAdmin) {
+      console.log('[TRUCK] Wrong role:', profile.role, '— redirecting to requester-dashboard');
+      window.location.replace('requester-dashboard.html');
+      return;
+    }
+
   // Check and display trial status
   await displayTrialBanner(user.id);
 
@@ -3119,6 +3140,7 @@ async function initDashboard(user) {
   }
   } catch(err) {
     console.error('[TRUCK] Dashboard init error:', err.message);
+    localStorage.setItem('sw_auth_error', 'Dashboard failed to load: ' + err.message);
     window.location.href = 'auth.html';
   }
 }
