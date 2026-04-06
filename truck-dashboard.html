@@ -2366,7 +2366,6 @@ async function submitExternalBooking() {
       .insert([{
         request_type: 'truck_booking',
         status: 'accepted',
-        source: 'external',
         truck_id: truck.id,
         event_name: eventName,
         event_date: eventDate,
@@ -2375,11 +2374,7 @@ async function submitExternalBooking() {
         location: location,
         city: city,
         guest_count: parseInt(guestCount),
-        notes: combinedNotes,
-        requester_first_name: firstName,
-        requester_last_name: lastName,
-        requester_email: email,
-        requester_phone: phone
+        notes: combinedNotes
       }]);
 
     if (reqError) {
@@ -2864,6 +2859,35 @@ let currentTruckId  = null;
 let currentUserId   = null;
 let currentChannel  = null;
 let currentThread   = { requestId: null, otherUserId: null };
+let requestsChannel = null;
+
+function subscribeToRequestsUpdates(truckId) {
+  if (requestsChannel) {
+    requestsChannel.unsubscribe();
+    requestsChannel = null;
+  }
+  if (!truckId) return;
+
+  requestsChannel = window.supabase
+    .channel('requests:' + truckId)
+    .on('postgres_changes', {
+      event:  'INSERT',
+      schema: 'public',
+      table:  'requests',
+      filter: `truck_id=eq.${truckId}`
+    }, payload => {
+      refreshRequestsFeed();
+    })
+    .on('postgres_changes', {
+      event:  'UPDATE',
+      schema: 'public',
+      table:  'requests',
+      filter: `truck_id=eq.${truckId}`
+    }, payload => {
+      refreshRequestsFeed();
+    })
+    .subscribe();
+}
 
 async function updateRequestStatus(requestId, cardEl, newStatus) {
   // Verify session is still valid
@@ -3000,6 +3024,9 @@ async function initDashboard(user) {
       .limit(6);
 
     currentTruckId = truck.id;
+
+    // Subscribe to real-time updates on requests for this truck
+    subscribeToRequestsUpdates(truck.id);
 
     // Batch-fetch requester profiles for verification + organizer_type
     let requesterMap = {};
