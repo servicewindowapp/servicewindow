@@ -2956,16 +2956,6 @@ async function initDashboard(user) {
       window.location.replace('auth.html');
       return;
     }
-    // Allow admin email to access dashboard for testing/support
-    const isAdmin = user.email === 'wesfitz72@gmail.com';
-    if(isAdmin) console.log('[TRUCK] Admin access via email bypass for user:', user.email);
-
-    // Show View As section for admin users
-    if (isAdmin) {
-      const el = document.getElementById('adminViewAs');
-      if (el) el.style.display = 'block';
-    }
-
     currentUserId = user.id;
     console.log('[TRUCK] Dashboard initializing for user:', user.id);
 
@@ -2983,7 +2973,16 @@ async function initDashboard(user) {
       return;
     }
 
-    // Role guard: only 'truck' role (and admin bypass) can access truck-dashboard
+    // Check admin role
+    const isAdmin = profile.role === 'admin';
+
+    // Show View As section for admin users
+    if (isAdmin) {
+      const el = document.getElementById('adminViewAs');
+      if (el) el.style.display = 'block';
+    }
+
+    // Role guard: only 'truck' or 'admin' role can access truck-dashboard
     if (profile.role !== 'truck' && !isAdmin) {
       console.log('[TRUCK] Wrong role:', profile.role, '— redirecting to requester-dashboard');
       window.location.replace('requester-dashboard.html');

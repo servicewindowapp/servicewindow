@@ -1,0 +1,143 @@
+SWFL FOOD TRUCK MARKET RESEARCH — 2026-04-06
+============================================================
+Automated scrape of 3 Facebook groups | 24-hour window
+Generated: 2026-04-06
+
+============================================================
+GROUP 1: Food Truck Connection of SWFL (3,500 members)
+URL: https://www.facebook.com/groups/ftcswfl
+============================================================
+
+POST 1
+Poster: Carol Schreder Czech
+Timestamp: ~1 day ago (within 24h window)
+Signal Type: BOOKING REQUEST
+Location: Naples (104th Ave N)
+Content: "Naples Park Area Assn. seeks food truck for our neighborhood mixer May 1 from 5:30 to 7:30 at 654 104th Ave N. We expect about 40 guests."
+Engagement: 2 likes, 4 comments
+Contact: Post in group — reply to Carol Schreder Czech
+Notes: Concrete booking opportunity. Event date May 1, ~40 guests, residential neighborhood mixer. No budget stated. Comments may contain operator responses — check thread.
+
+------------------------------------------------------------
+GROUP 1 SUMMARY:
+- Total posts scraped: 1 (within 24h)
+- Booking requests: 1
+- Operator announcements: 0
+- Pain points flagged: 0
+- Active operators identified: 0
+
+============================================================
+GROUP 2: SWFL Food Truck Depot (34,800 members)
+URL: https://www.facebook.com/groups/SWFLFoodTruckDepot
+============================================================
+
+POST 1
+Poster: Countries Coffee LLC
+Timestamp: 8h ago
+Signal Type: OPERATOR SCHEDULE ANNOUNCEMENT
+Content: Weekly schedule April 6–12
+  - Tuesday: St. John's Farmers Market, Naples
+  - Wednesday: Marco Island Farmers Market
+  - Thursday: Isles of Collier (Naples) + Keiser University Naples
+  - Saturday: Cape Coral Farmers Market
+  - Sunday: Pine Ridge Farmers Market
+Engagement: Not captured
+Contact: @CountriesCoffeeLLC | CountriesCoffee@Outlook.com
+Notes: Active multi-stop operator covering both Collier and Lee counties. Uses email for booking contact. High-frequency market circuit — potential partner or placement signal for underserved slots.
+
+POST 2
+Poster: Polar Delites
+Timestamp: 9h ago
+Signal Type: BOOKING PITCH (Operator seeking events)
+Content: Easter events wrap-up post. Actively seeking event bookings. "send us a message to book!"
+Engagement: 0 likes, 0 comments
+Media: Multi-photo post (Easter event photos)
+Contact: DM via Facebook page
+Notes: Zero engagement on booking pitch = operator may be struggling to fill calendar. Potential early-adopter target for platform. Specialty: likely frozen/dessert based on name.
+
+POST 3
+Poster: Cajun Corner (shared reel)
+Timestamp: Reel from ~April 3 (shared within window)
+Signal Type: OPERATOR ROUTE ANNOUNCEMENT
+Content: Crawfish route running every Thursday across Florida + West Coast FL Saturday run
+Engagement: Not captured
+Contact: Facebook page / reel
+Notes: Regional operator with recurring weekly routes. Thursday + Saturday coverage. Crawfish/Cajun specialty. Reel format = marketing-forward operator.
+
+------------------------------------------------------------
+GROUP 2 SUMMARY:
+- Total posts scraped: 3 (within 24h)
+- Booking requests (inbound): 0
+- Operator announcements/pitches: 3
+- Pain points flagged: 1 (Polar Delites zero engagement on booking pitch)
+- Active operators identified: 3 (Countries Coffee LLC, Polar Delites, Cajun Corner)
+
+============================================================
+GROUP 3: Collier & Lee County Food Trucks (1,700 members)
+URL: https://www.facebook.com/groups/collierleetrucks (approximate)
+============================================================
+
+POST 1
+Poster: Diego Botero
+Timestamp: 23h ago
+Signal Type: BOOKING PITCH (Operator seeking events)
+Content: "Now booking April-May! DM for any questions!"
+Engagement: Not captured
+Media: Multi-photo post
+Contact: DM via Facebook
+Notes: Proactive availability post for April-May window. No specialty or pricing stated. Smaller group (1.7K) = likely local/independent operator. Explicit booking availability = warm outreach target.
+
+------------------------------------------------------------
+GROUP 3 SUMMARY:
+- Total posts scraped: 1 (within 24h)
+- Booking requests (inbound): 0
+- Operator announcements/pitches: 1
+- Pain points flagged: 0
+- Active operators identified: 1 (Diego Botero)
+
+============================================================
+CROSS-GROUP INTELLIGENCE SUMMARY
+============================================================
+
+BOOKING OPPORTUNITIES (Venues/Organizers Seeking Trucks):
+1. Naples Park Area Assn. — May 1, 5:30–7:30pm, 654 104th Ave N, Naples. ~40 guests. Contact: Carol Schreder Czech (Group 1).
+
+OPERATORS SEEKING BOOKINGS:
+1. Polar Delites — Easter wrap-up, zero calendar engagement, actively soliciting. DM via FB. (Group 2)
+2. Diego Botero — "Now booking April-May." DM via FB. (Group 3)
+
+OPERATORS BROADCASTING SCHEDULES (established, route-based):
+1. Countries Coffee LLC — Multi-market weekly circuit (Collier + Lee counties). Email: CountriesCoffee@Outlook.com
+2. Cajun Corner — Thursday statewide crawfish route + Saturday West Coast FL run.
+
+MARKET SIGNALS:
+- April-May booking window is active — multiple operators explicitly advertising availability
+- Farmers market circuit dominates operator scheduling (Countries Coffee hitting 5 markets/week)
+- Low engagement on operator booking posts (Polar Delites: 0 likes/comments) suggests group reach/algorithm suppression or operator audience mismatch
+- Smaller groups (1.7K, 3.5K) have lower post volume but higher signal-to-noise ratio vs. large group (34.8K)
+- No operator-to-operator conflict or pricing discussion captured in this window
+- No complaints, cancellations, or no-show posts in this window
+
+CONTACT LIST (captured this cycle):
+| Name/Entity              | Role     | Contact                          | Signal                        |
+|--------------------------|----------|----------------------------------|-------------------------------|
+| Carol Schreder Czech     | Venue    | Facebook (Group 1 post)          | Booking request May 1         |
+| Countries Coffee LLC     | Operator | CountriesCoffee@Outlook.com      | Weekly schedule posted        |
+| Polar Delites            | Operator | Facebook DM                      | Seeking event bookings        |
+| Cajun Corner             | Operator | Facebook page/reel               | Thursday + Saturday routes    |
+| Diego Botero             | Operator | Facebook DM                      | Available April-May           |
+
+============================================================
+METHODOLOGY NOTES
+============================================================
+- Facebook groups scraped via browser automation (Claude in Chrome)
+- Facebook virtualizes feed rendering — content disappears from DOM when scrolled out of viewport
+- Timestamps extracted via JavaScript DOM query (innerText pattern matching) due to Facebook's anti-scrape character scrambling
+- Photo/media gallery used to access individual posts that wouldn't render in main feed
+- Chronological sort applied via ?sorting_setting=CHRONOLOGICAL URL parameter where available
+- "Facebook" blockquote elements confirmed as ad placeholders (not unloaded posts) via DOM class inspection
+- Post counts verified via querySelectorAll('a[href*="/user/"]') unique user link counting
+
+============================================================
+END OF REPORT
+============================================================

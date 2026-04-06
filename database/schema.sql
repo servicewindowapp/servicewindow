@@ -401,8 +401,54 @@ CREATE TABLE IF NOT EXISTS "public"."waitlist" (
 ALTER TABLE "public"."waitlist" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."listings" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "poster_id" "uuid" NOT NULL,
+    "board" "text" NOT NULL,
+    "title" "text" NOT NULL,
+    "event_date" "date",
+    "location" "text",
+    "city" "text",
+    "budget_range" "text",
+    "description" "text",
+    "status" "text" DEFAULT 'active'::"text",
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."listings" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."ads" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "poster_id" "uuid" NOT NULL,
+    "headline" "text" NOT NULL,
+    "category" "text",
+    "body" "text",
+    "contact" "text",
+    "status" "text" DEFAULT 'active'::"text",
+    "impressions" integer DEFAULT 0,
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."ads" OWNER TO "postgres";
+
+
+ALTER TABLE ONLY "public"."ads"
+    ADD CONSTRAINT "ads_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."jobs"
     ADD CONSTRAINT "jobs_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."listings"
+    ADD CONSTRAINT "listings_pkey" PRIMARY KEY ("id");
 
 
 

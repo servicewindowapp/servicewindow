@@ -538,14 +538,6 @@ async function redirectByRole(userId, userEmail){
       return;
     }
 
-    // Email fallback: force admin dashboard for wesfitz72@gmail.com
-    if(userEmail === 'wesfitz72@gmail.com'){
-      console.log('✓ [AUTH] Admin email detected — forcing admin-dashboard.html');
-      await new Promise(resolve => setTimeout(resolve, 800));
-      window.location.replace('admin-dashboard.html');
-      return;
-    }
-
     // Fetch profile to determine role
     const { data: profile, error: profileErr } = await window.supabase
       .from('profiles')
@@ -561,6 +553,13 @@ async function redirectByRole(userId, userEmail){
 
     // Determine destination dashboard
     const role = (profile && profile.role) || 'truck';
+
+    // Force admin dashboard for admin role
+    if(role === 'admin'){
+      await new Promise(resolve => setTimeout(resolve, 800));
+      window.location.replace('admin-dashboard.html');
+      return;
+    }
     const dashboardMap = {
       admin:            'admin-dashboard.html',
       truck:            'truck-dashboard.html',
@@ -705,17 +704,8 @@ async function checkSession(){
     }
 
     const userId = session.user.id;
-    const userEmail = session.user.email;
 
-    console.log('[AUTH] Session found — user:', userId, 'email:', userEmail);
-
-    // Email fallback: force admin dashboard for wesfitz72@gmail.com
-    if(userEmail === 'wesfitz72@gmail.com'){
-      console.log('✓ [AUTH] Admin email detected in session — forcing admin-dashboard.html');
-      sessionStorage.setItem('_sw_auth_redirected', 'true');
-      window.location.href = 'admin-dashboard.html';
-      return;
-    }
+    console.log('[AUTH] Session found — user:', userId);
 
     // Verify profile exists and has a valid role before redirecting
     const { data: profile, error } = await window.supabase
@@ -735,6 +725,13 @@ async function checkSession(){
     }
 
     console.log('✓ [AUTH] Profile valid — role:', profile.role);
+
+    // Force admin dashboard for admin role
+    if(profile.role === 'admin'){
+      sessionStorage.setItem('_sw_auth_redirected', 'true');
+      window.location.href = 'admin-dashboard.html';
+      return;
+    }
 
     // Profile is valid, safe to redirect
     sessionStorage.setItem('_sw_auth_redirected', 'true');
