@@ -527,7 +527,7 @@ const ROLE_DASHBOARDS = {
 
 async function redirectByRole(userId, userEmail){
   try {
-    console.log('✓ [AUTH] Redirecting user:', userId, 'email:', userEmail);
+    console.log('[SW] Redirecting...');
 
     // Get the full session (includes token in case Brave blocked localStorage)
     const { data: { session }, error: sessionErr } = await window.supabase.auth.getSession();
@@ -705,7 +705,7 @@ async function checkSession(){
 
     const userId = session.user.id;
 
-    console.log('[AUTH] Session found — user:', userId);
+    console.log('[SW] Session found');
 
     // Verify profile exists and has a valid role before redirecting
     const { data: profile, error } = await window.supabase

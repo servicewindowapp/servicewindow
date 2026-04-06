@@ -2957,7 +2957,7 @@ async function initDashboard(user) {
       return;
     }
     currentUserId = user.id;
-    console.log('[TRUCK] Dashboard initializing for user:', user.id);
+    console.log('[SW] Dashboard init');
 
     // Fetch profile and verify role
     const { data: profile, error: profileErr } = await window.supabase
