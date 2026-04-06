@@ -1501,6 +1501,30 @@ async function manageAdBilling() {
 }
 
 // ── MESSAGES ──────────────────────────────────────────────────────────────────
+let messageChannel = null;
+let selectedMessage = null; // Track selected message for reply
+
+function subscribeToInbox() {
+  if (messageChannel) {
+    messageChannel.unsubscribe();
+    messageChannel = null;
+  }
+  if (!currentUser) return;
+
+  messageChannel = window.supabase
+    .channel('messages:inbox:' + currentUser.id)
+    .on('postgres_changes', {
+      event:  'INSERT',
+      schema: 'public',
+      table:  'messages',
+      filter: `recipient_id=eq.${currentUser.id}`
+    }, payload => {
+      // Reload messages to show new message
+      loadMessages();
+    })
+    .subscribe();
+}
+
 async function loadMessages() {
   if (!currentUser) return;
   const { data: msgs } = await window.supabase
@@ -1515,19 +1539,90 @@ async function loadMessages() {
     container.innerHTML = '<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">No messages yet</div><div class="empty-sub">Messages from trucks and the ServiceWindow team will appear here.</div></div>';
     return;
   }
-  container.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>From</th><th>Message</th><th>Date</th></tr></thead>
-    <tbody>${msgs.map(m => `<tr>
-      <td class="td-primary">${m.sender?.business_name || m.sender?.full_name || 'Unknown'}</td>
-      <td class="td-muted" style="max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.content || '—'}</td>
-      <td class="td-muted">${new Date(m.created_at).toLocaleDateString()}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`;
+  container.innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr><th>From</th><th>Message</th><th>Date</th></tr></thead>
+      <tbody>${msgs.map(m => `<tr data-sender-id="${m.sender_id}" onclick="selectMessage(this, ${m.sender_id}, '${(m.sender?.business_name || m.sender?.full_name || 'Unknown').replace(/'/g, "\\'")}')" style="cursor:pointer;transition:background .15s;">
+        <td class="td-primary">${m.sender?.business_name || m.sender?.full_name || 'Unknown'}</td>
+        <td class="td-muted" style="max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.body || '—'}</td>
+        <td class="td-muted">${new Date(m.created_at).toLocaleDateString()}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+
+    <div style="border-top:1px solid var(--border);padding:16px;background:rgba(255,255,255,.02);">
+      <div style="font-size:.72rem;color:rgba(255,255,255,.6);margin-bottom:8px;font-weight:600;">REPLY TO TRUCK</div>
+      <div id="replyToLabel" style="font-size:.82rem;color:var(--fire);margin-bottom:12px;">Select a message to reply</div>
+      <div style="display:flex;gap:8px;align-items:flex-end;">
+        <textarea id="rdMsgInput" placeholder="Type your message…" style="flex:1;padding:10px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-sm);color:#fff;font-family:'Sora',sans-serif;font-size:.84rem;resize:vertical;min-height:60px;max-height:120px;" disabled></textarea>
+        <button class="btn btn-primary" id="rdMsgBtn" onclick="sendMessageReply()" style="flex-shrink:0;height:44px;padding:0 16px;" disabled>Send</button>
+      </div>
+    </div>
+  `;
 
   // Mark as read
   await window.supabase.from('messages').update({ is_read: true }).eq('recipient_id', currentUser.id).eq('is_read', false);
   document.getElementById('msgBadge').style.display = 'none';
   document.getElementById('notifDot').style.display = 'none';
+
+  // Subscribe to new messages
+  subscribeToInbox();
+}
+
+function selectMessage(rowEl, senderId, senderName) {
+  // Deselect previous row
+  document.querySelectorAll('#messagesContainer tr[data-sender-id]').forEach(r => {
+    r.style.background = '';
+  });
+
+  // Select clicked row
+  rowEl.style.background = 'rgba(255,107,53,.1)';
+  selectedMessage = { senderId, senderName };
+
+  // Enable reply input
+  const input = document.getElementById('rdMsgInput');
+  const btn = document.getElementById('rdMsgBtn');
+  const label = document.getElementById('replyToLabel');
+  input.disabled = false;
+  btn.disabled = false;
+  label.textContent = `Reply to ${senderName}`;
+  label.style.color = 'var(--fire)';
+  input.focus();
+}
+
+async function sendMessageReply() {
+  if (!currentUser || !selectedMessage) {
+    showToast('Select a message to reply to.', 'error');
+    return;
+  }
+
+  const input = document.getElementById('rdMsgInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.disabled = true;
+  document.getElementById('rdMsgBtn').disabled = true;
+
+  const { error } = await window.supabase
+    .from('messages')
+    .insert({
+      sender_id:    currentUser.id,
+      recipient_id: selectedMessage.senderId,
+      body:         text,
+      is_read:      false,
+    });
+
+  input.disabled = false;
+  document.getElementById('rdMsgBtn').disabled = false;
+  input.focus();
+
+  if (error) {
+    showToast('Failed to send message. Try again.', 'error');
+    input.value = text; // restore on failure
+  } else {
+    showToast('Message sent!', 'success');
+    loadMessages(); // Reload to show sent message
+  }
 }
 
 // ── PROFILE ───────────────────────────────────────────────────────────────────
