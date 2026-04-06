@@ -1054,8 +1054,9 @@ async function loadOverview(role, profile) {
       .from('listings').select('*', { count: 'exact', head: true })
       .eq('poster_id', profile.id).eq('board', 'event');
     const { count: bkCount } = await window.supabase
-      .from('bookings').select('*', { count: 'exact', head: true })
-      .eq('requester_id', profile.id);
+      .from('requests').select('*', { count: 'exact', head: true })
+      .eq('requester_id', profile.id)
+      .eq('request_type', 'truck_booking');
     kpiGrid.innerHTML = kpiCard('Events Posted', evCount || 0, 'All time') +
       kpiCard('Booking Requests', bkCount || 0, 'Sent to trucks') +
       kpiCard('Trucks Available', '50+', 'In SWFL') +
@@ -1095,9 +1096,10 @@ function kpiCard(label, value, sub) {
 
 async function loadRecentBookings(userId) {
   const { data: bookings } = await window.supabase
-    .from('bookings')
+    .from('requests')
     .select('*, truck:truck_id(business_name)')
     .eq('requester_id', userId)
+    .eq('request_type', 'truck_booking')
     .order('created_at', { ascending: false })
     .limit(5);
 
@@ -1189,12 +1191,13 @@ async function requestTruck(truckId, truckName) {
   const location = prompt('Event location / city:');
   if (!location) return;
 
-  const { error } = await window.supabase.from('bookings').insert({
+  const { error } = await window.supabase.from('requests').insert({
     truck_id: truckId,
     requester_id: currentUser.id,
     event_date: date,
     location: location,
-    status: 'pending'
+    status: 'pending',
+    request_type: 'truck_booking'
   });
   if (error) { showToast('Request failed: ' + error.message, 'error'); return; }
   showToast('Booking request sent to ' + truckName + '!', 'success');
@@ -1260,9 +1263,10 @@ function filterEvents(filter, btn) {
 async function loadBookings() {
   if (!currentUser) return;
   const { data: bookings } = await window.supabase
-    .from('bookings')
+    .from('requests')
     .select('*, truck:truck_id(business_name)')
     .eq('requester_id', currentUser.id)
+    .eq('request_type', 'truck_booking')
     .order('created_at', { ascending: false });
 
   const container = document.getElementById('bookingsContainer');
