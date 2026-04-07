@@ -810,6 +810,17 @@ img,video{max-width:100%;height:auto;}
     </div>
   </div>
 
+  <!-- VERIFICATION PENDING BANNER -->
+  <div id="verificationPendingBanner" style="display:none;padding:14px 20px;background:rgba(217,119,6,0.08);border-bottom:1px solid rgba(217,119,6,0.3);">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:1rem;">⏳</span>
+      <div>
+        <span style="font-size:.88rem;font-weight:700;color:#FCD34D;">Verification Pending</span>
+        <span style="font-size:.84rem;color:rgba(255,255,255,0.6);margin-left:8px;">Your account is under review. You'll receive an email once approved — usually within 1 business day.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- TRIAL STATUS BANNER -->
   <div id="trialStatusBanner" style="display:none;padding:14px 20px;background:#111f2e;border-bottom:1px solid rgba(255,255,255,0.1);font-size:.9rem;color:rgba(255,255,255,0.7);">
     <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;">
@@ -2962,7 +2973,7 @@ async function initDashboard(user) {
     // Fetch profile and verify role
     const { data: profile, error: profileErr } = await window.supabase
       .from('profiles')
-      .select('role')
+      .select('role, verification_status')
       .eq('id', user.id)
       .single();
 
@@ -2988,6 +2999,12 @@ async function initDashboard(user) {
       window.location.replace('requester-dashboard.html');
       return;
     }
+
+  // Show verification pending notice if not yet approved
+  if (profile.verification_status !== 'verified') {
+    const vb = document.getElementById('verificationPendingBanner');
+    if (vb) vb.style.display = 'block';
+  }
 
   // Check and display trial status
   await displayTrialBanner(user.id);
@@ -3499,31 +3516,4 @@ if (window.supabase) {
   <a class="bn-tab active" href="#" onclick="setPanel('home',document.getElementById('nav-home'));updateBn('bnHome');return false;"><span class="bn-icon">📊</span><span class="bn-label">Dashboard</span></a>
   <a class="bn-tab" href="#" onclick="setPanel('requests',document.getElementById('nav-requests'));updateBn('bnRequests');return false;"><span class="bn-icon">📬</span><span class="bn-label">Requests</span></a>
   <a class="bn-tab" href="#" onclick="setPanel('messages',document.getElementById('nav-messages'));updateBn('bnMessages');return false;"><span class="bn-icon">💬</span><span class="bn-label">Messages</span></a>
-  <a class="bn-tab" href="#" onclick="setPanel('marketplace',document.getElementById('nav-marketplace'));updateBn('bnMarket');return false;"><span class="bn-icon">📋</span><span class="bn-label">Listings</span></a>
-  <a class="bn-tab" href="#" onclick="setPanel('profile',document.getElementById('nav-profile'));updateBn('bnProfile');return false;"><span class="bn-icon">👤</span><span class="bn-label">Profile</span></a>
-</nav>
-
-<script>
-// ── ERROR LOGGER ─────────────────────────────────────────────
-(function() {
-  function logError(msg, stack) {
-    if (!window.supabase) return;
-    window.supabase.auth.getUser().then(({ data: { user } }) => {
-      window.supabase.from('error_logs').insert({
-        user_id: user?.id || null,
-        page: window.location.pathname,
-        message: String(msg).slice(0, 500),
-        stack: stack ? String(stack).slice(0, 2000) : null,
-        user_agent: navigator.userAgent.slice(0, 300)
-      }).then(() => {});
-    }).catch(() => {});
-  }
-  window.addEventListener('error', e => logError(e.message, e.error?.stack));
-  window.addEventListener('unhandledrejection', e => logError(
-    e.reason?.message || String(e.reason), e.reason?.stack
-  ));
-})();
-</script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR_REAL_TOKEN"}'></script>
-</body>
-</html>
+  <a class="bn-tab" href="#" onclick="setPanel('marketplace',document.getElementById('nav-marketplace'));updateBn('bnMarket');retu

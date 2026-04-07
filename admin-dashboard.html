@@ -273,11 +273,7 @@ textarea.form-input{height:auto;padding:10px 12px;resize:vertical;min-height:80p
     <div class="sidebar-section admin-view-as" id="adminViewAs" style="display:none;">
       <div class="sidebar-section-label">View As</div>
       <a class="sidebar-item" href="truck-dashboard.html"><span class="sidebar-icon">🚚</span>Truck</a>
-      <a class="sidebar-item" href="planner-dashboard.html"><span class="sidebar-icon">🎉</span>Organizer</a>
-      <a class="sidebar-item" href="venue-dashboard.html"><span class="sidebar-icon">🏢</span>Venue</a>
-      <a class="sidebar-item" href="property-dashboard.html"><span class="sidebar-icon">🏠</span>Property</a>
-      <a class="sidebar-item" href="service-provider-dashboard.html"><span class="sidebar-icon">🔧</span>Services</a>
-      <a class="sidebar-item" href="jobs-dashboard.html"><span class="sidebar-icon">💼</span>Jobs</a>
+      <a class="sidebar-item" href="requester-dashboard.html"><span class="sidebar-icon">🎉</span>Organizer / Venue</a>
       <a class="sidebar-item active" href="admin-dashboard.html"><span class="sidebar-icon">⚙️</span>Admin</a>
     </div>
 
@@ -725,11 +721,17 @@ async function loadRecentBookings() {
 // ── VERIFICATION QUEUE ────────────────────────────────────────────
 async function loadVerificationQueue() {
   try {
-    const { data: requests } = await window.supabase
+    const { data: requests, error: verifyErr } = await window.supabase
       .from('verification_requests')
       .select('*')
       .eq('status', 'pending')
-      .order('created_at', { ascending: false });
+      .order('submitted_at', { ascending: false });
+
+    if (verifyErr) {
+      console.error('Verification queue error:', verifyErr.message);
+      document.getElementById('verify-list').innerHTML = '<div class="empty-state"><p>Error loading verifications. Check console.</p></div>';
+      return;
+    }
 
     const html = (requests || []).map(r => `
       <div class="card">
@@ -781,7 +783,7 @@ async function approveVerification(requestId) {
         .eq('id', requestId),
       window.supabase
         .from('profiles')
-        .update({ verification_status: 'verified' })
+        .update({ verification_status: 'verified', is_verified: true })
         .eq('id', request.user_id)
     ]);
 
@@ -1094,3 +1096,4 @@ async function navSignOut() {
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR_REAL_TOKEN"}'></script>
 </body>
 </html>
+    
