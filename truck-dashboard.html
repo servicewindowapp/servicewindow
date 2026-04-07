@@ -760,24 +760,16 @@ img,video{max-width:100%;height:auto;}
   </div>
 
   <div class="sidebar-section" style="border-top:1px solid var(--border);padding-top:6px;margin-top:4px;">
-    <div class="sidebar-section-label" style="padding-top:10px;">Explore Demos</div>
+    <div class="sidebar-section-label" style="padding-top:10px;">Switch Dashboard</div>
     <a class="sidebar-item active" href="truck-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🚚</span> Truck Dashboard</a>
-    <a class="sidebar-item" href="planner-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">📋</span> Organizer Dashboard</a>
-    <a class="sidebar-item" href="venue-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🏛️</span> Venue Dashboard</a>
-    <a class="sidebar-item" href="property-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🏠</span> Property Dashboard</a>
-    <a class="sidebar-item" href="service-provider-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">🔧</span> Provider Dashboard</a>
-    <a class="sidebar-item" href="jobs-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">💼</span> Jobs Dashboard</a>
+    <a class="sidebar-item" href="requester-dashboard.html" style="text-decoration:none;"><span class="sidebar-item-icon">📋</span> Organizer / Venue</a>
   </div>
 
   <div class="sidebar-section admin-view-as" id="adminViewAs" style="display:none;">
     <div class="sidebar-section-label">View As</div>
     <a class="sidebar-item" href="truck-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">🚚</span>Truck</a>
-    <a class="sidebar-item" href="planner-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">🎉</span>Organizer</a>
-    <a class="sidebar-item" href="venue-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">🏢</span>Venue</a>
-    <a class="sidebar-item" href="property-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">🏠</span>Property</a>
-    <a class="sidebar-item" href="service-provider-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">🔧</span>Services</a>
-    <a class="sidebar-item" href="jobs-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">💼</span>Jobs</a>
-    <a class="sidebar-item active" href="admin-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">⚙️</span>Admin</a>
+    <a class="sidebar-item" href="requester-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">🎉</span>Organizer / Venue</a>
+    <a class="sidebar-item" href="admin-dashboard.html" style="text-decoration:none;"><span class="sidebar-icon">🛡️</span>Admin</a>
   </div>
 
   <div class='sidebar-footer'>
@@ -1024,103 +1016,21 @@ img,video{max-width:100%;height:auto;}
 
     <!-- ═══ PANEL: REQUEST MARKETPLACE ═══ -->
     <div class="panel" id="panel-marketplace">
-      <div class="panel-filters">
-        <button class="pf-chip active" onclick="pfChip(this)">All</button>
-        <button class="pf-chip" onclick="pfChip(this)">This Week</button>
-        <button class="pf-chip" onclick="pfChip(this)">This Month</button>
-        <button class="pf-chip" onclick="pfChip(this)">Private Events</button>
-        <button class="pf-chip" onclick="pfChip(this)">Markets &amp; Festivals</button>
-        <button class="pf-chip" onclick="pfChip(this)">Recurring</button>
-        <button class="pf-chip" onclick="pfChip(this)">Cape Coral</button>
-        <button class="pf-chip" onclick="pfChip(this)">Fort Myers</button>
-        <button class="pf-chip" onclick="pfChip(this)">Naples</button>
+      <div class="panel-filters" id="marketplaceFilters">
+        <button class="pf-chip active" onclick="pfChip(this);filterMarketplace('all')">All</button>
+        <button class="pf-chip" onclick="pfChip(this);filterMarketplace('Cape Coral')">Cape Coral</button>
+        <button class="pf-chip" onclick="pfChip(this);filterMarketplace('Fort Myers')">Fort Myers</button>
+        <button class="pf-chip" onclick="pfChip(this);filterMarketplace('Naples')">Naples</button>
+        <button class="pf-chip" onclick="pfChip(this);filterMarketplace('Sarasota')">Sarasota</button>
       </div>
-      <div class="listing-grid">
-        <div class="listing-card" onclick="openModal('modal-bid')">
-          <div class="lc-top">
-            <div><div class="lc-title">Corporate Lunch &mdash; Lee Health</div><div class="lc-meta">&#128205; Fort Myers &bull; Apr 3, 2025 &bull; 11am&ndash;2pm</div></div>
-            <div><div class="lc-payout">$900</div><div class="lc-payout-label">guaranteed</div></div>
-          </div>
-          <div class="chips"><span class="chip">&#128101; 200 guests</span><span class="chip">&#127838; Any cuisine</span><span class="chip">&#9889; Power provided</span><span class="chip">&#128662; Easy setup</span></div>
-          <div class="lc-desc">Employee appreciation lunch. Need 1 truck. Full commissary access on site. Very organized event team.</div>
-          <div class="lc-foot">
-            <div><span class="tag tag-new">New &bull; 4h ago</span> <span class="competing">2 competing</span></div>
-            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('modal-bid')">Bid Now</button>
-          </div>
-        </div>
-        <div class="listing-card" onclick="openModal('modal-bid')">
-          <div class="lc-top">
-            <div><div class="lc-title">Wedding Reception &mdash; Sanibel Island</div><div class="lc-meta">&#128205; Sanibel &bull; Apr 12, 2025 &bull; 6pm&ndash;10pm</div></div>
-            <div><div class="lc-payout">$1,400</div><div class="lc-payout-label">guaranteed</div></div>
-          </div>
-          <div class="chips"><span class="chip">&#128101; 120 guests</span><span class="chip">&#129473; Upscale preferred</span><span class="chip">&#127771; Evening service</span></div>
-          <div class="lc-desc">Upscale private wedding. Looking for elevated street food presentation. Menu approval required before confirm.</div>
-          <div class="lc-foot">
-            <div><span class="tag tag-open">Open</span> <span class="competing">5 competing</span></div>
-            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('modal-bid')">Bid Now</button>
-          </div>
-        </div>
-        <div class="listing-card" onclick="openModal('modal-bid')">
-          <div class="lc-top">
-            <div><div class="lc-title">Cape Coral Saturday Market</div><div class="lc-meta">&#128205; Cape Coral &bull; Every Saturday &bull; 8am&ndash;1pm</div></div>
-            <div><div class="lc-payout">$150</div><div class="lc-payout-label">spot fee</div></div>
-          </div>
-          <div class="chips"><span class="chip">&#9854; Recurring weekly</span><span class="chip">&#127978; 1 spot open</span><span class="chip">&#9728; Outdoor market</span></div>
-          <div class="lc-desc">Established Saturday market. High foot traffic, 40+ vendors. Looking for savory food truck to fill recurring spot.</div>
-          <div class="lc-foot">
-            <div><span class="tag tag-open">Open</span> <span class="competing">1 spot left</span></div>
-            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('modal-bid')">Bid Now</button>
-          </div>
-        </div>
-        <div class="listing-card" onclick="openModal('modal-bid')">
-          <div class="lc-top">
-            <div><div class="lc-title">Graduation Party &mdash; 150 Guests</div><div class="lc-meta">&#128205; Fort Myers &bull; Apr 20, 2025 &bull; 3pm&ndash;7pm</div></div>
-            <div><div class="lc-payout">$750</div><div class="lc-payout-label">estimated</div></div>
-          </div>
-          <div class="chips"><span class="chip">&#128101; 150 guests</span><span class="chip">&#127881; Party/celebration</span><span class="chip">&#9889; Power available</span></div>
-          <div class="lc-desc">Private residence. High school graduation. Budget flexible for right truck. References preferred.</div>
-          <div class="lc-foot">
-            <div><span class="tag tag-new">New &bull; 1d ago</span> <span class="competing">1 competing</span></div>
-            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('modal-bid')">Bid Now</button>
-          </div>
-        </div>
-        <div class="listing-card" onclick="openModal('modal-bid')">
-          <div class="lc-top">
-            <div><div class="lc-title">Art Walk &mdash; Downtown Fort Myers</div><div class="lc-meta">&#128205; Downtown FM &bull; Monthly &bull; 5pm&ndash;9pm</div></div>
-            <div><div class="lc-payout">$200</div><div class="lc-payout-label">spot fee</div></div>
-          </div>
-          <div class="chips"><span class="chip">&#9854; Monthly</span><span class="chip">&#127912; 2 spots open</span><span class="chip">&#127748; High traffic</span></div>
-          <div class="lc-desc">Monthly First Friday Art Walk. Foot traffic averages 1,200+. Looking for diverse cuisine mix for the strip.</div>
-          <div class="lc-foot">
-            <div><span class="tag tag-open">Open</span> <span class="competing">2 spots left</span></div>
-            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('modal-bid')">Bid Now</button>
-          </div>
-        </div>
-        <div class="listing-card" onclick="openModal('modal-bid')">
-          <div class="lc-top">
-            <div><div class="lc-title">Brewery Rotation &mdash; Momentum Brewing</div><div class="lc-meta">&#128205; Fort Myers &bull; Thu&ndash;Sat &bull; 5pm&ndash;9pm</div></div>
-            <div><div class="lc-payout">$0</div><div class="lc-payout-label">keep revenue</div></div>
-          </div>
-          <div class="chips"><span class="chip">&#9854; 3x/week</span><span class="chip">&#127866; Brewery</span><span class="chip">&#9889; Full hookups</span><span class="chip">&#128688; Water access</span></div>
-          <div class="lc-desc">Anchor spot at Momentum Brewing. Keep all revenue. 200+ built-in patrons nightly. Strong recurring income potential.</div>
-          <div class="lc-foot">
-            <div><span class="tag tag-new">New &bull; 6h ago</span> <span class="competing">4 competing</span></div>
-            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('modal-bid')">Bid Now</button>
-          </div>
-        </div>
-        <div class="listing-card" onclick="openModal('modal-bid')">
-          <div class="lc-top">
-            <div><div class="lc-title">SWFL Food &amp; Wine Festival</div><div class="lc-meta">&#128205; Naples, FL &bull; May 10&ndash;11, 2025</div></div>
-            <div><div class="lc-payout">$300</div><div class="lc-payout-label">spot fee</div></div>
-          </div>
-          <div class="chips"><span class="chip">&#127914; 2-day festival</span><span class="chip">&#128101; 3,000+ expected</span><span class="chip">&#128247; Media coverage</span></div>
-          <div class="lc-desc">Annual premier food festival in Naples. High exposure event. Menu curation required. Applications close Apr 1.</div>
-          <div class="lc-foot">
-            <div><span class="tag tag-open">Open</span> <span class="competing">12 spots left</span></div>
-            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('modal-bid')">Apply</button>
-          </div>
+      <div class="listing-grid" id="marketplaceGrid">
+        <div style="grid-column:1/-1;padding:32px;text-align:center;color:rgba(255,255,255,0.4);font-size:.85rem;">
+          Loading events&hellip;
         </div>
       </div>
+      <p id="marketplaceEmpty" style="display:none;padding:40px 20px;text-align:center;color:rgba(255,255,255,0.35);font-size:.9rem;">
+        No open event listings right now. Check back soon — new requests post daily.
+      </p>
     </div>
 
     <!-- ═══ PANEL: SHIFTS ═══ -->
@@ -1969,8 +1879,141 @@ function setPanel(id, navEl) {
   document.getElementById('panelTitle').textContent = PANEL_TITLES[id] || id;
   closeSidebar();
   if (id === 'calendar') buildCalendar();
+  if (id === 'marketplace') loadMarketplace();
   if (id === 'jobs') loadJobListings();
   if (id === 'ads') loadServiceAds();
+}
+
+// ═══════════════════════════════════
+//  REQUEST MARKETPLACE — LIVE EVENTS
+// ═══════════════════════════════════
+let _marketplaceListings = [];  // cache for city filter
+
+async function loadMarketplace() {
+  const grid = document.getElementById('marketplaceGrid');
+  const empty = document.getElementById('marketplaceEmpty');
+  if (!grid) return;
+
+  if (!window.supabase) {
+    grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:.84rem;text-align:center;padding:40px 0;">Not connected.</p>';
+    return;
+  }
+
+  grid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:rgba(255,255,255,0.4);font-size:.85rem;">Loading events&hellip;</div>';
+  if (empty) empty.style.display = 'none';
+
+  const { data: listings, error } = await window.supabase
+    .from('listings')
+    .select('id, poster_id, title, event_date, location, city, budget_range, description, created_at, profiles:poster_id(full_name)')
+    .eq('board', 'event')
+    .eq('status', 'active')
+    .order('event_date', { ascending: true });
+
+  if (error) {
+    grid.innerHTML = `<p style="color:rgba(220,38,38,0.7);font-size:.82rem;text-align:center;padding:40px 0;">Error loading listings: ${error.message}</p>`;
+    return;
+  }
+
+  _marketplaceListings = listings || [];
+  renderMarketplaceCards(_marketplaceListings);
+}
+
+function renderMarketplaceCards(listings) {
+  const grid = document.getElementById('marketplaceGrid');
+  const empty = document.getElementById('marketplaceEmpty');
+  if (!grid) return;
+
+  if (!listings || listings.length === 0) {
+    grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+
+  if (empty) empty.style.display = 'none';
+
+  grid.innerHTML = listings.map(l => {
+    const posterName = (l.profiles && l.profiles.full_name) ? l.profiles.full_name : 'Event Organizer';
+    const dateStr = l.event_date
+      ? new Date(l.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : 'Date TBD';
+    const budget = l.budget_range || 'Budget open';
+    const city = l.city || '';
+    const location = l.location || city || 'SWFL';
+    const desc = l.description || '';
+    // How recent is this posting?
+    const ageMs = Date.now() - new Date(l.created_at).getTime();
+    const ageHours = Math.floor(ageMs / 3600000);
+    const ageLabel = ageHours < 24 ? `New &bull; ${ageHours}h ago` : `${Math.floor(ageHours / 24)}d ago`;
+
+    return `
+    <div class="listing-card">
+      <div class="lc-top">
+        <div>
+          <div class="lc-title">${escHtml(l.title)}</div>
+          <div class="lc-meta">&#128205; ${escHtml(location)} &bull; ${escHtml(dateStr)}</div>
+        </div>
+        <div>
+          <div class="lc-payout">${escHtml(budget)}</div>
+          <div class="lc-payout-label">posted by ${escHtml(posterName)}</div>
+        </div>
+      </div>
+      ${desc ? `<div class="lc-desc">${escHtml(desc)}</div>` : ''}
+      <div class="lc-foot">
+        <div><span class="tag tag-new">${ageLabel}</span></div>
+        <button class="btn btn-primary btn-sm" onclick="submitProposal('${escHtml(l.id)}','${escHtml(l.poster_id)}',${JSON.stringify(l.title)},${JSON.stringify(l.event_date||'')},${JSON.stringify(l.location||'')},${JSON.stringify(l.city||'')},${JSON.stringify(l.budget_range||'')})">Express Interest</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterMarketplace(city) {
+  if (!_marketplaceListings.length) return;
+  const filtered = city === 'all' ? _marketplaceListings
+    : _marketplaceListings.filter(l => (l.city || '').toLowerCase().includes(city.toLowerCase()));
+  renderMarketplaceCards(filtered);
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function submitProposal(listingId, posterId, eventName, eventDate, location, city, budget) {
+  if (!currentTruckId) {
+    showToast('Complete your truck profile before expressing interest.', 'warning');
+    return;
+  }
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Sending\u2026';
+
+  const { error } = await window.supabase
+    .from('requests')
+    .insert([{
+      request_type: 'truck_booking',
+      status: 'pending',
+      truck_id: currentTruckId,
+      requester_id: posterId,
+      event_name: eventName,
+      event_date: eventDate || null,
+      location: location || null,
+      city: city || null,
+      notes: `Expressed interest via Request Marketplace. Budget: ${budget || 'open'}.`
+    }]);
+
+  if (error) {
+    showToast('Error submitting proposal: ' + error.message, 'warning');
+    btn.disabled = false;
+    btn.textContent = 'Express Interest';
+    return;
+  }
+
+  btn.textContent = 'Sent!';
+  btn.style.background = 'rgba(34,197,94,0.15)';
+  btn.style.color = '#4ade80';
+  btn.style.borderColor = 'rgba(34,197,94,0.3)';
+  showToast('Proposal sent — the organizer will be notified.', 'success');
 }
 
 // ═══════════════════════════════════
@@ -2792,11 +2835,7 @@ function closeMenu(){closeSidebar();}
       <a class="sw-footer-link" href="about.html">About</a>
       <a class="sw-footer-link" href="contact.html">Contact</a>
     <a class="sw-footer-link" href="truck-dashboard.html">Truck Dashboard</a>
-    <a class="sw-footer-link" href="planner-dashboard.html">Organizer Dashboard</a>
-    <a class="sw-footer-link" href="venue-dashboard.html">Venue Dashboard</a>
-    <a class="sw-footer-link" href="property-dashboard.html">Property Owner Dashboard</a>
-    <a class="sw-footer-link" href="service-provider-dashboard.html">Provider Dashboard</a>
-    <a class="sw-footer-link" href="jobs-dashboard.html">Jobs Dashboard</a>
+    <a class="sw-footer-link" href="requester-dashboard.html">Organizer / Venue Dashboard</a>
     <a class="sw-footer-link" href="jobs.html">Browse Jobs</a>
     <a class="sw-footer-link" href="venues.html">For Venues</a>
     <a class="sw-footer-link" href="property.html">Parking &amp; Space</a>

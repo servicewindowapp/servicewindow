@@ -41,7 +41,7 @@ input,textarea,select{font-family:'Sora',sans-serif;}
 }
 .sidebar::-webkit-scrollbar{display:none;}
 .sidebar-head{padding:18px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0;}
-.sidebar-logo{height:28px;width:auto;cursor:pointer;filter:brightness(0) invert(1);}
+.sidebar-logo{height:28px;width:auto;cursor:pointer;}
 .sidebar-user{
   display:flex;align-items:center;gap:10px;
   padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0;
@@ -994,7 +994,7 @@ async function onSessionReady(user) {
   document.getElementById('profileEmail').textContent = user.email || '—';
 
   // Check verification
-  if (!profile.is_verified) {
+  if (profile.verification_status !== 'verified') {
     document.getElementById('verificationNotice').style.display = 'block';
   }
 
@@ -1613,92 +1613,4 @@ async function sendMessageReply() {
     });
 
   input.disabled = false;
-  document.getElementById('rdMsgBtn').disabled = false;
-  input.focus();
-
-  if (error) {
-    showToast('Failed to send message. Try again.', 'error');
-    input.value = text; // restore on failure
-  } else {
-    showToast('Message sent!', 'success');
-    loadMessages(); // Reload to show sent message
-  }
-}
-
-// ── PROFILE ───────────────────────────────────────────────────────────────────
-async function loadProfile() {
-  if (!currentUser) return;
-  const p = currentProfile || {};
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-  set('p-full-name',     p.full_name || p.contact_name);
-  set('p-business-name', p.business_name);
-  set('p-phone',         p.phone);
-  set('p-city',          p.city);
-  set('p-bio',           p.bio);
-  set('p-website',       p.website);
-  // Venue fields
-  if (p.role === 'venue') {
-    set('venue-name',    p.business_name);
-    set('venue-city',    p.city);
-    set('venue-bio',     p.bio);
-    set('venue-website', p.website);
-  }
-}
-
-async function saveProfile() {
-  if (!currentUser) { showToast('Not signed in.', 'error'); return; }
-  const { error } = await window.supabase.from('profiles').update({
-    full_name:     document.getElementById('p-full-name').value.trim(),
-    business_name: document.getElementById('p-business-name').value.trim(),
-    phone:         document.getElementById('p-phone').value.trim(),
-    city:          document.getElementById('p-city').value.trim(),
-    bio:           document.getElementById('p-bio').value.trim(),
-    website:       document.getElementById('p-website').value.trim()
-  }).eq('id', currentUser.id);
-  if (error) { showToast('Save failed: ' + error.message, 'error'); return; }
-  showToast('Profile saved!', 'success');
-}
-
-// ── SIGN OUT ──────────────────────────────────────────────────────────────────
-async function signOut() {
-  if (window.supabase) await window.supabase.auth.signOut();
-  window.location.href = 'index.html';
-}
-
-// ── BOOT ──────────────────────────────────────────────────────────────────────
-if (window.supabase) {
-  initDashboard();
-  // Load profile into profile panel after short delay
-  setTimeout(loadProfile, 1500);
-} else {
-  document.addEventListener('supabase-ready', () => {
-    initDashboard();
-    setTimeout(loadProfile, 1500);
-  });
-}
-</script>
-<script src="assets/js/avatar-upload.js"></script>
-<script>
-// ── ERROR LOGGER ─────────────────────────────────────────────
-(function() {
-  function logError(msg, stack) {
-    if (!window.supabase) return;
-    window.supabase.auth.getUser().then(({ data: { user } }) => {
-      window.supabase.from('error_logs').insert({
-        user_id: user?.id || null,
-        page: window.location.pathname,
-        message: String(msg).slice(0, 500),
-        stack: stack ? String(stack).slice(0, 2000) : null,
-        user_agent: navigator.userAgent.slice(0, 300)
-      }).then(() => {});
-    }).catch(() => {});
-  }
-  window.addEventListener('error', e => logError(e.message, e.error?.stack));
-  window.addEventListener('unhandledrejection', e => logError(
-    e.reason?.message || String(e.reason), e.reason?.stack
-  ));
-})();
-</script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR_REAL_TOKEN"}'></script>
-</body>
-</html>
+  document.getElementById('rdMsgBtn').disabled

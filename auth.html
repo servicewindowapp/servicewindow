@@ -148,6 +148,7 @@ button{font-family:'Sora',sans-serif;}
 .form-control:focus{border-color:var(--fire);outline:none;}
 .form-control::placeholder{color:rgba(255,255,255,0.4);}
 textarea.form-control{height:auto;padding:12px 14px;resize:none;}
+.form-control option{background:#0D1B2A;color:#ffffff;}
 .role-grid{
   display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
 }
@@ -624,7 +625,7 @@ async function handleAuth(){
         role,
         email,
         organizer_type:      organizerType,
-        verification_status: 'verified',
+        verification_status: 'pending',
       };
 
       // Set trial dates for truck and service_provider roles (30 days from signup)
@@ -787,22 +788,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (prePlan === 'founding') {
     const banner = document.createElement('div');
     banner.style.cssText = 'background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);border-radius:8px;padding:10px 14px;font-family:DM Mono,monospace;font-size:.78rem;color:rgba(255,255,255,0.85);margin-bottom:16px;text-align:center;';
-    banner.textContent = '🔥 Founding Member rate locked in — complete signup to claim it';
-    const form = document.querySelector('.auth-form, form, #authForm');
-    if (form && form.parentNode) {
-      form.parentNode.insertBefore(banner, form);
-    }
-  }
-});
-
-// ── Init ──────────────────────────────────────────────────────────────────
-if(window.supabase){
-  checkSession();
-} else {
-  document.addEventListener('supabase-ready', checkSession);
-}
-</script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR_REAL_TOKEN"}'></script>
-</body>
-</html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    banner.textContent = 
