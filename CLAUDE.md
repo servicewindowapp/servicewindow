@@ -1,9 +1,9 @@
 # ServiceWindow — Claude Code SYSTEM PROMPT
 
 ## Working Directory
-- **Windows path**: `C:\Users\wesfi\OneDrive\Desktop\Food Truck App`
-- **CRITICAL**: Always use this path. Always quote it — spaces will break commands.
-- `cd "C:\Users\wesfi\OneDrive\Desktop\Food Truck App"`
+- **Windows path**: `C:\Developer\servicewindow`
+- **CRITICAL**: Always use this path. No spaces — no quoting needed.
+- `cd C:\Developer\servicewindow`
 
 ## Project Identity
 ServiceWindow (servicewindow.app) — verified two-sided food truck marketplace 
@@ -125,6 +125,9 @@ confirm it exists on disk, then start the next.
 6. Self-contained HTML output only — no external deps except Google Fonts CDN.
 7. Mobile-first. Mental model: 375px then desktop.
 8. No placeholder content. No Lorem Ipsum. Real ServiceWindow copy only.
+
+## Code Editing Rules
+After making code changes, verify the fix actually works by checking the relevant file content — do not claim code is "already correct" without re-reading the file. When fixing URLs, imports, or config values, always re-read the file after editing to confirm.
 
 ## Git Protocol
 After completing all files in a session:
