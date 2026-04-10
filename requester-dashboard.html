@@ -1276,15 +1276,70 @@ async function loadBookings() {
     return;
   }
   const STATUS_TAG = { pending: 'tag-pending', accepted: 'tag-confirmed', declined: 'tag-declined', cancelled: 'tag-declined' };
-  container.innerHTML = `<table>
-    <thead><tr><th>Truck</th><th>Event Date</th><th>Location</th><th>Status</th></tr></thead>
-    <tbody>${bookings.map(b => `<tr>
-      <td class="td-primary">${b.truck?.business_name || '—'}</td>
-      <td class="td-muted">${b.event_date || '—'}</td>
-      <td class="td-muted">${b.location || '—'}</td>
-      <td><span class="tag ${STATUS_TAG[b.status] || 'tag-draft'}">${b.status}</span></td>
-    </tr>`).join('')}</tbody>
-  </table>`;
+  container.innerHTML = `<div class="booking-list">
+    ${bookings.map(b => {
+      const truckName = b.truck?.business_name || '—';
+      const isInbound = b.notes && b.notes.includes('Expressed interest via Request Marketplace');
+      const dirLabel = isInbound
+        ? '<span class="tag tag-draft" style="font-size:.7rem;padding:2px 6px;">Inbound</span>'
+        : '<span class="tag" style="font-size:.7rem;padding:2px 6px;background:rgba(255,255,255,0.08);">Outbound</span>';
+      const actions = b.status === 'pending' ? `
+        <div class="booking-actions" style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-primary" style="padding:6px 14px;font-size:.8rem;" onclick="updateBookingStatus('${b.id}', 'accepted', this)">Accept</button>
+          <button class="btn btn-secondary" style="padding:6px 14px;font-size:.8rem;" onclick="updateBookingStatus('${b.id}', 'declined', this)">Decline</button>
+        </div>` : b.status === 'accepted' ? `
+        <div class="booking-actions" style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-secondary" style="padding:6px 14px;font-size:.8rem;opacity:.7;" onclick="updateBookingStatus('${b.id}', 'cancelled', this)">Cancel</button>
+        </div>` : '';
+      return `<div class="booking-card" id="booking-${b.id}" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:Sora,sans-serif;font-size:.92rem;font-weight:600;color:#fff;margin-bottom:4px;">${truckName}</div>
+            <div style="font-family:DM Mono,monospace;font-size:.75rem;color:rgba(255,255,255,0.45);margin-bottom:6px;">${b.event_date || 'Date TBD'} · ${b.location || 'Location TBD'}</div>
+            <div style="display:flex;align-items:center;gap:6px;">${dirLabel}<span class="tag ${STATUS_TAG[b.status] || 'tag-draft'}">${b.status}</span></div>
+          </div>
+        </div>
+        ${b.event_name ? `<div style="font-size:.8rem;color:rgba(255,255,255,0.5);margin-top:6px;">Event: ${b.event_name}</div>` : ''}
+        ${actions}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+async function updateBookingStatus(requestId, newStatus, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  const { error } = await window.supabase
+    .from('requests')
+    .update({ status: newStatus })
+    .eq('id', requestId)
+    .eq('requester_id', currentUser.id);
+
+  if (error) {
+    showToast('Update failed: ' + error.message, 'error');
+    btn.disabled = false;
+    btn.textContent = btn.dataset.label || 'Retry';
+    return;
+  }
+
+  const card = document.getElementById('booking-' + requestId);
+  if (card) {
+    const STATUS_TAG = { pending: 'tag-pending', accepted: 'tag-confirmed', declined: 'tag-declined', cancelled: 'tag-declined' };
+    const tagEl = card.querySelector('.tag.tag-pending, .tag.tag-confirmed, .tag.tag-declined');
+    if (tagEl) { tagEl.className = 'tag ' + (STATUS_TAG[newStatus] || 'tag-draft'); tagEl.textContent = newStatus; }
+    const actionsEl = card.querySelector('.booking-actions');
+    if (actionsEl) actionsEl.remove();
+    if (newStatus === 'accepted') {
+      const actDiv = document.createElement('div');
+      actDiv.className = 'booking-actions';
+      actDiv.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+      actDiv.innerHTML = '<button class="btn btn-secondary" style="padding:6px 14px;font-size:.8rem;opacity:.7;" onclick="updateBookingStatus(\''+requestId+'\', \'cancelled\', this)">Cancel</button>';
+      card.appendChild(actDiv);
+    }
+  }
+  const label = { accepted: 'Accepted', declined: 'Declined', cancelled: 'Cancelled' };
+  showToast(label[newStatus] || 'Updated', 'success');
 }
 
 // ── VENUE ─────────────────────────────────────────────────────────────────────
