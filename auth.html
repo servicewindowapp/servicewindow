@@ -789,7 +789,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (prePlan === 'founding') {
     const banner = document.createElement('div');
     banner.style.cssText = 'background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);border-radius:8px;padding:10px 14px;font-family:DM Mono,monospace;font-size:.78rem;color:rgba(255,255,255,0.85);margin-bottom:16px;text-align:center;';
-    banner.textContent = 
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c3528d2635bc4ff98f2c08d9709932a6"}'></script>
+    banner.textContent = '🔥 Founding Member rate locked in — complete signup to claim it';
+    const form = document.querySelector('.auth-form, form, #authForm');
+    if (form && form.parentNode) {
+      form.parentNode.insertBefore(banner, form);
+    }
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────
+if(window.supabase){
+  checkSession();
+} else {
+  document.addEventListener('supabase-ready', checkSession);
+}
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"c3528d2635bc4ff98f2c08d9709932a6"}'></script>
 </body>
 </html>
