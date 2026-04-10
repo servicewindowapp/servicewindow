@@ -3586,7 +3586,31 @@ if (window.supabase) {
   <a class="bn-tab active" href="#" onclick="setPanel('home',document.getElementById('nav-home'));updateBn('bnHome');return false;"><span class="bn-icon">📊</span><span class="bn-label">Dashboard</span></a>
   <a class="bn-tab" href="#" onclick="setPanel('requests',document.getElementById('nav-requests'));updateBn('bnRequests');return false;"><span class="bn-icon">📬</span><span class="bn-label">Requests</span></a>
   <a class="bn-tab" href="#" onclick="setPanel('messages',document.getElementById('nav-messages'));updateBn('bnMessages');return false;"><span class="bn-icon">💬</span><span class="bn-label">Messages</span></a>
-  <a class="bn-tab" href="#" onclick="setPanel('marketplace',document.getElementById('nav-marketplace'));updateBn('bnMarket');retu
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c3528d2635bc4ff98f2c08d9709932a6"}'></script>
+  <a class="bn-tab" href="#" onclick="setPanel('marketplace',document.getElementById('nav-marketplace'));updateBn('bnMarket');return false;"><span class="bn-icon">📋</span><span class="bn-label">Listings</span></a>
+  <a class="bn-tab" href="#" onclick="setPanel('profile',document.getElementById('nav-profile'));updateBn('bnProfile');return false;"><span class="bn-icon">👤</span><span class="bn-label">Profile</span></a>
+</nav>
+
+<script>
+// ── ERROR LOGGER ─────────────────────────────────────────────
+(function() {
+  function logError(msg, stack) {
+    if (!window.supabase) return;
+    window.supabase.auth.getUser().then(({ data: { user } }) => {
+      window.supabase.from('error_logs').insert({
+        user_id: user?.id || null,
+        page: window.location.pathname,
+        message: String(msg).slice(0, 500),
+        stack: stack ? String(stack).slice(0, 2000) : null,
+        user_agent: navigator.userAgent.slice(0, 300)
+      }).then(() => {});
+    }).catch(() => {});
+  }
+  window.addEventListener('error', e => logError(e.message, e.error?.stack));
+  window.addEventListener('unhandledrejection', e => logError(
+    e.reason?.message || String(e.reason), e.reason?.stack
+  ));
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"c3528d2635bc4ff98f2c08d9709932a6"}'></script>
 </body>
 </html>
