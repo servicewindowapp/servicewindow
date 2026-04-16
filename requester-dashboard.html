@@ -1098,7 +1098,7 @@ function kpiCard(label, value, sub) {
 async function loadRecentBookings(userId) {
   const { data: bookings } = await window.supabase
     .from('requests')
-    .select('*, truck:truck_id(business_name)')
+    .select('*, truck:truck_id(name)')
     .eq('requester_id', userId)
     .eq('request_type', 'truck_booking')
     .order('created_at', { ascending: false })
@@ -1113,7 +1113,7 @@ async function loadRecentBookings(userId) {
   body.innerHTML = `<div class="table-wrap"><table>
     <thead><tr><th>Truck</th><th>Event Date</th><th>Status</th></tr></thead>
     <tbody>${bookings.map(b => `<tr>
-      <td class="td-primary">${b.truck?.business_name || 'Unknown'}</td>
+      <td class="td-primary">${b.truck?.name || 'Unknown'}</td>
       <td class="td-muted">${b.event_date || '—'}</td>
       <td><span class="tag ${STATUS_TAG[b.status] || 'tag-draft'}">${b.status}</span></td>
     </tr>`).join('')}</tbody>
@@ -1139,13 +1139,20 @@ async function loadUnreadCounts() {
 async function loadTrucks() {
   const container = document.getElementById('trucksContainer');
   const { data: trucks } = await window.supabase
-    .from('profiles')
-    .select('id,business_name,cuisine_type,city,bio,is_verified,is_fundraiser_friendly,is_veteran_owned')
-    .eq('role', 'truck')
-    .eq('is_verified', true)
-    .order('business_name');
+    .from('trucks')
+    .select('id, name, cuisine_type, cities_served, is_verified, owner_id, owner:owner_id(business_name, city, bio)')
+    .eq('is_active', true)
+    .eq('is_approved', true)
+    .order('name');
 
-  allTrucks = trucks || [];
+  allTrucks = (trucks || []).map(t => ({
+    ...t,
+    business_name: t.name || t.owner?.business_name || 'Unnamed Truck',
+    city: t.owner?.city || (t.cities_served?.[0]) || 'SWFL',
+    bio: t.owner?.bio || null,
+    is_fundraiser_friendly: false,
+    is_veteran_owned: false
+  }));
   renderTrucks(allTrucks);
 }
 
@@ -1265,7 +1272,7 @@ async function loadBookings() {
   if (!currentUser) return;
   const { data: bookings } = await window.supabase
     .from('requests')
-    .select('*, truck:truck_id(business_name)')
+    .select('*, truck:truck_id(name)')
     .eq('requester_id', currentUser.id)
     .eq('request_type', 'truck_booking')
     .order('created_at', { ascending: false });
@@ -1278,7 +1285,7 @@ async function loadBookings() {
   const STATUS_TAG = { pending: 'tag-pending', accepted: 'tag-confirmed', declined: 'tag-declined', cancelled: 'tag-declined' };
   container.innerHTML = `<div class="booking-list">
     ${bookings.map(b => {
-      const truckName = b.truck?.business_name || '—';
+      const truckName = b.truck?.name || '—';
       const isInbound = b.notes && b.notes.includes('Expressed interest via Request Marketplace');
       const dirLabel = isInbound
         ? '<span class="tag tag-draft" style="font-size:.7rem;padding:2px 6px;">Inbound</span>'

@@ -659,7 +659,7 @@ async function loadStats() {
       window.supabase.from('profiles').select('id', { count: 'exact' }),
       window.supabase.from('trucks').select('id', { count: 'exact' }).eq('is_active', true),
       window.supabase.from('venues').select('id', { count: 'exact' }).eq('is_active', true),
-      window.supabase.from('booking_requests').select('id', { count: 'exact' }),
+      window.supabase.from('requests').select('id', { count: 'exact' }),
       window.supabase.from('waitlist').select('id', { count: 'exact' }),
       window.supabase.from('verification_requests').select('id', { count: 'exact' }).eq('status', 'pending'),
       window.supabase.from('trucks').select('id', { count: 'exact' }).eq('is_approved', false),
@@ -698,8 +698,8 @@ async function loadStats() {
 async function loadRecentBookings() {
   try {
     const { data: bookings } = await window.supabase
-      .from('booking_requests')
-      .select('id, event_name, truck_id, organizer_id, event_date, status, created_at')
+      .from('requests')
+      .select('id, event_name, truck_id, requester_id, event_date, status, created_at')
       .order('created_at', { ascending: false })
       .limit(5);
 
@@ -707,7 +707,7 @@ async function loadRecentBookings() {
       <tr>
         <td>${b.event_name || '—'}</td>
         <td>${b.truck_id || '—'}</td>
-        <td>${b.organizer_id || '—'}</td>
+        <td>${b.requester_id || '—'}</td>
         <td>${b.event_date || '—'}</td>
         <td><span class="badge badge-blue">${b.status || 'pending'}</span></td>
       </tr>
@@ -830,7 +830,7 @@ async function loadTruckApprovalQueue() {
   try {
     const { data: trucks } = await window.supabase
       .from('trucks')
-      .select('id, name, cuisine_type, owner_id, city, cities_served, is_verified, has_insurance, has_license, has_food_handler_cert, is_school_approved, created_at')
+      .select('id, name, cuisine_type, owner_id, cities_served, is_verified, has_insurance, has_license, has_food_handler_cert, is_school_approved, created_at')
       .eq('is_approved', false)
       .order('created_at', { ascending: false });
 
@@ -984,15 +984,15 @@ function searchUsers() {
 async function loadActivity() {
   try {
     const { data: bookings } = await window.supabase
-      .from('booking_requests')
-      .select('id, event_name, organizer_id, truck_id, event_date, status, created_at')
+      .from('requests')
+      .select('id, event_name, requester_id, truck_id, event_date, status, created_at')
       .order('created_at', { ascending: false })
       .limit(20);
 
     const html = (bookings || []).map(b => `
       <tr>
         <td>${b.event_name || '—'}</td>
-        <td>${b.organizer_id || '—'}</td>
+        <td>${b.requester_id || '—'}</td>
         <td>${b.truck_id || '—'}</td>
         <td>${b.event_date || '—'}</td>
         <td>${statusBadge(b.status)}</td>
