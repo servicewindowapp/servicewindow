@@ -121,12 +121,14 @@ Deno.serve(async (req) => {
 
     console.log("Step 7: Processing plan from metadata");
     const planMap = {
-      truck_standard: "standard",
+      truck_standard: "starter",
+      truck_founding: "starter",
       truck_pro: "pro",
-      service_provider_standard: "standard",
-      advertiser: "advertiser",
+      service_provider_standard: "starter",
+      service_provider_founding: "starter",
+      advertiser: "starter",
     };
-    const plan = planMap[session.metadata?.plan_name] || "standard";
+    const plan = planMap[session.metadata?.plan_name] || "starter";
     console.log("Plan determined:", plan);
 
     console.log("Step 8: Updating user profile in Supabase");

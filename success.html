@@ -220,7 +220,10 @@ async function handleSuccessfulPayment() {
     setTimeout(() => {
       const dashboards = {
         truck: 'truck-dashboard.html',
-        service_provider: 'service-provider-dashboard.html'
+        service_provider: 'requester-dashboard.html',
+        venue: 'requester-dashboard.html',
+        organizer: 'requester-dashboard.html',
+        property: 'requester-dashboard.html'
       };
       const dest = dashboards[result.role] || 'truck-dashboard.html';
       window.location.href = dest;
@@ -243,9 +246,12 @@ document.getElementById('goToDashboardBtn').addEventListener('click', () => {
   const role = localStorage.getItem('user_role') || 'truck';
   const dashboards = {
     truck: 'truck-dashboard.html',
-    service_provider: 'service-provider-dashboard.html'
+    service_provider: 'requester-dashboard.html',
+    venue: 'requester-dashboard.html',
+    organizer: 'requester-dashboard.html',
+    property: 'requester-dashboard.html'
   };
-  window.location.href = dashboards[role];
+  window.location.href = dashboards[role] || 'truck-dashboard.html';
 });
 
 if (window.supabase) {
