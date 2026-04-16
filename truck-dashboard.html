@@ -1286,8 +1286,8 @@ img,video{max-width:100%;height:auto;}
           <span style="position:absolute;bottom:-8px;right:-8px;background:var(--fire);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;border:2px solid #fff;cursor:pointer;" title="Click avatar to upload photo">📷</span>
         </div>
         <div style="flex:1;">
-          <div class="profile-name">Smoke Ring BBQ</div>
-          <div class="profile-sub">&#128205; Fort Myers, FL &bull; Member since Jan 2025</div>
+          <div class="profile-name" id="profileDisplayName">Your Truck</div>
+          <div class="profile-sub" id="profileDisplaySub"></div>
           <div class="profile-badges">
             <span class="profile-badge verified">&#10003; Verified</span>
             <span class="profile-badge plan">Standard Plan</span>
@@ -1304,7 +1304,7 @@ img,video{max-width:100%;height:auto;}
       <!-- Rating Section -->
       <div class="rating-section">
         <div class="rating-section-title">Your Marketplace Rating</div>
-        <div class="rating-display-large">
+        <div class="rating-display-large" id="ratingDisplay" style="display:none;">
           <div>
             <div class="rating-value" id="profileRatingValue">4.8</div>
             <div class="rating-stars" id="profileRatingStars">★★★★★</div>
@@ -1314,7 +1314,7 @@ img,video{max-width:100%;height:auto;}
             <button class="btn btn-sm btn-outline" onclick="document.getElementById('panel-profile').scrollTo({top: document.getElementById('panel-profile').scrollHeight, behavior: 'smooth'})">View Reviews &rarr;</button>
           </div>
         </div>
-        <div id="profileReviewsList" class="reviews-list">
+        <div id="profileReviewsList" class="reviews-list" style="display:none;">
           <div class="review-item">
             <div class="review-header">
               <span class="review-author">Sarah's Events Co.</span>
@@ -1339,23 +1339,23 @@ img,video{max-width:100%;height:auto;}
         <div class="form-grid two">
           <div class="form-group">
             <label class="form-label">Truck Name</label>
-            <input class="form-control" type="text" id="p-truck-name" value="Smoke Ring BBQ">
+            <input class="form-control" type="text" id="p-truck-name" placeholder="Your truck name">
           </div>
           <div class="form-group">
             <label class="form-label">Owner Name</label>
-            <input class="form-control" type="text" id="p-full-name" value="Sam Rivera">
+            <input class="form-control" type="text" id="p-full-name" placeholder="Your name">
           </div>
           <div class="form-group">
             <label class="form-label">Phone</label>
-            <input class="form-control" type="tel" id="p-phone" value="(239) 555-0182">
+            <input class="form-control" type="tel" id="p-phone" placeholder="(239) 555-0000">
           </div>
           <div class="form-group">
             <label class="form-label">Email</label>
-            <input class="form-control" type="email" id="p-email" value="sam@smokeringbbq.com">
+            <input class="form-control" type="email" id="p-email" placeholder="your@email.com">
           </div>
           <div class="form-group">
             <label class="form-label">City</label>
-            <input class="form-control" type="text" id="p-city" value="Fort Myers">
+            <input class="form-control" type="text" id="p-city" placeholder="City">
           </div>
           <div class="form-group">
             <label class="form-label">Service Radius</label>
@@ -1369,7 +1369,7 @@ img,video{max-width:100%;height:auto;}
         </div>
         <div class="form-group" style="margin-top:12px;">
           <label class="form-label">Bio / Truck Description</label>
-          <textarea class="form-control" id="p-bio" style="height:90px;">Award-winning slow-smoked BBQ from a custom-built 24ft trailer. Brisket, ribs, pulled pork &amp; all the fixins. Serving SWFL since 2019. Veteran-owned and operated.</textarea>
+          <textarea class="form-control" id="p-bio" style="height:90px;" placeholder="Tell customers about your food truck, specialties, and vibe…"></textarea>
         </div>
       </div>
 
@@ -1511,8 +1511,8 @@ img,video{max-width:100%;height:auto;}
       </div>
     </div>
 
-    <div class="panel" id="panel-onboarding" style="display:flex;align-items:center;justify-content:center;">
-      <div style="width:100%;max-width:480px;padding:32px 20px;text-align:center;">
+    <div class="panel" id="panel-onboarding">
+      <div style="width:100%;max-width:480px;padding:32px 20px;text-align:center;margin:0 auto;">
         <div style="font-family:'Lora',serif;font-size:1.8rem;font-weight:700;margin-bottom:8px;">Welcome to ServiceWindow</div>
         <p style="font-size:.95rem;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:32px;">Let's set up your food truck profile so you can start receiving catering requests.</p>
 
@@ -3442,6 +3442,14 @@ async function loadProfile() {
     if (profile.phone)     document.getElementById('p-phone').value     = profile.phone;
     if (profile.city)      document.getElementById('p-city').value      = profile.city;
     if (profile.bio)       document.getElementById('p-bio').value       = profile.bio;
+    if (profile.email)     { const el = document.getElementById('p-email'); if(el) el.value = profile.email; }
+
+    // Update profile header
+    const memberSince = profile.created_at
+      ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      : '';
+    const subEl = document.getElementById('profileDisplaySub');
+    if (subEl) subEl.textContent = (profile.city ? '📍 ' + profile.city + ' · ' : '') + (memberSince ? 'Member since ' + memberSince : '');
   }
 
   const { data: truck } = await window.supabase
@@ -3459,7 +3467,11 @@ async function loadProfile() {
       document.getElementById('profileAvatar').appendChild(img);
     }
 
-    if (truck.name)                 document.getElementById('p-truck-name').value      = truck.name;
+    if (truck.name) {
+      document.getElementById('p-truck-name').value = truck.name;
+      const nameEl = document.getElementById('profileDisplayName');
+      if (nameEl) nameEl.textContent = truck.name;
+    }
     if (truck.serves_per_hour)      document.getElementById('p-serves-per-hour').value = truck.serves_per_hour;
     if (truck.flat_event_rate)      document.getElementById('p-flat-rate').value        = truck.flat_event_rate;
     if (truck.service_radius_miles) document.getElementById('p-service-radius').value   = truck.service_radius_miles;
@@ -3598,7 +3610,7 @@ if (window.supabase) {
 <!-- BOTTOM NAV (truck-dashboard) -->
 <nav class="bottom-nav" aria-label="Dashboard navigation">
   <a class="bn-tab active" href="#" onclick="setPanel('home',document.getElementById('nav-home'));updateBn('bnHome');return false;"><span class="bn-icon">📊</span><span class="bn-label">Dashboard</span></a>
-  <a class="bn-tab" href="#" onclick="setPanel('requests',document.getElementById('nav-requests'));updateBn('bnRequests');return false;"><span class="bn-icon">📬</span><span class="bn-label">Requests</span></a>
+  <a class="bn-tab" href="#" onclick="setPanel('home',document.getElementById('nav-home'));updateBn('bnRequests');return false;"><span class="bn-icon">📬</span><span class="bn-label">Requests</span></a>
   <a class="bn-tab" href="#" onclick="setPanel('messages',document.getElementById('nav-messages'));updateBn('bnMessages');return false;"><span class="bn-icon">💬</span><span class="bn-label">Messages</span></a>
   <a class="bn-tab" href="#" onclick="setPanel('marketplace',document.getElementById('nav-marketplace'));updateBn('bnMarket');return false;"><span class="bn-icon">📋</span><span class="bn-label">Listings</span></a>
   <a class="bn-tab" href="#" onclick="setPanel('profile',document.getElementById('nav-profile'));updateBn('bnProfile');return false;"><span class="bn-icon">👤</span><span class="bn-label">Profile</span></a>
