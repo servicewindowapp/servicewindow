@@ -763,6 +763,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const preRole = urlParams.get('role');
   const prePlan = urlParams.get('plan');
+  const preMode = urlParams.get('mode');
+
+  // Force signup mode if ?mode=signup is in the URL
+  if (preMode === 'signup') {
+    setMode('signup');
+  }
 
   // Pre-select role from URL
   if (preRole) {

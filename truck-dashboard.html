@@ -3182,9 +3182,23 @@ async function initDashboard(user) {
       });
     }
   } else {
-    // No truck found — show onboarding panel
-    setPanel('onboarding', null);
-    document.getElementById('panelTitle').textContent = 'Complete Your Profile';
+    // No truck found
+    if (profile.verification_status !== 'verified') {
+      // Pending or rejected — show waiting state, not the profile creation form
+      setPanel('onboarding', null);
+      document.getElementById('panelTitle').textContent = 'Account Under Review';
+      const ob = document.querySelector('#panel-onboarding > div');
+      if (ob) ob.innerHTML = \`
+        <div style="font-size:3rem;margin-bottom:16px;">&#9203;</div>
+        <div style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px;">Your account is under review</div>
+        <p style="font-size:.9rem;color:rgba(255,255,255,0.65);line-height:1.6;max-width:380px;margin:0 auto 24px;">We're verifying your business information. You'll receive an email once approved — then you can complete your truck profile and start receiving booking requests.</p>
+        <p style="font-size:.78rem;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;">Questions? Contact us at hello@servicewindow.app</p>
+      \`;
+    } else {
+      // Verified but no truck record yet — show onboarding form to create it
+      setPanel('onboarding', null);
+      document.getElementById('panelTitle').textContent = 'Complete Your Profile';
+    }
   }
 
   // ── 3. Message threads ──────────────────────────────────────────────────
