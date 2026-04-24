@@ -373,6 +373,12 @@
         <span class="nav-icon">◷</span> Bookings
         <span class="nav-badge" id="bookings-badge"></span>
       </button>
+      <button class="nav-item" onclick="window.location.href='marketplace.html'">
+        <span class="nav-icon">🔍</span> Browse Trucks
+      </button>
+      <button class="nav-item" data-section="profile">
+        <span class="nav-icon">◎</span> My Profile
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-name" id="sidebar-name">—</div>
@@ -579,6 +585,44 @@
       </div>
     </section>
 
+    <!-- PROFILE -->
+    <section class="section" id="section-profile">
+      <div class="section-header">
+        <h1>My Profile</h1>
+        <p>Your organization details shown to trucks when they receive your requests.</p>
+      </div>
+      <div class="form-card">
+        <form id="profile-form" novalidate>
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="p-business">Organization / Business Name</label>
+              <input type="text" id="p-business" placeholder="e.g. Pelican Bay HOA, ABC Events">
+            </div>
+            <div class="field-group">
+              <label for="p-contact">Your Name</label>
+              <input type="text" id="p-contact" placeholder="First and last name">
+            </div>
+            <div class="field-group">
+              <label for="p-phone">Phone</label>
+              <input type="tel" id="p-phone" placeholder="(239) 000-0000">
+            </div>
+            <div class="field-group">
+              <label for="p-city">City</label>
+              <input type="text" id="p-city" placeholder="e.g. Cape Coral">
+            </div>
+            <div class="field-group full">
+              <label for="p-website">Website (optional)</label>
+              <input type="url" id="p-website" placeholder="https://…">
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button type="submit" class="btn-primary">Save Profile</button>
+            <span id="profile-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -598,7 +642,7 @@
 
     const { data } = await supabase
       .from('profiles')
-      .select('id, role, business_name, contact_name, email')
+      .select('id, role, business_name, contact_name, email, phone, city, website, is_verified')
       .eq('id', userId)
       .single()
 
@@ -617,6 +661,7 @@
       `Welcome back, ${profile.business_name || profile.contact_name || 'there'}`
 
     await Promise.all([loadOverview(), loadRequests(), loadBookings()])
+    loadProfile()
   }
 
   // ─── OVERVIEW ────────────────────────────────────────────
@@ -742,6 +787,48 @@
     if (next === 0) badge.style.display = 'none'
     await Promise.all([loadBookings(), loadOverview()])
   }
+
+  // ─── PROFILE ─────────────────────────────────────────────
+  function loadProfile() {
+    document.getElementById('p-business').value = profile.business_name || ''
+    document.getElementById('p-contact').value  = profile.contact_name  || ''
+    document.getElementById('p-phone').value    = profile.phone         || ''
+    document.getElementById('p-city').value     = profile.city          || ''
+    document.getElementById('p-website').value  = profile.website       || ''
+  }
+
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const statusEl = document.getElementById('profile-status')
+    statusEl.textContent = 'Saving…'
+    statusEl.style.color = 'var(--text-muted)'
+
+    const updates = {
+      business_name: document.getElementById('p-business').value.trim() || null,
+      contact_name:  document.getElementById('p-contact').value.trim()  || null,
+      phone:         document.getElementById('p-phone').value.trim()    || null,
+      city:          document.getElementById('p-city').value.trim()     || null,
+      website:       document.getElementById('p-website').value.trim()  || null,
+      updated_at:    new Date().toISOString()
+    }
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', userId)
+    if (error) {
+      statusEl.textContent = 'Error saving profile.'
+      statusEl.style.color = '#ff8080'
+      return
+    }
+
+    // Update local profile cache + sidebar name
+    Object.assign(profile, updates)
+    document.getElementById('sidebar-name').textContent =
+      profile.business_name || profile.contact_name || 'My Account'
+
+    statusEl.textContent = 'Saved.'
+    statusEl.style.color = '#50c878'
+    setTimeout(() => { statusEl.textContent = '' }, 2500)
+    showToast('Profile updated')
+  })
 
   // ─── POST REQUEST ────────────────────────────────────────
   document.getElementById('request-form').addEventListener('submit', async (e) => {
