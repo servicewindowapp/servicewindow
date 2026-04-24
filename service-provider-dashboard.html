@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Provider Dashboard — ServiceWindow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fire: #FF6B35;
+      --navy: #0D1B2A;
+      --dark-section: #0d1f2d;
+      --dark-alt: #111f2e;
+      --dark-card: rgba(255,255,255,0.06);
+      --dark-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.85);
+      --text-muted: rgba(255,255,255,0.6);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--navy);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* LOADING */
+    #loading-screen {
+      position: fixed; inset: 0; background: var(--navy);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--dark-border); border-top-color: var(--fire);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .dashboard-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 220px; min-width: 220px;
+      background: #07111a;
+      border-right: 1px solid var(--dark-border);
+      display: flex; flex-direction: column;
+    }
+    .sidebar-logo {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .sidebar-logo img { height: 36px; width: auto; filter: brightness(0) invert(1); }
+
+    .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 20px;
+      background: none; border: none;
+      color: var(--text-muted);
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s; text-align: left; position: relative;
+    }
+    .nav-item:hover { color: white; background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: white; background: rgba(255,107,53,0.12); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--fire); border-radius: 0 2px 2px 0;
+    }
+    .nav-icon { width: 18px; text-align: center; font-style: normal; }
+    .nav-badge {
+      margin-left: auto; background: var(--fire); color: white;
+      border-radius: 10px; padding: 1px 7px;
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      display: none;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px; border-top: 1px solid var(--dark-border);
+    }
+    .user-name {
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; margin-bottom: 4px;
+    }
+    .user-role {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--text-muted); margin-bottom: 12px;
+    }
+    .btn-signout {
+      width: 100%; padding: 8px 12px; background: transparent;
+      border: 1px solid var(--dark-border); color: var(--text-muted);
+      border-radius: 6px; font-family: 'Sora', sans-serif; font-size: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-signout:hover { border-color: rgba(255,255,255,0.3); color: white; }
+
+    /* MAIN */
+    .main-content { flex: 1; overflow-y: auto; background: var(--dark-section); }
+    .section { display: none; padding: 32px; max-width: 960px; }
+    .section.active { display: block; }
+
+    .section-header { margin-bottom: 28px; }
+    .section-header h1 { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: white; }
+    .section-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+
+    /* STAT CARDS */
+    .card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; padding: 20px;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .stat-value { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; color: white; }
+    .stat-value.fire { color: var(--fire); }
+    .stat-sub {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--text-muted); margin-top: 4px;
+    }
+
+    /* BANNERS */
+    .banner {
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+    }
+    .banner-warn { background: rgba(255,180,50,0.1); border: 1px solid rgba(255,180,50,0.3); color: #ffb432; }
+    .banner-info { background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.2); color: rgba(255,107,53,0.9); }
+
+    /* TABLE */
+    .table-container {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 28px;
+    }
+    .table-toolbar {
+      padding: 16px 20px; border-bottom: 1px solid var(--dark-border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .table-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: white; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 10px 20px; text-align: left;
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--dark-border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px; color: var(--text-secondary); vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .td-name { font-family: 'Sora', sans-serif; font-weight: 600; color: white; font-size: 13px; }
+    .td-sub  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* PILLS */
+    .pill {
+      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .pill-pending  { background: rgba(255,180,50,0.15);  color: #ffb432; border: 1px solid rgba(255,180,50,0.3); }
+    .pill-accepted { background: rgba(80,200,120,0.15);  color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+    .pill-declined { background: rgba(255,100,100,0.15); color: #ff8080; border: 1px solid rgba(255,100,100,0.3); }
+    .pill-active   { background: rgba(255,107,53,0.15);  color: var(--fire); border: 1px solid rgba(255,107,53,0.3); }
+    .pill-filled   { background: rgba(80,200,120,0.15);  color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+    .pill-expired  { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
+    .pill-paused   { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
+
+    /* BUTTONS */
+    .btn-primary {
+      background: var(--fire); color: white; border: none;
+      border-radius: 8px; padding: 10px 20px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s; white-space: nowrap;
+    }
+    .btn-primary:hover { background: #e55a2b; }
+    .btn-outline {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--dark-border); border-radius: 8px; padding: 9px 18px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.3); color: white; }
+    .btn-edit {
+      background: rgba(255,107,53,0.1); color: var(--fire);
+      border: 1px solid rgba(255,107,53,0.25); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-edit:hover { background: rgba(255,107,53,0.2); }
+    .btn-delete {
+      background: transparent; color: rgba(255,100,100,0.7);
+      border: 1px solid rgba(255,100,100,0.25); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-delete:hover { border-color: rgba(255,100,100,0.5); color: #ff6464; }
+    .action-group { display: flex; gap: 8px; }
+
+    /* FORM */
+    .form-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; padding: 28px;
+    }
+    .profile-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;
+    }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group.full { grid-column: 1 / -1; }
+    label {
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    input[type="text"], input[type="url"], input[type="tel"], input[type="email"],
+    input[type="date"], input[type="time"], input[type="number"], textarea, select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--dark-border); border-radius: 8px;
+      padding: 10px 14px; color: white;
+      font-family: 'Lora', serif; font-size: 14px;
+      outline: none; transition: border-color 0.15s; width: 100%;
+      -webkit-appearance: none;
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    input:focus, textarea:focus, select:focus { border-color: rgba(255,255,255,0.3); }
+    textarea { resize: vertical; min-height: 100px; }
+    select { cursor: pointer; }
+    select option { background: #1a2a3a; color: white; }
+
+    /* EDIT MODE banner inside form */
+    .edit-mode-notice {
+      background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.2);
+      border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      color: rgba(255,107,53,0.9); display: none; align-items: center; gap: 10px;
+    }
+    .edit-mode-notice.show { display: flex; }
+
+    /* EMPTY */
+    .empty-state { padding: 48px 20px; text-align: center; }
+    .empty-state p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1a3020; border: 1px solid rgba(80,200,120,0.3); color: #50c878;
+      padding: 12px 20px; border-radius: 8px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      z-index: 1000; opacity: 0; transform: translateY(8px);
+      transition: all 0.2s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { background: #301a1a; border-color: rgba(255,100,100,0.3); color: #ff8080; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .section { padding: 20px 16px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading-screen"><div class="spinner"></div></div>
+
+<div class="dashboard-shell" id="dashboard" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="ServiceWindow">
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-section="overview">
+        <span class="nav-icon">▦</span> Dashboard
+      </button>
+      <button class="nav-item" data-section="my-listings">
+        <span class="nav-icon">≡</span> My Listings
+        <span class="nav-badge" id="listings-badge"></span>
+      </button>
+      <button class="nav-item" data-section="post-service">
+        <span class="nav-icon">+</span> Post a Service
+      </button>
+      <button class="nav-item" data-section="profile">
+        <span class="nav-icon">○</span> Provider Profile
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-name" id="sidebar-name">Loading…</div>
+      <div class="user-role">Service Provider</div>
+      <button class="btn-signout" id="btn-signout">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- ─── OVERVIEW ─── -->
+    <section class="section active" id="section-overview">
+      <div class="section-header">
+        <h1 id="welcome-heading">Welcome back</h1>
+        <p>Your service provider account at a glance.</p>
+      </div>
+
+      <div class="banner banner-warn" id="unverified-banner" style="display:none">
+        ⏳ Your account is pending verification. We'll email you within 24 hours.
+      </div>
+
+      <div class="banner banner-info">
+        ✓ Your ServiceWindow account is free. Focus on getting discovered by verified food truck operators in SWFL.
+      </div>
+
+      <div class="card-grid">
+        <div class="stat-card">
+          <div class="stat-label">Active Listings</div>
+          <div class="stat-value fire" id="ov-active">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Views</div>
+          <div class="stat-value" id="ov-views">0</div>
+          <div class="stat-sub">Coming soon</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cities Covered</div>
+          <div class="stat-value" id="ov-cities">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Member Since</div>
+          <div class="stat-value" id="ov-since" style="font-size:16px;padding-top:6px">—</div>
+        </div>
+      </div>
+
+      <div class="table-container" id="ov-recent-wrap">
+        <div class="table-toolbar">
+          <span class="table-title">Recent Listings</span>
+          <button class="btn-outline" onclick="showSection('my-listings')" style="font-size:12px;padding:6px 14px">View All</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Service Type</th>
+              <th>City</th>
+              <th>Status</th>
+              <th>Posted</th>
+            </tr>
+          </thead>
+          <tbody id="ov-recent-tbody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ─── MY LISTINGS ─── -->
+    <section class="section" id="section-my-listings">
+      <div class="section-header">
+        <h1>My Listings</h1>
+        <p>All service listings you've posted on the vendor marketplace.</p>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar">
+          <span class="table-title">Posted Listings</span>
+          <button class="btn-primary" onclick="startNewListing()" style="font-size:12px;padding:7px 16px">+ New Listing</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Service Type</th>
+              <th>City</th>
+              <th>Status</th>
+              <th>Posted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="listings-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="listings-empty" style="display:none">
+          <p>No service listings yet. Post your first listing to get discovered by food truck operators.</p>
+          <button class="btn-primary" onclick="startNewListing()">Post Your First Listing →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── POST A SERVICE ─── -->
+    <section class="section" id="section-post-service">
+      <div class="section-header">
+        <h1 id="form-heading">Post a Service</h1>
+        <p id="form-subhead">List your service on the vendor marketplace. Food truck operators will find you here.</p>
+      </div>
+
+      <div class="form-card">
+        <div class="edit-mode-notice" id="edit-notice">
+          ✎ Editing an existing listing. Save to update, or <button id="cancel-edit-btn" style="background:none;border:none;color:var(--fire);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline">cancel</button>.
+        </div>
+        <form id="service-form">
+          <input type="hidden" id="edit-listing-id">
+          <div class="profile-grid">
+            <div class="field-group full">
+              <label for="f-title">Service Title *</label>
+              <input type="text" id="f-title" placeholder="e.g. Commercial Kitchen Rental — Cape Coral" required>
+            </div>
+            <div class="field-group">
+              <label for="f-category">Service Category *</label>
+              <select id="f-category" required>
+                <option value="" disabled selected>Select category</option>
+                <option>Commissary Kitchen</option>
+                <option>Equipment Rental</option>
+                <option>Repair &amp; Maintenance</option>
+                <option>Permitting &amp; Licensing</option>
+                <option>Supplies &amp; Wholesale</option>
+                <option>Insurance</option>
+                <option>Branding &amp; Marketing</option>
+                <option>Accounting &amp; Legal</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="f-city">City *</label>
+              <select id="f-city" required>
+                <option value="" disabled selected>Select city</option>
+                <option>Cape Coral</option>
+                <option>Fort Myers</option>
+                <option>Lehigh Acres</option>
+                <option>Bonita Springs</option>
+                <option>North Fort Myers</option>
+                <option>Estero</option>
+                <option>Sanibel</option>
+                <option>Fort Myers Beach</option>
+                <option>Naples</option>
+                <option>Immokalee</option>
+                <option>Marco Island</option>
+                <option>Golden Gate</option>
+                <option>Lely Resort</option>
+                <option>Ave Maria</option>
+                <option>Naples Manor</option>
+                <option>Naples Park</option>
+                <option>Sarasota</option>
+                <option>Punta Gorda</option>
+                <option>Port Charlotte</option>
+                <option>Englewood</option>
+                <option>LaBelle</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="f-service-area">Service Area *</label>
+              <select id="f-service-area" required>
+                <option value="" disabled selected>Select service area</option>
+                <option>Single City</option>
+                <option>Multiple Cities</option>
+                <option>All of SWFL</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label for="f-description">Description *</label>
+              <textarea id="f-description" rows="5" placeholder="Describe what you offer, pricing, availability, and any requirements. Be specific — trucks are looking for reliable partners." required></textarea>
+            </div>
+            <div class="field-group">
+              <label for="f-website">Website / Booking Link</label>
+              <input type="url" id="f-website" placeholder="https://…">
+            </div>
+            <div class="field-group">
+              <label for="f-phone">Phone</label>
+              <input type="tel" id="f-phone" placeholder="(239) 555-0100">
+            </div>
+            <div class="field-group">
+              <label for="f-email">Contact Email</label>
+              <input type="email" id="f-email" placeholder="you@yourbusiness.com">
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button type="submit" class="btn-primary" id="form-submit-btn">Post Listing →</button>
+            <span id="form-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ─── PROVIDER PROFILE ─── -->
+    <section class="section" id="section-profile">
+      <div class="section-header">
+        <h1>Provider Profile</h1>
+        <p>This is what food truck operators see when they browse your listings. Keep it complete.</p>
+      </div>
+
+      <div class="form-card">
+        <form id="profile-form">
+          <div class="profile-grid">
+            <div class="field-group">
+              <label for="p-business">Business Name *</label>
+              <input type="text" id="p-business" placeholder="e.g. SWFL Commissary Co." required>
+            </div>
+            <div class="field-group">
+              <label for="p-phone">Phone Number</label>
+              <input type="tel" id="p-phone" placeholder="(239) 555-0100">
+            </div>
+            <div class="field-group">
+              <label for="p-website">Website</label>
+              <input type="url" id="p-website" placeholder="https://…">
+            </div>
+            <div class="field-group">
+              <label for="p-city">City</label>
+              <select id="p-city">
+                <option value="">Select city</option>
+                <option>Cape Coral</option>
+                <option>Fort Myers</option>
+                <option>Lehigh Acres</option>
+                <option>Bonita Springs</option>
+                <option>North Fort Myers</option>
+                <option>Estero</option>
+                <option>Sanibel</option>
+                <option>Fort Myers Beach</option>
+                <option>Naples</option>
+                <option>Immokalee</option>
+                <option>Marco Island</option>
+                <option>Golden Gate</option>
+                <option>Lely Resort</option>
+                <option>Ave Maria</option>
+                <option>Naples Manor</option>
+                <option>Naples Park</option>
+                <option>Sarasota</option>
+                <option>Punta Gorda</option>
+                <option>Port Charlotte</option>
+                <option>Englewood</option>
+                <option>LaBelle</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="p-years">Years in Business</label>
+              <input type="text" id="p-years" placeholder="e.g. 8 years">
+            </div>
+            <div class="field-group full">
+              <label for="p-bio">About Your Business</label>
+              <textarea id="p-bio" placeholder="Describe your services, experience, and what makes you a great partner for food truck operators. This appears publicly on your listings."></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <button type="submit" class="btn-primary">Save Profile</button>
+            <span id="profile-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const SUPABASE_URL     = 'https://krmfxedkxoyzkeqnijcd.supabase.co'
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtybWZ4ZWRreG95emtlcW5pamNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjg1NDMsImV4cCI6MjA4OTk0NDU0M30._oSoUIyo5vhdYCtQtgZYfbRBHvf1bNisdSJ4yxiE3yo'
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+  let userId  = null
+  let profile = null
+
+  // ─── INIT ─────────────────────────────────────────────────
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = 'auth.html?mode=login'; return }
+    userId = session.user.id
+
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+
+    if (!data || data.role !== 'service_provider') {
+      window.location.href = 'index.html'; return
+    }
+    profile = data
+
+    document.getElementById('loading-screen').style.display = 'none'
+    document.getElementById('dashboard').style.display = 'flex'
+
+    renderSidebarMeta()
+    populateProfileForm()
+    await Promise.all([loadOverview(), loadMyListings()])
+  }
+
+  // ─── SIDEBAR META ─────────────────────────────────────────
+  function renderSidebarMeta() {
+    document.getElementById('sidebar-name').textContent =
+      profile.business_name || profile.contact_name || 'My Business'
+  }
+
+  // ─── OVERVIEW ─────────────────────────────────────────────
+  async function loadOverview() {
+    document.getElementById('welcome-heading').textContent =
+      `Welcome back, ${profile.business_name || profile.contact_name || 'there'}`
+
+    if (!profile.is_verified) {
+      document.getElementById('unverified-banner').style.display = 'flex'
+    }
+
+    // Member since
+    if (profile.created_at) {
+      document.getElementById('ov-since').textContent = fmtDate(profile.created_at)
+    }
+
+    // Active listing count
+    const { count: activeCount } = await supabase
+      .from('listings')
+      .select('*', { count: 'exact', head: true })
+      .eq('poster_id', userId)
+      .eq('board', 'vendor')
+      .eq('status', 'active')
+
+    document.getElementById('ov-active').textContent = activeCount ?? 0
+
+    // Update sidebar badge
+    if ((activeCount ?? 0) > 0) {
+      const badge = document.getElementById('listings-badge')
+      badge.textContent = activeCount
+      badge.style.display = 'inline-block'
+    }
+
+    // Recent listings for overview table + city count
+    const { data: recent } = await supabase
+      .from('listings')
+      .select('id, title, cuisine_type, city, status, created_at')
+      .eq('poster_id', userId)
+      .eq('board', 'vendor')
+      .order('created_at', { ascending: false })
+      .limit(5)
+
+    // Cities covered — distinct cities across all listings
+    const { data: allListings } = await supabase
+      .from('listings')
+      .select('city, metadata')
+      .eq('poster_id', userId)
+      .eq('board', 'vendor')
+
+    if (allListings) {
+      const citySet = new Set()
+      allListings.forEach(l => {
+        // If service_area is "All of SWFL" count as all 21 cities
+        const meta = l.metadata || {}
+        if (meta.service_area === 'All of SWFL') {
+          // Just mark with a special flag — show "All SWFL"
+          citySet.add('__all__')
+        } else if (l.city) {
+          citySet.add(l.city)
+        }
+      })
+      if (citySet.has('__all__')) {
+        document.getElementById('ov-cities').textContent = '21'
+        document.getElementById('ov-cities').style.fontSize = '20px'
+      } else {
+        document.getElementById('ov-cities').textContent = citySet.size
+      }
+    } else {
+      document.getElementById('ov-cities').textContent = '0'
+    }
+
+    const tbody = document.getElementById('ov-recent-tbody')
+
+    if (!recent || recent.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;font-size:13px">No listings yet. <button class="btn-primary" style="margin-left:8px;padding:6px 14px;font-size:12px" onclick="showSection('post-service')">Post your first →</button></td></tr>`
+      return
+    }
+
+    tbody.innerHTML = recent.map(l => `
+      <tr>
+        <td><div class="td-name">${esc(l.title)}</div></td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${esc(l.cuisine_type || '—')}</td>
+        <td>${esc(l.city || '—')}</td>
+        <td><span class="pill pill-${l.status}">${l.status}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
+      </tr>`).join('')
+  }
+
+  // ─── MY LISTINGS ──────────────────────────────────────────
+  async function loadMyListings() {
+    const { data } = await supabase
+      .from('listings')
+      .select('id, title, cuisine_type, city, status, created_at, metadata')
+      .eq('poster_id', userId)
+      .eq('board', 'vendor')
+      .order('created_at', { ascending: false })
+
+    const tbody = document.getElementById('listings-tbody')
+    const empty = document.getElementById('listings-empty')
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = ''
+      empty.style.display = 'block'
+      return
+    }
+
+    empty.style.display = 'none'
+
+    tbody.innerHTML = data.map(l => {
+      const meta = l.metadata || {}
+      return `
+        <tr>
+          <td>
+            <div class="td-name">${esc(l.title)}</div>
+            ${meta.service_area ? `<div class="td-sub">${esc(meta.service_area)}</div>` : ''}
+          </td>
+          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${esc(l.cuisine_type || '—')}</td>
+          <td>${esc(l.city || '—')}</td>
+          <td><span class="pill pill-${l.status}">${l.status}</span></td>
+          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
+          <td>
+            <div class="action-group">
+              <button class="btn-edit"   onclick="editListing('${l.id}')">Edit</button>
+              <button class="btn-delete" onclick="deleteListing('${l.id}')">Delete</button>
+            </div>
+          </td>
+        </tr>`
+    }).join('')
+  }
+
+  // ─── EDIT LISTING ─────────────────────────────────────────
+  window.editListing = async function(id) {
+    const { data, error } = await supabase
+      .from('listings')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error || !data) {
+      showToast('Could not load listing.', true)
+      return
+    }
+
+    const meta = data.metadata || {}
+
+    document.getElementById('edit-listing-id').value = id
+    document.getElementById('f-title').value         = data.title            || ''
+    document.getElementById('f-description').value   = data.description      || ''
+    document.getElementById('f-city').value          = data.city             || ''
+    document.getElementById('f-website').value       = data.location         || ''
+    document.getElementById('f-phone').value         = data.start_time       || ''
+    document.getElementById('f-email').value         = meta.contact_email    || ''
+
+    // Service category stored in cuisine_type
+    const catSel = document.getElementById('f-category')
+    for (const opt of catSel.options) {
+      if (opt.value === data.cuisine_type) { catSel.value = data.cuisine_type; break }
+    }
+
+    // Service area
+    const areaSel = document.getElementById('f-service-area')
+    for (const opt of areaSel.options) {
+      if (opt.value === meta.service_area) { areaSel.value = meta.service_area; break }
+    }
+
+    document.getElementById('edit-notice').classList.add('show')
+    document.getElementById('form-heading').textContent   = 'Edit Listing'
+    document.getElementById('form-subhead').textContent   = 'Update your service listing details below.'
+    document.getElementById('form-submit-btn').textContent = 'Save Changes →'
+
+    showSection('post-service')
+  }
+
+  // ─── DELETE LISTING ───────────────────────────────────────
+  window.deleteListing = async function(id) {
+    if (!confirm('Delete this listing? This cannot be undone.')) return
+
+    const { error } = await supabase
+      .from('listings')
+      .delete()
+      .eq('id', id)
+      .eq('poster_id', userId)
+
+    if (error) {
+      showToast('Error deleting listing.', true)
+      return
+    }
+
+    showToast('Listing deleted.')
+    await Promise.all([loadOverview(), loadMyListings()])
+  }
+
+  // ─── START NEW LISTING ────────────────────────────────────
+  window.startNewListing = function() {
+    resetServiceForm()
+    showSection('post-service')
+  }
+
+  function resetServiceForm() {
+    document.getElementById('service-form').reset()
+    document.getElementById('edit-listing-id').value      = ''
+    document.getElementById('edit-notice').classList.remove('show')
+    document.getElementById('form-heading').textContent   = 'Post a Service'
+    document.getElementById('form-subhead').textContent   = 'List your service on the vendor marketplace. Food truck operators will find you here.'
+    document.getElementById('form-submit-btn').textContent = 'Post Listing →'
+    document.getElementById('form-status').textContent    = ''
+  }
+
+  document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+    resetServiceForm()
+    showSection('my-listings')
+  })
+
+  // ─── SERVICE FORM SUBMIT ──────────────────────────────────
+  document.getElementById('service-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const statusEl = document.getElementById('form-status')
+    statusEl.textContent = 'Saving…'
+    statusEl.style.color = 'var(--text-muted)'
+
+    const editId      = document.getElementById('edit-listing-id').value.trim()
+    const title       = document.getElementById('f-title').value.trim()
+    const category    = document.getElementById('f-category').value
+    const description = document.getElementById('f-description').value.trim()
+    const city        = document.getElementById('f-city').value
+    const serviceArea = document.getElementById('f-service-area').value
+    const website     = document.getElementById('f-website').value.trim() || null
+    const phone       = document.getElementById('f-phone').value.trim()   || null
+    const email       = document.getElementById('f-email').value.trim()   || null
+
+    if (!title || !category || !description || !city || !serviceArea) {
+      statusEl.textContent = 'Please fill in all required fields.'
+      statusEl.style.color = '#ff8080'
+      return
+    }
+
+    const payload = {
+      poster_id:    userId,
+      board:        'vendor',
+      title,
+      description,
+      city,
+      cuisine_type: category,   // service category stored here
+      location:     website,    // website/booking link
+      start_time:   phone,      // phone stored here
+      status:       'active',
+      metadata: {
+        service_category: category,
+        service_area:     serviceArea,
+        contact_email:    email
+      }
+    }
+
+    let error
+
+    if (editId) {
+      // Update existing
+      const res = await supabase
+        .from('listings')
+        .update({ ...payload, updated_at: new Date().toISOString() })
+        .eq('id', editId)
+        .eq('poster_id', userId)
+      error = res.error
+    } else {
+      // Insert new
+      const res = await supabase.from('listings').insert(payload)
+      error = res.error
+    }
+
+    if (error) {
+      statusEl.textContent = 'Error saving listing.'
+      statusEl.style.color = '#ff8080'
+      console.error(error)
+      return
+    }
+
+    statusEl.textContent = ''
+    resetServiceForm()
+    showToast(editId ? 'Listing updated.' : 'Listing posted — trucks will find you on the marketplace.')
+    await Promise.all([loadOverview(), loadMyListings()])
+    showSection('my-listings')
+  })
+
+  // ─── PROFILE FORM ─────────────────────────────────────────
+  function populateProfileForm() {
+    if (!profile) return
+    document.getElementById('p-business').value = profile.business_name || ''
+    document.getElementById('p-phone').value    = profile.phone         || ''
+    document.getElementById('p-website').value  = profile.website       || ''
+    document.getElementById('p-bio').value      = profile.bio           || ''
+
+    // Years in business stored in metadata
+    const meta = profile.metadata || {}
+    document.getElementById('p-years').value = meta.years_in_business || ''
+
+    const cityEl = document.getElementById('p-city')
+    for (const opt of cityEl.options) {
+      if (opt.value === profile.city) { cityEl.value = profile.city; break }
+    }
+  }
+
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const statusEl = document.getElementById('profile-status')
+    statusEl.textContent = 'Saving…'
+    statusEl.style.color = 'var(--text-muted)'
+
+    const years = document.getElementById('p-years').value.trim() || null
+    const existingMeta = profile.metadata || {}
+
+    const updates = {
+      business_name: document.getElementById('p-business').value.trim() || null,
+      phone:         document.getElementById('p-phone').value.trim()    || null,
+      website:       document.getElementById('p-website').value.trim()  || null,
+      bio:           document.getElementById('p-bio').value.trim()      || null,
+      city:          document.getElementById('p-city').value            || null,
+      metadata:      { ...existingMeta, years_in_business: years },
+      updated_at:    new Date().toISOString()
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', userId)
+
+    if (error) {
+      statusEl.textContent = 'Error saving profile.'
+      statusEl.style.color = '#ff8080'
+      console.error(error)
+      return
+    }
+
+    profile = { ...profile, ...updates }
+    document.getElementById('sidebar-name').textContent =
+      profile.business_name || profile.contact_name || 'My Business'
+
+    statusEl.textContent = 'Saved.'
+    statusEl.style.color = '#50c878'
+    setTimeout(() => { statusEl.textContent = '' }, 2500)
+    showToast('Profile updated.')
+  })
+
+  // ─── NAV ──────────────────────────────────────────────────
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => showSection(btn.dataset.section))
+  })
+
+  window.showSection = function(id) {
+    document.querySelectorAll('.nav-item').forEach(b => {
+      b.classList.toggle('active', b.dataset.section === id)
+    })
+    document.querySelectorAll('.section').forEach(s => {
+      s.classList.toggle('active', s.id === 'section-' + id)
+    })
+  }
+
+  document.getElementById('btn-signout').addEventListener('click', async () => {
+    await supabase.auth.signOut()
+    window.location.href = 'index.html'
+  })
+
+  // ─── HELPERS ──────────────────────────────────────────────
+  function esc(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  }
+
+  function fmtDate(ts) {
+    if (!ts) return '—'
+    const d = new Date(ts + (ts.length === 10 ? 'T00:00:00' : ''))
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  function showToast(msg, error = false) {
+    const t = document.getElementById('toast')
+    t.textContent = msg
+    t.className = 'toast' + (error ? ' error' : '') + ' show'
+    setTimeout(() => t.classList.remove('show'), 3200)
+  }
+
+  init()
+</script>
+
+</body>
+</html>

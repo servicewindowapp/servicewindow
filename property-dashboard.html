@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Dashboard — ServiceWindow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fire: #FF6B35;
+      --navy: #0D1B2A;
+      --dark-section: #0d1f2d;
+      --dark-alt: #111f2e;
+      --dark-card: rgba(255,255,255,0.06);
+      --dark-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.85);
+      --text-muted: rgba(255,255,255,0.6);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--navy);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* LOADING */
+    #loading-screen {
+      position: fixed; inset: 0; background: var(--navy);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--dark-border); border-top-color: var(--fire);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .dashboard-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 220px; min-width: 220px;
+      background: #07111a;
+      border-right: 1px solid var(--dark-border);
+      display: flex; flex-direction: column;
+    }
+    .sidebar-logo {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .sidebar-logo img { height: 36px; width: auto; filter: brightness(0) invert(1); }
+
+    .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 20px;
+      background: none; border: none;
+      color: var(--text-muted);
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s; text-align: left; position: relative;
+    }
+    .nav-item:hover { color: white; background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: white; background: rgba(255,107,53,0.12); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--fire); border-radius: 0 2px 2px 0;
+    }
+    .nav-icon { width: 18px; text-align: center; font-style: normal; }
+    .nav-badge {
+      margin-left: auto; background: var(--fire); color: white;
+      border-radius: 10px; padding: 1px 7px;
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      display: none;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px; border-top: 1px solid var(--dark-border);
+    }
+    .user-name {
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; margin-bottom: 4px;
+    }
+    .user-role {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--text-muted); margin-bottom: 12px;
+    }
+    .btn-signout {
+      width: 100%; padding: 8px 12px; background: transparent;
+      border: 1px solid var(--dark-border); color: var(--text-muted);
+      border-radius: 6px; font-family: 'Sora', sans-serif; font-size: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-signout:hover { border-color: rgba(255,255,255,0.3); color: white; }
+
+    /* MAIN */
+    .main-content { flex: 1; overflow-y: auto; background: var(--dark-section); }
+    .section { display: none; padding: 32px; max-width: 960px; }
+    .section.active { display: block; }
+
+    .section-header { margin-bottom: 28px; }
+    .section-header h1 { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: white; }
+    .section-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+
+    /* STAT CARDS */
+    .card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; padding: 20px;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .stat-value { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; color: white; }
+    .stat-value.fire { color: var(--fire); }
+
+    /* BANNERS */
+    .banner {
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+    }
+    .banner-warn { background: rgba(255,180,50,0.1); border: 1px solid rgba(255,180,50,0.3); color: #ffb432; }
+    .banner-info { background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.2); color: rgba(255,107,53,0.9); }
+
+    /* TABLE */
+    .table-container {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 28px;
+    }
+    .table-toolbar {
+      padding: 16px 20px; border-bottom: 1px solid var(--dark-border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .table-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: white; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 10px 20px; text-align: left;
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--dark-border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px; color: var(--text-secondary); vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .td-name { font-family: 'Sora', sans-serif; font-weight: 600; color: white; font-size: 13px; }
+    .td-sub  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* PILLS */
+    .pill {
+      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .pill-pending  { background: rgba(255,180,50,0.15);  color: #ffb432; border: 1px solid rgba(255,180,50,0.3); }
+    .pill-accepted { background: rgba(80,200,120,0.15);  color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+    .pill-declined { background: rgba(255,100,100,0.15); color: #ff8080; border: 1px solid rgba(255,100,100,0.3); }
+    .pill-active   { background: rgba(255,107,53,0.15);  color: var(--fire); border: 1px solid rgba(255,107,53,0.3); }
+    .pill-filled   { background: rgba(80,200,120,0.15);  color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+    .pill-expired  { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
+    .pill-deleted  { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
+
+    /* Type pills */
+    .pill-vendor-spot { background: rgba(255,107,53,0.15);  color: #FF6B35; border: 1px solid rgba(255,107,53,0.3); }
+    .pill-parking     { background: rgba(80,160,200,0.15);  color: #50a0c8; border: 1px solid rgba(80,160,200,0.3); }
+    .pill-storage     { background: rgba(160,100,220,0.15); color: #a064dc; border: 1px solid rgba(160,100,220,0.3); }
+
+    /* FILTER ROW */
+    .filter-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: transparent; border: 1px solid var(--dark-border); border-radius: 6px;
+      padding: 6px 14px; color: var(--text-muted);
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .filter-btn:hover { border-color: rgba(255,255,255,0.25); color: var(--text-secondary); }
+    .filter-btn.active {
+      background: rgba(255,107,53,0.12); border-color: rgba(255,107,53,0.4);
+      color: var(--fire);
+    }
+
+    /* BUTTONS */
+    .btn-primary {
+      background: var(--fire); color: white; border: none;
+      border-radius: 8px; padding: 10px 20px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s; white-space: nowrap;
+    }
+    .btn-primary:hover { background: #e55a2b; }
+    .btn-outline {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--dark-border); border-radius: 8px; padding: 9px 18px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.3); color: white; }
+    .btn-delete {
+      background: transparent; color: rgba(255,100,100,0.7);
+      border: 1px solid rgba(255,100,100,0.25); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-delete:hover { border-color: rgba(255,100,100,0.5); color: #ff6464; }
+
+    /* FORM */
+    .form-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; padding: 28px;
+    }
+    .profile-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;
+    }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group.full { grid-column: 1 / -1; }
+    label {
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    input[type="text"], input[type="url"], input[type="tel"], input[type="date"],
+    input[type="time"], input[type="number"], input[type="email"], textarea, select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--dark-border); border-radius: 8px;
+      padding: 10px 14px; color: white;
+      font-family: 'Lora', serif; font-size: 14px;
+      outline: none; transition: border-color 0.15s; width: 100%;
+      -webkit-appearance: none;
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    input:focus, textarea:focus, select:focus { border-color: rgba(255,255,255,0.3); }
+    textarea { resize: vertical; min-height: 100px; }
+    select { cursor: pointer; }
+    select option { background: #1a2a3a; color: white; }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.6);
+    }
+
+    /* LISTING TYPE TABS */
+    .type-tabs {
+      display: flex; gap: 0; margin-bottom: 24px;
+      border: 1px solid var(--dark-border); border-radius: 8px; overflow: hidden;
+    }
+    .type-tab {
+      flex: 1; padding: 10px 16px; background: transparent; border: none;
+      color: var(--text-muted); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s; text-align: center;
+      border-right: 1px solid var(--dark-border);
+    }
+    .type-tab:last-child { border-right: none; }
+    .type-tab:hover { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+    .type-tab.active { background: rgba(255,107,53,0.12); color: var(--fire); }
+
+    /* CHECKBOX GROUP */
+    .checkbox-group {
+      display: flex; flex-wrap: wrap; gap: 12px; padding: 4px 0;
+    }
+    .checkbox-label {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Lora', serif; font-size: 14px; color: var(--text-secondary);
+      cursor: pointer; text-transform: none; letter-spacing: normal;
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: 16px; height: 16px; min-width: 16px; padding: 0;
+      accent-color: var(--fire); cursor: pointer;
+    }
+
+    /* EMPTY */
+    .empty-state { padding: 48px 20px; text-align: center; }
+    .empty-state p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1a3020; border: 1px solid rgba(80,200,120,0.3); color: #50c878;
+      padding: 12px 20px; border-radius: 8px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      z-index: 1000; opacity: 0; transform: translateY(8px);
+      transition: all 0.2s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { background: #301a1a; border-color: rgba(255,100,100,0.3); color: #ff8080; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .section { padding: 20px 16px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+      .type-tabs { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading-screen"><div class="spinner"></div></div>
+
+<div class="dashboard-shell" id="dashboard" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="ServiceWindow">
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-section="overview">
+        <span class="nav-icon">▦</span> Dashboard
+      </button>
+      <button class="nav-item" data-section="my-listings">
+        <span class="nav-icon">≡</span> My Listings
+        <span class="nav-badge" id="listings-badge"></span>
+      </button>
+      <button class="nav-item" data-section="post-listing">
+        <span class="nav-icon">+</span> Post a Listing
+      </button>
+      <button class="nav-item" data-section="profile">
+        <span class="nav-icon">○</span> Property Profile
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-name" id="sidebar-name">Loading…</div>
+      <div class="user-role">Property Owner</div>
+      <button class="btn-signout" id="btn-signout">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- ─── OVERVIEW ─── -->
+    <section class="section active" id="section-overview">
+      <div class="section-header">
+        <h1 id="welcome-heading">Welcome back</h1>
+        <p>Your property listings at a glance.</p>
+      </div>
+
+      <div class="banner banner-warn" id="unverified-banner" style="display:none">
+        ⏳ Your account is pending admin verification. Listings will go live once approved.
+      </div>
+
+      <div class="card-grid">
+        <div class="stat-card">
+          <div class="stat-label">Active Vendor Spots</div>
+          <div class="stat-value fire" id="ov-vendor">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Parking Spots</div>
+          <div class="stat-value" id="ov-parking">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Storage Units</div>
+          <div class="stat-value" id="ov-storage">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Listings</div>
+          <div class="stat-value" id="ov-total">—</div>
+        </div>
+      </div>
+
+      <div class="banner banner-info" id="no-listings-tip" style="display:none">
+        You haven't posted any listings yet. Post your first location — it's free.
+        <button class="btn-primary" style="margin-left:auto;flex-shrink:0" onclick="showSection('post-listing')">Post a Listing →</button>
+      </div>
+
+      <div class="table-container" id="ov-recent-wrap">
+        <div class="table-toolbar">
+          <span class="table-title">Recent Listings</span>
+          <button class="btn-outline" onclick="showSection('my-listings')" style="font-size:12px;padding:6px 14px">View All</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Pricing</th>
+              <th>Status</th>
+              <th>Posted</th>
+            </tr>
+          </thead>
+          <tbody id="ov-recent-tbody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ─── MY LISTINGS ─── -->
+    <section class="section" id="section-my-listings">
+      <div class="section-header">
+        <h1>My Listings</h1>
+        <p>All your posted locations and their current status.</p>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar">
+          <span class="table-title">All Listings</span>
+          <div class="filter-row">
+            <button class="filter-btn active" data-filter="all">All Types</button>
+            <button class="filter-btn" data-filter="vendor_spot">Vendor Spots</button>
+            <button class="filter-btn" data-filter="parking">Parking</button>
+            <button class="filter-btn" data-filter="storage">Storage</button>
+          </div>
+          <button class="btn-primary" onclick="showSection('post-listing')" style="font-size:12px;padding:7px 16px">+ New Listing</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Type</th>
+              <th>City</th>
+              <th>Pricing</th>
+              <th>Status</th>
+              <th>Posted</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="listings-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="listings-empty" style="display:none">
+          <p>No listings yet. Post your first location — it's free.</p>
+          <button class="btn-primary" onclick="showSection('post-listing')">Post Your First Listing →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── POST A LISTING ─── -->
+    <section class="section" id="section-post-listing">
+      <div class="section-header">
+        <h1>Post a Listing</h1>
+        <p>All listing types are free to post. Trucks will see your location and reach out.</p>
+      </div>
+
+      <div class="form-card">
+        <!-- Listing type tabs -->
+        <div class="type-tabs">
+          <button class="type-tab active" data-type="vendor_spot">Vendor Spot</button>
+          <button class="type-tab" data-type="parking">Parking</button>
+          <button class="type-tab" data-type="storage">Storage</button>
+        </div>
+
+        <form id="listing-form">
+          <!-- Shared fields -->
+          <div class="profile-grid">
+            <div class="field-group full">
+              <label for="l-title">Listing Title *</label>
+              <input type="text" id="l-title" placeholder="e.g. Waterfront Lot with Hookups — Cape Coral" required>
+            </div>
+            <div class="field-group full">
+              <label for="l-description">Description *</label>
+              <textarea id="l-description" placeholder="Describe your location, access, nearby foot traffic, utilities, etc." required></textarea>
+            </div>
+            <div class="field-group">
+              <label for="l-city">City *</label>
+              <select id="l-city" required>
+                <option value="" disabled selected>Select city</option>
+                <option>Cape Coral</option>
+                <option>Fort Myers</option>
+                <option>Lehigh Acres</option>
+                <option>Bonita Springs</option>
+                <option>North Fort Myers</option>
+                <option>Estero</option>
+                <option>Sanibel</option>
+                <option>Fort Myers Beach</option>
+                <option>Naples</option>
+                <option>Immokalee</option>
+                <option>Marco Island</option>
+                <option>Golden Gate</option>
+                <option>Lely Resort</option>
+                <option>Ave Maria</option>
+                <option>Naples Manor</option>
+                <option>Naples Park</option>
+                <option>Sarasota</option>
+                <option>Punta Gorda</option>
+                <option>Port Charlotte</option>
+                <option>Englewood</option>
+                <option>LaBelle</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="l-address">Address (optional)</label>
+              <input type="text" id="l-address" placeholder="Street address or cross-streets">
+            </div>
+            <div class="field-group">
+              <label for="l-available-from">Available From *</label>
+              <input type="date" id="l-available-from" required>
+            </div>
+            <div class="field-group">
+              <label for="l-contact">Contact Info *</label>
+              <input type="text" id="l-contact" placeholder="Phone, email, or preferred method" required>
+            </div>
+          </div>
+
+          <!-- VENDOR SPOT specific fields -->
+          <div id="fields-vendor_spot">
+            <div class="profile-grid">
+              <div class="field-group">
+                <label for="vs-pricing-model">Pricing Model *</label>
+                <select id="vs-pricing-model">
+                  <option value="free">Free</option>
+                  <option value="profit_share">Profit Share</option>
+                  <option value="weekly_rate">Weekly Rate</option>
+                  <option value="monthly_rate">Monthly Rate</option>
+                </select>
+              </div>
+              <div class="field-group" id="vs-rate-group" style="display:none">
+                <label for="vs-rate">Rate Amount ($) *</label>
+                <input type="number" id="vs-rate" placeholder="0.00" min="0" step="0.01">
+              </div>
+              <div class="field-group full">
+                <label for="vs-hours">Typical Hours Available</label>
+                <input type="text" id="vs-hours" placeholder="e.g. Weekends 10am–8pm">
+              </div>
+              <div class="field-group full">
+                <label>Utilities Available</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="vs-water"> Water
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="vs-electric"> Electric
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="vs-trash"> Trash
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PARKING specific fields -->
+          <div id="fields-parking" style="display:none">
+            <div class="profile-grid">
+              <div class="field-group">
+                <label for="pk-pricing-model">Pricing *</label>
+                <select id="pk-pricing-model">
+                  <option value="free">Free</option>
+                  <option value="weekly_rate">Weekly Rate</option>
+                  <option value="monthly_rate">Monthly Rate</option>
+                </select>
+              </div>
+              <div class="field-group" id="pk-rate-group" style="display:none">
+                <label for="pk-rate">Rate Amount ($) *</label>
+                <input type="number" id="pk-rate" placeholder="0.00" min="0" step="0.01">
+              </div>
+              <div class="field-group">
+                <label for="pk-clearance">Height Clearance (optional)</label>
+                <input type="text" id="pk-clearance" placeholder="e.g. 14 ft clearance">
+              </div>
+              <div class="field-group full">
+                <label>Options</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="pk-trailer"> Trailer-friendly
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STORAGE specific fields -->
+          <div id="fields-storage" style="display:none">
+            <div class="profile-grid">
+              <div class="field-group">
+                <label for="st-pricing-model">Pricing *</label>
+                <select id="st-pricing-model">
+                  <option value="monthly_rate">Monthly Rate</option>
+                  <option value="weekly_rate">Weekly Rate</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="st-rate">Rate Amount ($) *</label>
+                <input type="number" id="st-rate" placeholder="0.00" min="0" step="0.01">
+              </div>
+              <div class="field-group">
+                <label for="st-size">Unit Size</label>
+                <input type="text" id="st-size" placeholder="e.g. 10x20 ft">
+              </div>
+              <div class="field-group full">
+                <label>Options</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="st-climate"> Climate Controlled
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <button type="submit" class="btn-primary">Post Listing →</button>
+            <span id="listing-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ─── PROPERTY PROFILE ─── -->
+    <section class="section" id="section-profile">
+      <div class="section-header">
+        <h1>Property Profile</h1>
+        <p>This is how food trucks see you on the platform. Keep it complete.</p>
+      </div>
+
+      <div class="form-card">
+        <form id="profile-form">
+          <div class="profile-grid">
+            <div class="field-group">
+              <label for="p-business">Business / Property Name *</label>
+              <input type="text" id="p-business" placeholder="e.g. Riverside Business Park" required>
+            </div>
+            <div class="field-group">
+              <label for="p-phone">Phone Number</label>
+              <input type="tel" id="p-phone" placeholder="(239) 555-0100">
+            </div>
+            <div class="field-group">
+              <label for="p-website">Website (optional)</label>
+              <input type="url" id="p-website" placeholder="https://…">
+            </div>
+            <div class="field-group">
+              <label for="p-city">City</label>
+              <select id="p-city">
+                <option value="">Select city</option>
+                <option>Cape Coral</option>
+                <option>Fort Myers</option>
+                <option>Lehigh Acres</option>
+                <option>Bonita Springs</option>
+                <option>North Fort Myers</option>
+                <option>Estero</option>
+                <option>Sanibel</option>
+                <option>Fort Myers Beach</option>
+                <option>Naples</option>
+                <option>Immokalee</option>
+                <option>Marco Island</option>
+                <option>Golden Gate</option>
+                <option>Lely Resort</option>
+                <option>Ave Maria</option>
+                <option>Naples Manor</option>
+                <option>Naples Park</option>
+                <option>Sarasota</option>
+                <option>Punta Gorda</option>
+                <option>Port Charlotte</option>
+                <option>Englewood</option>
+                <option>LaBelle</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label for="p-bio">About Your Property</label>
+              <textarea id="p-bio" placeholder="Describe your property — location advantages, access, typical use, foot traffic, what makes it great for food trucks…"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <button type="submit" class="btn-primary">Save Profile</button>
+            <span id="profile-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const SUPABASE_URL     = 'https://krmfxedkxoyzkeqnijcd.supabase.co'
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtybWZ4ZWRreG95emtlcW5pamNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjg1NDMsImV4cCI6MjA4OTk0NDU0M30._oSoUIyo5vhdYCtQtgZYfbRBHvf1bNisdSJ4yxiE3yo'
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+  let userId  = null
+  let profile = null
+  let allListings = []
+  let activeListingType = 'vendor_spot'
+  let activeFilter = 'all'
+
+  // ─── INIT ─────────────────────────────────────────────────
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = 'auth.html?mode=login'; return }
+    userId = session.user.id
+
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+
+    if (!data || data.role !== 'property') {
+      window.location.href = 'index.html'; return
+    }
+    profile = data
+
+    document.getElementById('loading-screen').style.display = 'none'
+    document.getElementById('dashboard').style.display = 'flex'
+
+    renderSidebarMeta()
+    populateProfileForm()
+    await loadAllListings()
+    renderOverview()
+    renderMyListings()
+  }
+
+  // ─── SIDEBAR META ─────────────────────────────────────────
+  function renderSidebarMeta() {
+    document.getElementById('sidebar-name').textContent =
+      profile.business_name || 'My Property'
+  }
+
+  // ─── LOAD LISTINGS ────────────────────────────────────────
+  async function loadAllListings() {
+    const { data, error } = await supabase
+      .from('listings')
+      .select('*')
+      .eq('poster_id', userId)
+      .in('board', ['vendor_spot', 'parking', 'storage'])
+      .order('created_at', { ascending: false })
+
+    if (error) { console.error(error); allListings = []; return }
+    allListings = data || []
+  }
+
+  // ─── OVERVIEW ─────────────────────────────────────────────
+  function renderOverview() {
+    document.getElementById('welcome-heading').textContent =
+      `Welcome back, ${profile.business_name || 'there'}`
+
+    if (!profile.is_verified) {
+      document.getElementById('unverified-banner').style.display = 'flex'
+    }
+
+    const active = allListings.filter(l => l.status === 'active')
+    const vendorCount  = active.filter(l => l.board === 'vendor_spot').length
+    const parkingCount = active.filter(l => l.board === 'parking').length
+    const storageCount = active.filter(l => l.board === 'storage').length
+    const total        = allListings.length
+
+    document.getElementById('ov-vendor').textContent  = vendorCount
+    document.getElementById('ov-parking').textContent = parkingCount
+    document.getElementById('ov-storage').textContent = storageCount
+    document.getElementById('ov-total').textContent   = total
+
+    // Badge for sidebar
+    if (total > 0) {
+      const badge = document.getElementById('listings-badge')
+      badge.textContent = total
+      badge.style.display = 'inline-block'
+    }
+
+    if (total === 0) {
+      document.getElementById('no-listings-tip').style.display = 'flex'
+    }
+
+    // Recent 5
+    const recent = allListings.slice(0, 5)
+    const tbody  = document.getElementById('ov-recent-tbody')
+
+    if (recent.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;font-size:13px">No listings posted yet.</td></tr>`
+      return
+    }
+
+    tbody.innerHTML = recent.map(l => {
+      const meta   = l.metadata || {}
+      const pricing = pricingLabel(l.board, meta)
+      return `<tr>
+        <td><div class="td-name">${esc(l.title)}</div></td>
+        <td>${typePill(l.board)}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px">${esc(pricing)}</td>
+        <td><span class="pill pill-${l.status}">${l.status}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
+      </tr>`
+    }).join('')
+  }
+
+  // ─── MY LISTINGS ──────────────────────────────────────────
+  function renderMyListings() {
+    const filtered = activeFilter === 'all'
+      ? allListings
+      : allListings.filter(l => l.board === activeFilter)
+
+    const tbody = document.getElementById('listings-tbody')
+    const empty = document.getElementById('listings-empty')
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = ''
+      empty.style.display = 'block'
+      return
+    }
+
+    empty.style.display = 'none'
+
+    tbody.innerHTML = filtered.map(l => {
+      const meta    = l.metadata || {}
+      const pricing = pricingLabel(l.board, meta)
+      return `<tr id="lrow-${l.id}">
+        <td>
+          <div class="td-name">${esc(l.title)}</div>
+          ${l.city ? `<div class="td-sub">${esc(l.city)}</div>` : ''}
+        </td>
+        <td>${typePill(l.board)}</td>
+        <td style="font-size:12px">${esc(l.city || '—')}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px">${esc(pricing)}</td>
+        <td><span class="pill pill-${l.status}">${l.status}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
+        <td>
+          ${l.status !== 'deleted'
+            ? `<button class="btn-delete" onclick="deleteListing('${l.id}')">Delete</button>`
+            : ''}
+        </td>
+      </tr>`
+    }).join('')
+  }
+
+  window.deleteListing = async function(id) {
+    if (!confirm('Delete this listing? This cannot be undone.')) return
+    const { error } = await supabase
+      .from('listings')
+      .delete()
+      .eq('id', id)
+      .eq('poster_id', userId)
+
+    if (error) { showToast('Error deleting listing', true); return }
+
+    allListings = allListings.filter(l => l.id !== id)
+    document.getElementById(`lrow-${id}`)?.remove()
+    showToast('Listing deleted')
+
+    // Update stats
+    const total = allListings.length
+    document.getElementById('ov-total').textContent = total
+    const badge = document.getElementById('listings-badge')
+    if (total === 0) {
+      badge.style.display = 'none'
+      document.getElementById('listings-empty').style.display = 'block'
+    } else {
+      badge.textContent = total
+    }
+
+    // Rerender overview counts
+    const active = allListings.filter(l => l.status === 'active')
+    document.getElementById('ov-vendor').textContent  = active.filter(l => l.board === 'vendor_spot').length
+    document.getElementById('ov-parking').textContent = active.filter(l => l.board === 'parking').length
+    document.getElementById('ov-storage').textContent = active.filter(l => l.board === 'storage').length
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      activeFilter = btn.dataset.filter
+      renderMyListings()
+    })
+  })
+
+  // ─── LISTING TYPE TABS ────────────────────────────────────
+  document.querySelectorAll('.type-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'))
+      tab.classList.add('active')
+      activeListingType = tab.dataset.type
+      document.querySelectorAll('[id^="fields-"]').forEach(el => el.style.display = 'none')
+      document.getElementById(`fields-${activeListingType}`).style.display = 'block'
+    })
+  })
+
+  // Show/hide rate fields based on pricing model selection
+  document.getElementById('vs-pricing-model').addEventListener('change', function() {
+    document.getElementById('vs-rate-group').style.display =
+      this.value === 'free' ? 'none' : 'flex'
+    document.getElementById('vs-rate').required = this.value !== 'free'
+  })
+
+  document.getElementById('pk-pricing-model').addEventListener('change', function() {
+    document.getElementById('pk-rate-group').style.display =
+      this.value === 'free' ? 'none' : 'flex'
+    document.getElementById('pk-rate').required = this.value !== 'free'
+  })
+
+  // ─── POST A LISTING ───────────────────────────────────────
+  document.getElementById('listing-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const statusEl = document.getElementById('listing-status')
+    statusEl.textContent = 'Posting…'
+    statusEl.style.color = 'var(--text-muted)'
+
+    const title         = document.getElementById('l-title').value.trim()
+    const description   = document.getElementById('l-description').value.trim()
+    const city          = document.getElementById('l-city').value
+    const address       = document.getElementById('l-address').value.trim() || null
+    const availableFrom = document.getElementById('l-available-from').value || null
+    const contact       = document.getElementById('l-contact').value.trim()
+
+    if (!title || !description || !city || !contact) {
+      statusEl.textContent = 'Title, description, city, and contact are required.'
+      statusEl.style.color = '#ff8080'
+      return
+    }
+
+    // Build metadata per type
+    let metadata = {}
+    let pricingModelLabel = ''
+
+    if (activeListingType === 'vendor_spot') {
+      const model = document.getElementById('vs-pricing-model').value
+      const rate  = model !== 'free' ? parseFloat(document.getElementById('vs-rate').value) || null : null
+      const water    = document.getElementById('vs-water').checked
+      const electric = document.getElementById('vs-electric').checked
+      const trash    = document.getElementById('vs-trash').checked
+      const hours    = document.getElementById('vs-hours').value.trim() || null
+      metadata = {
+        pricing_model: model,
+        rate,
+        extras: { water, electric, trash, hours }
+      }
+      pricingModelLabel = model
+    } else if (activeListingType === 'parking') {
+      const model   = document.getElementById('pk-pricing-model').value
+      const rate    = model !== 'free' ? parseFloat(document.getElementById('pk-rate').value) || null : null
+      const trailer = document.getElementById('pk-trailer').checked
+      const clearance = document.getElementById('pk-clearance').value.trim() || null
+      metadata = {
+        pricing_model: model,
+        rate,
+        extras: { trailer_friendly: trailer, height_clearance: clearance }
+      }
+      pricingModelLabel = model
+    } else if (activeListingType === 'storage') {
+      const model   = document.getElementById('st-pricing-model').value
+      const rate    = parseFloat(document.getElementById('st-rate').value) || null
+      const size    = document.getElementById('st-size').value.trim() || null
+      const climate = document.getElementById('st-climate').checked
+      metadata = {
+        pricing_model: model,
+        rate,
+        extras: { unit_size: size, climate_controlled: climate }
+      }
+      pricingModelLabel = model
+    }
+
+    const { data: inserted, error } = await supabase.from('listings').insert({
+      board:       activeListingType,
+      poster_id:   userId,
+      title,
+      description,
+      city,
+      location:    address,
+      event_date:  availableFrom,
+      start_time:  contact,
+      cuisine_type: activeListingType,
+      metadata,
+      status:      'active'
+    }).select().single()
+
+    if (error) {
+      statusEl.textContent = 'Error posting listing.'
+      statusEl.style.color = '#ff8080'
+      console.error(error)
+      return
+    }
+
+    // Prepend to local cache
+    allListings.unshift(inserted)
+
+    statusEl.textContent = ''
+    document.getElementById('listing-form').reset()
+    // Reset tabs to vendor_spot
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'))
+    document.querySelector('[data-type="vendor_spot"]').classList.add('active')
+    document.querySelectorAll('[id^="fields-"]').forEach(el => el.style.display = 'none')
+    document.getElementById('fields-vendor_spot').style.display = 'block'
+    document.getElementById('vs-rate-group').style.display = 'none'
+    activeListingType = 'vendor_spot'
+
+    // Refresh badge + counts
+    const total = allListings.length
+    const badge = document.getElementById('listings-badge')
+    badge.textContent = total
+    badge.style.display = 'inline-block'
+
+    const active = allListings.filter(l => l.status === 'active')
+    document.getElementById('ov-vendor').textContent  = active.filter(l => l.board === 'vendor_spot').length
+    document.getElementById('ov-parking').textContent = active.filter(l => l.board === 'parking').length
+    document.getElementById('ov-storage').textContent = active.filter(l => l.board === 'storage').length
+    document.getElementById('ov-total').textContent   = total
+    document.getElementById('no-listings-tip').style.display = 'none'
+
+    showToast('Listing posted — trucks can now see it')
+    renderMyListings()
+    showSection('my-listings')
+  })
+
+  // ─── PROFILE FORM ─────────────────────────────────────────
+  function populateProfileForm() {
+    if (!profile) return
+    document.getElementById('p-business').value = profile.business_name || ''
+    document.getElementById('p-phone').value    = profile.phone         || ''
+    document.getElementById('p-website').value  = profile.website       || ''
+    document.getElementById('p-bio').value      = profile.bio           || ''
+
+    const cityEl = document.getElementById('p-city')
+    for (const opt of cityEl.options) {
+      if (opt.value === profile.city) { cityEl.value = profile.city; break }
+    }
+  }
+
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const statusEl = document.getElementById('profile-status')
+    statusEl.textContent = 'Saving…'
+    statusEl.style.color = 'var(--text-muted)'
+
+    const updates = {
+      business_name: document.getElementById('p-business').value.trim() || null,
+      phone:         document.getElementById('p-phone').value.trim()    || null,
+      website:       document.getElementById('p-website').value.trim()  || null,
+      city:          document.getElementById('p-city').value            || null,
+      bio:           document.getElementById('p-bio').value.trim()      || null,
+      updated_at:    new Date().toISOString()
+    }
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', userId)
+    if (error) {
+      statusEl.textContent = 'Error saving profile.'
+      statusEl.style.color = '#ff8080'
+      return
+    }
+
+    profile = { ...profile, ...updates }
+    document.getElementById('sidebar-name').textContent = profile.business_name || 'My Property'
+    statusEl.textContent = 'Saved.'
+    statusEl.style.color = '#50c878'
+    setTimeout(() => { statusEl.textContent = '' }, 2500)
+    showToast('Profile updated')
+  })
+
+  // ─── NAV ──────────────────────────────────────────────────
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => showSection(btn.dataset.section))
+  })
+
+  window.showSection = function(id) {
+    document.querySelectorAll('.nav-item').forEach(b => {
+      b.classList.toggle('active', b.dataset.section === id)
+    })
+    document.querySelectorAll('.section').forEach(s => {
+      s.classList.toggle('active', s.id === 'section-' + id)
+    })
+  }
+
+  document.getElementById('btn-signout').addEventListener('click', async () => {
+    await supabase.auth.signOut()
+    window.location.href = 'index.html'
+  })
+
+  // ─── HELPERS ──────────────────────────────────────────────
+  function esc(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  }
+
+  function fmtDate(ts) {
+    if (!ts) return '—'
+    const d = new Date(ts + (ts.length === 10 ? 'T00:00:00' : ''))
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  function typePill(board) {
+    const map = {
+      vendor_spot: ['vendor-spot', 'Vendor Spot'],
+      parking:     ['parking',     'Parking'],
+      storage:     ['storage',     'Storage']
+    }
+    const [cls, label] = map[board] || ['active', board]
+    return `<span class="pill pill-${cls}">${label}</span>`
+  }
+
+  function pricingLabel(board, meta) {
+    if (!meta || !meta.pricing_model) return '—'
+    const modelMap = {
+      free:          'Free',
+      profit_share:  'Profit Share',
+      weekly_rate:   meta.rate ? `$${meta.rate}/wk` : 'Weekly',
+      monthly_rate:  meta.rate ? `$${meta.rate}/mo` : 'Monthly'
+    }
+    return modelMap[meta.pricing_model] || meta.pricing_model
+  }
+
+  function showToast(msg, error = false) {
+    const t = document.getElementById('toast')
+    t.textContent = msg
+    t.className = 'toast' + (error ? ' error' : '') + ' show'
+    setTimeout(() => t.classList.remove('show'), 3200)
+  }
+
+  init()
+</script>
+
+</body>
+</html>

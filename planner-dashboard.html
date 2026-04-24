@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planner Dashboard — ServiceWindow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fire: #FF6B35;
+      --navy: #0D1B2A;
+      --dark-section: #0d1f2d;
+      --dark-alt: #111f2e;
+      --dark-card: rgba(255,255,255,0.06);
+      --dark-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.85);
+      --text-muted: rgba(255,255,255,0.6);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--navy);
+      color: var(--text-primary);
+      height: 100vh; overflow: hidden;
+    }
+
+    #loading-screen {
+      position: fixed; inset: 0; background: var(--navy);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--dark-border); border-top-color: var(--fire);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .dashboard-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 220px; min-width: 220px;
+      background: #07111a;
+      border-right: 1px solid var(--dark-border);
+      display: flex; flex-direction: column;
+    }
+    .sidebar-logo {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .sidebar-logo img { height: 36px; width: auto; filter: brightness(0) invert(1); }
+
+    .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 20px;
+      background: none; border: none;
+      color: var(--text-muted);
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s; text-align: left; position: relative;
+    }
+    .nav-item:hover { color: white; background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: white; background: rgba(255,107,53,0.12); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--fire); border-radius: 0 2px 2px 0;
+    }
+    .nav-icon { width: 18px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 16px 20px; border-top: 1px solid var(--dark-border);
+    }
+    .user-name {
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; margin-bottom: 4px;
+    }
+    .free-badge {
+      display: inline-block;
+      background: rgba(80,200,120,0.15); color: #50c878;
+      border: 1px solid rgba(80,200,120,0.3);
+      border-radius: 20px; padding: 2px 8px;
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      margin-bottom: 12px;
+    }
+    .btn-signout {
+      width: 100%; padding: 8px 12px; background: transparent;
+      border: 1px solid var(--dark-border); color: var(--text-muted);
+      border-radius: 6px; font-family: 'Sora', sans-serif; font-size: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-signout:hover { border-color: rgba(255,255,255,0.3); color: white; }
+
+    /* MAIN */
+    .main-content { flex: 1; overflow-y: auto; background: var(--dark-section); }
+    .section { display: none; padding: 32px; max-width: 960px; }
+    .section.active { display: block; }
+
+    .section-header { margin-bottom: 28px; }
+    .section-header h1 { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: white; }
+    .section-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+
+    /* STATS */
+    .card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; padding: 20px;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .stat-value { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; color: white; }
+    .stat-value.fire { color: var(--fire); }
+
+    /* TABLE */
+    .table-container {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 28px;
+    }
+    .table-toolbar {
+      padding: 16px 20px; border-bottom: 1px solid var(--dark-border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .table-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: white; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 10px 20px; text-align: left;
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--dark-border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px; color: var(--text-secondary); vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .td-name { font-family: 'Sora', sans-serif; font-weight: 600; color: white; font-size: 13px; }
+    .td-sub  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* PILLS */
+    .pill {
+      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .pill-active    { background: rgba(255,107,53,0.15);  color: var(--fire); border: 1px solid rgba(255,107,53,0.3); }
+    .pill-filled    { background: rgba(80,200,120,0.15);  color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+    .pill-cancelled { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
+    .pill-expired   { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
+    .pill-accepted  { background: rgba(80,200,120,0.15);  color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+    .pill-pending   { background: rgba(255,180,50,0.15);  color: #ffb432; border: 1px solid rgba(255,180,50,0.3); }
+    .pill-declined  { background: rgba(255,100,100,0.15); color: #ff8080; border: 1px solid rgba(255,100,100,0.3); }
+    .badge-verified { background: rgba(80,200,120,0.15); color: #50c878; border: 1px solid rgba(80,200,120,0.3); border-radius: 20px; padding: 2px 8px; font-family: 'DM Mono', monospace; font-size: 10px; display: inline-block; }
+
+    /* BUTTONS */
+    .btn-primary {
+      background: var(--fire); color: white; border: none;
+      border-radius: 8px; padding: 10px 20px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s; white-space: nowrap;
+    }
+    .btn-primary:hover { background: #e55a2b; }
+    .btn-outline {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--dark-border); border-radius: 8px; padding: 9px 18px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.3); color: white; }
+    .btn-cancel-listing {
+      background: transparent; color: rgba(255,100,100,0.7);
+      border: 1px solid rgba(255,100,100,0.25); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 11px;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-cancel-listing:hover { border-color: rgba(255,100,100,0.5); color: #ff6464; }
+    .btn-accept {
+      background: rgba(80,200,120,0.15); color: #50c878;
+      border: 1px solid rgba(80,200,120,0.3); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-accept:hover { background: rgba(80,200,120,0.25); }
+    .btn-decline {
+      background: transparent; color: rgba(255,100,100,0.7);
+      border: 1px solid rgba(255,100,100,0.25); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-decline:hover { border-color: rgba(255,100,100,0.5); color: #ff6464; }
+    .action-group { display: flex; gap: 8px; }
+
+    /* BANNERS */
+    .banner {
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+    }
+    .banner-warn { background: rgba(255,180,50,0.1); border: 1px solid rgba(255,180,50,0.3); color: #ffb432; }
+
+    /* NAV BADGE */
+    .nav-badge {
+      margin-left: auto; background: var(--fire); color: white;
+      border-radius: 10px; padding: 1px 7px;
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      display: none;
+    }
+
+    /* FORM */
+    .form-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; padding: 28px;
+    }
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;
+    }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group.full { grid-column: 1 / -1; }
+    label {
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    input[type="text"], input[type="number"], input[type="url"],
+    input[type="tel"], input[type="date"], input[type="time"],
+    textarea, select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--dark-border); border-radius: 8px;
+      padding: 10px 14px; color: white;
+      font-family: 'Lora', serif; font-size: 14px;
+      outline: none; transition: border-color 0.15s; width: 100%;
+      -webkit-appearance: none;
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    input:focus, textarea:focus, select:focus { border-color: rgba(255,255,255,0.3); }
+    textarea { resize: vertical; min-height: 90px; }
+    select { cursor: pointer; }
+    select option { background: #1a2a3a; color: white; }
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.6); }
+
+    .checkbox-row {
+      display: flex; align-items: center; gap: 10px; margin-top: 6px;
+    }
+    .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--fire); }
+    .checkbox-row label { font-size: 13px; color: var(--text-secondary); text-transform: none; letter-spacing: 0; }
+
+    /* INFO BOX */
+    .info-box {
+      background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.2);
+      border-radius: 8px; padding: 14px 18px;
+      font-family: 'Sora', sans-serif; font-size: 13px; color: rgba(255,255,255,0.7);
+      margin-bottom: 24px;
+    }
+
+    /* EMPTY */
+    .empty-state { padding: 48px 20px; text-align: center; }
+    .empty-icon  { font-size: 32px; margin-bottom: 12px; }
+    .empty-state p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1a3020; border: 1px solid rgba(80,200,120,0.3); color: #50c878;
+      padding: 12px 20px; border-radius: 8px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+      z-index: 1000; opacity: 0; transform: translateY(8px);
+      transition: all 0.2s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { background: #301a1a; border-color: rgba(255,100,100,0.3); color: #ff8080; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .section { padding: 20px 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading-screen"><div class="spinner"></div></div>
+
+<div class="dashboard-shell" id="dashboard" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="ServiceWindow">
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-section="overview">
+        <span class="nav-icon">▦</span> Dashboard
+      </button>
+      <button class="nav-item" data-section="requests">
+        <span class="nav-icon">◈</span> My Requests
+      </button>
+      <button class="nav-item" data-section="post">
+        <span class="nav-icon">＋</span> Post a Request
+      </button>
+      <button class="nav-item" data-section="bookings">
+        <span class="nav-icon">◷</span> Bookings
+        <span class="nav-badge" id="bookings-badge"></span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-name" id="sidebar-name">—</div>
+      <div class="free-badge">Free Forever</div>
+      <button class="btn-signout" id="btn-signout">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- OVERVIEW -->
+    <section class="section active" id="section-overview">
+      <div class="section-header">
+        <h1 id="welcome-heading">Welcome back</h1>
+        <p>Find and book verified food trucks for your events across Southwest Florida.</p>
+      </div>
+
+      <div class="banner banner-warn" id="unverified-banner" style="display:none">
+        ⏳ Your account is pending verification. We'll email you within 24 hours.
+      </div>
+
+      <div class="card-grid">
+        <div class="stat-card">
+          <div class="stat-label">Active Requests</div>
+          <div class="stat-value fire" id="ov-active">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Confirmed Bookings</div>
+          <div class="stat-value" id="ov-confirmed">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Responses</div>
+          <div class="stat-value" id="ov-pending">—</div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        ServiceWindow is <strong>free forever</strong> for event planners and HOA managers. Post requests, browse verified trucks, and manage bookings at no cost.
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-primary" onclick="showSection('post')">+ Post an Event Request</button>
+        <button class="btn-outline" onclick="window.location.href='marketplace.html'">Browse Trucks</button>
+      </div>
+    </section>
+
+    <!-- MY REQUESTS -->
+    <section class="section" id="section-requests">
+      <div class="section-header">
+        <h1>My Requests</h1>
+        <p>Event requests you've posted to the marketplace.</p>
+      </div>
+      <div class="table-container">
+        <div class="table-toolbar">
+          <span class="table-title">Posted Requests</span>
+          <button class="btn-primary" style="padding:7px 16px;font-size:12px" onclick="showSection('post')">+ New Request</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date</th>
+              <th>City</th>
+              <th>Guests</th>
+              <th>Trucks Needed</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="requests-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="requests-empty" style="display:none">
+          <div class="empty-icon">📋</div>
+          <p>No requests posted yet.</p>
+          <button class="btn-primary" onclick="showSection('post')">Post Your First Request</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- POST A REQUEST -->
+    <section class="section" id="section-post">
+      <div class="section-header">
+        <h1>Post an Event Request</h1>
+        <p>Tell verified trucks what you're looking for. They'll respond directly.</p>
+      </div>
+      <div class="form-card">
+        <form id="request-form" novalidate>
+          <div class="form-grid">
+            <div class="field-group full">
+              <label for="r-title">Event Name / Title</label>
+              <input type="text" id="r-title" placeholder="e.g. Summer HOA Block Party, Community Movie Night" required>
+            </div>
+            <div class="field-group">
+              <label for="r-type">Event Type</label>
+              <select id="r-type">
+                <option value="">Select type…</option>
+                <option value="HOA Event">HOA Event</option>
+                <option value="Private Party">Private Party</option>
+                <option value="Corporate Event">Corporate Event</option>
+                <option value="Community Event">Community Event</option>
+                <option value="Wedding">Wedding</option>
+                <option value="Festival">Festival</option>
+                <option value="Fundraiser">Fundraiser</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="r-date">Event Date</label>
+              <input type="date" id="r-date" required>
+            </div>
+            <div class="field-group">
+              <label for="r-start">Start Time</label>
+              <input type="time" id="r-start">
+            </div>
+            <div class="field-group">
+              <label for="r-end">End Time</label>
+              <input type="time" id="r-end">
+            </div>
+            <div class="field-group">
+              <label for="r-city">City</label>
+              <input type="text" id="r-city" placeholder="e.g. Cape Coral" required>
+            </div>
+            <div class="field-group full">
+              <label for="r-location">Location / Address</label>
+              <input type="text" id="r-location" placeholder="Venue name or street address">
+            </div>
+            <div class="field-group">
+              <label for="r-guests-min">Estimated Guests (min)</label>
+              <input type="number" id="r-guests-min" placeholder="e.g. 100" min="1">
+            </div>
+            <div class="field-group">
+              <label for="r-guests-max">Estimated Guests (max)</label>
+              <input type="number" id="r-guests-max" placeholder="e.g. 300" min="1">
+            </div>
+            <div class="field-group">
+              <label for="r-trucks">Trucks Needed</label>
+              <input type="number" id="r-trucks" value="1" min="1" max="10">
+            </div>
+            <div class="field-group">
+              <label for="r-budget">Budget Range</label>
+              <select id="r-budget">
+                <option value="">Select range…</option>
+                <option value="Under $500">Under $500</option>
+                <option value="$500–$1,000">$500–$1,000</option>
+                <option value="$1,000–$2,500">$1,000–$2,500</option>
+                <option value="$2,500–$5,000">$2,500–$5,000</option>
+                <option value="$5,000+">$5,000+</option>
+                <option value="Negotiable">Negotiable</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="r-cuisine">Cuisine Preference (optional)</label>
+              <input type="text" id="r-cuisine" placeholder="e.g. BBQ, Tacos, Any">
+            </div>
+            <div class="field-group">
+              <div class="checkbox-row">
+                <input type="checkbox" id="r-urgent">
+                <label for="r-urgent">Mark as Urgent</label>
+              </div>
+            </div>
+            <div class="field-group full">
+              <label for="r-notes">Additional Details</label>
+              <textarea id="r-notes" placeholder="Parking details, setup requirements, HOA gate code process, dietary restrictions, anything trucks should know…"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button type="submit" class="btn-primary">Post Request to Marketplace</button>
+            <span id="request-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- BOOKINGS -->
+    <section class="section" id="section-bookings">
+      <div class="section-header">
+        <h1>Bookings</h1>
+        <p>Truck responses to your event requests.</p>
+      </div>
+      <div class="table-container">
+        <div class="table-toolbar">
+          <span class="table-title">All Responses</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Truck</th>
+              <th>Event Type</th>
+              <th>Event Date</th>
+              <th>City</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="bookings-empty" style="display:none">
+          <div class="empty-icon">🚚</div>
+          <p>No booking responses yet. Post a request to start receiving trucks.</p>
+          <button class="btn-primary" onclick="showSection('post')">Post a Request</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { supabase } from './supabase-client.js'
+
+  let userId  = null
+  let profile = null
+
+  // ─── INIT ────────────────────────────────────────────────
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = 'auth.html?mode=login'; return }
+    userId = session.user.id
+
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, role, business_name, contact_name, email')
+      .eq('id', userId)
+      .single()
+
+    if (!data || data.role !== 'organizer') {
+      window.location.href = 'index.html'; return
+    }
+    profile = data
+
+    document.getElementById('loading-screen').style.display = 'none'
+    document.getElementById('dashboard').style.display = 'flex'
+
+    document.getElementById('sidebar-name').textContent =
+      profile.business_name || profile.contact_name || 'My Account'
+
+    document.getElementById('welcome-heading').textContent =
+      `Welcome back, ${profile.business_name || profile.contact_name || 'there'}`
+
+    await Promise.all([loadOverview(), loadRequests(), loadBookings()])
+  }
+
+  // ─── OVERVIEW ────────────────────────────────────────────
+  async function loadOverview() {
+    if (!profile.is_verified) {
+      document.getElementById('unverified-banner').style.display = 'flex'
+    }
+
+    const [{ count: active }, { count: confirmed }, { count: pending }] = await Promise.all([
+      supabase.from('listings').select('*', { count: 'exact', head: true })
+        .eq('poster_id', userId).eq('status', 'active'),
+      supabase.from('bookings').select('*', { count: 'exact', head: true })
+        .eq('requester_id', userId).eq('status', 'accepted'),
+      supabase.from('bookings').select('*', { count: 'exact', head: true })
+        .eq('requester_id', userId).eq('status', 'pending')
+    ])
+    document.getElementById('ov-active').textContent    = active    ?? 0
+    document.getElementById('ov-confirmed').textContent = confirmed ?? 0
+    document.getElementById('ov-pending').textContent   = pending   ?? 0
+
+    if ((pending ?? 0) > 0) {
+      const badge = document.getElementById('bookings-badge')
+      badge.textContent = pending
+      badge.style.display = 'inline-block'
+    }
+  }
+
+  // ─── MY REQUESTS ─────────────────────────────────────────
+  async function loadRequests() {
+    const { data } = await supabase
+      .from('listings')
+      .select('id, title, event_date, city, guest_count_min, guest_count_max, trucks_needed, status, created_at')
+      .eq('poster_id', userId)
+      .in('board', ['request'])
+      .order('created_at', { ascending: false })
+
+    const tbody = document.getElementById('requests-tbody')
+    const empty = document.getElementById('requests-empty')
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = ''; empty.style.display = 'block'; return
+    }
+    empty.style.display = 'none'
+
+    tbody.innerHTML = data.map(l => {
+      const guests = l.guest_count_min || l.guest_count_max
+        ? [(l.guest_count_min || ''), (l.guest_count_max || '')].filter(Boolean).join('–')
+        : '—'
+      return `
+      <tr>
+        <td><div class="td-name">${esc(l.title)}</div></td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(l.event_date)}</td>
+        <td>${esc(l.city || '—')}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px">${guests}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px">${l.trucks_needed || 1}</td>
+        <td><span class="pill pill-${l.status}">${l.status}</span></td>
+        <td>
+          ${l.status === 'active'
+            ? `<button class="btn-cancel-listing" onclick="cancelRequest('${l.id}')">Cancel</button>`
+            : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
+        </td>
+      </tr>`
+    }).join('')
+  }
+
+  window.cancelRequest = async function (id) {
+    if (!confirm('Cancel this request? It will be removed from the marketplace.')) return
+    const { error } = await supabase
+      .from('listings').update({ status: 'cancelled' }).eq('id', id)
+    if (error) { showToast('Error cancelling request', true); return }
+    showToast('Request cancelled')
+    await Promise.all([loadRequests(), loadOverview()])
+  }
+
+  // ─── BOOKINGS ────────────────────────────────────────────
+  async function loadBookings() {
+    const { data } = await supabase
+      .from('bookings')
+      .select(`id, event_type, event_date, city, status, created_at,
+               truck:truck_id(business_name, contact_name, is_verified)`)
+      .eq('requester_id', userId)
+      .order('created_at', { ascending: false })
+
+    const tbody = document.getElementById('bookings-tbody')
+    const empty = document.getElementById('bookings-empty')
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = ''; empty.style.display = 'block'; return
+    }
+    empty.style.display = 'none'
+
+    tbody.innerHTML = data.map(b => `
+      <tr id="brow-${b.id}">
+        <td>
+          <div class="td-name">${esc(b.truck?.business_name || b.truck?.contact_name || '—')}</div>
+          ${b.truck?.is_verified ? '<span class="badge-verified" style="margin-top:4px;display:inline-block">Verified</span>' : ''}
+        </td>
+        <td>${esc(b.event_type || '—')}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
+        <td>${esc(b.city || '—')}</td>
+        <td><span class="pill pill-${b.status}">${b.status}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(b.created_at)}</td>
+        <td>
+          ${b.status === 'pending'
+            ? `<div class="action-group">
+                 <button class="btn-accept"  onclick="respondBooking('${b.id}','accepted')">Accept</button>
+                 <button class="btn-decline" onclick="respondBooking('${b.id}','declined')">Decline</button>
+               </div>`
+            : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
+        </td>
+      </tr>`).join('')
+  }
+
+  window.respondBooking = async function(id, status) {
+    const { error } = await supabase.from('bookings').update({ status }).eq('id', id)
+    if (error) { showToast('Error updating booking', true); return }
+    showToast(status === 'accepted' ? 'Truck accepted' : 'Booking declined')
+    // Update badge count
+    const badge = document.getElementById('bookings-badge')
+    const cur = parseInt(badge.textContent, 10) || 0
+    const next = Math.max(0, cur - 1)
+    badge.textContent = next
+    if (next === 0) badge.style.display = 'none'
+    await Promise.all([loadBookings(), loadOverview()])
+  }
+
+  // ─── POST REQUEST ────────────────────────────────────────
+  document.getElementById('request-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const statusEl = document.getElementById('request-status')
+    statusEl.textContent = 'Posting…'
+    statusEl.style.color = 'var(--text-muted)'
+
+    const title     = document.getElementById('r-title').value.trim()
+    const city      = document.getElementById('r-city').value.trim()
+    const date      = document.getElementById('r-date').value.trim()
+
+    if (!title || !city || !date) {
+      statusEl.textContent = 'Title, city, and date are required.'
+      statusEl.style.color = '#ff8080'
+      return
+    }
+
+    const gMin  = parseInt(document.getElementById('r-guests-min').value)  || null
+    const gMax  = parseInt(document.getElementById('r-guests-max').value)  || null
+    const trucks = parseInt(document.getElementById('r-trucks').value)     || 1
+
+    const { error } = await supabase.from('listings').insert({
+      poster_id:          userId,
+      board:              'request',
+      title,
+      description:        document.getElementById('r-notes').value.trim()    || null,
+      location:           document.getElementById('r-location').value.trim() || null,
+      city,
+      event_date:         date,
+      start_time:         document.getElementById('r-start').value.trim()    || null,
+      end_time:           document.getElementById('r-end').value.trim()      || null,
+      guest_count_min:    gMin,
+      guest_count_max:    gMax,
+      trucks_needed:      trucks,
+      budget_range:       document.getElementById('r-budget').value          || null,
+      cuisine_type_needed: document.getElementById('r-cuisine').value.trim() || null,
+      is_urgent:          document.getElementById('r-urgent').checked,
+      status:             'active'
+    })
+
+    if (error) {
+      statusEl.textContent = 'Error posting request.'
+      statusEl.style.color = '#ff8080'
+      return
+    }
+
+    statusEl.textContent = ''
+    document.getElementById('request-form').reset()
+    document.getElementById('r-trucks').value = '1'
+    showToast('Request posted to the marketplace')
+    await Promise.all([loadRequests(), loadOverview()])
+    showSection('requests')
+  })
+
+  // ─── NAV ─────────────────────────────────────────────────
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => showSection(btn.dataset.section))
+  })
+
+  window.showSection = function (id) {
+    document.querySelectorAll('.nav-item').forEach(b =>
+      b.classList.toggle('active', b.dataset.section === id))
+    document.querySelectorAll('.section').forEach(s =>
+      s.classList.toggle('active', s.id === 'section-' + id))
+  }
+
+  document.getElementById('btn-signout').addEventListener('click', async () => {
+    await supabase.auth.signOut()
+    window.location.href = 'index.html'
+  })
+
+  // ─── HELPERS ─────────────────────────────────────────────
+  function esc(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  }
+  function fmtDate(ts) {
+    if (!ts) return '—'
+    const d = new Date(ts + (ts.length === 10 ? 'T00:00:00' : ''))
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+  function fmtTime(t) {
+    if (!t) return ''
+    const [h, m] = t.split(':').map(Number)
+    const ampm = h >= 12 ? 'pm' : 'am'
+    return `${h % 12 || 12}${m ? ':' + String(m).padStart(2,'0') : ''}${ampm}`
+  }
+  function showToast(msg, error = false) {
+    const t = document.getElementById('toast')
+    t.textContent = msg
+    t.className = 'toast' + (error ? ' error' : '') + ' show'
+    setTimeout(() => t.classList.remove('show'), 3200)
+  }
+
+  init()
+</script>
+
+</body>
+</html>
