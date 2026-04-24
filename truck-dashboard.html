@@ -835,6 +835,9 @@
     if (!data || data.role !== 'truck') {
       window.location.href = 'index.html'; return
     }
+    if (!data.is_verified) {
+      window.location.href = 'auth.html'; return
+    }
     profile = data
 
     document.getElementById('loading-screen').style.display = 'none'

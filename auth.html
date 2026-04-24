@@ -788,10 +788,16 @@
     if (session) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, is_verified')
         .eq('id', session.user.id)
         .single()
-      redirectToDashboard(profile?.role)
+      if (profile?.is_verified) {
+        redirectToDashboard(profile.role)
+      } else {
+        // Logged in but pending — show the queue screen, don't redirect to dashboard
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'))
+        document.getElementById('stepSuccess').classList.add('active')
+      }
     }
 
     function redirectToDashboard(role) {
