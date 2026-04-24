@@ -983,7 +983,12 @@
 
       if (error) {
         setLoading(btn, false)
-        showError(errEl, 'Incorrect email or password.')
+        const msg = error.message?.toLowerCase() || ''
+        if (msg.includes('email not confirmed') || msg.includes('not confirmed')) {
+          showError(errEl, 'Please confirm your email address first — check your inbox for a link from ServiceWindow.')
+        } else {
+          showError(errEl, 'Incorrect email or password.')
+        }
         return
       }
 
