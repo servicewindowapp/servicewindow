@@ -283,8 +283,53 @@
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast.error { background: #301a1a; border-color: rgba(255,100,100,0.3); color: #ff8080; }
 
+    /* MOBILE NAV */
+    .mobile-topbar {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 200;
+    }
+    .mobile-topbar-logo { height: 28px; width: auto; filter: brightness(0) invert(1); }
+    .mobile-topbar-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px; font-weight: 600; color: white;
+      position: absolute; left: 50%; transform: translateX(-50%);
+    }
+    .mobile-hamburger {
+      display: flex; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 6px;
+    }
+    .mobile-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: white; border-radius: 2px; transition: all 0.25s;
+    }
+    .mobile-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .mobile-hamburger.open span:nth-child(2) { opacity: 0; }
+    .mobile-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 150;
+    }
+    .sidebar-overlay.show { display: block; }
     @media (max-width: 768px) {
-      .sidebar { display: none; }
+      .mobile-topbar { display: flex; }
+      .main-content { padding-top: 56px; }
+      .sidebar {
+        display: flex !important;
+        position: fixed; top: 0; left: 0;
+        height: 100vh; width: 260px;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 160;
+      }
+      .sidebar.mobile-open { transform: translateX(0); }
       .section { padding: 20px 16px; }
       .form-grid { grid-template-columns: 1fr; }
       .card-grid { grid-template-columns: 1fr 1fr; }
@@ -292,6 +337,15 @@
   </style>
 </head>
 <body>
+
+<div class="mobile-topbar">
+  <button class="mobile-hamburger" id="mobileHamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <span class="mobile-topbar-title">Planner Dashboard</span>
+  <img src="logo.png" alt="ServiceWindow" class="mobile-topbar-logo">
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div id="loading-screen"><div class="spinner"></div></div>
 
@@ -778,6 +832,28 @@
     t.className = 'toast' + (error ? ' error' : '') + ' show'
     setTimeout(() => t.classList.remove('show'), 3200)
   }
+
+  // ─── MOBILE NAV ──────────────────────────────────────────────
+  const mobileHamburger = document.getElementById('mobileHamburger')
+  const sidebarOverlay  = document.getElementById('sidebarOverlay')
+  const sidebar         = document.querySelector('.sidebar')
+  function openSidebar() {
+    sidebar.classList.add('mobile-open')
+    sidebarOverlay.classList.add('show')
+    mobileHamburger.classList.add('open')
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('mobile-open')
+    sidebarOverlay.classList.remove('show')
+    mobileHamburger.classList.remove('open')
+  }
+  mobileHamburger.addEventListener('click', () => {
+    sidebar.classList.contains('mobile-open') ? closeSidebar() : openSidebar()
+  })
+  sidebarOverlay.addEventListener('click', closeSidebar)
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', closeSidebar)
+  })
 
   init()
 </script>
