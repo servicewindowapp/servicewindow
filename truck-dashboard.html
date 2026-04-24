@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>My Dashboard — ServiceWindow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -308,18 +308,73 @@
       background: rgba(0,0,0,0.5); z-index: 150;
     }
     .sidebar-overlay.show { display: block; }
+    /* COMPLETED PILL */
+    .pill-completed { background: rgba(80,200,120,0.1); color: #50c878; border: 1px solid rgba(80,200,120,0.25); }
+
+    /* REVIEW BUTTONS */
+    .btn-review {
+      background: rgba(255,107,53,0.12); color: var(--fire);
+      border: 1px solid rgba(255,107,53,0.3); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-review:hover { background: rgba(255,107,53,0.2); }
+
+    /* STAR DISPLAY (read-only, for reviews list) */
+    .star-display { color: var(--fire); font-size: 14px; letter-spacing: 1px; }
+    .star-display.muted { color: rgba(255,255,255,0.15); }
+
+    /* REVIEW CARD */
+    .review-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 10px; padding: 18px 20px; margin-bottom: 12px;
+    }
+    .review-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+    .review-card-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: white; }
+    .review-card-date { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+    .review-card-text { font-size: 13px; color: var(--text-secondary); margin-top: 6px; font-style: italic; }
+
+    /* REVIEW MODAL */
+    .review-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      z-index: 600; display: flex; align-items: center; justify-content: center;
+    }
+    .review-modal {
+      background: #0d1f2d; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 28px; width: 100%; max-width: 440px; margin: 20px;
+    }
+    .review-modal h3 { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; color: white; margin-bottom: 6px; }
+    .review-modal-sub { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; font-family: 'Sora', sans-serif; }
+    .star-row { display: flex; gap: 6px; margin-bottom: 20px; }
+    .star-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 30px; color: rgba(255,255,255,0.15); transition: color 0.1s; line-height: 1; padding: 0;
+    }
+    .star-btn.lit { color: var(--fire); }
+    .review-textarea {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid var(--dark-border); border-radius: 8px;
+      padding: 10px 14px; color: white;
+      font-family: 'Lora', serif; font-size: 14px;
+      outline: none; resize: vertical; min-height: 80px; margin-bottom: 20px; display: block;
+    }
+    .review-textarea::placeholder { color: var(--text-muted); }
+    .review-textarea:focus { border-color: rgba(255,255,255,0.3); }
+    .review-modal-actions { display: flex; gap: 10px; }
+
     @media (max-width: 768px) {
       .mobile-topbar { display: flex; }
       .main-content { padding-top: 56px; }
       .sidebar {
         display: flex !important;
         position: fixed; top: 0; left: 0;
-        height: 100vh; width: 260px;
+        height: 100vh; height: -webkit-fill-available; height: 100dvh; width: 260px;
         transform: translateX(-100%);
         transition: transform 0.25s ease;
         z-index: 160;
       }
       .sidebar.mobile-open { transform: translateX(0); }
+      .sidebar-footer { flex-shrink: 0; background: #07111a; }
       .section { padding: 20px 16px; }
       .profile-grid { grid-template-columns: 1fr; }
       .card-grid { grid-template-columns: 1fr 1fr; }
@@ -368,6 +423,9 @@
       </button>
       <button class="nav-item" data-section="profile">
         <span class="nav-icon">◉</span> My Profile
+      </button>
+      <button class="nav-item" data-section="reviews">
+        <span class="nav-icon">★</span> My Reviews
       </button>
     </nav>
     <div class="sidebar-footer">
@@ -453,6 +511,29 @@
           <div class="empty-icon">📬</div>
           <p>No pending booking requests.</p>
           <button class="btn-outline" onclick="window.location.href='marketplace.html'">Browse Open Requests</button>
+        </div>
+      </div>
+
+      <!-- ACCEPTED / COMPLETED BOOKINGS -->
+      <div class="table-container" style="margin-top:8px">
+        <div class="table-toolbar">
+          <span class="table-title">Accepted &amp; Completed</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date</th>
+              <th>City</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="accepted-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="accepted-empty" style="display:none">
+          <div class="empty-icon">📅</div>
+          <p>No accepted bookings yet.</p>
         </div>
       </div>
     </section>
@@ -671,7 +752,50 @@
       </div>
     </section>
 
+    <!-- MY REVIEWS -->
+    <section class="section" id="section-reviews">
+      <div class="section-header">
+        <h1>My Reviews</h1>
+        <p>Ratings left by event organizers and HOA managers after completed bookings.</p>
+      </div>
+      <div class="card-grid" style="margin-bottom:28px">
+        <div class="stat-card">
+          <div class="stat-label">Average Rating</div>
+          <div class="stat-value fire" id="rv-avg">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Reviews</div>
+          <div class="stat-value" id="rv-count">0</div>
+        </div>
+      </div>
+      <div id="reviews-list"></div>
+      <div class="empty-state" id="reviews-empty" style="display:none">
+        <div class="empty-icon">⭐</div>
+        <p>No reviews yet. Reviews appear here after organizers rate a completed booking.</p>
+      </div>
+    </section>
+
   </main>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="review-modal-overlay" id="review-modal-overlay" style="display:none" onclick="closeReviewModal(event)">
+  <div class="review-modal" onclick="event.stopPropagation()">
+    <h3>Leave a Review</h3>
+    <p class="review-modal-sub" id="review-modal-sub">Rate this event organizer.</p>
+    <div class="star-row" id="review-star-row">
+      <button type="button" class="star-btn" data-val="1">★</button>
+      <button type="button" class="star-btn" data-val="2">★</button>
+      <button type="button" class="star-btn" data-val="3">★</button>
+      <button type="button" class="star-btn" data-val="4">★</button>
+      <button type="button" class="star-btn" data-val="5">★</button>
+    </div>
+    <textarea class="review-textarea" id="review-text" placeholder="Optional — professional to work with? Clear requirements? Good location access?"></textarea>
+    <div class="review-modal-actions">
+      <button class="btn-primary" onclick="submitReview()">Submit Review</button>
+      <button class="btn-outline" onclick="closeReviewModal()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -681,6 +805,9 @@
 
   let userId   = null
   let profile  = null
+  let reviewedBookingIds = new Set()
+  let pendingReview = { bookingId: null, revieweeId: null }
+  let reviewRating  = 0
 
   // ─── INIT ────────────────────────────────────────────────
   async function init() {
@@ -704,7 +831,7 @@
 
     renderSidebarMeta()
     populateProfileForm()
-    await Promise.all([loadOverview(), loadInbox(), loadListings(), loadPostedJobs()])
+    await Promise.all([loadOverview(), loadInbox(), loadAcceptedBookings(), loadListings(), loadPostedJobs(), loadReviewedBookingIds(), loadReviews()])
   }
 
   // ─── SIDEBAR META ────────────────────────────────────────
@@ -800,6 +927,7 @@
                requester:requester_id(business_name, contact_name, email)`)
       .eq('truck_id', userId)
       .eq('status', 'pending')
+      .order('event_date', { ascending: true })
       .order('event_date', { ascending: true })
 
     const tbody = document.getElementById('inbox-tbody')
@@ -959,132 +1087,57 @@
     const desc     = document.getElementById('job-desc').value.trim()
     const contact  = document.getElementById('job-contact').value.trim()
 
+    if (!title || !city
     if (!title || !city || !desc) {
-      statusEl.textContent = 'Position title, city, and description are required.'
+      statusEl.textContent = 'Title, city, and description are required.'
       statusEl.style.color = '#ff8080'
       return
     }
 
     const { error } = await supabase.from('listings').insert({
-      poster_id:   userId,
-      board:       'jobs',
+      poster_id:  userId,
+      board:      'jobs',
       title,
-      description: desc,
       city,
       cuisine_type: jobType,
-      start_time:  pay || null,
-      location:    contact || null,
-      status:      'active'
+      description:  desc,
+      metadata:     { pay, contact },
+      status:       'active'
     })
 
     if (error) {
-      statusEl.textContent = 'Error posting job. Try again.'
+      statusEl.textContent = 'Error posting job.'
       statusEl.style.color = '#ff8080'
       return
     }
 
     statusEl.textContent = ''
     document.getElementById('jobs-form').reset()
-    showToast('Job posted to the jobs board')
+    showToast('Job posted to the board')
     await loadPostedJobs()
+    showSection('jobs')
   })
-
-  // ─── PROFILE FORM ────────────────────────────────────────
-  function populateProfileForm() {
-    if (!profile) return
-    document.getElementById('p-business').value   = profile.business_name    || ''
-    document.getElementById('p-contact').value    = profile.contact_name     || ''
-    document.getElementById('p-phone').value      = profile.phone            || ''
-    document.getElementById('p-city').value       = profile.city             || ''
-    document.getElementById('p-cuisine').value    = profile.cuisine_type     || ''
-    document.getElementById('p-radius').value     = profile.service_radius   || ''
-    document.getElementById('p-website').value    = profile.website          || ''
-    document.getElementById('p-bio').value        = profile.bio              || ''
-    document.getElementById('p-fundraiser').checked = !!profile.is_fundraiser_friendly
-    document.getElementById('p-veteran').checked    = !!profile.is_veteran_owned
-  }
-
-  document.getElementById('profile-form').addEventListener('submit', async (e) => {
-    e.preventDefault()
-    const statusEl = document.getElementById('profile-status')
-    statusEl.textContent = 'Saving…'
-    statusEl.style.color = 'var(--text-muted)'
-
-    const updates = {
-      business_name:          document.getElementById('p-business').value.trim() || null,
-      contact_name:           document.getElementById('p-contact').value.trim()  || null,
-      phone:                  document.getElementById('p-phone').value.trim()    || null,
-      city:                   document.getElementById('p-city').value.trim()     || null,
-      cuisine_type:           document.getElementById('p-cuisine').value.trim()  || null,
-      service_radius:         parseInt(document.getElementById('p-radius').value) || null,
-      website:                document.getElementById('p-website').value.trim()  || null,
-      bio:                    document.getElementById('p-bio').value.trim()       || null,
-      is_fundraiser_friendly: document.getElementById('p-fundraiser').checked,
-      is_veteran_owned:       document.getElementById('p-veteran').checked,
-      updated_at:             new Date().toISOString()
-    }
-
-    const { error } = await supabase.from('profiles').update(updates).eq('id', userId)
-    if (error) {
-      statusEl.textContent = 'Error saving profile.'
-      statusEl.style.color = '#ff8080'
-      return
-    }
-    profile = { ...profile, ...updates }
-    renderSidebarMeta()
-    statusEl.textContent = 'Saved.'
-    statusEl.style.color = '#50c878'
-    setTimeout(() => { statusEl.textContent = '' }, 2500)
-    showToast('Profile updated')
-  })
-
-  // ─── NAV ─────────────────────────────────────────────────
-  document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.addEventListener('click', () => showSection(btn.dataset.section))
-  })
-
-  window.showSection = function (id) {
-    document.querySelectorAll('.nav-item').forEach(b => {
-      b.classList.toggle('active', b.dataset.section === id)
-    })
-    document.querySelectorAll('.section').forEach(s => {
-      s.classList.toggle('active', s.id === 'section-' + id)
-    })
-  }
-
-  document.getElementById('btn-signout').addEventListener('click', async () => {
-    await supabase.auth.signOut()
-    window.location.href = 'index.html'
-  })
-
-  // ─── HELPERS ─────────────────────────────────────────────
-  function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-  }
-  function fmtDate(ts) {
-    if (!ts) return '—'
-    return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  }
-  function showToast(msg, error = false) {
-    const t = document.getElementById('toast')
-    t.textContent = msg
-    t.className = 'toast' + (error ? ' error' : '') + ' show'
-    setTimeout(() => t.classList.remove('show'), 3200)
-  }
 
   // ─── MOBILE NAV ──────────────────────────────────────────────
   const mobileHamburger = document.getElementById('mobileHamburger')
   const sidebarOverlay  = document.getElementById('sidebarOverlay')
   const sidebar         = document.querySelector('.sidebar')
+  function updateSidebarHeight() {
+    if (window.visualViewport) sidebar.style.height = window.visualViewport.height + 'px'
+  }
   function openSidebar() {
     sidebar.classList.add('mobile-open')
     sidebarOverlay.classList.add('show')
     mobileHamburger.classList.add('open')
+    updateSidebarHeight()
+    window.visualViewport?.addEventListener('resize', updateSidebarHeight)
   }
   function closeSidebar() {
     sidebar.classList.remove('mobile-open')
     sidebarOverlay.classList.remove('show')
     mobileHamburger.classList.remove('open')
+    sidebar.style.height = ''
+    window.visualViewport?.removeEventListener('resize', updateSidebarHeight)
   }
   mobileHamburger.addEventListener('click', () => {
     sidebar.classList.contains('mobile-open') ? closeSidebar() : openSidebar()
@@ -1096,6 +1149,5 @@
 
   init()
 </script>
-
 </body>
 </html>

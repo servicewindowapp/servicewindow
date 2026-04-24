@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Venue Dashboard — ServiceWindow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -299,12 +299,13 @@
       .sidebar {
         display: flex !important;
         position: fixed; top: 0; left: 0;
-        height: 100vh; width: 260px;
+        height: 100vh; height: -webkit-fill-available; height: 100dvh; width: 260px;
         transform: translateX(-100%);
         transition: transform 0.25s ease;
         z-index: 160;
       }
       .sidebar.mobile-open { transform: translateX(0); }
+      .sidebar-footer { flex-shrink: 0; background: #07111a; }
       .section { padding: 20px 16px; }
       .profile-grid { grid-template-columns: 1fr; }
       .card-grid { grid-template-columns: 1fr 1fr; }
@@ -1016,15 +1017,22 @@
   const mobileHamburger = document.getElementById('mobileHamburger')
   const sidebarOverlay  = document.getElementById('sidebarOverlay')
   const sidebar         = document.querySelector('.sidebar')
+  function updateSidebarHeight() {
+    if (window.visualViewport) sidebar.style.height = window.visualViewport.height + 'px'
+  }
   function openSidebar() {
     sidebar.classList.add('mobile-open')
     sidebarOverlay.classList.add('show')
     mobileHamburger.classList.add('open')
+    updateSidebarHeight()
+    window.visualViewport?.addEventListener('resize', updateSidebarHeight)
   }
   function closeSidebar() {
     sidebar.classList.remove('mobile-open')
     sidebarOverlay.classList.remove('show')
     mobileHamburger.classList.remove('open')
+    sidebar.style.height = ''
+    window.visualViewport?.removeEventListener('resize', updateSidebarHeight)
   }
   mobileHamburger.addEventListener('click', () => {
     sidebar.classList.contains('mobile-open') ? closeSidebar() : openSidebar()
