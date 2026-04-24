@@ -286,7 +286,7 @@
       padding: 0 16px;
       z-index: 200;
     }
-    .mobile-topbar-logo { height: 28px; width: auto; filter: brightness(0) invert(1); }
+    .mobile-topbar-logo { height: 28px; width: auto; }
     .mobile-topbar-title {
       font-family: 'Sora', sans-serif;
       font-size: 15px; font-weight: 600; color: white;
@@ -323,6 +323,9 @@
       .section { padding: 20px 16px; }
       .profile-grid { grid-template-columns: 1fr; }
       .card-grid { grid-template-columns: 1fr 1fr; }
+      .main-content { -webkit-overflow-scrolling: touch; }
+      .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+      table { min-width: 480px; }
     }
   </style>
 </head>

@@ -5,6 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Browse verified food trucks in Southwest Florida. Find trucks for HOA events, venues, private parties, and more. ServiceWindow — the SWFL food truck marketplace.">
   <meta name="keywords" content="food trucks SWFL, food trucks Fort Myers, food trucks Naples, food trucks Cape Coral, hire food truck Southwest Florida">
+  <meta property="og:title" content="SWFL Food Truck Marketplace — ServiceWindow">
+  <meta property="og:description" content="Browse verified food trucks in Southwest Florida. Find trucks for HOA events, venues, private parties, and more.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://servicewindow.app/marketplace.html">
+  <meta property="og:image" content="https://servicewindow.app/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SWFL Food Truck Marketplace — ServiceWindow">
+  <meta name="twitter:description" content="Browse verified food trucks in Southwest Florida. Find trucks for HOA events, venues, private parties, and more.">
+  <meta name="twitter:image" content="https://servicewindow.app/og-image.png">
+  <link rel="canonical" href="https://servicewindow.app/marketplace.html">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "SWFL Food Truck Marketplace",
+    "description": "Browse verified food trucks in Southwest Florida. Find trucks for HOA events, venues, private parties, and more.",
+    "url": "https://servicewindow.app/marketplace.html",
+    "publisher": {
+      "@type": "Organization",
+      "name": "ServiceWindow",
+      "url": "https://servicewindow.app"
+    }
+  }
+  </script>
   <title>Browse Trucks &amp; Marketplace — ServiceWindow SWFL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -933,8 +957,8 @@
             <span class="board-tab-count" id="count-venue">0</span>
           </button>
           <button class="board-tab" data-board="parking">
-            <span class="board-tab-icon">🅿️</span>
-            Parking &amp; Storage
+            <span class="board-tab-icon">🏠</span>
+            Property &amp; Parking
             <span class="board-tab-count" id="count-parking">0</span>
           </button>
           <button class="board-tab" data-board="vendor">
@@ -1048,9 +1072,9 @@
         action: { label: 'List Your Venue', href: 'auth.html' }
       },
       parking: {
-        icon: '🅿️',
-        text: '<strong>Parking &amp; Storage</strong> — Property owners offering truck spots and commissary storage.',
-        action: { label: 'List a Space', href: 'auth.html' }
+        icon: '🏠',
+        text: '<strong>Property &amp; Parking</strong> — Vendor spots, parking, and storage from property owners across SWFL.',
+        action: { label: 'List a Space', href: 'auth.html?role=property' }
       },
       vendor: {
         icon: '🔧',
@@ -1111,10 +1135,12 @@
 
     // ─── FETCH LISTINGS ───
     async function fetchListings(board) {
+      // Property & Parking tab aggregates three boards
+      const boards = board === 'parking' ? ['parking', 'vendor_spot', 'storage'] : [board]
       let query = supabase
         .from('listings')
-        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, created_at, profiles(business_name)')
-        .eq('board', board)
+        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at, profiles(business_name)')
+        .in('board', boards)
         .eq('status', 'active')
 
       if (cityVal) query = query.eq('city', cityVal)
@@ -1136,10 +1162,17 @@
       const truckRes = await supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'truck').eq('is_verified', true)
       counts.trucks = truckRes.count || 0
 
-      for (const board of ['request', 'event', 'shift', 'venue', 'parking', 'vendor']) {
+      for (const board of ['request', 'event', 'shift', 'venue', 'vendor']) {
         const res = await supabase.from('listings').select('id', { count: 'exact', head: true }).eq('board', board).eq('status', 'active')
         counts[board] = res.count || 0
       }
+      // Property & Parking tab aggregates three boards
+      const [parkRes, spotRes, storRes] = await Promise.all([
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('board', 'parking').eq('status', 'active'),
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('board', 'vendor_spot').eq('status', 'active'),
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('board', 'storage').eq('status', 'active')
+      ])
+      counts.parking = (parkRes.count || 0) + (spotRes.count || 0) + (storRes.count || 0)
 
       return counts
     }
@@ -1184,8 +1217,8 @@
 
     // ─── RENDER LISTING CARD ───
     function renderListingCard(listing, board) {
-      const boardIcons = { request: '📋', event: '📅', shift: '⚡', venue: '🏛️', parking: '🅿️', vendor: '🔧' }
-      const icon = boardIcons[board] || '📋'
+      const boardIcons = { request: '📋', event: '📅', shift: '⚡', venue: '🏛️', parking: '🅿️', vendor_spot: '📍', storage: '📦', vendor: '🔧' }
+      const icon = boardIcons[listing.board || board] || '📋'
 
       const tags = []
       if (listing.city) tags.push(listing.city)

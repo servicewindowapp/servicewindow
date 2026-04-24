@@ -1,1 +1,0 @@
-alter table public.requests disable row level security;

@@ -1,266 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://js.sentry-cdn.com/a8fee8662472736f4d32caf076980a1a.min.js" crossorigin="anonymous"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Payment Successful — ServiceWindow</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --fire: #FF5400;
-  --navy: #1E3A5F;
-  --smoke: #1C1917;
-  --charcoal: #292524;
-  --warm-gray: #57534E;
-  --mid-gray: #A8A29E;
-  --border: #E7E5E4;
-  --bg: #FAFAF9;
-  --white: #FFFFFF;
-  --green: #16A34A;
-  --green-pale: #F0FDF4;
-  --r: 16px;
-  --sh: 0 4px 16px rgba(0,0,0,.08);
-}
-*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'Sora',sans-serif;
-  background:#0d1f2d;
-  color:#ffffff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;
-  padding:20px;
-}
-.container {
-  max-width:500px;
-  background:#0d1f2d;
-  border-radius:var(--r);
-  padding:40px 28px;
-  text-align:center;
-  box-shadow:var(--sh);
-}
-.success-icon {
-  font-size:4rem;
-  margin-bottom:20px;
-}
-h1 {
-  font-family:'Lora',serif;
-  font-size:1.8rem;
-  font-weight:700;
-  margin-bottom:10px;
-  color:#ffffff;
-}
-.success-sub {
-  font-size:0.95rem;
-  color:rgba(255,255,255,0.85);
-  line-height:1.6;
-  margin-bottom:28px;
-}
-.status-box {
-  background:var(--green-pale);
-  border:1px solid #86EFAC;
-  border-radius:10px;
-  padding:16px;
-  margin-bottom:24px;
-  text-align:left;
-}
-.status-item {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:0.85rem;
-  margin-bottom:8px;
-}
-.status-item:last-child { margin-bottom:0; }
-.status-check {
-  color:var(--green);
-  font-weight:700;
-  flex-shrink:0;
-}
-.status-label {
-  color:rgba(255,255,255,0.85);
-}
-.status-value {
-  color:#ffffff;
-  font-weight:600;
-}
-.cta-group {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.btn {
-  height:48px;
-  border:none;
-  border-radius:8px;
-  font-family:'Sora',sans-serif;
-  font-size:0.88rem;
-  font-weight:700;
-  cursor:pointer;
-  transition:all 0.2s;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-}
-.btn-primary {
-  background:var(--fire);
-  color:white;
-}
-.btn-primary:hover { background:#E85A00; }
-.btn-secondary {
-  background:#0d1f2d;
-  color:var(--fire);
-  border:1.5px solid var(--border);
-}
-.btn-secondary:hover {
-  background:#0d1f2d;
-  border-color:var(--fire);
-}
-.loading { opacity:0.6; pointer-events:none; }
-#errorMsg {
-  display:none;
-  background:#FEE2E2;
-  border:1px solid #FECACA;
-  color:#991B1B;
-  padding:12px;
-  border-radius:8px;
-  font-size:0.85rem;
-  margin-bottom:20px;
-}
-#errorMsg.show { display:block; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="You're in. ServiceWindow subscription confirmed.">
+  <title>You're In — ServiceWindow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fire: #FF6B35;
+      --navy: #0D1B2A;
+      --dark-section: #0d1f2d;
+      --dark-card: rgba(255,255,255,0.06);
+      --dark-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.85);
+      --text-muted: rgba(255,255,255,0.6);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--navy);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    nav {
+      background: var(--navy); border-bottom: 1px solid var(--dark-border);
+      padding: 0 20px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .nav-logo { height: 40px; width: auto; filter: brightness(0) invert(1); }
+
+    main {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .success-card {
+      width: 100%; max-width: 520px;
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 20px; padding: 48px 40px; text-align: center;
+    }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.25);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 32px; margin: 0 auto 24px;
+      animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes pop {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      font-family: 'Sora', sans-serif; font-size: clamp(1.6rem, 4vw, 2rem);
+      font-weight: 800; color: var(--text-primary); margin-bottom: 12px;
+    }
+
+    .sub {
+      font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px;
+    }
+
+    .status-row {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 8px; padding: 10px 20px; margin-bottom: 36px;
+      font-family: 'DM Mono', monospace; font-size: 12px; color: #4ade80;
+    }
+    .status-dot {
+      width: 8px; height: 8px; background: #4ade80; border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    .steps { text-align: left; margin-bottom: 36px; }
+    .steps-title {
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px;
+    }
+    .step-num {
+      width: 26px; height: 26px; background: rgba(255,107,53,0.12);
+      border: 1px solid rgba(255,107,53,0.25); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--fire);
+    }
+    .step-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; padding-top: 3px; }
+    .step-text strong { color: var(--text-primary); font-weight: 600; }
+
+    .cta-primary {
+      display: block; width: 100%; padding: 14px 20px;
+      background: var(--fire); color: white; border: none; border-radius: 10px;
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
+      text-decoration: none; text-align: center;
+      cursor: pointer; transition: background 0.2s, transform 0.1s; margin-bottom: 12px;
+    }
+    .cta-primary:hover { background: #e55a2b; transform: translateY(-1px); }
+
+    .cta-secondary {
+      display: block; width: 100%; padding: 13px 20px;
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--dark-border); border-radius: 10px;
+      font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600;
+      text-decoration: none; text-align: center;
+      transition: all 0.2s;
+    }
+    .cta-secondary:hover { border-color: rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.04); }
+
+    .page-footer {
+      padding: 20px; text-align: center;
+      font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted);
+      border-top: 1px solid var(--dark-border); flex-shrink: 0;
+    }
+
+    @media (max-width: 480px) {
+      .success-card { padding: 32px 20px; border-radius: 12px; }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="success-icon">✨</div>
-  <h1 id="successTitle">Welcome to ServiceWindow!</h1>
-  <p class="success-sub">Your subscription is active and you have full access to all features.</p>
 
-  <div class="status-box">
-    <div class="status-item">
-      <span class="status-check">✓</span>
-      <span class="status-label">Plan:</span>
-      <span class="status-value" id="planName">—</span>
+  <nav>
+    <a href="index.html"><img src="logo.png" class="nav-logo" alt="ServiceWindow"></a>
+  </nav>
+
+  <main>
+    <div class="success-card">
+
+      <div class="success-icon">✓</div>
+      <h1>You're in.</h1>
+      <p class="sub">Your ServiceWindow subscription is active. You're now a founding member — your rate is locked forever.</p>
+
+      <div class="status-row">
+        <div class="status-dot"></div>
+        Founding member · Subscription active
+      </div>
+
+      <div class="steps">
+        <div class="steps-title">Next steps</div>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Complete your profile.</strong> Add your cuisine type, service area, photos, and a description. Verified profiles with complete info get bookings first.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Check the marketplace boards.</strong> HOA managers, venues, and event planners are already posting booking requests. Review open requests in your service area.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Post your available dates.</strong> Use the Shift Marketplace to let organizers know when you're available. Fill your calendar before someone else does.</div>
+        </div>
+      </div>
+
+      <a href="truck-dashboard.html" class="cta-primary" id="dashboardBtn">Go to My Dashboard →</a>
+      <a href="marketplace.html" class="cta-secondary">Browse the Marketplace</a>
+
     </div>
-    <div class="status-item">
-      <span class="status-check">✓</span>
-      <span class="status-label">Billing Cycle:</span>
-      <span class="status-value">Monthly</span>
-    </div>
-    <div class="status-item">
-      <span class="status-check">✓</span>
-      <span class="status-label">Status:</span>
-      <span class="status-value" style="color:var(--green);">Active</span>
-    </div>
-  </div>
+  </main>
 
-  <div id="errorMsg"></div>
+  <footer class="page-footer">
+    Questions? <a href="contact.html" style="color: var(--fire); text-decoration: none;">Contact us</a> · servicewindow.app
+  </footer>
 
-  <div class="cta-group">
-    <button class="btn btn-primary" id="goToDashboardBtn">Go to Dashboard →</button>
-    <a href="pricing.html" class="btn btn-secondary">Back to Pricing</a>
-  </div>
+  <script type="module">
+    import { supabase } from './supabase-client.js'
 
-  <p style="font-size:0.78rem; color:var(--mid-gray); margin-top:20px;">
-    You'll receive a confirmation email shortly. You can manage your subscription anytime.
-  </p>
-</div>
-
-<script src="assets/js/supabase-client.js"></script>
-<script>
-async function handleSuccessfulPayment() {
-  try {
-    // Get Stripe session ID from URL
-    const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get('session_id');
-
-    if (!sessionId) {
-      showError('No session found. Please contact support.');
-      return;
+    // Verify user is logged in — if not, redirect to auth
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      window.location.href = 'auth.html?mode=login'
     }
+  </script>
 
-    // Get current user
-    const { data: { user }, error: authError } = await window.supabase.auth.getUser();
-    if (authError || !user) {
-      showError('Not logged in. Redirecting to signin...');
-      setTimeout(() => { window.location.href = 'auth.html'; }, 2000);
-      return;
-    }
-
-    // Call edge function to finalize the subscription
-    // This function verifies the Stripe session and updates the profile
-    const response = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/stripe-webhook-success', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${(await window.supabase.auth.getSession()).data.session.access_token}`
-      },
-      body: JSON.stringify({
-        session_id: sessionId,
-        user_id: user.id
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      showError(result.error || 'Failed to process payment. Please contact support.');
-      return;
-    }
-
-    // Update UI with subscription details
-    document.getElementById('planName').textContent = result.plan || 'Premium';
-
-    // Redirect to appropriate dashboard after 3 seconds
-    setTimeout(() => {
-      const dashboards = {
-        truck: 'truck-dashboard.html',
-        service_provider: 'requester-dashboard.html',
-        venue: 'requester-dashboard.html',
-        organizer: 'requester-dashboard.html',
-        property: 'requester-dashboard.html'
-      };
-      const dest = dashboards[result.role] || 'truck-dashboard.html';
-      window.location.href = dest;
-    }, 3000);
-
-  } catch (err) {
-    console.error('Success page error:', err);
-    showError(err.message || 'An error occurred. Please contact support.');
-  }
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorMsg');
-  el.textContent = msg;
-  el.classList.add('show');
-}
-
-document.getElementById('goToDashboardBtn').addEventListener('click', () => {
-  // Redirect based on stored role in localStorage
-  const role = localStorage.getItem('user_role') || 'truck';
-  const dashboards = {
-    truck: 'truck-dashboard.html',
-    service_provider: 'requester-dashboard.html',
-    venue: 'requester-dashboard.html',
-    organizer: 'requester-dashboard.html',
-    property: 'requester-dashboard.html'
-  };
-  window.location.href = dashboards[role] || 'truck-dashboard.html';
-});
-
-if (window.supabase) {
-  handleSuccessfulPayment();
-} else {
-  document.addEventListener('supabase-ready', handleSuccessfulPayment);
-}
-</script>
-
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c3528d2635bc4ff98f2c08d9709932a6"}'></script>
 </body>
 </html>

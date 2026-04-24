@@ -1,134 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://js.sentry-cdn.com/a8fee8662472736f4d32caf076980a1a.min.js" crossorigin="anonymous"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Checkout Cancelled — ServiceWindow</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --fire: #FF5400;
-  --navy: #1E3A5F;
-  --smoke: #1C1917;
-  --charcoal: #292524;
-  --warm-gray: #57534E;
-  --mid-gray: #A8A29E;
-  --border: #E7E5E4;
-  --bg: #FAFAF9;
-  --white: #FFFFFF;
-  --amber: #D97706;
-  --r: 16px;
-  --sh: 0 4px 16px rgba(0,0,0,.08);
-}
-*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body {
-  font-family:'Sora',sans-serif;
-  background:#0d1f2d;
-  color:#ffffff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;
-  padding:20px;
-}
-.container {
-  max-width:500px;
-  background:#0d1f2d;
-  border-radius:var(--r);
-  padding:40px 28px;
-  text-align:center;
-  box-shadow:var(--sh);
-}
-.cancel-icon {
-  font-size:4rem;
-  margin-bottom:20px;
-}
-h1 {
-  font-family:'Lora',serif;
-  font-size:1.8rem;
-  font-weight:700;
-  margin-bottom:10px;
-  color:#ffffff;
-}
-.cancel-sub {
-  font-size:0.95rem;
-  color:rgba(255,255,255,0.85);
-  line-height:1.6;
-  margin-bottom:28px;
-}
-.info-box {
-  background:#FFFBEB;
-  border:1px solid #FDE68A;
-  border-radius:10px;
-  padding:16px;
-  margin-bottom:24px;
-  text-align:left;
-}
-.info-text {
-  font-size:0.85rem;
-  color:rgba(255,255,255,0.85);
-  line-height:1.5;
-}
-.cta-group {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.btn {
-  height:48px;
-  border:none;
-  border-radius:8px;
-  font-family:'Sora',sans-serif;
-  font-size:0.88rem;
-  font-weight:700;
-  cursor:pointer;
-  transition:all 0.2s;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-}
-.btn-primary {
-  background:var(--fire);
-  color:white;
-}
-.btn-primary:hover { background:#E85A00; }
-.btn-secondary {
-  background:#0d1f2d;
-  color:var(--fire);
-  border:1.5px solid var(--border);
-}
-.btn-secondary:hover {
-  background:#0d1f2d;
-  border-color:var(--fire);
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="No problem. Your ServiceWindow trial is still active.">
+  <title>No Problem — ServiceWindow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fire: #FF6B35;
+      --navy: #0D1B2A;
+      --dark-section: #0d1f2d;
+      --dark-card: rgba(255,255,255,0.06);
+      --dark-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.85);
+      --text-muted: rgba(255,255,255,0.6);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--navy); color: var(--text-primary);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    nav {
+      background: var(--navy); border-bottom: 1px solid var(--dark-border);
+      padding: 0 20px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .nav-logo { height: 40px; width: auto; filter: brightness(0) invert(1); }
+
+    main {
+      flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px;
+    }
+
+    .cancel-card {
+      width: 100%; max-width: 480px;
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 20px; padding: 48px 40px; text-align: center;
+    }
+
+    .cancel-icon {
+      font-size: 48px; margin-bottom: 20px; display: block;
+    }
+
+    h1 {
+      font-family: 'Sora', sans-serif; font-size: clamp(1.5rem, 4vw, 1.9rem);
+      font-weight: 800; color: var(--text-primary); margin-bottom: 12px;
+    }
+
+    .sub {
+      font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 28px;
+    }
+
+    .trial-note {
+      background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.2);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 32px;
+      font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary);
+      line-height: 1.6; text-align: left;
+    }
+    .trial-note strong { color: var(--fire); }
+
+    .cta-primary {
+      display: block; width: 100%; padding: 14px 20px;
+      background: var(--fire); color: white; border: none; border-radius: 10px;
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
+      text-decoration: none; text-align: center;
+      transition: background 0.2s, transform 0.1s; margin-bottom: 12px;
+    }
+    .cta-primary:hover { background: #e55a2b; transform: translateY(-1px); }
+
+    .cta-secondary {
+      display: block; width: 100%; padding: 13px 20px;
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--dark-border); border-radius: 10px;
+      font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600;
+      text-decoration: none; text-align: center; margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+    .cta-secondary:hover { border-color: rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.04); }
+
+    .cta-text {
+      font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted);
+    }
+    .cta-text a { color: var(--text-muted); text-decoration: underline; }
+    .cta-text a:hover { color: var(--white); }
+
+    .page-footer {
+      padding: 20px; text-align: center;
+      font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted);
+      border-top: 1px solid var(--dark-border); flex-shrink: 0;
+    }
+
+    @media (max-width: 480px) {
+      .cancel-card { padding: 32px 20px; border-radius: 12px; }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="cancel-icon">↩️</div>
-  <h1>Checkout Cancelled</h1>
-  <p class="cancel-sub">No worries — your trial is still active and you can try again whenever you're ready.</p>
 
-  <div class="info-box">
-    <p class="info-text">
-      <strong>Your free trial is still active.</strong> You can return to our pricing page anytime to choose a plan and upgrade before your trial ends.
-    </p>
-  </div>
+  <nav>
+    <a href="index.html"><img src="logo.png" class="nav-logo" alt="ServiceWindow"></a>
+  </nav>
 
-  <div class="cta-group">
-    <a href="pricing.html" class="btn btn-primary">Back to Pricing →</a>
-    <a href="truck-dashboard.html" class="btn btn-secondary">Continue to Dashboard</a>
-  </div>
+  <main>
+    <div class="cancel-card">
 
-  <p style="font-size:0.78rem; color:var(--mid-gray); margin-top:20px;">
-    Questions? Contact us at support@servicewindow.app
-  </p>
-</div>
+      <span class="cancel-icon">👋</span>
+      <h1>No problem.</h1>
+      <p class="sub">You stepped away from checkout. Nothing was charged. Your account is still active.</p>
 
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c3528d2635bc4ff98f2c08d9709932a6"}'></script>
+      <div class="trial-note">
+        <strong>Your 30-day free trial is still running.</strong><br>
+        You have full platform access during your trial — no credit card required. When you're ready to lock in your founding rate, you can subscribe anytime from your dashboard.
+      </div>
+
+      <a href="pricing.html" class="cta-primary">Review Pricing →</a>
+      <a href="truck-dashboard.html" class="cta-secondary">Back to My Dashboard</a>
+      <div class="cta-text">Questions? <a href="contact.html">Contact us</a></div>
+
+    </div>
+  </main>
+
+  <footer class="page-footer">
+    servicewindow.app · Fort Myers · Cape Coral · Naples · Sarasota and beyond.
+  </footer>
+
 </body>
 </html>

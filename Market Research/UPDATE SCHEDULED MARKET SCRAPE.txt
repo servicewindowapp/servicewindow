@@ -1,1 +1,0 @@
-add  https://www.facebook.com/groups/429050798542986 https://www.facebook.com/groups/1420947091617027 https://www.facebook.com/groups/532520733576785, https://www.facebook.com/EventsInSWFlorida to the facebook groups to pull data from. change frequency from 48 to 24

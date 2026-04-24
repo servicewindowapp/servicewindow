@@ -306,7 +306,7 @@
       padding: 0 16px;
       z-index: 200;
     }
-    .mobile-topbar-logo { height: 28px; width: auto; filter: brightness(0) invert(1); }
+    .mobile-topbar-logo { height: 28px; width: auto; }
     .mobile-topbar-title {
       font-family: 'Sora', sans-serif;
       font-size: 15px; font-weight: 600; color: white;
@@ -342,6 +342,11 @@
       .sidebar.mobile-open { transform: translateX(0); }
       .section { padding: 20px 16px; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .main-content { -webkit-overflow-scrolling: touch; }
+      .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+      table { min-width: 540px; }
+      .table-toolbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .search-input { width: 100%; max-width: none; }
     }
   </style>
 </head>

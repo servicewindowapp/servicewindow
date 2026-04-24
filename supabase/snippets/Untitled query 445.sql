@@ -1,2 +1,0 @@
--- paste contents of supabase/migrations/20260404000000_add_ads_table.sql
--- paste contents of supabase/migrations/20260404000001_add_error_logs_table.sql
