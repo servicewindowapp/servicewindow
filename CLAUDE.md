@@ -116,7 +116,7 @@ ServiceWindow (servicewindow.app) is a verified two-sided food truck marketplace
 - **Fonts**: Sora (headings) / Lora (body) / DM Mono (labels/data) — never substitute
 - **Colors**: `--fire: #FF6B35` / `--navy: #0D1B2A` / `--smoke: #F5F0EB` / `--charcoal: #2C3E50`
 - **Theme**: Dark throughout — navy backgrounds, white text, fire orange CTAs
-- **Logo**: Place `logo.png` in repo root. Use `filter: brightness(0) invert(1)` on dark nav backgrounds.
+- **Logo**: Place `logo.png` in repo root. Use `<img src="logo.png" class="nav-logo">` with NO CSS filter. The logo renders correctly on dark backgrounds as-is. NEVER add `filter: brightness(0) invert(1)` — this washes it out to solid white.
 - **No Bootstrap, no Tailwind, no external CSS frameworks**
 
 ---
