@@ -975,6 +975,93 @@
       margin-top: 16px;
     }
 
+    /* ─── AI INFRASTRUCTURE ─── */
+    .ai-section {
+      background: var(--dark-alt);
+      padding: 80px 0;
+      border-top: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .ai-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 40px;
+    }
+    .ai-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+    }
+    .ai-card-full {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 40px;
+    }
+    .ai-card-full .ai-card-body { flex: 1; }
+    .ai-card-full .ai-card-aside {
+      flex: 0 0 300px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      align-self: center;
+    }
+    .ai-card-full .ai-card-aside .aside-line { color: var(--text-secondary); }
+    .ai-card-full .ai-card-aside .aside-key { color: #7ec8e3; }
+    .ai-card-full .ai-card-aside .aside-val { color: #a8d8a8; }
+    .ai-card-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--fire);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .ai-card h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .ai-card p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      flex: 1;
+    }
+    .ai-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fire);
+      text-decoration: none;
+      border: 1px solid rgba(255,107,53,0.3);
+      border-radius: 6px;
+      padding: 7px 16px;
+      align-self: flex-start;
+      transition: all 0.2s;
+    }
+    .ai-link:hover { background: rgba(255,107,53,0.1); border-color: var(--fire); }
+    @media (max-width: 768px) {
+      .ai-grid { grid-template-columns: 1fr; }
+      .ai-card-full { flex-direction: column; }
+      .ai-card-full .ai-card-aside { flex: none; width: 100%; }
+    }
+
     /* ─── FOOTER ─── */
     footer {
       background: #07111a;
@@ -1449,6 +1536,51 @@
           <span class="stat-number">6+</span>
           <span class="stat-label">Scam Posts Blocked<br>Per Day in Groups</span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── AI INFRASTRUCTURE ─── -->
+  <section class="ai-section">
+    <div class="container">
+      <div class="section-label">Built for the Age of AI</div>
+      <h2 class="section-title">Your AI assistant can already find trucks here.</h2>
+      <p class="section-sub">ServiceWindow is the only food truck marketplace with a native AI interface. We didn't bolt this on — we built it from the start.</p>
+      <div class="ai-grid">
+
+        <div class="ai-card">
+          <div class="ai-card-label">For Event Planners & HOA Managers</div>
+          <h3>Skip the search. Ask your AI.</h3>
+          <p>Claude, ChatGPT, and other AI assistants can query ServiceWindow directly — no browser, no form, no back-and-forth. Ask your AI to find a verified BBQ truck available in Cape Coral on a Saturday, and it pulls live results from our marketplace. Verified operators, real availability, direct answers.</p>
+        </div>
+
+        <div class="ai-card">
+          <div class="ai-card-label">For Food Truck Operators</div>
+          <h3>A new inbound channel. Same subscription.</h3>
+          <p>Every verified truck on ServiceWindow is automatically discoverable by AI agents. Corporate event planners, HOA managers, and venue coordinators increasingly use AI tools to handle scheduling and vendor sourcing. When they do, your verified profile is what gets surfaced. More discovery, no extra work, already included in your $29/mo.</p>
+        </div>
+
+        <div class="ai-card ai-card-full">
+          <div class="ai-card-body">
+            <div class="ai-card-label">The Infrastructure Layer</div>
+            <h3>We're not a listing site.<br>We're the platform other tools connect to.</h3>
+            <p>ServiceWindow publishes a live MCP server — the protocol AI agents use to interact with external services — alongside a REST API, OpenAPI spec, and structured data across every page. When AI becomes the primary interface for booking services in Southwest Florida, ServiceWindow is already wired in. No other food truck marketplace in the country has done this.</p>
+            <a href="api.html" class="ai-link">View API documentation →</a>
+          </div>
+          <div class="ai-card-aside">
+            <span class="aside-line">// Live MCP endpoint</span><br>
+            <span class="aside-key">method</span>: <span class="aside-val">"tools/call"</span><br>
+            <span class="aside-key">name</span>: <span class="aside-val">"search_trucks"</span><br>
+            <span class="aside-key">city</span>: <span class="aside-val">"Fort Myers"</span><br>
+            <span class="aside-key">cuisine</span>: <span class="aside-val">"BBQ"</span><br>
+            <br>
+            <span class="aside-line">// Response</span><br>
+            <span class="aside-key">total</span>: <span class="aside-val">3</span><br>
+            <span class="aside-key">verified</span>: <span class="aside-val">true</span><br>
+            <span class="aside-key">trucks</span>: [<span class="aside-val">…</span>]
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
