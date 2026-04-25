@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="google" content="notranslate">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ServiceWindow MCP API — connect AI agents to the Southwest Florida food truck marketplace. Search verified trucks, browse marketplace listings, and more.">
+  <meta property="og:title" content="ServiceWindow MCP API — AI Agent Interface">
+  <meta property="og:description" content="Connect your AI agent to the ServiceWindow food truck marketplace. Search verified SWFL trucks, browse events, venues, and listings via Model Context Protocol.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://servicewindow.app/api.html">
+  <link rel="canonical" href="https://servicewindow.app/api.html">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "ServiceWindow MCP API",
+    "description": "AI agent interface for the ServiceWindow food truck marketplace. Model Context Protocol server exposing verified SWFL truck data.",
+    "url": "https://servicewindow.app/api.html",
+    "provider": {
+      "@type": "Organization",
+      "name": "ServiceWindow",
+      "url": "https://servicewindow.app"
+    },
+    "mainEntity": {
+      "@type": "SoftwareApplication",
+      "name": "ServiceWindow MCP Server",
+      "applicationCategory": "API",
+      "description": "Model Context Protocol server for the ServiceWindow SWFL food truck marketplace",
+      "url": "https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp",
+      "operatingSystem": "Any"
+    }
+  }
+  </script>
+  <title>API — ServiceWindow MCP | SWFL Food Truck Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fire: #FF6B35;
+      --navy: #0D1B2A;
+      --smoke: #F5F0EB;
+      --charcoal: #2C3E50;
+      --white: #FFFFFF;
+      --dark-section: #0d1f2d;
+      --dark-alt: #111f2e;
+      --dark-card: rgba(255,255,255,0.06);
+      --dark-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.85);
+      --text-muted: rgba(255,255,255,0.6);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--navy);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--navy);
+      border-bottom: 1px solid var(--dark-border);
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo { height: 40px; width: auto; filter: brightness(0) invert(1); }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a.active { color: var(--fire); }
+    .nav-cta { background: var(--fire); color: var(--white) !important; padding: 9px 20px; border-radius: 8px; font-weight: 600 !important; }
+    .nav-cta:hover { background: #e55a2b !important; }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #0d1f2d 100%);
+      padding: 80px 40px 60px;
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .hero-inner { max-width: 860px; margin: 0 auto; }
+    .hero-label {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--fire);
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--fire); }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 620px;
+      margin-bottom: 32px;
+    }
+    .endpoint-block {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .method-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      background: rgba(255,107,53,0.15);
+      color: var(--fire);
+      border: 1px solid rgba(255,107,53,0.3);
+      border-radius: 6px;
+      padding: 3px 10px;
+      flex-shrink: 0;
+    }
+    .endpoint-url {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      color: var(--text-primary);
+      word-break: break-all;
+    }
+    .copy-btn {
+      margin-left: auto;
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      background: transparent;
+      border: 1px solid var(--dark-border);
+      color: var(--text-secondary);
+      border-radius: 6px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { border-color: var(--fire); color: var(--fire); }
+
+    /* ─── MAIN CONTENT ─── */
+    .content { max-width: 860px; margin: 0 auto; padding: 60px 40px; }
+
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ─── PROTOCOL CARDS ─── */
+    .protocol-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+    .protocol-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .protocol-card .label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .protocol-card .value {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      color: var(--fire);
+    }
+
+    /* ─── TOOL CARDS ─── */
+    .tool-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .tool-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .tool-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--fire);
+    }
+    .tool-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .params-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .param-row {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      flex-wrap: wrap;
+    }
+    .param-row:last-child { border-bottom: none; }
+    .param-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--white);
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+    .param-required {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--fire);
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.2);
+      border-radius: 4px;
+      padding: 1px 6px;
+      flex-shrink: 0;
+    }
+    .param-optional {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--dark-border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      flex-shrink: 0;
+    }
+    .param-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ─── CODE BLOCKS ─── */
+    .code-block {
+      background: #07111a;
+      border: 1px solid var(--dark-border);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .code-block pre {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: pre;
+      line-height: 1.7;
+    }
+    .code-block .key { color: #7ec8e3; }
+    .code-block .string { color: #a8d8a8; }
+    .code-block .number { color: #f4b8c1; }
+    .code-block .comment { color: rgba(255,255,255,0.35); }
+
+    .code-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider { border: none; border-top: 1px solid var(--dark-border); margin: 52px 0; }
+
+    /* ─── CLIENTS ─── */
+    .clients-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .client-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+    .client-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .client-code {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      padding: 8px 10px;
+      word-break: break-all;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #07111a;
+      border-top: 1px solid var(--dark-border);
+      padding: 40px;
+      text-align: center;
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--fire); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 60px 20px 48px; }
+      .content { padding: 48px 20px; }
+      footer { padding: 32px 20px; }
+      .endpoint-block { flex-direction: column; align-items: flex-start; }
+      .copy-btn { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html">
+      <img src="logo.png" alt="ServiceWindow" class="nav-logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="marketplace.html">Marketplace</a></li>
+      <li><a href="find-trucks.html">Find a Truck</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="api.html" class="active">API</a></li>
+      <li><a href="auth.html?mode=signup" class="nav-cta">Get Started</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-label">Model Context Protocol</div>
+      <h1>ServiceWindow <span>MCP API</span></h1>
+      <p>Connect your AI agent to the Southwest Florida food truck marketplace. Search verified trucks, browse events, and query listings — structured data, no scraping required.</p>
+      <div class="endpoint-block">
+        <span class="method-badge">POST</span>
+        <span class="endpoint-url" id="endpointUrl">https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp</span>
+        <button class="copy-btn" onclick="copyEndpoint()">Copy URL</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- PROTOCOL OVERVIEW -->
+    <div class="protocol-grid">
+      <div class="protocol-card">
+        <div class="label">Protocol</div>
+        <div class="value">MCP 2024-11-05</div>
+      </div>
+      <div class="protocol-card">
+        <div class="label">Transport</div>
+        <div class="value">HTTP / JSON-RPC 2.0</div>
+      </div>
+      <div class="protocol-card">
+        <div class="label">Auth</div>
+        <div class="value">None required</div>
+      </div>
+      <div class="protocol-card">
+        <div class="label">Data</div>
+        <div class="value">Verified SWFL trucks</div>
+      </div>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="section-title">Available Tools</div>
+    <p class="section-subtitle">Three tools are exposed. All are read-only against publicly available, verified operator data.</p>
+
+    <!-- search_trucks -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-name">search_trucks</div>
+      </div>
+      <p class="tool-desc">Search verified food truck operators in Southwest Florida. Filter by cuisine type, city, or keyword. Returns truck profiles with name, cuisine, city, bio, flags (fundraiser-friendly, veteran-owned), and booking URL.</p>
+      <div class="params-label">Parameters</div>
+      <div class="param-row">
+        <span class="param-name">cuisine</span>
+        <span class="param-optional">optional</span>
+        <span class="param-desc">Cuisine type — e.g. "BBQ", "Mexican", "Seafood", "Asian", "Dessert"</span>
+      </div>
+      <div class="param-row">
+        <span class="param-name">city</span>
+        <span class="param-optional">optional</span>
+        <span class="param-desc">City in SWFL — e.g. "Fort Myers", "Cape Coral", "Naples", "Sarasota"</span>
+      </div>
+      <div class="param-row">
+        <span class="param-name">keyword</span>
+        <span class="param-optional">optional</span>
+        <span class="param-desc">Free-text search across truck name, cuisine, and bio</span>
+      </div>
+      <div class="param-row">
+        <span class="param-name">limit</span>
+        <span class="param-optional">optional</span>
+        <span class="param-desc">Max results — default 10, max 24</span>
+      </div>
+
+      <div class="code-label" style="margin-top:20px;">Example request</div>
+      <div class="code-block"><pre>{
+  <span class="key">"jsonrpc"</span>: <span class="string">"2.0"</span>,
+  <span class="key">"id"</span>: <span class="number">1</span>,
+  <span class="key">"method"</span>: <span class="string">"tools/call"</span>,
+  <span class="key">"params"</span>: {
+    <span class="key">"name"</span>: <span class="string">"search_trucks"</span>,
+    <span class="key">"arguments"</span>: {
+      <span class="key">"city"</span>: <span class="string">"Cape Coral"</span>,
+      <span class="key">"cuisine"</span>: <span class="string">"BBQ"</span>
+    }
+  }
+}</pre></div>
+    </div>
+
+    <!-- get_truck -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-name">get_truck</div>
+      </div>
+      <p class="tool-desc">Get full details on a specific verified truck by its profile ID. Use after <code style="font-family:'DM Mono',monospace;color:var(--fire)">search_trucks</code> to fetch complete information on a result.</p>
+      <div class="params-label">Parameters</div>
+      <div class="param-row">
+        <span class="param-name">id</span>
+        <span class="param-required">required</span>
+        <span class="param-desc">Truck profile UUID from a search_trucks result</span>
+      </div>
+
+      <div class="code-label" style="margin-top:20px;">Example request</div>
+      <div class="code-block"><pre>{
+  <span class="key">"jsonrpc"</span>: <span class="string">"2.0"</span>,
+  <span class="key">"id"</span>: <span class="number">2</span>,
+  <span class="key">"method"</span>: <span class="string">"tools/call"</span>,
+  <span class="key">"params"</span>: {
+    <span class="key">"name"</span>: <span class="string">"get_truck"</span>,
+    <span class="key">"arguments"</span>: {
+      <span class="key">"id"</span>: <span class="string">"&lt;truck-uuid&gt;"</span>
+    }
+  }
+}</pre></div>
+    </div>
+
+    <!-- list_marketplace -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-name">list_marketplace</div>
+      </div>
+      <p class="tool-desc">Browse active listings on any of the seven ServiceWindow marketplace boards.</p>
+      <div class="params-label">Parameters</div>
+      <div class="param-row">
+        <span class="param-name">board</span>
+        <span class="param-required">required</span>
+        <span class="param-desc"><code style="font-family:'DM Mono',monospace;font-size:12px">"request"</code> · <code style="font-family:'DM Mono',monospace;font-size:12px">"event"</code> · <code style="font-family:'DM Mono',monospace;font-size:12px">"shift"</code> · <code style="font-family:'DM Mono',monospace;font-size:12px">"venue"</code> · <code style="font-family:'DM Mono',monospace;font-size:12px">"parking"</code> · <code style="font-family:'DM Mono',monospace;font-size:12px">"vendor"</code> · <code style="font-family:'DM Mono',monospace;font-size:12px">"jobs"</code></span>
+      </div>
+      <div class="param-row">
+        <span class="param-name">city</span>
+        <span class="param-optional">optional</span>
+        <span class="param-desc">Filter by city in Southwest Florida</span>
+      </div>
+      <div class="param-row">
+        <span class="param-name">limit</span>
+        <span class="param-optional">optional</span>
+        <span class="param-desc">Max results — default 10, max 24</span>
+      </div>
+
+      <div class="code-label" style="margin-top:20px;">Example request</div>
+      <div class="code-block"><pre>{
+  <span class="key">"jsonrpc"</span>: <span class="string">"2.0"</span>,
+  <span class="key">"id"</span>: <span class="number">3</span>,
+  <span class="key">"method"</span>: <span class="string">"tools/call"</span>,
+  <span class="key">"params"</span>: {
+    <span class="key">"name"</span>: <span class="string">"list_marketplace"</span>,
+    <span class="key">"arguments"</span>: {
+      <span class="key">"board"</span>: <span class="string">"request"</span>,
+      <span class="key">"city"</span>: <span class="string">"Fort Myers"</span>
+    }
+  }
+}</pre></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- QUICKSTART -->
+    <div class="section-title">Quickstart</div>
+    <p class="section-subtitle">No API key required. Send a POST request with a JSON-RPC 2.0 body.</p>
+
+    <div class="code-label">Step 1 — Handshake</div>
+    <div class="code-block"><pre><span class="comment"># Verify the server is live</span>
+curl -X POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'</pre></div>
+
+    <div class="code-label">Step 2 — List tools</div>
+    <div class="code-block"><pre>curl -X POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'</pre></div>
+
+    <div class="code-label">Step 3 — Search trucks</div>
+    <div class="code-block"><pre>curl -X POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc":"2.0","id":3,
+    "method":"tools/call",
+    "params":{
+      "name":"search_trucks",
+      "arguments":{"city":"Naples","limit":5}
+    }
+  }'</pre></div>
+
+    <hr class="divider">
+
+    <!-- CONNECT TO AGENTS -->
+    <div class="section-title">Connect to Your Agent</div>
+    <p class="section-subtitle">Add ServiceWindow to any MCP-compatible AI client.</p>
+
+    <div class="clients-grid">
+      <div class="client-card">
+        <div class="client-name">Claude Desktop</div>
+        <div class="client-code">Add to claude_desktop_config.json<br><br>"servicewindow": {<br>&nbsp;&nbsp;"url": "https://krmfxedkxoyzkeqnijcd<br>&nbsp;&nbsp;&nbsp;&nbsp;.supabase.co/functions/v1/mcp"<br>}</div>
+      </div>
+      <div class="client-card">
+        <div class="client-name">Any MCP Client</div>
+        <div class="client-code">Transport: HTTP<br>URL: https://krmfxedkxoyzkeqnijcd<br>&nbsp;&nbsp;&nbsp;&nbsp;.supabase.co/functions/v1/mcp<br>Auth: none required</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- COVERAGE -->
+    <div class="section-title">Coverage</div>
+    <p class="section-subtitle">All data is scoped to Southwest Florida — verified operators only.</p>
+
+    <div class="protocol-grid">
+      <div class="protocol-card">
+        <div class="label">Cities</div>
+        <div class="value">21 SWFL cities</div>
+      </div>
+      <div class="protocol-card">
+        <div class="label">Counties</div>
+        <div class="value">Lee · Collier · Sarasota · Charlotte · Hendry</div>
+      </div>
+      <div class="protocol-card">
+        <div class="label">Operators</div>
+        <div class="value">Verified only</div>
+      </div>
+      <div class="protocol-card">
+        <div class="label">Boards</div>
+        <div class="value">7 marketplace boards</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+      ServiceWindow MCP API · <a href="https://servicewindow.app">servicewindow.app</a> ·
+      <a href="index.html">Home</a> ·
+      <a href="marketplace.html">Marketplace</a> ·
+      <a href="contact.html">Contact</a>
+    </p>
+    <p style="margin-top:10px;">Fort Myers · Cape Coral · Naples · Sarasota and beyond.</p>
+  </footer>
+
+  <script>
+    function copyEndpoint() {
+      const url = document.getElementById('endpointUrl').textContent
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.querySelector('.copy-btn')
+        btn.textContent = 'Copied!'
+        setTimeout(() => { btn.textContent = 'Copy URL' }, 2000)
+      })
+    }
+  </script>
+
+</body>
+</html>
