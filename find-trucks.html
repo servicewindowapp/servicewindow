@@ -22,14 +22,24 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Find a Food Truck — ServiceWindow SWFL",
-    "description": "Browse verified food trucks in Southwest Florida. Filter by cuisine and city.",
+    "@type": "CollectionPage",
+    "name": "Find a Food Truck Near You — ServiceWindow SWFL",
+    "description": "Browse and filter verified food trucks in Southwest Florida by cuisine type, city, and availability. Book direct for HOA events, private parties, and venues across 21 SWFL cities.",
     "url": "https://servicewindow.app/find-trucks.html",
-    "publisher": {
+    "provider": {
       "@type": "Organization",
       "name": "ServiceWindow",
       "url": "https://servicewindow.app"
+    },
+    "about": {
+      "@type": "FoodEstablishment",
+      "name": "Verified Food Trucks — Southwest Florida",
+      "description": "Verified food truck operators searchable by cuisine and city across Southwest Florida"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://servicewindow.app/find-trucks.html?search={search_term_string}",
+      "query-input": "required name=search_term_string"
     }
   }
   </script>
@@ -771,6 +781,44 @@
     let cityVal = ''
     let debounceTimer
 
+    // ─── DYNAMIC SCHEMA INJECTION ───
+    function injectTruckSchema(trucks) {
+      const existing = document.getElementById('truck-schema-ld')
+      if (existing) existing.remove()
+      if (!trucks || trucks.length === 0) return
+      const schema = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        'name': 'Verified Food Trucks — ServiceWindow SWFL',
+        'description': 'Verified food truck operators available for booking in Southwest Florida',
+        'url': 'https://servicewindow.app/find-trucks.html',
+        'numberOfItems': trucks.length,
+        'itemListElement': trucks.map((truck, i) => ({
+          '@type': 'ListItem',
+          'position': i + 1,
+          'item': {
+            '@type': 'FoodEstablishment',
+            'name': truck.business_name || 'Food Truck',
+            'description': truck.bio || 'Verified food truck operator serving Southwest Florida.',
+            'servesCuisine': truck.cuisine_type || undefined,
+            'address': {
+              '@type': 'PostalAddress',
+              'addressLocality': truck.city || 'Southwest Florida',
+              'addressRegion': 'FL',
+              'addressCountry': 'US'
+            },
+            'areaServed': truck.city || 'Southwest Florida',
+            'url': truck.website || `https://servicewindow.app/find-trucks.html#truck-${truck.id}`
+          }
+        }))
+      }
+      const script = document.createElement('script')
+      script.type = 'application/ld+json'
+      script.id = 'truck-schema-ld'
+      script.textContent = JSON.stringify(schema)
+      document.head.appendChild(script)
+    }
+
     // ─── LOAD ───
     async function loadTrucks() {
       const { data, error } = await supabase
@@ -791,6 +839,7 @@
       }
 
       allTrucks = data
+      injectTruckSchema(data)
       render()
     }
 

@@ -19,14 +19,24 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "SWFL Food Truck Marketplace",
-    "description": "Browse verified food trucks in Southwest Florida. Find trucks for HOA events, venues, private parties, and more.",
+    "@type": "CollectionPage",
+    "name": "SWFL Food Truck Marketplace — ServiceWindow",
+    "description": "Browse verified food trucks and marketplace listings in Southwest Florida. Trucks, events, shifts, venue partnerships, parking, vendor services, and jobs — all verified operators across 21 SWFL cities.",
     "url": "https://servicewindow.app/marketplace.html",
-    "publisher": {
+    "provider": {
       "@type": "Organization",
       "name": "ServiceWindow",
       "url": "https://servicewindow.app"
+    },
+    "about": {
+      "@type": "FoodEstablishment",
+      "name": "Verified Food Trucks — Southwest Florida",
+      "description": "Verified food truck operators available for booking across 21 cities in Southwest Florida including Fort Myers, Cape Coral, Naples, Sarasota, Bonita Springs, and more."
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://servicewindow.app/marketplace.html?search={search_term_string}",
+      "query-input": "required name=search_term_string"
     }
   }
   </script>
@@ -1110,6 +1120,44 @@
       return '🚚'
     }
 
+    // ─── DYNAMIC SCHEMA INJECTION ───
+    function injectTruckSchema(trucks) {
+      const existing = document.getElementById('truck-schema-ld')
+      if (existing) existing.remove()
+      if (!trucks || trucks.length === 0) return
+      const schema = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        'name': 'Verified Food Trucks — ServiceWindow SWFL',
+        'description': 'Verified food truck operators available for booking in Southwest Florida',
+        'url': 'https://servicewindow.app/marketplace.html',
+        'numberOfItems': trucks.length,
+        'itemListElement': trucks.map((truck, i) => ({
+          '@type': 'ListItem',
+          'position': i + 1,
+          'item': {
+            '@type': 'FoodEstablishment',
+            'name': truck.business_name || 'Food Truck',
+            'description': truck.bio || 'Verified food truck operator serving Southwest Florida.',
+            'servesCuisine': truck.cuisine_type || undefined,
+            'address': {
+              '@type': 'PostalAddress',
+              'addressLocality': truck.city || 'Southwest Florida',
+              'addressRegion': 'FL',
+              'addressCountry': 'US'
+            },
+            'areaServed': truck.city || 'Southwest Florida',
+            'url': `https://servicewindow.app/marketplace.html#truck-${truck.id}`
+          }
+        }))
+      }
+      const script = document.createElement('script')
+      script.type = 'application/ld+json'
+      script.id = 'truck-schema-ld'
+      script.textContent = JSON.stringify(schema)
+      document.head.appendChild(script)
+    }
+
     // ─── FETCH TRUCKS ───
     async function fetchTrucks() {
       let query = supabase
@@ -1295,6 +1343,7 @@
         cards = trucks.length
           ? trucks.map(renderTruckCard).join('')
           : renderEmpty('trucks')
+        injectTruckSchema(trucks)
       } else {
         const listings = await fetchListings(currentBoard)
         count = listings.length

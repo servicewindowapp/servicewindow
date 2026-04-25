@@ -17,23 +17,67 @@
   <meta name="twitter:image" content="https://servicewindow.app/og-image.png">
   <link rel="canonical" href="https://servicewindow.app/">
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "ServiceWindow",
-    "url": "https://servicewindow.app",
-    "description": "The verified food truck marketplace for Southwest Florida. Book a truck, list your event, or list your venue.",
-    "publisher": {
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "ServiceWindow",
+      "url": "https://servicewindow.app",
+      "description": "The verified food truck marketplace for Southwest Florida. Book a truck, list your event, or list your venue.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "ServiceWindow",
+        "url": "https://servicewindow.app"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://servicewindow.app/find-trucks.html?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@context": "https://schema.org",
       "@type": "Organization",
       "name": "ServiceWindow",
-      "url": "https://servicewindow.app"
-    },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://servicewindow.app/find-trucks.html?search={search_term_string}",
-      "query-input": "required name=search_term_string"
+      "url": "https://servicewindow.app",
+      "logo": "https://servicewindow.app/logo.png",
+      "description": "Verified two-sided food truck marketplace for Southwest Florida. Connects food truck operators with event planners, HOA communities, venues, and property owners across 21 cities in Lee, Collier, Sarasota, Charlotte, and Hendry counties.",
+      "areaServed": [
+        { "@type": "City", "name": "Fort Myers", "containedInPlace": { "@type": "State", "name": "Florida" } },
+        { "@type": "City", "name": "Cape Coral", "containedInPlace": { "@type": "State", "name": "Florida" } },
+        { "@type": "City", "name": "Naples", "containedInPlace": { "@type": "State", "name": "Florida" } },
+        { "@type": "City", "name": "Sarasota", "containedInPlace": { "@type": "State", "name": "Florida" } },
+        { "@type": "City", "name": "Bonita Springs", "containedInPlace": { "@type": "State", "name": "Florida" } },
+        { "@type": "AdministrativeArea", "name": "Southwest Florida" }
+      ],
+      "serviceType": ["Food Truck Marketplace", "Event Booking", "Venue Partnerships"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "url": "https://servicewindow.app/contact.html"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "ServiceWindow Plans",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "name": "Food Truck Operator — Founding Rate",
+            "description": "List your verified food truck on ServiceWindow. Founding rate locked forever. 30-day free trial, no credit card required.",
+            "price": "29.00",
+            "priceCurrency": "USD"
+          },
+          {
+            "@type": "Offer",
+            "name": "Event Planner / HOA Manager",
+            "description": "Post events, find and book verified food trucks for your HOA, event, or venue. Always free.",
+            "price": "0.00",
+            "priceCurrency": "USD"
+          }
+        ]
+      }
     }
-  }
+  ]
   </script>
   <title>ServiceWindow — Where Events Find Their Truck | SWFL Food Truck Marketplace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
