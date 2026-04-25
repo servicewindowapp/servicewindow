@@ -1,0 +1,182 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ServiceWindow API",
+    "version": "1.0.0",
+    "description": "REST API for the ServiceWindow food truck marketplace in Southwest Florida. Search verified truck operators and browse marketplace listings across 21 SWFL cities. No authentication required.",
+    "contact": {
+      "url": "https://servicewindow.app/api.html"
+    },
+    "license": {
+      "name": "Public",
+      "url": "https://servicewindow.app/terms.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/sw-api": {
+      "get": {
+        "operationId": "queryServiceWindow",
+        "summary": "Query the ServiceWindow marketplace",
+        "description": "Single endpoint with type-based routing. Use type=trucks to search food trucks, type=truck to get a specific truck by ID, or type=listings to browse any of the 7 marketplace boards.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["trucks", "truck", "listings"]
+            },
+            "description": "Query type. 'trucks' = search verified truck operators. 'truck' = get a specific truck by ID. 'listings' = browse a marketplace board."
+          },
+          {
+            "name": "cuisine",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter trucks by cuisine type. Examples: BBQ, Mexican, Seafood, Asian, Dessert, Italian, American, Caribbean, Mediterranean."
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by city in Southwest Florida. Examples: Fort Myers, Cape Coral, Naples, Sarasota, Bonita Springs, Estero, Punta Gorda, Port Charlotte, Lehigh Acres."
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Free-text keyword search across truck name, cuisine, and bio description. Used with type=trucks."
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" },
+            "description": "Truck profile UUID. Required when type=truck. Obtain from a trucks search result."
+          },
+          {
+            "name": "board",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["request", "event", "shift", "venue", "parking", "vendor", "jobs"]
+            },
+            "description": "Marketplace board to browse. Required when type=listings. 'request' = organizers/HOAs seeking trucks. 'event' = upcoming events trucks can apply to. 'shift' = trucks posting available dates. 'venue' = venues seeking food truck partnerships. 'parking' = parking spots and commissary storage. 'vendor' = industry services and suppliers. 'jobs' = food truck industry employment."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 1, "maximum": 24, "default": 10 },
+            "description": "Maximum number of results to return. Default 10, max 24."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string", "description": "The query type that was executed" },
+                    "total": { "type": "integer", "description": "Number of results returned" },
+                    "data": {
+                      "type": "array",
+                      "description": "Result array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string", "format": "uuid" },
+                          "name": { "type": "string", "description": "Truck or listing name" },
+                          "cuisine": { "type": "string", "description": "Cuisine type (trucks only)" },
+                          "city": { "type": "string", "description": "City in Southwest Florida" },
+                          "bio": { "type": "string", "nullable": true },
+                          "fundraiser_friendly": { "type": "boolean" },
+                          "veteran_owned": { "type": "boolean" },
+                          "website": { "type": "string", "nullable": true },
+                          "service_radius_miles": { "type": "integer", "nullable": true },
+                          "booking_url": { "type": "string", "format": "uri" }
+                        }
+                      }
+                    },
+                    "note": { "type": "string", "description": "Human-readable summary of results" },
+                    "marketplace_url": { "type": "string", "format": "uri", "description": "Direct link to the ServiceWindow marketplace" }
+                  }
+                },
+                "examples": {
+                  "trucks_search": {
+                    "summary": "Search BBQ trucks in Fort Myers",
+                    "value": {
+                      "type": "trucks",
+                      "total": 2,
+                      "filters": { "cuisine": "BBQ", "city": "Fort Myers" },
+                      "data": [
+                        {
+                          "id": "abc-123",
+                          "name": "Smoky's BBQ",
+                          "cuisine": "BBQ",
+                          "city": "Fort Myers",
+                          "bio": "Award-winning hickory smoked BBQ serving SWFL.",
+                          "fundraiser_friendly": true,
+                          "veteran_owned": false,
+                          "website": null,
+                          "service_radius_miles": 30,
+                          "booking_url": "https://servicewindow.app/marketplace.html"
+                        }
+                      ],
+                      "note": "2 verified trucks in Southwest Florida.",
+                      "marketplace_url": "https://servicewindow.app/marketplace.html"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — missing or invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-mcp-server": {
+    "endpoint": "https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp",
+    "protocol": "MCP 2024-11-05",
+    "transport": "http",
+    "docs": "https://servicewindow.app/api.html"
+  }
+}

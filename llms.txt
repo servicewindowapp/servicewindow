@@ -1,0 +1,119 @@
+# ServiceWindow
+
+> Verified two-sided food truck marketplace for Southwest Florida (SWFL)
+
+ServiceWindow connects verified food truck operators with event planners, HOA/gated community managers, venue operators, property owners, and anyone booking mobile food service across Southwest Florida. It is the only verified marketplace for this market — all operators are reviewed and approved before listing.
+
+## What This Site Does
+
+- Food truck operators list profiles, manage availability, and receive booking requests
+- Event planners and HOA managers post events and book verified trucks
+- Venues (beer gardens, breweries, wineries, event spaces) find recurring truck partners
+- Property owners list parking spots, vendor locations, and commissary storage for trucks
+- Job seekers and employers connect through the food truck industry jobs board
+
+## Coverage
+
+- 21 cities: Cape Coral, Fort Myers, Lehigh Acres, Bonita Springs, North Fort Myers, Estero, Sanibel, Fort Myers Beach, Naples, Immokalee, Marco Island, Golden Gate, Lely Resort, Ave Maria, Naples Manor, Naples Park, Sarasota, Punta Gorda, Port Charlotte, Englewood, LaBelle
+- 5 counties: Lee, Collier, Sarasota, Charlotte, Hendry
+- Region: Southwest Florida (SWFL)
+
+## Key Facts
+
+- All listed trucks are verified operators (manually reviewed)
+- Event planners, HOA managers, and venues: free forever
+- Food truck operators: $29/mo founding rate (30-day free trial, no credit card required)
+- No payment processing between users — platform subscriptions only
+- Async messaging only (no real-time chat)
+- Responsive web app only — no mobile app
+
+## Seven Marketplace Boards
+
+1. **Request Marketplace** — organizers post events seeking trucks
+2. **Event Calendar** — upcoming events trucks can apply to
+3. **Shift Marketplace** — trucks post available dates
+4. **Venue Partnership** — venues seeking food truck relationships
+5. **Parking & Real Estate** — property owners offering spots and commissary storage
+6. **Vendor Services** — commissaries, suppliers, and service providers
+7. **Jobs Board** — food truck industry employment
+
+## AI Agent Interface (MCP)
+
+ServiceWindow exposes a live Model Context Protocol (MCP) server for AI agents.
+
+- **Endpoint**: https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp
+- **Protocol**: JSON-RPC 2.0 / MCP 2024-11-05
+- **Transport**: HTTP POST
+- **Auth**: None required
+- **Docs**: https://servicewindow.app/api.html
+
+### Available MCP Tools
+
+**search_trucks** — Search verified food truck operators by cuisine type, city, or keyword. Returns name, cuisine, city, bio, and booking URL.
+
+Parameters:
+- `cuisine` (optional): e.g. "BBQ", "Mexican", "Seafood", "Asian", "Dessert"
+- `city` (optional): e.g. "Fort Myers", "Cape Coral", "Naples", "Sarasota"
+- `keyword` (optional): free-text search
+- `limit` (optional): default 10, max 24
+
+**get_truck** — Get full details on a specific truck by profile UUID.
+
+Parameters:
+- `id` (required): truck profile UUID from a search_trucks result
+
+**list_marketplace** — Browse active listings on any marketplace board.
+
+Parameters:
+- `board` (required): "request" | "event" | "shift" | "venue" | "parking" | "vendor" | "jobs"
+- `city` (optional): filter by city
+- `limit` (optional): default 10, max 24
+
+### Example MCP Call
+
+```
+POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "search_trucks",
+    "arguments": {
+      "city": "Fort Myers",
+      "cuisine": "BBQ"
+    }
+  }
+}
+```
+
+## REST API
+
+A simple REST API is also available for agent frameworks that don't support MCP.
+
+- **Base URL**: https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/sw-api
+- **Auth**: None required
+- **Docs**: https://servicewindow.app/openapi.json
+
+Endpoints:
+- `GET /sw-api?type=trucks` — search trucks (params: cuisine, city, keyword, limit)
+- `GET /sw-api?type=truck&id={uuid}` — get specific truck
+- `GET /sw-api?type=listings&board={board}` — browse marketplace board (params: city, limit)
+
+## Public Pages
+
+- https://servicewindow.app/ — Landing page
+- https://servicewindow.app/marketplace.html — Full marketplace (all 7 boards)
+- https://servicewindow.app/find-trucks.html — Truck search and discovery
+- https://servicewindow.app/venues.html — Venue partnerships
+- https://servicewindow.app/jobs.html — Jobs board
+- https://servicewindow.app/property.html — Parking and real estate
+- https://servicewindow.app/pricing.html — Pricing details
+- https://servicewindow.app/about.html — About ServiceWindow
+- https://servicewindow.app/api.html — API documentation
+
+## Contact
+
+- https://servicewindow.app/contact.html
