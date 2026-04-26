@@ -776,13 +776,6 @@
       document.body.classList.add('login-mode')
     }
 
-    if (roleParam) {
-      const card = document.querySelector(`[data-role="${roleParam}"]`)
-      if (card) {
-        window.selectRole(card)
-      }
-    }
-
     // ─── REDIRECT IF LOGGED IN ───
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
@@ -840,6 +833,12 @@
         document.getElementById('step2Title').textContent = titles[selectedRole].title
         document.getElementById('step2Sub').textContent = titles[selectedRole].sub
       }
+    }
+
+    // ─── APPLY ?role= URL PARAM (must run after window.selectRole is defined) ───
+    if (roleParam) {
+      const card = document.querySelector(`[data-role="${roleParam}"]`)
+      if (card) window.selectRole(card)
     }
 
     // ─── STEP NAVIGATION ───

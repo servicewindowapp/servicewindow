@@ -1,0 +1,13 @@
+{
+  "name": "servicewindow-tests",
+  "private": true,
+  "scripts": {
+    "test": "node_modules/.bin/playwright test",
+    "test:smoke": "node_modules/.bin/playwright test smoke/",
+    "test:headed": "node_modules/.bin/playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.43.0",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -749,11 +749,7 @@
 <div class="toast" id="toast"></div>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-  const SUPABASE_URL     = 'https://krmfxedkxoyzkeqnijcd.supabase.co'
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtybWZ4ZWRreG95emtlcW5pamNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjg1NDMsImV4cCI6MjA4OTk0NDU0M30._oSoUIyo5vhdYCtQtgZYfbRBHvf1bNisdSJ4yxiE3yo'
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  import { supabase } from './supabase-client.js'
 
   let userId  = null
   let profile = null
@@ -1209,7 +1205,11 @@
     btn.addEventListener('click', closeSidebar)
   })
 
-  init()
+  init().catch(err => {
+    console.error('Dashboard init error:', err)
+    document.getElementById('loading-screen').innerHTML =
+      '<div style="text-align:center;padding:40px"><p style="color:#ff8080;font-family:Sora,sans-serif;font-size:14px">Error loading dashboard. Please refresh.</p></div>'
+  })
 </script>
 
 </body>

@@ -23,6 +23,9 @@ profiles (
   website text,
   cuisine_type text,              -- trucks only
   service_radius integer,         -- trucks only (miles)
+  venue_type text,                -- venues only (e.g. 'Beer/Wine Bar', 'Brewery', 'Event Space')
+  address text,                   -- venues only (street address)
+  capacity text,                  -- venues only (e.g. '200 guests')
   is_verified boolean DEFAULT false,
   is_fundraiser_friendly boolean DEFAULT false,
   is_veteran_owned boolean DEFAULT false,
@@ -107,12 +110,17 @@ messages (
 reviews (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   reviewer_id uuid REFERENCES profiles(id),
-  reviewee_id uuid REFERENCES profiles(id),
-  booking_id uuid REFERENCES bookings(id),
+  truck_id uuid REFERENCES profiles(id),   -- nullable: review target is a truck
+  venue_id uuid REFERENCES profiles(id),   -- nullable: review target is a venue
+  request_id uuid,                         -- nullable: review tied to a specific request
   rating integer CHECK (rating >= 1 AND rating <= 5),
-  review_text text,
+  body text,
   created_at timestamptz DEFAULT now()
 )
+-- Partial unique indexes (prevent duplicate reviews per reviewer per entity):
+-- UNIQUE (reviewer_id, truck_id) WHERE truck_id IS NOT NULL
+-- UNIQUE (reviewer_id, venue_id) WHERE venue_id IS NOT NULL
+-- UNIQUE (reviewer_id, request_id) WHERE request_id IS NOT NULL
 ```
 
 ### waitlist (pre-launch)
@@ -208,3 +216,11 @@ Non-truck roles (organizer, venue, property, service_provider) are set to `activ
 ## Migration Location
 `supabase/migrations/20260324000000_initial_schema.sql`
 When adding columns: `ALTER TABLE profiles ADD COLUMN IF NOT EXISTS column_name type DEFAULT value;`
+
+### Applied Migrations (run in Supabase SQL Editor)
+```sql
+-- 2026-04-26: venue profile fields
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS venue_type text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS address text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS capacity text;
+```

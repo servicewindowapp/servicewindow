@@ -714,8 +714,8 @@
 
   let userId  = null
   let profile = null
-  let reviewedBookingIds = new Set()
-  let pendingReview = { bookingId: null, revieweeId: null }
+  let reviewedTruckIds = new Set()
+  let pendingReview = { truckId: null }
 
   // ─── INIT ────────────────────────────────────────────────
   async function init() {
@@ -856,9 +856,9 @@
             : b.status === 'accepted'
             ? `<button class="btn-complete" onclick="markComplete('${b.id}')">Mark Complete</button>`
             : b.status === 'completed'
-            ? reviewedBookingIds.has(b.id)
+            ? reviewedTruckIds.has(b.truck_id)
               ? '<span style="color:#50c878;font-family:\'DM Mono\',monospace;font-size:11px">✓ Reviewed</span>'
-              : `<button class="btn-review" onclick="openReviewModal('${b.id}','${b.truck_id || ''}','${esc(b.truck?.business_name || b.truck?.contact_name || 'this truck')}')">Leave a Review</button>`
+              : `<button class="btn-review" onclick="openReviewModal('${b.truck_id || ''}','${esc(b.truck?.business_name || b.truck?.contact_name || 'this truck')}')">Leave a Review</button>`
             : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
         </td>
       </tr>`).join('')
@@ -881,9 +881,9 @@
   async function loadReviewedBookings() {
     const { data } = await supabase
       .from('reviews')
-      .select('booking_id')
+      .select('truck_id')
       .eq('reviewer_id', userId)
-    if (data) data.forEach(r => reviewedBookingIds.add(r.booking_id))
+    if (data) data.forEach(r => reviewedTruckIds.add(r.truck_id))
   }
 
   window.markComplete = async function(id) {
@@ -896,8 +896,8 @@
   }
 
   let reviewRating = 0
-  window.openReviewModal = function(bookingId, revieweeId, truckName) {
-    pendingReview = { bookingId, revieweeId }
+  window.openReviewModal = function(truckId, truckName) {
+    pendingReview = { truckId }
     reviewRating  = 0
     document.getElementById('review-modal-sub').textContent = `Rate your experience with ${truckName}.`
     document.getElementById('review-text').value = ''
@@ -921,16 +921,15 @@
     const text = document.getElementById('review-text').value.trim() || null
     const { error } = await supabase.from('reviews').insert({
       reviewer_id: userId,
-      reviewee_id: pendingReview.revieweeId,
-      booking_id:  pendingReview.bookingId,
+      truck_id:    pendingReview.truckId,
       rating:      reviewRating,
-      review_text: text
+      body:        text
     })
     if (error) {
-      showToast(error.code === '23505' ? 'You already reviewed this booking' : 'Error submitting review', true)
+      showToast(error.code === '23505' ? 'You already reviewed this truck' : 'Error submitting review', true)
       return
     }
-    reviewedBookingIds.add(pendingReview.bookingId)
+    reviewedTruckIds.add(pendingReview.truckId)
     document.getElementById('review-modal-overlay').style.display = 'none'
     showToast('Review submitted — thank you')
     await loadBookings()
@@ -995,7 +994,29 @@
     btn.addEventListener('click', closeSidebar)
   })
 
-  init()
+  // ─── SECTION SWITCHING ───────────────────────────────────────
+  window.showSection = function(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+    document.getElementById('section-' + name)?.classList.add('active')
+    document.querySelectorAll('.nav-item[data-section]').forEach(b => {
+      b.classList.toggle('active', b.dataset.section === name)
+    })
+  }
+
+  document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => showSection(btn.dataset.section))
+  })
+
+  document.getElementById('btn-signout').addEventListener('click', async () => {
+    await supabase.auth.signOut()
+    window.location.href = 'index.html'
+  })
+
+  init().catch(err => {
+    console.error('Dashboard init error:', err)
+    document.getElementById('loading-screen').innerHTML =
+      '<div style="text-align:center;padding:40px"><p style="color:#ff8080;font-family:Sora,sans-serif;font-size:14px">Error loading dashboard. Please refresh.</p></div>'
+  })
 </script>
 </body>
 </html>

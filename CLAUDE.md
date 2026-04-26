@@ -184,8 +184,65 @@ Commit prefixes: `feat:` `fix:` `style:` `chore:`
 
 ---
 
+## Testing
+
+Playwright smoke tests live in `tests/`. They are the quality gate — run before every push.
+
+### First-time setup (once)
+```powershell
+cd "C:\Developer\New ServicwWindow Website\tests"
+npm install
+npx playwright install chromium
+```
+
+### Run tests (before every push)
+```powershell
+# From project root — preferred:
+.\run-tests.ps1
+
+# Or manually from tests/:
+cd "C:\Developer\New ServicwWindow Website\tests"
+npx playwright test
+```
+
+### What the tests cover
+- **`smoke/public-pages.spec.js`** — all 12 public pages: HTTP 200, title contains "ServiceWindow", nav logo visible, no fatal JS errors
+- **`smoke/auth-guard.spec.js`** — all 7 dashboard pages: unauthenticated users redirect to `auth.html`
+
+### Adding tests for a new page
+1. Add public pages to the `PUBLIC_PAGES` array in `public-pages.spec.js`
+2. Add dashboard pages to the `DASHBOARD_PAGES` array in `auth-guard.spec.js`
+3. Write feature-specific assertions in a new `smoke/*.spec.js` file if needed
+
+### Constitution rule
+Per the Project Development Constitution: **all code must have passing tests before merging.**
+If `run-tests.ps1` exits non-zero, do not push.
+
+---
+
 ## Known Issues
 1. Photo uploads disabled — deferred until Supabase Pro
 2. AVG Secure Browser has display issues — not a priority
 3. Public truck map planned (find-trucks.html) — needs live location check-in system
 4. Uber Eats / DoorDash links — fields exist in DB, UI not wired yet
+
+---
+
+# Project Development Constitution
+
+## 1. Non-Negotiable Quality Gates
+- All code must first have passing tests.
+- Every change must pass through a dedicated `code-review` agent before merging.
+- Results must be compared to pre-computed expectations, never to the function's own output.
+- Follow all existing lint, type-safety, and style rules (Prettier, ESLint).
+
+## 2. Operational Rules
+- **NEVER implement features beyond what was explicitly asked.**
+- **NEVER create abstractions for single-use code.**
+- **ALWAYS** state your assumptions before implementing any solution.
+- **ALWAYS** read relevant files before making edits.
+
+## 3. Instructions for this Session
+- Use a fresh session for each new task.
+- Use the `Claude Devtools` suite for systematic workflows that enforce quality gates.
+- Use `Claude-Smart` to learn from my corrections and avoid repeating future mistakes.

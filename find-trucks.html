@@ -564,7 +564,7 @@
       transition: color 0.2s;
     }
 
-    .footer-links-group a:hover { color: var(--white); }
+    .footer-links-group a:hover { color: white; }
 
     .footer-bottom {
       border-top: 1px solid rgba(255,255,255,0.07);
@@ -780,6 +780,7 @@
     let cuisineVal = ''
     let cityVal = ''
     let debounceTimer
+    let userSession = null
 
     // ─── DYNAMIC SCHEMA INJECTION ───
     function injectTruckSchema(trucks) {
@@ -908,7 +909,7 @@
         t.is_veteran_owned ? `<span class="badge-small badge-veteran">Veteran Owned</span>` : ''
       ].filter(Boolean).join('')
 
-      const requestHref = `auth.html?mode=login`
+      const requestHref = userSession ? 'planner-dashboard.html' : 'auth.html'
 
       return `
         <div class="truck-card">
@@ -1018,7 +1019,11 @@
     }
 
     // ─── INIT ───
-    loadTrucks()
+    ;(async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      userSession = session
+      loadTrucks()
+    })()
   </script>
 
 </body>

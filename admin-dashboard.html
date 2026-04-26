@@ -880,7 +880,11 @@
     btn.addEventListener('click', closeSidebar)
   })
 
-  init()
+  init().catch(err => {
+    console.error('Dashboard init error:', err)
+    document.getElementById('loading-screen').innerHTML =
+      '<div style="text-align:center;padding:40px"><p style="color:#ff8080;font-family:Sora,sans-serif;font-size:14px">Error loading dashboard. Please refresh.</p></div>'
+  })
 </script>
 
 </body>

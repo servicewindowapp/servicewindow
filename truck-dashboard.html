@@ -822,30 +822,44 @@
 
   // ─── INIT ────────────────────────────────────────────────
   async function init() {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) { window.location.href = 'auth.html?mode=login'; return }
-    userId = session.user.id
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError) throw new Error(`getSession failed: ${sessionError.message}`)
+      if (!session) { window.location.href = 'auth.html?mode=login'; return }
+      userId = session.user.id
 
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
+      const { data, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
 
-    if (!data || data.role !== 'truck') {
-      window.location.href = 'index.html'; return
+      if (profileError) throw new Error(`profiles fetch failed: ${profileError.message} (code: ${profileError.code})`)
+
+      if (!data || data.role !== 'truck') {
+        window.location.href = 'index.html'; return
+      }
+      if (!data.is_verified) {
+        window.location.href = 'auth.html'; return
+      }
+      profile = data
+
+      document.getElementById('loading-screen').style.display = 'none'
+      document.getElementById('dashboard').style.display = 'flex'
+
+      renderSidebarMeta()
+      populateProfileForm()
+      await Promise.all([loadOverview(), loadInbox(), loadAcceptedBookings(), loadListings(), loadPostedJobs(), loadReviewedBookingIds(), loadReviews()])
+    } catch (err) {
+      console.error('[truck-dashboard] init error:', err)
+      const ls = document.getElementById('loading-screen')
+      ls.innerHTML = `
+        <div style="text-align:center;padding:40px;max-width:480px">
+          <p style="color:#FF6B35;font-family:monospace;font-size:13px;margin-bottom:12px">Dashboard failed to load</p>
+          <p style="color:rgba(255,255,255,0.6);font-family:monospace;font-size:12px;word-break:break-word">${err.message}</p>
+          <p style="color:rgba(255,255,255,0.4);font-family:monospace;font-size:11px;margin-top:16px">Open DevTools → Console for full details</p>
+        </div>`
     }
-    if (!data.is_verified) {
-      window.location.href = 'auth.html'; return
-    }
-    profile = data
-
-    document.getElementById('loading-screen').style.display = 'none'
-    document.getElementById('dashboard').style.display = 'flex'
-
-    renderSidebarMeta()
-    populateProfileForm()
-    await Promise.all([loadOverview(), loadInbox(), loadAcceptedBookings(), loadListings(), loadPostedJobs(), loadReviewedBookingIds(), loadReviews()])
   }
 
   // ─── SIDEBAR META ────────────────────────────────────────
@@ -1157,4 +1171,224 @@
   })
   sidebarOverlay.addEventListener('click', closeSidebar)
   // ─── SECTION SWITCHING ───────────────────────────────────
-  windo
+  window.showSection = function(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+    document.getElementById('section-' + id)?.classList.add('active')
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.section === id)
+    })
+  }
+
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.section) showSection(btn.dataset.section)
+      closeSidebar()
+    })
+  })
+
+  // ─── SIGN OUT ────────────────────────────────────────────
+  document.getElementById('btn-signout').addEventListener('click', async () => {
+    await supabase.auth.signOut()
+    window.location.href = 'index.html'
+  })
+
+  // ─── UTILITIES ───────────────────────────────────────────
+  function esc(s) {
+    if (s == null) return ''
+    return s.toString()
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  }
+
+  function fmtDate(d) {
+    if (!d) return '—'
+    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast')
+    t.textContent = msg
+    t.className = 'toast' + (isError ? ' error' : '')
+    t.classList.add('show')
+    setTimeout(() => t.classList.remove('show'), 3000)
+  }
+
+  // ─── ACCEPTED BOOKINGS ───────────────────────────────────
+  async function loadAcceptedBookings() {
+    const { data } = await supabase
+      .from('bookings')
+      .select(`id, event_type, event_date, city, status, requester_id,
+               requester:requester_id(business_name, contact_name)`)
+      .eq('truck_id', userId)
+      .in('status', ['accepted', 'completed'])
+      .order('event_date', { ascending: false })
+
+    const tbody = document.getElementById('accepted-tbody')
+    const empty = document.getElementById('accepted-empty')
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = ''; empty.style.display = 'block'; return
+    }
+    empty.style.display = 'none'
+
+    tbody.innerHTML = data.map(b => {
+      const canReview = b.status === 'completed' && !reviewedBookingIds.has(b.id)
+      const action = b.status === 'completed'
+        ? (canReview
+            ? `<button class="btn-review" onclick="openReviewModal('${b.id}','${b.requester_id}','${esc(b.event_type || 'Event')}')">Leave Review</button>`
+            : `<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Reviewed</span>`)
+        : '—'
+      return `
+        <tr>
+          <td>
+            <div class="td-name">${esc(b.event_type || 'Event')}</div>
+            <div class="td-sub">From: ${esc(b.requester?.business_name || b.requester?.contact_name || '—')}</div>
+          </td>
+          <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
+          <td>${esc(b.city || '—')}</td>
+          <td><span class="pill pill-${b.status}">${b.status}</span></td>
+          <td>${action}</td>
+        </tr>`
+    }).join('')
+  }
+
+  // ─── REVIEWED BOOKINGS ───────────────────────────────────
+  async function loadReviewedBookingIds() {
+    const { data } = await supabase
+      .from('reviews')
+      .select('booking_id')
+      .eq('reviewer_id', userId)
+    if (data) reviewedBookingIds = new Set(data.map(r => r.booking_id))
+  }
+
+  // ─── MY REVIEWS ──────────────────────────────────────────
+  async function loadReviews() {
+    const { data } = await supabase
+      .from('reviews')
+      .select('rating, comment, created_at, reviewer:reviewer_id(business_name, contact_name)')
+      .eq('reviewee_id', userId)
+      .order('created_at', { ascending: false })
+
+    const list  = document.getElementById('reviews-list')
+    const empty = document.getElementById('reviews-empty')
+
+    if (!data || data.length === 0) {
+      list.innerHTML = ''; empty.style.display = 'block'; return
+    }
+    empty.style.display = 'none'
+
+    const avg = (data.reduce((s, r) => s + r.rating, 0) / data.length).toFixed(1)
+    document.getElementById('rv-avg').textContent   = avg
+    document.getElementById('rv-count').textContent = data.length
+
+    list.innerHTML = data.map(r => {
+      const stars = Array.from({ length: 5 }, (_, i) =>
+        `<span style="color:${i < r.rating ? 'var(--fire)' : 'rgba(255,255,255,0.15)'}">★</span>`
+      ).join('')
+      return `
+        <div class="review-card">
+          <div class="review-card-header">
+            <span class="review-card-name">${esc(r.reviewer?.business_name || r.reviewer?.contact_name || 'Anonymous')}</span>
+            <span class="review-card-date">${fmtDate(r.created_at)}</span>
+          </div>
+          <div class="star-display">${stars}</div>
+          ${r.comment ? `<div class="review-card-text">"${esc(r.comment)}"</div>` : ''}
+        </div>`
+    }).join('')
+  }
+
+  // ─── POPULATE PROFILE FORM ───────────────────────────────
+  function populateProfileForm() {
+    const p = profile
+    if (p.business_name)      document.getElementById('p-business').value   = p.business_name
+    if (p.contact_name)       document.getElementById('p-contact').value    = p.contact_name
+    if (p.phone)              document.getElementById('p-phone').value      = p.phone
+    if (p.city)               document.getElementById('p-city').value       = p.city
+    if (p.cuisine_type)       document.getElementById('p-cuisine').value    = p.cuisine_type
+    if (p.service_radius)     document.getElementById('p-radius').value     = p.service_radius
+    if (p.website)            document.getElementById('p-website').value    = p.website
+    if (p.bio)                document.getElementById('p-bio').value        = p.bio
+    if (p.fundraiser_friendly) document.getElementById('p-fundraiser').checked = true
+    if (p.veteran_owned)       document.getElementById('p-veteran').checked    = true
+  }
+
+  // ─── PROFILE FORM SAVE ───────────────────────────────────
+  document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const statusEl = document.getElementById('profile-status')
+    statusEl.textContent = 'Saving…'
+    statusEl.style.color = 'var(--text-muted)'
+
+    const updates = {
+      business_name:       document.getElementById('p-business').value.trim() || null,
+      contact_name:        document.getElementById('p-contact').value.trim()  || null,
+      phone:               document.getElementById('p-phone').value.trim()    || null,
+      city:                document.getElementById('p-city').value.trim()     || null,
+      cuisine_type:        document.getElementById('p-cuisine').value.trim()  || null,
+      service_radius:      parseInt(document.getElementById('p-radius').value) || null,
+      website:             document.getElementById('p-website').value.trim()  || null,
+      bio:                 document.getElementById('p-bio').value.trim()      || null,
+      fundraiser_friendly: document.getElementById('p-fundraiser').checked,
+      veteran_owned:       document.getElementById('p-veteran').checked,
+      updated_at:          new Date().toISOString()
+    }
+
+    const { error } = await supabase.from('profiles').update(updates).eq('id', userId)
+    if (error) {
+      statusEl.textContent = 'Error saving profile.'
+      statusEl.style.color = '#ff8080'
+      return
+    }
+    Object.assign(profile, updates)
+    statusEl.textContent = 'Saved!'
+    statusEl.style.color = '#50c878'
+    setTimeout(() => { statusEl.textContent = '' }, 2500)
+    showToast('Profile updated')
+  })
+
+  // ─── REVIEW MODAL ────────────────────────────────────────
+  window.openReviewModal = function(bookingId, revieweeId, eventName) {
+    pendingReview = { bookingId, revieweeId }
+    reviewRating  = 0
+    document.getElementById('review-modal-sub').textContent = `Rate your experience: ${eventName}`
+    document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'))
+    document.getElementById('review-text').value = ''
+    document.getElementById('review-modal-overlay').style.display = 'flex'
+  }
+
+  window.closeReviewModal = function(e) {
+    if (!e || e.target === document.getElementById('review-modal-overlay')) {
+      document.getElementById('review-modal-overlay').style.display = 'none'
+    }
+  }
+
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      reviewRating = parseInt(btn.dataset.val)
+      document.querySelectorAll('.star-btn').forEach(b => {
+        b.classList.toggle('lit', parseInt(b.dataset.val) <= reviewRating)
+      })
+    })
+  })
+
+  window.submitReview = async function() {
+    if (!reviewRating) { showToast('Select a star rating first', true); return }
+    const comment = document.getElementById('review-text').value.trim()
+    const { error } = await supabase.from('reviews').insert({
+      booking_id:  pendingReview.bookingId,
+      reviewer_id: userId,
+      reviewee_id: pendingReview.revieweeId,
+      rating:      reviewRating,
+      comment:     comment || null
+    })
+    if (error) { showToast('Error submitting review', true); return }
+    reviewedBookingIds.add(pendingReview.bookingId)
+    document.getElementById('review-modal-overlay').style.display = 'none'
+    showToast('Review submitted')
+    await Promise.all([loadAcceptedBookings(), loadReviews()])
+  }
+
+  init()
+</script>
+</body>
+</html>

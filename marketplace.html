@@ -1032,6 +1032,14 @@
 
   </div>
 
+  <!-- ─── TRUCK DETAIL MODAL ─── -->
+  <div id="truck-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:1000;align-items:center;justify-content:center;padding:20px">
+    <div id="truck-modal-box" style="background:#0d1f2d;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:28px 28px 24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;position:relative">
+      <button onclick="window.closeTruckModal()" aria-label="Close" style="position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;line-height:1">×</button>
+      <div id="truck-modal-content"></div>
+    </div>
+  </div>
+
   <!-- ─── FLOATING CTA ─── -->
   <a href="auth.html" class="float-cta" id="floatCta" title="Post a request">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -1051,6 +1059,8 @@
     let currentBoard = 'trucks'
     let searchVal = ''
     let cityVal = ''
+    const truckMap = new Map()
+    let userSession = null
     let cuisineVal = ''
     let sortVal = 'newest'
     let debounceTimer = null
@@ -1228,6 +1238,7 @@
 
     // ─── RENDER TRUCK CARD ───
     function renderTruckCard(truck) {
+      truckMap.set(truck.id, truck)
       const emoji = getCuisineEmoji(truck.cuisine_type)
       const badges = []
       if (truck.is_verified) badges.push(`<span class="badge badge-verified">Verified</span>`)
@@ -1257,8 +1268,8 @@
               ${escHtml(radius)}
             </span>
             <div style="display:flex;gap:8px">
-              <a href="auth.html?mode=login" class="btn-view">View</a>
-              <a href="auth.html" class="btn-request">Request</a>
+              <button class="btn-view" onclick="window.openTruckModal('${truck.id}')">View</button>
+              <a href="${userSession ? 'planner-dashboard.html' : 'auth.html'}" class="btn-request">Request</a>
             </div>
           </div>
         </div>`
@@ -1372,17 +1383,18 @@
     // ─── UPDATE FLOAT CTA ───
     function updateFloatCta(board) {
       const cta = document.getElementById('floatCta')
+      const loggedIn = !!userSession
       const labels = {
-        trucks: { label: 'Post a Request', href: 'auth.html' },
-        request: { label: 'Post a Request', href: 'auth.html' },
-        event: { label: 'Add an Event', href: 'auth.html' },
-        shift: { label: 'Post Your Dates', href: 'auth.html?role=truck' },
-        venue: { label: 'List Your Venue', href: 'auth.html' },
-        parking: { label: 'List a Space', href: 'auth.html' },
-        vendor: { label: 'Get Listed', href: 'auth.html?role=service_provider' }
+        trucks:  { label: 'Post a Request',  auth: 'auth.html',                   dash: 'planner-dashboard.html' },
+        request: { label: 'Post a Request',  auth: 'auth.html',                   dash: 'planner-dashboard.html' },
+        event:   { label: 'Add an Event',    auth: 'auth.html',                   dash: 'planner-dashboard.html' },
+        shift:   { label: 'Post Your Dates', auth: 'auth.html?role=truck',        dash: 'truck-dashboard.html' },
+        venue:   { label: 'List Your Venue', auth: 'auth.html',                   dash: 'venue-dashboard.html' },
+        parking: { label: 'List a Space',    auth: 'auth.html',                   dash: 'property-dashboard.html' },
+        vendor:  { label: 'Get Listed',      auth: 'auth.html?role=service_provider', dash: 'service-provider-dashboard.html' }
       }
       const cfg = labels[board] || labels.trucks
-      cta.href = cfg.href
+      cta.href = loggedIn ? cfg.dash : cfg.auth
       cta.querySelector('.cta-label').textContent = cfg.label
     }
 
@@ -1426,11 +1438,23 @@
     }
 
     // ─── EVENT LISTENERS ───
+    function updateCuisineFilter(board) {
+      const cuisineEl = document.getElementById('cuisineFilter')
+      if (board === 'trucks') {
+        cuisineEl.style.display = ''
+      } else {
+        cuisineEl.style.display = 'none'
+        cuisineVal = ''
+        cuisineEl.value = ''
+      }
+    }
+
     document.querySelectorAll('.board-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.board-tab').forEach(t => t.classList.remove('active'))
         tab.classList.add('active')
         currentBoard = tab.dataset.board
+        updateCuisineFilter(currentBoard)
         updateBanner(currentBoard)
         updateFloatCta(currentBoard)
         refresh()
@@ -1484,10 +1508,15 @@
     }
 
     // ─── INIT ───
-    updateBanner(currentBoard)
-    updateFloatCta(currentBoard)
-    initCounts()
-    loadAndRender()
+    ;(async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      userSession = session
+      updateCuisineFilter(currentBoard)
+      updateBanner(currentBoard)
+      updateFloatCta(currentBoard)
+      initCounts()
+      loadAndRender()
+    })()
 
     // ─── UTILS ───
     function escHtml(str) {
@@ -1512,6 +1541,48 @@
       const hour = h % 12 || 12
       return `${hour}${m ? ':' + String(m).padStart(2,'0') : ''}${ampm}`
     }
+
+    // ─── TRUCK DETAIL MODAL ───
+    window.openTruckModal = function(id) {
+      const truck = truckMap.get(id)
+      if (!truck) return
+      const overlay = document.getElementById('truck-modal-overlay')
+      const content = document.getElementById('truck-modal-content')
+
+      const emoji  = getCuisineEmoji(truck.cuisine_type)
+      const badges = []
+      if (truck.is_verified)          badges.push('<span style="background:rgba(80,200,120,0.15);color:#50c878;border:1px solid rgba(80,200,120,0.3);border-radius:4px;font-size:11px;font-family:\'DM Mono\',monospace;padding:2px 8px">✓ Verified</span>')
+      if (truck.is_fundraiser_friendly) badges.push('<span style="background:rgba(255,107,53,0.12);color:#FF6B35;border:1px solid rgba(255,107,53,0.25);border-radius:4px;font-size:11px;font-family:\'DM Mono\',monospace;padding:2px 8px">Fundraiser Friendly</span>')
+      if (truck.is_veteran_owned)      badges.push('<span style="background:rgba(100,149,237,0.15);color:#6495ed;border:1px solid rgba(100,149,237,0.3);border-radius:4px;font-size:11px;font-family:\'DM Mono\',monospace;padding:2px 8px">Veteran Owned</span>')
+
+      const requestHref = userSession ? 'planner-dashboard.html' : 'auth.html'
+
+      content.innerHTML = `
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+          <div style="width:52px;height:52px;background:rgba(255,107,53,0.12);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${emoji}</div>
+          <div>
+            <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:white;margin-bottom:3px">${escHtml(truck.business_name || 'Unnamed Truck')}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,0.5)">${escHtml(truck.city || 'SWFL')}${truck.cuisine_type ? ' · ' + escHtml(truck.cuisine_type) : ''}</div>
+          </div>
+        </div>
+        ${badges.length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">${badges.join('')}</div>` : ''}
+        <p style="font-family:'Lora',Georgia,serif;font-size:14px;color:rgba(255,255,255,0.75);line-height:1.6;margin-bottom:18px">${escHtml(truck.bio || 'Verified food truck operator serving Southwest Florida.')}</p>
+        ${truck.service_radius ? `<div style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px">Service radius: ${truck.service_radius} miles</div>` : ''}
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="${requestHref}" style="background:#FF6B35;color:white;border:none;border-radius:7px;padding:10px 20px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block">Book This Truck</a>
+          <button onclick="window.closeTruckModal()" style="background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:7px;padding:10px 20px;font-family:'Sora',sans-serif;font-size:13px;cursor:pointer">Close</button>
+        </div>`
+
+      overlay.style.display = 'flex'
+    }
+
+    window.closeTruckModal = function() {
+      document.getElementById('truck-modal-overlay').style.display = 'none'
+    }
+
+    document.getElementById('truck-modal-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('truck-modal-overlay')) window.closeTruckModal()
+    })
   </script>
 
 </body>
