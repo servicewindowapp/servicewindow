@@ -325,6 +325,31 @@
     .star-display { color: var(--fire); font-size: 14px; letter-spacing: 1px; }
     .star-display.muted { color: rgba(255,255,255,0.15); }
 
+    /* MESSAGES */
+    .msg-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer; transition: background 0.1s;
+    }
+    .msg-row:last-of-type { border-bottom: none; }
+    .msg-row:hover { background: rgba(255,255,255,0.03); }
+    .msg-row.unread { background: rgba(255,107,53,0.04); }
+    .msg-row.unread .msg-sender { color: white; }
+    .msg-unread-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--fire);
+      margin-top: 5px; flex-shrink: 0;
+    }
+    .msg-unread-dot.hidden { background: transparent; }
+    .msg-sender { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .msg-preview { font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 500px; }
+    .msg-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); white-space: nowrap; margin-left: auto; flex-shrink: 0; }
+    .msg-body-expanded {
+      padding: 10px 20px 16px 40px; font-size: 13px; color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.05); display: none;
+      background: rgba(255,255,255,0.02); line-height: 1.6;
+    }
+    .msg-body-expanded.show { display: block; }
+
     /* REVIEW CARD */
     .review-card {
       background: var(--dark-card); border: 1px solid var(--dark-border);
@@ -383,7 +408,7 @@
         z-index: 5;
       }
       .sidebar-nav { padding-bottom: 120px; }
-      .section { padding: 20px 16px; }
+      .section { padding: 20px 16px 120px; }
       .profile-grid { grid-template-columns: 1fr; }
       .card-grid { grid-template-columns: 1fr 1fr; }
       .main-content { -webkit-overflow-scrolling: touch; }
@@ -423,11 +448,15 @@
         <span class="nav-icon">◷</span> Booking Inbox
         <span class="nav-badge" id="inbox-badge" style="display:none">0</span>
       </button>
+      <button class="nav-item" data-section="messages">
+        <span class="nav-icon">✉</span> Messages
+        <span class="nav-badge" id="messages-badge" style="display:none">0</span>
+      </button>
       <button class="nav-item" data-section="listings">
         <span class="nav-icon">◈</span> My Listings
       </button>
       <button class="nav-item" data-section="shift">
-        <span class="nav-icon">＋</span> Post a Shift
+        <span class="nav-icon">⚡</span> Emergency Coverage
       </button>
       <button class="nav-item" data-section="jobs">
         <span class="nav-icon">◈</span> Post a Job
@@ -558,7 +587,7 @@
       <div class="table-container">
         <div class="table-toolbar">
           <span class="table-title">Posted Shifts &amp; Events</span>
-          <button class="btn-primary" style="padding:7px 16px;font-size:12px" onclick="showSection('shift')">+ Post Shift</button>
+          <button class="btn-primary" style="padding:7px 16px;font-size:12px" onclick="showSection('shift')">⚡ Post Coverage</button>
         </div>
         <table>
           <thead>
@@ -575,48 +604,63 @@
         </table>
         <div class="empty-state" id="listings-empty" style="display:none">
           <div class="empty-icon">📋</div>
-          <p>No listings yet. Post your first available shift.</p>
-          <button class="btn-primary" onclick="showSection('shift')">Post a Shift</button>
+          <p>No listings yet. Need a truck to cover an accepted booking?</p>
+          <button class="btn-primary" onclick="showSection('shift')">⚡ Post Emergency Coverage</button>
         </div>
       </div>
     </section>
 
-    <!-- POST A SHIFT -->
+    <!-- EMERGENCY COVERAGE -->
     <section class="section" id="section-shift">
       <div class="section-header">
-        <h1>Post a Shift</h1>
-        <p>Let organizers and venues know you're available on a specific date.</p>
+        <h1>Emergency Coverage</h1>
+        <p>Have an accepted booking you can't fulfill? Post it here — verified trucks in your area see it flagged as urgent and can pick it up immediately.</p>
       </div>
-      <div class="shift-form-card">
+      <div class="shift-form-card" style="border-color:rgba(255,107,53,0.25)">
+        <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding:14px 16px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:8px">
+          <span style="font-size:20px;line-height:1.3">⚡</span>
+          <span style="font-family:'Sora',sans-serif;font-size:13px;color:rgba(255,180,100,0.95);line-height:1.5">This posts as <strong>URGENT</strong> on the Shift Marketplace. Use this only for bookings you have already accepted and can no longer fulfill due to illness, equipment failure, or family emergency.</span>
+        </div>
         <form id="shift-form" novalidate>
           <div class="profile-grid">
-            <div class="field-group full">
-              <label for="shift-title">Title</label>
-              <input type="text" id="shift-title" placeholder="e.g. Available Saturday — Cape Coral area" required>
-            </div>
-            <div class="field-group full">
-              <label for="shift-desc">Description (optional)</label>
-              <textarea id="shift-desc" placeholder="Any details about what you can offer, capacity, setup time…"></textarea>
+            <div class="field-group">
+              <label for="shift-event-type">Event Type</label>
+              <select id="shift-event-type">
+                <option value="Private Party">Private Party</option>
+                <option value="HOA / Gated Community">HOA / Gated Community</option>
+                <option value="Corporate Event">Corporate Event</option>
+                <option value="Venue Event">Venue Event</option>
+                <option value="Festival / Market">Festival / Market</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
             <div class="field-group">
-              <label for="shift-date">Available Date</label>
-              <input type="text" id="shift-date" placeholder="YYYY-MM-DD" required>
-            </div>
-            <div class="field-group">
-              <label for="shift-city">City</label>
+              <label for="shift-city">City *</label>
               <input type="text" id="shift-city" placeholder="e.g. Cape Coral" required>
             </div>
             <div class="field-group">
-              <label for="shift-location">Location / Area (optional)</label>
-              <input type="text" id="shift-location" placeholder="e.g. Near Pine Island Rd">
+              <label for="shift-date">Event Date *</label>
+              <input type="text" id="shift-date" placeholder="YYYY-MM-DD" required>
             </div>
             <div class="field-group">
-              <label for="shift-start">Start Time (optional)</label>
+              <label for="shift-start">Start Time</label>
               <input type="text" id="shift-start" placeholder="HH:MM">
+            </div>
+            <div class="field-group">
+              <label for="shift-guests">Expected Guests</label>
+              <input type="number" id="shift-guests" placeholder="e.g. 150" min="1">
+            </div>
+            <div class="field-group">
+              <label for="shift-compensation">Compensation / Revenue Split</label>
+              <input type="text" id="shift-compensation" placeholder="e.g. 100% revenue, $500 flat fee">
+            </div>
+            <div class="field-group full">
+              <label for="shift-desc">Event Details + Coverage Notes</label>
+              <textarea id="shift-desc" placeholder="Describe the event and why you need coverage. Include any requirements — generator needed, alcohol policy, setup time, cuisine restrictions, etc." style="min-height:120px"></textarea>
             </div>
           </div>
           <div style="display:flex;gap:12px;align-items:center">
-            <button type="submit" class="btn-primary">Post to Shift Marketplace</button>
+            <button type="submit" class="btn-primary" style="background:#c94a1a">⚡ Post Emergency Coverage</button>
             <span id="shift-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
           </div>
         </form>
@@ -786,6 +830,25 @@
       </div>
     </section>
 
+    <!-- MESSAGES -->
+    <section class="section" id="section-messages">
+      <div class="section-header">
+        <h1>Messages</h1>
+        <p>Direct messages from event organizers, HOA managers, and venues.</p>
+      </div>
+      <div class="table-container">
+        <div class="table-toolbar">
+          <span class="table-title">Inbox</span>
+          <button class="btn-outline" style="padding:6px 14px;font-size:12px" id="btn-mark-all-read">Mark All Read</button>
+        </div>
+        <div id="messages-list"></div>
+        <div class="empty-state" id="messages-empty" style="display:none">
+          <div class="empty-icon">✉️</div>
+          <p>No messages yet. Messages from organizers and venues will appear here.</p>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -849,7 +912,7 @@
 
       renderSidebarMeta()
       populateProfileForm()
-      await Promise.all([loadOverview(), loadInbox(), loadAcceptedBookings(), loadListings(), loadPostedJobs(), loadReviewedBookingIds(), loadReviews()])
+      await Promise.all([loadOverview(), loadInbox(), loadAcceptedBookings(), loadListings(), loadPostedJobs(), loadReviewedBookingIds(), loadReviews(), loadMessages()])
     } catch (err) {
       console.error('[truck-dashboard] init error:', err)
       const ls = document.getElementById('loading-screen')
@@ -1026,46 +1089,55 @@
       </tr>`).join('')
   }
 
-  // ─── POST A SHIFT ────────────────────────────────────────
+  // ─── EMERGENCY COVERAGE ──────────────────────────────────
   document.getElementById('shift-form').addEventListener('submit', async (e) => {
     e.preventDefault()
     const statusEl = document.getElementById('shift-status')
     statusEl.textContent = 'Posting…'
+    statusEl.style.color = 'var(--text-muted)'
 
-    const title    = document.getElementById('shift-title').value.trim()
-    const city     = document.getElementById('shift-city').value.trim()
-    const date     = document.getElementById('shift-date').value.trim()
-    const desc     = document.getElementById('shift-desc').value.trim()
-    const location = document.getElementById('shift-location').value.trim()
-    const start    = document.getElementById('shift-start').value.trim()
+    const eventType    = document.getElementById('shift-event-type').value
+    const city         = document.getElementById('shift-city').value.trim()
+    const date         = document.getElementById('shift-date').value.trim()
+    const start        = document.getElementById('shift-start').value.trim()
+    const guests       = parseInt(document.getElementById('shift-guests').value) || null
+    const compensation = document.getElementById('shift-compensation').value.trim()
+    const desc         = document.getElementById('shift-desc').value.trim()
 
-    if (!title || !city || !date) {
-      statusEl.textContent = 'Title, city, and date are required.'
+    if (!city || !date) {
+      statusEl.textContent = 'City and event date are required.'
       statusEl.style.color = '#ff8080'
       return
     }
 
+    const title = '⚡ Coverage Needed: ' + eventType + ' — ' + city
+    const fullDesc = [
+      desc || null,
+      compensation ? 'Compensation: ' + compensation : null
+    ].filter(Boolean).join('\n\n') || null
+
     const { error } = await supabase.from('listings').insert({
-      poster_id:  userId,
-      board:      'shift',
+      poster_id:       userId,
+      board:           'shift',
       title,
-      description: desc || null,
-      location:   location || null,
+      description:     fullDesc,
       city,
-      event_date: date || null,
-      start_time: start || null,
-      status:     'active'
+      event_date:      date || null,
+      start_time:      start || null,
+      guest_count_min: guests,
+      is_urgent:       true,
+      status:          'active'
     })
 
     if (error) {
-      statusEl.textContent = 'Error posting shift.'
+      statusEl.textContent = 'Error: ' + error.message
       statusEl.style.color = '#ff8080'
       return
     }
 
     statusEl.textContent = ''
     document.getElementById('shift-form').reset()
-    showToast('Shift posted to the marketplace')
+    showToast('Emergency coverage posted — other trucks will see it now')
     await loadListings()
     showSection('listings')
   })
@@ -1143,6 +1215,76 @@
     showToast('Job posted to the board')
     await loadPostedJobs()
     showSection('jobs')
+  })
+
+  // ─── MESSAGES ────────────────────────────────────────────
+  async function loadMessages() {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('id, conversation_id, content, is_read, created_at, sender:sender_id(id, business_name, contact_name, role)')
+      .eq('recipient_id', userId)
+      .order('created_at', { ascending: false })
+
+    const list  = document.getElementById('messages-list')
+    const empty = document.getElementById('messages-empty')
+
+    if (error) {
+      list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-muted);font-family:\'DM Mono\',monospace;font-size:12px">Messages unavailable — ' + esc(error.message) + '</div>'
+      return
+    }
+
+    if (!data || data.length === 0) {
+      list.innerHTML = ''; empty.style.display = 'block'; return
+    }
+    empty.style.display = 'none'
+
+    const unread = data.filter(m => !m.is_read).length
+    if (unread > 0) {
+      const badge = document.getElementById('messages-badge')
+      badge.textContent   = unread
+      badge.style.display = 'inline-block'
+    }
+
+    list.innerHTML = data.map(m => {
+      const sender  = esc(m.sender?.business_name || m.sender?.contact_name || 'Unknown')
+      const preview = esc((m.content || '').substring(0, 100) + (m.content?.length > 100 ? '\u2026' : ''))
+      const isRead  = m.is_read
+      return (
+        '<div class="msg-row ' + (isRead ? '' : 'unread') + '" onclick="toggleMessage(\'' + m.id + '\')">' +
+          '<div class="msg-unread-dot ' + (isRead ? 'hidden' : '') + '" id="dot-' + m.id + '"></div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<div class="msg-sender">' + sender + '</div>' +
+            '<div class="msg-preview">' + preview + '</div>' +
+          '</div>' +
+          '<div class="msg-time">' + fmtDate(m.created_at) + '</div>' +
+        '</div>' +
+        '<div class="msg-body-expanded" id="body-' + m.id + '">' + esc(m.content || '') + '</div>'
+      )
+    }).join('')
+  }
+
+  window.toggleMessage = async function(id) {
+    const body = document.getElementById('body-' + id)
+    const dot  = document.getElementById('dot-' + id)
+    body.classList.toggle('show')
+    if (dot && !dot.classList.contains('hidden')) {
+      dot.classList.add('hidden')
+      dot.closest('.msg-row')?.classList.remove('unread')
+      await supabase.from('messages').update({ is_read: true }).eq('id', id)
+      const badge = document.getElementById('messages-badge')
+      const next  = Math.max(0, (parseInt(badge.textContent, 10) || 0) - 1)
+      if (next === 0) badge.style.display = 'none'
+      else badge.textContent = next
+    }
+  }
+
+  document.getElementById('btn-mark-all-read')?.addEventListener('click', async () => {
+    await supabase.from('messages').update({ is_read: true })
+      .eq('recipient_id', userId).eq('is_read', false)
+    document.querySelectorAll('.msg-unread-dot').forEach(d => d.classList.add('hidden'))
+    document.querySelectorAll('.msg-row.unread').forEach(r => r.classList.remove('unread'))
+    document.getElementById('messages-badge').style.display = 'none'
+    showToast('All messages marked as read')
   })
 
   // ─── MOBILE NAV ──────────────────────────────────────────────
@@ -1308,8 +1450,8 @@
     if (p.service_radius)     document.getElementById('p-radius').value     = p.service_radius
     if (p.website)            document.getElementById('p-website').value    = p.website
     if (p.bio)                document.getElementById('p-bio').value        = p.bio
-    if (p.fundraiser_friendly) document.getElementById('p-fundraiser').checked = true
-    if (p.veteran_owned)       document.getElementById('p-veteran').checked    = true
+    if (p.is_fundraiser_friendly) document.getElementById('p-fundraiser').checked = true
+    if (p.is_veteran_owned)       document.getElementById('p-veteran').checked    = true
   }
 
   // ─── PROFILE FORM SAVE ───────────────────────────────────
@@ -1328,15 +1470,16 @@
       service_radius:      parseInt(document.getElementById('p-radius').value) || null,
       website:             document.getElementById('p-website').value.trim()  || null,
       bio:                 document.getElementById('p-bio').value.trim()      || null,
-      fundraiser_friendly: document.getElementById('p-fundraiser').checked,
-      veteran_owned:       document.getElementById('p-veteran').checked,
+      is_fundraiser_friendly: document.getElementById('p-fundraiser').checked,
+      is_veteran_owned:       document.getElementById('p-veteran').checked,
       updated_at:          new Date().toISOString()
     }
 
     const { error } = await supabase.from('profiles').update(updates).eq('id', userId)
     if (error) {
-      statusEl.textContent = 'Error saving profile.'
+      statusEl.textContent = `Error: ${error.message}`
       statusEl.style.color = '#ff8080'
+      console.error('[profile save]', error)
       return
     }
     Object.assign(profile, updates)
