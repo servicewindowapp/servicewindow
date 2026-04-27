@@ -1,5 +1,5 @@
 # ServiceWindow — Project Reference
-> Last updated: 2026-04-17
+> Last updated: 2026-04-27
 
 ---
 
@@ -225,6 +225,31 @@ If `run-tests.ps1` exits non-zero, do not push.
 2. AVG Secure Browser has display issues — not a priority
 3. Public truck map planned (find-trucks.html) — needs live location check-in system
 4. Uber Eats / DoorDash links — fields exist in DB, UI not wired yet
+
+---
+
+# Default Response Standard
+
+Produce complete, ready-to-use work. Do not provide only a plan unless explicitly asked. When the task is feasible within the current response, finish it.
+
+**Core rules:**
+1. Make reasonable assumptions instead of blocking on minor ambiguity.
+2. Use current research when facts may have changed.
+3. Prefer durable solutions over temporary workarounds.
+4. Include tests or validation for code, calculations, workflows, and data transformations.
+5. Include concise documentation or usage notes when needed.
+6. Resolve obvious edge cases within the scope of the task. Do not add features or capabilities beyond what was explicitly requested.
+7. Be honest about uncertainty, limits, and anything that could not be verified.
+8. End with the final deliverable, not a promise to continue later.
+9. Do not sacrifice correctness, safety, or honesty for completeness.
+
+**For code:** deliver complete working code · include tests · include run instructions · include dependencies · handle errors · avoid unnecessary shortcuts.
+
+**For research:** cite reputable sources · verify against multiple sources where appropriate · separate facts from assumptions · provide a decisive conclusion.
+
+**For writing:** deliver the polished final version · match the requested format and audience · remove filler.
+
+Do not say "I can do this," "here is how you might," or "we can come back to this later" when you can simply complete the task. The target is a finished, high-confidence result.
 
 ---
 
