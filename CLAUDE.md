@@ -1,5 +1,45 @@
 # ServiceWindow — Project Reference
-> Last updated: 2026-04-27
+> Last updated: 2026-05-01
+
+---
+
+## Brain Integration — Session Protocol
+
+Claude maintains a persistent context layer in the Obsidian vault at `E:\Brain\Claude\`. This is mandatory — not optional.
+
+### Session Start (do this before any other work)
+Read these three files in order:
+1. `E:\Brain\Claude\ServiceWindow-Context.md` — current project state, what's built, what's open
+2. `E:\Brain\Claude\Session-Log.md` — recent session history (read last 2–3 entries)
+3. `E:\Brain\Claude\Open-Issues.md` — active bugs and blockers with IDs
+
+Use this context to orient before touching any code. Do not rely on CLAUDE.md alone — the Brain files are the living state.
+
+### Session End (do this after every session that touches tracked files)
+1. **Update** `E:\Brain\Claude\ServiceWindow-Context.md` — revise "What's Incomplete / Open" table to reflect current state
+2. **Prepend** a new entry to `E:\Brain\Claude\Session-Log.md` — what was done, state at end, next priorities, flagged issues
+3. **Update** `E:\Brain\Claude\Open-Issues.md` — mark resolved issues, add new ones with IDs (OI-### format)
+4. **Create or update** today's daily note at `E:\Brain\Daily\YYYY-MM-DD.md` — use the sprint status table format established in 2026-05-01.md
+
+### Daily Note Format
+Follow the template in `E:\Brain\Templates\Daily Note.md`, and append a ServiceWindow sprint status table below the Notes section when there is active sprint work. Link to previous day's note at the bottom.
+
+### File Structure Summary
+```
+E:\Brain\
+├── Claude\
+│   ├── ServiceWindow-Context.md   ← current state (rewrite each session)
+│   ├── Session-Log.md             ← append-only history
+│   └── Open-Issues.md             ← bug/blocker tracker with IDs
+├── Daily\
+│   └── YYYY-MM-DD.md              ← daily notes (create each session)
+├── Areas\
+│   └── ServiceWindow.md           ← area overview (update monthly or on major shifts)
+├── Projects\
+│   └── ServiceWindow Website.md   ← sprint tracker (update when sprint milestones change)
+└── Templates\
+    └── Daily Note.md              ← base template
+```
 
 ---
 
