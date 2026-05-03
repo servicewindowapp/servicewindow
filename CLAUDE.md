@@ -311,3 +311,16 @@ Do not say "I can do this," "here is how you might," or "we can come back to thi
 - Use a fresh session for each new task.
 - Use the `Claude Devtools` suite for systematic workflows that enforce quality gates.
 - Use `Claude-Smart` to learn from my corrections and avoid repeating future mistakes.
+
+---
+
+## Change Request Format (Required for all UI changes)
+Every UI change request must include:
+- FILE: which file
+- SECTION: which named section
+- CHANGE: exactly what to do, not how it should feel
+- CONSTRAINT: what must not change
+- VIEWPORT: desktop/mobile/both
+
+Ambiguous requests without this format should be clarified before implementing.
+
