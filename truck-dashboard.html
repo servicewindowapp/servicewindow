@@ -442,6 +442,16 @@
         <span>Your account is pending verification. You'll be able to receive bookings once approved.</span>
       </div>
 
+      <!-- SUBSCRIPTION -->
+      <div class="sub-card">
+        <div class="stat-label" style="margin-bottom:10px">Subscription</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span class="sub-badge" id="ov-sub-badge" style="font-size:12px">—</span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)" id="ov-sub-detail"></span>
+          <button class="btn-outline" style="padding:6px 14px;font-size:12px" id="btn-billing">Manage Billing</button>
+        </div>
+      </div>
+
       <!-- 3 KPI CARDS -->
       <div class="card-grid">
         <div class="stat-card">
@@ -458,16 +468,6 @@
         </div>
       </div>
 
-      <!-- SUBSCRIPTION -->
-      <div class="sub-card">
-        <div class="stat-label" style="margin-bottom:10px">Subscription</div>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span class="sub-badge" id="ov-sub-badge" style="font-size:12px">—</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)" id="ov-sub-detail"></span>
-          <button class="btn-outline" style="padding:6px 14px;font-size:12px" id="btn-billing">Manage Billing</button>
-        </div>
-      </div>
-
       <!-- UPCOMING BOOKINGS -->
       <div class="upcoming-bookings-wrap">
         <div class="upcoming-hd">
@@ -475,7 +475,7 @@
             <div class="upcoming-title">Upcoming Bookings</div>
             <div class="upcoming-sub">Confirmed and pending events</div>
           </div>
-          <button class="btn-outline" style="font-size:12px;padding:6px 14px;white-space:nowrap" onclick="location.hash='calendar'">View Calendar</button>
+          <button class="btn-primary" style="font-size:12px;padding:6px 14px;white-space:nowrap" onclick="location.hash='calendar'">View Calendar</button>
         </div>
         <div style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse">
@@ -498,7 +498,7 @@
       <div class="marketplace-req-wrap">
         <div class="marketplace-req-hd">
           <div class="marketplace-req-title">New Marketplace Requests</div>
-          <button class="btn-outline" style="font-size:12px;padding:6px 14px;white-space:nowrap" id="btn-log-external-marketplace">+ Log External Booking</button>
+          <button class="btn-primary" style="font-size:12px;padding:6px 14px;white-space:nowrap" id="btn-log-external-marketplace">+ Log External Booking</button>
         </div>
         <div id="marketplace-req-list">
           <div style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">Loading…</div>
@@ -525,7 +525,6 @@
 
       <!-- CTA ROW -->
       <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <button class="btn-primary" id="btn-log-external-overview">+ Log External Booking</button>
         <button class="btn-outline" onclick="window.location.href='marketplace.html'">Browse Marketplace</button>
       </div>
     </section>
@@ -1196,13 +1195,33 @@ async function loadOverview() {
 
 }
 
-// Billing portal
+// Billing — trialing/pending → pricing page; active/past_due → Stripe portal
 document.getElementById('btn-billing')?.addEventListener('click', async () => {
-  const { data: { session } } = await supabase.auth.getSession()
-  const res = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-portal-session',
-    { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+session?.access_token } })
-  const { url } = await res.json()
-  if (url) window.location.href = url; else showToast('Could not open billing portal', true)
+  const status = profile?.subscription_status
+  if (!status || status === 'trialing' || status === 'pending') {
+    window.location.href = 'pricing.html'
+    return
+  }
+  const btn = document.getElementById('btn-billing')
+  const orig = btn.textContent
+  btn.textContent = 'Opening…'; btn.disabled = true
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-portal-session',
+      { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session?.access_token } })
+    const { url, error: fnErr } = await res.json()
+    if (url) {
+      window.location.href = url
+    } else {
+      console.error('[billing portal]', fnErr)
+      showToast('Could not open billing portal — try again', true)
+    }
+  } catch (e) {
+    console.error('[billing portal]', e)
+    showToast('Could not open billing portal — try again', true)
+  } finally {
+    btn.textContent = orig; btn.disabled = false
+  }
 })
 
 // ─── MINI CALENDAR (removed — replaced by Upcoming Bookings table) ────────────
@@ -1803,7 +1822,6 @@ function closeExtModal() {
 }
 
 document.getElementById('btn-log-external-nav').addEventListener('click', openExtModal)
-document.getElementById('btn-log-external-overview').addEventListener('click', openExtModal)
 document.getElementById('btn-log-external-cal').addEventListener('click', openExtModal)
 document.getElementById('btn-log-external-marketplace').addEventListener('click', openExtModal)
 document.getElementById('ext-cancel-btn').addEventListener('click', closeExtModal)
