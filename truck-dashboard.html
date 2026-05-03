@@ -131,6 +131,33 @@
     .preview-row-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
     .preview-row-actions { display: flex; gap: 6px; }
 
+    /* UPCOMING BOOKINGS CARD */
+    .upcoming-bookings-wrap { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .upcoming-hd { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--dark-border); gap: 12px; }
+    .upcoming-title { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .upcoming-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+    /* MARKETPLACE REQUESTS CARD */
+    .marketplace-req-wrap { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .marketplace-req-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--dark-border); gap: 12px; }
+    .marketplace-req-title { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; }
+    .req-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .req-card:last-child { border-bottom: none; }
+    .req-card-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .req-card-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+    .btn-bid { padding: 7px 18px; background: var(--fire); color: white; border: none; border-radius: 20px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s; flex-shrink: 0; }
+    .btn-bid:hover { background: #e55a26; }
+
+    /* ACTIVE BIDS */
+    .active-bids-wrap { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .active-bids-hd { padding: 14px 18px; border-bottom: 1px solid var(--dark-border); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; }
+    .bids-list-scroll { max-height: 260px; overflow-y: auto; }
+
+    /* BID MODAL */
+    .bid-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 8000; display: none; align-items: flex-end; justify-content: center; }
+    @media (min-width: 600px) { .bid-modal-overlay { align-items: center; } }
+    .bid-modal-overlay.open { display: flex; }
+
     /* FULL CALENDAR SECTION */
     .cal-section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
     .cal-toggle { display: flex; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 3px; }
@@ -441,32 +468,58 @@
         </div>
       </div>
 
-      <!-- MINI CALENDAR -->
-      <div class="mini-cal-wrap">
-        <div class="mini-cal-head">
-          <span class="mini-cal-title" id="mini-cal-title">—</span>
-          <div class="mini-cal-nav">
-            <button class="mini-cal-nav-btn" id="mini-cal-prev">‹</button>
-            <button class="mini-cal-nav-btn" id="mini-cal-next">›</button>
+      <!-- UPCOMING BOOKINGS -->
+      <div class="upcoming-bookings-wrap">
+        <div class="upcoming-hd">
+          <div>
+            <div class="upcoming-title">Upcoming Bookings</div>
+            <div class="upcoming-sub">Confirmed and pending events</div>
           </div>
+          <button class="btn-outline" style="font-size:12px;padding:6px 14px;white-space:nowrap" onclick="location.hash='calendar'">View Calendar</button>
         </div>
-        <div class="mini-cal-days-hd">
-          <div class="mini-cal-day-lbl">Su</div><div class="mini-cal-day-lbl">Mo</div>
-          <div class="mini-cal-day-lbl">Tu</div><div class="mini-cal-day-lbl">We</div>
-          <div class="mini-cal-day-lbl">Th</div><div class="mini-cal-day-lbl">Fr</div>
-          <div class="mini-cal-day-lbl">Sa</div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:10px 18px;background:rgba(255,255,255,0.03);font-family:'Sora',sans-serif;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--dark-border)">Event</th>
+                <th style="text-align:left;padding:10px 18px;background:rgba(255,255,255,0.03);font-family:'Sora',sans-serif;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--dark-border)">Date</th>
+                <th style="text-align:left;padding:10px 18px;background:rgba(255,255,255,0.03);font-family:'Sora',sans-serif;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--dark-border)">Location</th>
+                <th style="text-align:left;padding:10px 18px;background:rgba(255,255,255,0.03);font-family:'Sora',sans-serif;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--dark-border)">Status</th>
+              </tr>
+            </thead>
+            <tbody id="upcoming-bookings-list">
+              <tr><td colspan="4" style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="mini-cal-cells" id="mini-cal-cells"></div>
       </div>
 
-      <!-- PENDING REQUESTS PREVIEW -->
-      <div class="pending-preview">
-        <div class="pending-preview-hd">
-          <span class="pending-preview-title">Pending Requests</span>
-          <button class="pending-preview-link" onclick="location.hash='inbox'">View all →</button>
+      <!-- NEW MARKETPLACE REQUESTS -->
+      <div class="marketplace-req-wrap">
+        <div class="marketplace-req-hd">
+          <div class="marketplace-req-title">New Marketplace Requests</div>
+          <button class="btn-outline" style="font-size:12px;padding:6px 14px;white-space:nowrap" id="btn-log-external-marketplace">+ Log External Booking</button>
         </div>
-        <div id="pending-preview-list">
-          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);padding:16px 0">Loading…</div>
+        <div id="marketplace-req-list">
+          <div style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">Loading…</div>
+        </div>
+      </div>
+
+      <!-- YOUR ACTIVE BIDS -->
+      <div class="active-bids-wrap">
+        <div class="active-bids-hd">Your Active Bids</div>
+        <div class="bids-list-scroll">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:10px 18px;background:rgba(255,255,255,0.03);font-family:'Sora',sans-serif;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--dark-border)">Request</th>
+                <th style="text-align:left;padding:10px 18px;background:rgba(255,255,255,0.03);font-family:'Sora',sans-serif;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--dark-border)">Status</th>
+              </tr>
+            </thead>
+            <tbody id="active-bids-list">
+              <tr><td colspan="2" style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -970,6 +1023,23 @@
   </div>
 </div>
 
+<!-- BID MODAL -->
+<div class="bid-modal-overlay" id="bid-modal-overlay" onclick="if(event.target===this)closeBidModal()">
+  <div class="ext-modal" onclick="event.stopPropagation()">
+    <div class="ext-modal-eyebrow">Submit Bid</div>
+    <div class="ext-modal-title" id="bid-modal-title">—</div>
+    <div class="ext-modal-sub" id="bid-modal-meta"></div>
+    <div class="ext-form">
+      <div class="ext-form-group">
+        <label class="ext-form-label">Message to Requester</label>
+        <textarea class="ext-form-textarea" id="bid-message" rows="4" placeholder="Briefly introduce your truck, confirm availability, and share your rate…"></textarea>
+      </div>
+      <button class="ext-submit-btn" id="bid-submit-btn">Submit Bid</button>
+      <button class="ext-cancel-link" id="bid-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -1031,6 +1101,9 @@ async function init() {
     await Promise.all([
       loadAllBookings(),
       loadOverview(),
+      loadUpcomingBookings(),
+      loadMarketplaceRequests(),
+      loadActiveBids(),
       loadInbox(),
       loadAcceptedBookings(),
       loadListings(),
@@ -1062,7 +1135,6 @@ async function loadAllBookings() {
     .not('status', 'in', '("declined","cancelled")')
     .order('event_date', { ascending: true })
   allBookings = data || []
-  renderMiniCal()
   renderFullCal()
   renderCalUpcoming()
 }
@@ -1122,26 +1194,6 @@ async function loadOverview() {
     document.getElementById('ov-sub-detail').textContent = 'Trial ends in ' + days + ' day' + (days!==1?'s':'')
   }
 
-  // Pending preview
-  const { data: pv } = await supabase.from('bookings')
-    .select('id, event_type, event_date, city, requester:requester_id(business_name,contact_name)')
-    .eq('truck_id', userId).eq('status','pending').order('event_date',{ascending:true}).limit(5)
-  const pvEl = document.getElementById('pending-preview-list')
-  if (!pv || pv.length === 0) {
-    pvEl.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted);padding:12px 0">No pending requests.</div>'
-  } else {
-    pvEl.innerHTML = pv.map(b => `
-      <div class="preview-row">
-        <div>
-          <div class="preview-row-name">${esc(b.event_type||'Event Request')}</div>
-          <div class="preview-row-meta">${esc(b.requester?.business_name||b.requester?.contact_name||'—')} · ${fmtDate(b.event_date)} · ${esc(b.city||'—')}</div>
-        </div>
-        <div class="preview-row-actions">
-          <button class="btn-accept" onclick="respondBooking('${b.id}','accepted')">Accept</button>
-          <button class="btn-decline" onclick="respondBooking('${b.id}','declined')">Decline</button>
-        </div>
-      </div>`).join('')
-  }
 }
 
 // Billing portal
@@ -1153,19 +1205,7 @@ document.getElementById('btn-billing')?.addEventListener('click', async () => {
   if (url) window.location.href = url; else showToast('Could not open billing portal', true)
 })
 
-// ─── MINI CALENDAR ────────────────────────────────────
-function renderMiniCal() {
-  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
-  document.getElementById('mini-cal-title').textContent = MONTHS[miniCalMonth] + ' ' + miniCalYear
-  const cells = document.getElementById('mini-cal-cells')
-  cells.innerHTML = buildCalCells(miniCalYear, miniCalMonth, 'mini')
-}
-document.getElementById('mini-cal-prev').addEventListener('click', () => {
-  miniCalMonth--; if(miniCalMonth<0){miniCalMonth=11;miniCalYear--}; renderMiniCal()
-})
-document.getElementById('mini-cal-next').addEventListener('click', () => {
-  miniCalMonth++; if(miniCalMonth>11){miniCalMonth=0;miniCalYear++}; renderMiniCal()
-})
+// ─── MINI CALENDAR (removed — replaced by Upcoming Bookings table) ────────────
 
 // ─── FULL CALENDAR ────────────────────────────────────
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
@@ -1765,6 +1805,7 @@ function closeExtModal() {
 document.getElementById('btn-log-external-nav').addEventListener('click', openExtModal)
 document.getElementById('btn-log-external-overview').addEventListener('click', openExtModal)
 document.getElementById('btn-log-external-cal').addEventListener('click', openExtModal)
+document.getElementById('btn-log-external-marketplace').addEventListener('click', openExtModal)
 document.getElementById('ext-cancel-btn').addEventListener('click', closeExtModal)
 document.getElementById('ext-modal-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeExtModal() })
 
@@ -1864,11 +1905,159 @@ function fmtDate(d) {
   if (!d) return '—'
   return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
 }
+function fmtTime(t) {
+  if (!t) return ''
+  const [h, m] = t.split(':').map(Number)
+  const ampm = h >= 12 ? 'PM' : 'AM'
+  return ((h % 12) || 12) + ':' + String(m).padStart(2,'0') + ' ' + ampm
+}
 function showToast(msg, isError=false) {
   const t = document.getElementById('toast')
   t.textContent=msg; t.className='toast'+(isError?' error':''); t.classList.add('show')
   setTimeout(()=>t.classList.remove('show'),3000)
 }
+
+// ─── UPCOMING BOOKINGS (Overview) ─────────────────────
+async function loadUpcomingBookings() {
+  const today = new Date().toISOString().slice(0,10)
+  const { data } = await supabase
+    .from('bookings')
+    .select('id, event_type, event_date, start_time, city, location, status')
+    .eq('truck_id', userId)
+    .in('status', ['accepted', 'pending'])
+    .gte('event_date', today)
+    .order('event_date', { ascending: true })
+    .limit(5)
+  const tbody = document.getElementById('upcoming-bookings-list')
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No upcoming bookings.</td></tr>'
+    return
+  }
+  tbody.innerHTML = data.map(b => {
+    const statusPill = b.status === 'accepted'
+      ? '<span class="pill pill-accepted">Confirmed</span>'
+      : '<span class="pill pill-pending">Pending</span>'
+    const timeStr = b.start_time
+      ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:3px">${fmtTime(b.start_time)}</div>`
+      : ''
+    return `<tr>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div class="td-name">${esc(b.event_type||'Event')}</div>
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</div>
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div style="font-size:13px">${esc(b.location || b.city || '—')}</div>
+        ${b.location && b.city ? `<div class="td-sub">${esc(b.city)}</div>` : ''}
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        ${statusPill}${timeStr}
+      </td>
+    </tr>`
+  }).join('')
+}
+
+// ─── MARKETPLACE REQUESTS (Overview) ──────────────────
+async function loadMarketplaceRequests() {
+  const { data } = await supabase
+    .from('listings')
+    .select('id, title, city, event_date, budget_range, board')
+    .in('board', ['request', 'event'])
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+    .limit(5)
+  const el = document.getElementById('marketplace-req-list')
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No open requests right now.</div>'
+    return
+  }
+  el.innerHTML = data.map(r => {
+    const label = r.board === 'event' ? 'Apply' : 'Bid'
+    const parts = [r.event_date ? fmtDate(r.event_date) : null, r.city || null, r.budget_range || null].filter(Boolean)
+    const meta = parts.join(' · ')
+    return `<div class="req-card">
+      <div>
+        <div class="req-card-name">${esc(r.title)}</div>
+        <div class="req-card-meta">${meta || '—'}</div>
+      </div>
+      <button class="btn-bid"
+        data-lid="${esc(r.id)}"
+        data-title="${esc(r.title)}"
+        data-meta="${esc(meta)}"
+        onclick="openBidModal(this.dataset.lid, this.dataset.title, this.dataset.meta)">
+        ${label}
+      </button>
+    </div>`
+  }).join('')
+}
+
+// ─── ACTIVE BIDS (Overview) ───────────────────────────
+async function loadActiveBids() {
+  const { data } = await supabase
+    .from('bids')
+    .select('id, status, created_at, listing:listing_id(title, event_date, city)')
+    .eq('truck_id', userId)
+    .order('created_at', { ascending: false })
+  const tbody = document.getElementById('active-bids-list')
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>'
+    return
+  }
+  tbody.innerHTML = data.map(b => {
+    const pillClass = b.status === 'accepted' ? 'pill-accepted' : b.status === 'declined' ? 'pill-declined' : 'pill-pending'
+    const pillLabel = b.status === 'accepted' ? 'Accepted' : b.status === 'declined' ? 'Declined' : 'Pending'
+    const parts = [b.listing?.event_date ? fmtDate(b.listing.event_date) : null, b.listing?.city || null].filter(Boolean)
+    return `<tr>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div class="td-name">${esc(b.listing?.title || '—')}</div>
+        ${parts.length ? `<div class="td-sub">${parts.join(' · ')}</div>` : ''}
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <span class="pill ${pillClass}">${pillLabel}</span>
+      </td>
+    </tr>`
+  }).join('')
+}
+
+// ─── BID MODAL ────────────────────────────────────────
+let pendingBidListingId = null
+window.openBidModal = function(listingId, title, meta) {
+  pendingBidListingId = listingId
+  document.getElementById('bid-modal-title').textContent = title || 'Marketplace Request'
+  document.getElementById('bid-modal-meta').textContent = meta || ''
+  document.getElementById('bid-message').value = ''
+  document.getElementById('bid-modal-overlay').classList.add('open')
+}
+function closeBidModal() {
+  document.getElementById('bid-modal-overlay').classList.remove('open')
+  pendingBidListingId = null
+}
+document.getElementById('bid-cancel-btn').addEventListener('click', closeBidModal)
+document.getElementById('bid-submit-btn').addEventListener('click', async () => {
+  if (!pendingBidListingId) return
+  const btn = document.getElementById('bid-submit-btn')
+  const msg = document.getElementById('bid-message').value.trim()
+  btn.textContent = 'Submitting…'; btn.disabled = true
+  const { error } = await supabase.from('bids').insert({
+    listing_id: pendingBidListingId,
+    truck_id: userId,
+    message: msg || null
+  })
+  btn.textContent = 'Submit Bid'; btn.disabled = false
+  if (error) {
+    if (error.code === '23505') {
+      showToast('You already submitted a bid for this request', true)
+    } else {
+      showToast('Error submitting bid — try again', true)
+      console.error('[bid]', error)
+    }
+    return
+  }
+  showToast('Bid submitted')
+  closeBidModal()
+  await loadActiveBids()
+})
 
 init()
 </script>

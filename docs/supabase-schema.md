@@ -92,6 +92,20 @@ listings (
 )
 ```
 
+### bids (marketplace bid submissions)
+```sql
+bids (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  listing_id uuid REFERENCES listings(id) ON DELETE CASCADE,
+  truck_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
+  message text,
+  status text DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined')),
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  UNIQUE (listing_id, truck_id)   -- one bid per truck per listing
+)
+```
+
 ### messages
 ```sql
 messages (
@@ -223,4 +237,10 @@ When adding columns: `ALTER TABLE profiles ADD COLUMN IF NOT EXISTS column_name 
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS venue_type text;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS address text;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS capacity text;
+```
+
+```sql
+-- 2026-05-03: listings was never created from initial migration (ALTER TABLE was failing silently)
+-- Full CREATE TABLE listings + RLS run manually in SQL Editor (see session log 2026-05-03 Session 3)
+-- Also created: bids table (new — marketplace bid submissions from truck operators)
 ```
