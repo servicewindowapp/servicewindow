@@ -942,7 +942,7 @@
       <!-- Board Tabs -->
       <div class="board-tabs-wrap">
         <div class="board-tabs">
-          <button class="board-tab active" data-board="request">
+          <button class="board-tab" data-board="request">
             <span class="board-tab-icon">📋</span>
             Booking Requests
             <span class="board-tab-count" id="count-request">0</span>
@@ -1056,7 +1056,7 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
     // ─── STATE ───
-    let currentBoard = 'trucks'
+    let currentBoard = new URLSearchParams(window.location.search).get('board') || 'trucks'
     let searchVal = ''
     let cityVal = ''
     const truckMap = new Map()
