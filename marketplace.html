@@ -518,6 +518,12 @@
       border: 1px solid var(--dark-border);
     }
 
+    .badge-unverified {
+      background: rgba(250,200,60,0.1);
+      color: #f0c040;
+      border: 1px solid rgba(250,200,60,0.25);
+    }
+
     .truck-badges {
       display: flex;
       gap: 6px;
@@ -573,6 +579,152 @@
     }
 
     .btn-request:hover { background: #e55a2b; }
+
+    .btn-claim {
+      background: transparent;
+      color: #f0c040;
+      border: 1px solid rgba(250,200,60,0.35);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      min-height: 38px;
+    }
+
+    .btn-claim:hover {
+      background: rgba(250,200,60,0.1);
+      border-color: rgba(250,200,60,0.6);
+    }
+
+    .listing-card-unverified {
+      border-color: rgba(250,200,60,0.2) !important;
+    }
+
+    /* ─── CLAIM MODAL ─── */
+    .claim-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .claim-modal-box {
+      background: #0d1f2d;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .claim-modal-box h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .claim-modal-box p.claim-sub {
+      font-family: 'Lora', serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .claim-form-group {
+      margin-bottom: 14px;
+    }
+
+    .claim-form-group label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .claim-form-group input,
+    .claim-form-group textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      color: white;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .claim-form-group input:focus,
+    .claim-form-group textarea:focus {
+      border-color: rgba(255,107,53,0.5);
+    }
+
+    .claim-form-group textarea { resize: vertical; min-height: 80px; }
+
+    .claim-modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-claim-submit {
+      flex: 1;
+      background: var(--fire);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-claim-submit:hover { background: #e55a2b; }
+    .btn-claim-submit:disabled { opacity: 0.55; cursor: default; }
+
+    .claim-success-msg {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .claim-success-msg .claim-check {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .claim-success-msg h4 {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .claim-success-msg p {
+      font-family: 'Lora', serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+    }
 
     .btn-view {
       background: transparent;
@@ -1032,6 +1184,46 @@
 
   </div>
 
+  <!-- ─── CLAIM LISTING MODAL ─── -->
+  <div id="claim-modal-overlay" class="claim-modal-overlay">
+    <div class="claim-modal-box">
+      <button onclick="window.closeClaimModal()" aria-label="Close" style="position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;line-height:1">×</button>
+      <div id="claim-modal-form-wrap">
+        <h3>Claim this listing</h3>
+        <p class="claim-sub">This listing was added by ServiceWindow from public sources. If this is your business, claim it to take ownership and manage it from your dashboard.</p>
+        <input type="hidden" id="claim-listing-id" value="">
+        <input type="hidden" id="claim-listing-title" value="">
+        <div class="claim-form-group">
+          <label for="claim-name">Your name *</label>
+          <input type="text" id="claim-name" placeholder="Full name" required>
+        </div>
+        <div class="claim-form-group">
+          <label for="claim-email">Email address *</label>
+          <input type="email" id="claim-email" placeholder="you@example.com" required>
+        </div>
+        <div class="claim-form-group">
+          <label for="claim-phone">Phone (optional)</label>
+          <input type="tel" id="claim-phone" placeholder="239-555-0000">
+        </div>
+        <div class="claim-form-group">
+          <label for="claim-message">Tell us your connection to this listing</label>
+          <textarea id="claim-message" placeholder="e.g. I'm the owner of this venue and manage the truck schedule every Friday."></textarea>
+        </div>
+        <div id="claim-error-msg" style="display:none;font-family:'DM Mono',monospace;font-size:12px;color:#f87171;margin-top:10px"></div>
+        <div class="claim-modal-actions">
+          <button class="btn-claim-submit" id="claim-submit-btn" onclick="window.submitClaimRequest()">Submit claim</button>
+          <button onclick="window.closeClaimModal()" style="background:transparent;color:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:11px 16px;font-family:'Sora',sans-serif;font-size:14px;cursor:pointer">Cancel</button>
+        </div>
+      </div>
+      <div id="claim-modal-success" style="display:none" class="claim-success-msg">
+        <div class="claim-check">✅</div>
+        <h4>Claim submitted</h4>
+        <p>We'll review your request and reach out within 1 business day to verify and transfer ownership.</p>
+        <button onclick="window.closeClaimModal()" style="margin-top:20px;background:var(--fire);color:white;border:none;border-radius:8px;padding:10px 24px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer">Done</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ─── TRUCK DETAIL MODAL ─── -->
   <div id="truck-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:1000;align-items:center;justify-content:center;padding:20px">
     <div id="truck-modal-box" style="background:#0d1f2d;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:28px 28px 24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;position:relative">
@@ -1198,7 +1390,7 @@
       const boards = board === 'parking' ? ['parking', 'vendor_spot', 'storage'] : [board]
       let query = supabase
         .from('listings')
-        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at, profiles(business_name)')
+        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at, source, claimed, profiles(business_name)')
         .in('board', boards)
         .eq('status', 'active')
 
@@ -1280,6 +1472,8 @@
       const boardIcons = { request: '📋', event: '📅', shift: '⚡', venue: '🏛️', parking: '🅿️', vendor_spot: '📍', storage: '📦', vendor: '🔧' }
       const icon = boardIcons[listing.board || board] || '📋'
 
+      const isMarketResearch = listing.source === 'market_research'
+
       const tags = []
       if (listing.city) tags.push(listing.city)
       if (listing.cuisine_type_needed) tags.push(listing.cuisine_type_needed)
@@ -1287,22 +1481,27 @@
       if (listing.guest_count_max) tags.push(`~${listing.guest_count_min || ''}${listing.guest_count_max ? '–' + listing.guest_count_max : ''} guests`)
       if (listing.trucks_needed > 1) tags.push(`${listing.trucks_needed} trucks needed`)
 
-      const postedBy = listing.profiles?.business_name || 'Verified member'
+      const postedBy = isMarketResearch ? 'ServiceWindow' : (listing.profiles?.business_name || 'Verified member')
       const dateStr = listing.event_date ? formatDate(listing.event_date) : ''
 
+      const footerAction = isMarketResearch
+        ? `<button class="btn-claim" onclick="window.openClaimModal('${escHtml(listing.id)}', '${escHtml((listing.title || '').replace(/'/g, "\\'"))}')">Claim this listing</button>`
+        : `<a href="auth.html?mode=login" class="btn-request" style="font-size:12px;padding:8px 14px">Respond</a>`
+
       return `
-        <div class="listing-card">
+        <div class="listing-card${isMarketResearch ? ' listing-card-unverified' : ''}">
           <div class="listing-card-top">
             <div class="listing-type-icon">${icon}</div>
             <div class="listing-card-title">${escHtml(listing.title || 'Untitled listing')}</div>
+            ${isMarketResearch ? `<span class="badge badge-unverified">Unverified</span>` : ''}
             ${listing.is_urgent ? `<span class="listing-urgency">Urgent</span>` : ''}
           </div>
           ${listing.description ? `<p class="listing-desc">${escHtml(listing.description)}</p>` : ''}
           ${dateStr ? `<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fire)">${dateStr}${listing.start_time ? ' · ' + formatTime(listing.start_time) : ''}</div>` : ''}
           ${tags.length ? `<div class="listing-tags">${tags.map(t => `<span class="listing-tag">${escHtml(t)}</span>`).join('')}</div>` : ''}
           <div class="listing-card-footer">
-            <span class="listing-poster">Posted by ${escHtml(postedBy)}</span>
-            <a href="auth.html?mode=login" class="btn-request" style="font-size:12px;padding:8px 14px">Respond</a>
+            <span class="listing-poster">Listed by ${escHtml(postedBy)}</span>
+            ${footerAction}
           </div>
         </div>`
     }
@@ -1582,6 +1781,80 @@
 
     document.getElementById('truck-modal-overlay').addEventListener('click', e => {
       if (e.target === document.getElementById('truck-modal-overlay')) window.closeTruckModal()
+    })
+
+    // ─── CLAIM MODAL ───
+    window.openClaimModal = function(listingId, title) {
+      document.getElementById('claim-listing-id').value = listingId
+      document.getElementById('claim-listing-title').value = title
+      document.getElementById('claim-name').value = ''
+      document.getElementById('claim-email').value = ''
+      document.getElementById('claim-phone').value = ''
+      document.getElementById('claim-message').value = ''
+      document.getElementById('claim-error-msg').style.display = 'none'
+      document.getElementById('claim-modal-form-wrap').style.display = ''
+      document.getElementById('claim-modal-success').style.display = 'none'
+      document.getElementById('claim-submit-btn').disabled = false
+      document.getElementById('claim-modal-overlay').style.display = 'flex'
+    }
+
+    window.closeClaimModal = function() {
+      document.getElementById('claim-modal-overlay').style.display = 'none'
+    }
+
+    window.submitClaimRequest = async function() {
+      const listingId = document.getElementById('claim-listing-id').value
+      const listingTitle = document.getElementById('claim-listing-title').value
+      const name = document.getElementById('claim-name').value.trim()
+      const email = document.getElementById('claim-email').value.trim()
+      const phone = document.getElementById('claim-phone').value.trim()
+      const message = document.getElementById('claim-message').value.trim()
+      const errEl = document.getElementById('claim-error-msg')
+      const btn = document.getElementById('claim-submit-btn')
+
+      errEl.style.display = 'none'
+
+      if (!name || !email) {
+        errEl.textContent = 'Name and email are required.'
+        errEl.style.display = 'block'
+        return
+      }
+
+      // Basic email format check
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errEl.textContent = 'Please enter a valid email address.'
+        errEl.style.display = 'block'
+        return
+      }
+
+      btn.disabled = true
+      btn.textContent = 'Submitting…'
+
+      const { error } = await supabase
+        .from('claim_requests')
+        .insert({
+          listing_id: listingId,
+          listing_title: listingTitle,
+          claimant_name: name,
+          claimant_email: email,
+          claimant_phone: phone || null,
+          message: message || null
+        })
+
+      if (error) {
+        btn.disabled = false
+        btn.textContent = 'Submit claim'
+        errEl.textContent = 'Something went wrong. Please try again.'
+        errEl.style.display = 'block'
+        return
+      }
+
+      document.getElementById('claim-modal-form-wrap').style.display = 'none'
+      document.getElementById('claim-modal-success').style.display = 'block'
+    }
+
+    document.getElementById('claim-modal-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('claim-modal-overlay')) window.closeClaimModal()
     })
   </script>
 

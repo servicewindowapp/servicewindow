@@ -1,0 +1,116 @@
+-- ============================================================
+-- ServiceWindow Pre-Load Infrastructure Migration
+-- Run in Supabase SQL Editor (Dashboard > SQL Editor)
+-- Date: 2026-05-04
+-- ============================================================
+
+-- 1. Add source/claim columns to listings
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS source text DEFAULT 'user';
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS claimed boolean DEFAULT false;
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS claimed_by uuid REFERENCES profiles(id);
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS claimed_at timestamptz;
+
+-- 2. Create claim_requests table
+CREATE TABLE IF NOT EXISTS claim_requests (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  listing_id uuid REFERENCES listings(id) ON DELETE CASCADE,
+  listing_title text,
+  claimant_name text NOT NULL,
+  claimant_email text NOT NULL,
+  claimant_phone text,
+  message text,
+  status text DEFAULT 'pending',  -- 'pending' | 'approved' | 'rejected'
+  reviewed_by uuid REFERENCES profiles(id),
+  reviewed_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE claim_requests ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can submit a claim (anon or authenticated)
+CREATE POLICY "claim_requests_insert_anyone" ON claim_requests
+  FOR INSERT WITH CHECK (true);
+
+-- Only admins can read/update claim requests
+CREATE POLICY "claim_requests_admin_all" ON claim_requests
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+-- 3. Update listings SELECT policy to include market_research records
+-- (Existing policy should already allow SELECT USING (true) for public boards
+--  No change needed if the existing policy is permissive. If it only allows
+--  auth.uid() = poster_id, add:)
+-- CREATE POLICY "listings_select_market_research" ON listings
+--   FOR SELECT USING (source = 'market_research');
+
+-- ============================================================
+-- SEED DATA — 42 Venues + 21 Events
+-- ============================================================
+
+-- VENUES (42 records)
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Millennial Brewing Co.', 'Regular live music events. Had last-minute truck cancellation March 28 (5pm–10pm). Recurring booking opportunity', '1811 Royal Palm Ave, Downtown Fort Myers, FL', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'The Pearl Founders Square', 'Fridays 5–8pm. April availability: all Fridays except 4/24. May availability: all Fridays except 5/22', '8820 Walter Way, Naples, FL', 'Naples', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Wellen Park Farmers Market', 'Every Sunday 9am–1pm. Multiple food vendors weekly. High activity. Organizer page very active on social', '19745 Wellen Park Blvd, Northport, FL 34293', 'Northport', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Burnt Store Marina Country Club (BSMCC)', 'Regular music events. Food trucks operate outside. Freshly Prepped (Thu) and Horse Eyed Jakes / Daves Pizza are regulars', '24315 Vincent Ave, Punta Gorda, FL', 'Punta Gorda', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Babcock Ranch / Founders Square', 'Multiple events weekly. Freshly Prepped books Wednesdays. Papa D''s Cheesecake Saturdays. Paradise Smoothie Saturdays (Bluebird Park). Established high-traffic location', '42850 Crescent Loop, Punta Gorda, FL', 'Punta Gorda', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'LLSN Farmers Market (Local Ladies Social Network)', 'Every Thursday through April 30. Prefers breakfast trucks. Direct contact info publicly posted', '2101 SW Pine Island Rd, Cape Coral, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'First Christian Church Cape Coral', 'Two events posted: April 4 (Easter — 10,000+ Easter eggs) and April 19. High engagement (27 comments). Likely recurring/high-frequency venue', 'Cape Coral, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Murano At Three Oaks', 'Seeking trucks April 9–30, Tuesday–Saturday, dinner and weekend shifts. 21 comments. Residential community. Potential for recurring monthly contract', '17171 Three Oaks Pkwy, Fort Myers, FL 33967', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Slipaway Park', 'Actively calling food truck operators to book slots. Vanessa Franco is the point of contact between Slipaway Park and operators', '1811 Cape Coral Pkwy E, Cape Coral, FL (foot of Cape Coral Bridge, Caloosahatchee River)', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'RAD Winery', 'Posted same-day slot need (2–7pm). Two trucks already responded (AK Grill Gou, Red Roc Cravings). Likely recurring venue for food trucks', '10801 Corkscrew Rd Suite 172, Estero, FL 33928', 'Estero', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Health Park (Lee Health)', 'Regular food truck lunch rotation. Sweeter Society posted about a lunch slot here. Recurring venue', 'Fort Myers, FL', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Lee Memorial Hospital', 'Regular lunch truck rotation. Mamas Meatballs books Thursdays 11am–3pm. High employee traffic', '2776 Cleveland Ave, Fort Myers, FL 33901', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Anarchy Ale Works', 'Regular food truck host. SubTastic sold out here March 21. Mamas Meatballs books Fridays until sell out', '21450 Palm Beach Blvd, Alva, FL 33920', 'Alva', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Coastal Dayz Brewery', 'Regular food truck host. Mamas Meatballs (Sat 1–7pm) and Turn N Burn Fresh N Fast both co-located here', '2161 McGregor Blvd, Ste E, Fort Myers, FL 33901', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Hop-Sized Brewing', 'Regular food truck host. Mamas Meatballs books Thursdays 4–8pm', '9201 Cockleshell Ct, Ste 13-14, Bonita Springs, FL 34135', 'Bonita Springs', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Point Ybel Brewing Company', 'Mamas Meatballs posted from here. Regular truck host', 'San Carlos Park / Fort Myers area', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Sam Galloway Ford', 'Regular corporate food truck placement. Blades of Glory Culinary books 11am–2pm', '1800 Boy Scout Dr, Fort Myers, FL 33907', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'To Fly Equestrian', '"Spring at the Barn" event April 4, 11am–2pm. Easter Egg Hunt, Pony Rides, Food Trucks. Lil Stack Shack confirmed. Recurring equestrian venue', '21571 N River Rd, Alva, FL 33920', 'Alva', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'The Southerly at Heron Creek', 'Apartment community (70% occupied). Posts last-minute food truck requests for resident events (4pm–7pm). Recurring venue type', '1230 Front Place, North Port, FL 34287', 'North Port', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Bayside Estates', 'Event April 25, 1–4pm, approx 75 guests', '11201 Bayside Lane, Fort Myers Beach, FL', 'Fort Myers Beach', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Lago Apartments', '320-unit apartment complex. Evening truck slot April 9, 5–8PM. 515 reactions — extremely high visibility post. Da Grub Box responded 2h after posting. venue', '10200 Sweetgrass Cir, Naples, FL 34104', 'Naples', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Seminole Campground', 'Recurring events venue. April 4 cornhole tournament (60+ expected). Actively posts last-minute truck needs', '8991 Triplett Road, North Fort Myers, FL 33917', 'North Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'The Millennium Fort Myers', '296 units, families and young professionals. Monthly 3rd Thursday food truck slot. Events coordinator is the decision-maker. 629 reactions on posting — very high competition. recurring venue', 'Fort Myers, FL', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Big Top Brewing Company', 'Craft brewery hosting food trucks. Windy City Chowdown confirmed April 4, 5–9PM', 'Sarasota, FL', 'Sarasota', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Punta Gorda Elks Lodge #2606', 'Regular food truck host. Fork In the Road books afternoon 3–7PM slots here', '25538 Shore Dr, Punta Gorda, FL 33950', 'Punta Gorda', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Lee Health Cape Coral', 'Hospital / healthcare campus. Regular food truck lunch rotation. Firebread books Wednesdays 11AM–2PM', 'Cape Coral, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'The Caves Cape Coral', 'Regular Saturday food truck host. Firebread books Saturdays 11AM–3PM', 'Cape Coral, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Peace River Campground', 'Campground hosting weekend food trucks. Miz Shirley Shrimp Shack books Sat/Sun 11AM–6PM', '2998 NW Highway 70, Arcadia, FL 34266', 'Arcadia', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Pelican SnoBalls & Mini Golf', 'Regular Thursday food truck host. The Fat Cowboys Food Truck books Thursdays (window opens 4PM)', 'SWFL', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Mike Greenwell Regional Park', 'Public park hosting large events. SW Florida Food Fest & Craft Fair scheduled May 30, 2026. Vendor registration via BattleBrosEvents.com', 'Cape Coral area, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Naples Pride', 'Venue in Naples seeking recurring food truck partnerships.', 'Cambier Park, Naples, FL', 'Naples', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Horseshoe Tavern', 'Venue in Bokeelia seeking recurring food truck partnerships.', 'Bokeelia (Pine Island area), FL', 'Bokeelia', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Cristina Alessandro', 'Most recent commenter (other than Roderick). Active', NULL, 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Conservancy of Southwest Florida', 'Earth Day event April 18, 10am–3pm. 2,000 attendees. 1 food truck slot still open. Direct contact: ReneeS@conservancy.org. Competitor (Lakota by Chef) already emailed 9h ago. Time-sensitive. Post had 7 reactions, 20 comments. [_2026-04-14_] Added from daily market research', '1495 Smith Preserve Way, Naples, FL 34102', 'Naples', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'NeighBARs', 'Venue in Englewood seeking recurring food truck partnerships.', '125 S Indiana Ave, Englewood, FL', 'Englewood', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Coral Lakes Association', 'Venue in Cape Coral seeking recurring food truck partnerships.', 'NE Cape Coral, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Somerset @ The Plantation', 'Venue in Fort Myers seeking recurring food truck partnerships.', 'Fort Myers, FL', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Brookside Beer Market', 'Venue in Naples seeking recurring food truck partnerships.', 'Naples, FL', 'Naples', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Shadetree Apartments', 'Venue in SWFL seeking recurring food truck partnerships.', 'SWFL', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Fort Myers Brewing Company', 'Venue in Fort Myers seeking recurring food truck partnerships.', '12811 Commerce Lakes Dr, Fort Myers, FL', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Grand Palm', 'Venue in Sarasota seeking recurring food truck partnerships.', '1315 Observation Blvd, Venice, FL 34293 (Sarasota County)', 'Sarasota', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('venue', 'Up in Smoke Cape Coral', 'Venue in Cape Coral seeking recurring food truck partnerships.', '1059 NE Pine Island Rd, Cape Coral, FL 33909', 'Cape Coral', 'active', 'market_research', false);
+
+-- EVENTS (21 records)
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Best of the Best — Punta Gorda (Weekly)', 'New weekly recurring event. April 18 confirmed first date. Racing, fireworks, live music, beer garden. Actively recruiting food trucks. High-visibility event format', 'Punta Gorda, FL', 'Punta Gorda', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Wellen Park Farmers Market (Weekly — Sundays)', 'Every Sunday 9am–1pm. Multiple food trucks weekly. Organizer page posts live video from events. Very high activity and community engagement', '19745 Wellen Park Blvd, Northport, FL 34293', 'Northport', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'LLSN Farmers Market (Weekly — Thursdays)', 'Every Thursday through April 30. Prefers breakfast trucks. Run by the Local Ladies Social Network (LLSN)', '2101 SW Pine Island Rd, Cape Coral, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Babcock Ranch / Founders Square Events (Weekly)', 'Multiple events per week. Established SWFL food truck destination. Freshly Prepped (Wed lunch), Papa D''s Cheesecake (Sat), Paradise Smoothie (Sat) all confirmed regulars', '42850 Crescent Loop, Punta Gorda, FL', 'Punta Gorda', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Oddities & Art Markets Fort Myers (Annual / Multi-weekend)', '2nd annual. Food truck registration open at accessartfl.org. 3,000+ attendees per weekend. Multi-weekend event series', 'Fort Myers, FL', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Hospital Appreciation Week (Annual — May 10–16)', 'Annual week-long event targeting healthcare workers. Ice Cream Emergency SWFL actively marketing for this window. Contact: ice11@icecreamemergency.com / 475-342-9107', 'SWFL (multiple hospital locations)', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'First Christian Church Cape Coral Events (Recurring)', 'April 4 (Easter — 10,000+ eggs) and April 19 confirmed. 27 comments on April 19 post. Likely books trucks for multiple community events throughout the year', 'Cape Coral, FL', 'Cape Coral', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Easter Festival at Equestrian Acres (Annual)', 'April 4, 11am–2pm. "Supplies running short" — vendor spots filling fast. Alva FL area. Same date zone as To Fly Equestrian event', 'Alva, FL', 'Alva', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Spring at the Barn — To Fly Equestrian (Seasonal)', 'April 4, 11am–2pm. Easter Egg Hunt, Pony Rides, Food Trucks. Lil Stack Shack confirmed. Equestrian venue — recurring event potential', '21571 N River Rd, Alva, FL 33920', 'Alva', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Collier County Fair (Annual)', 'LaCafetera.239 operating through March 30. Multi-day event. Recurring annual fair', 'Collier County, FL', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Sallie Jones Elementary School Event', 'April 24, 10:30am–1:30pm. 23 comments — extremely high truck interest. School events are a recurring vertical worth pursuing', 'Punta Gorda, FL', 'Punta Gorda', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Nicole Evans Biweekly Lunch Program', 'Every other Thursday starting April 9, 10am–2pm. 50–75 employees. Lunch food only. 91 comments. Highest engagement signal in all 3 days of research. opportunity', 'Near PG Airport, Piper Rd, Punta Gorda, FL', 'Punta Gorda', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'The Millennium Fort Myers (Monthly — 3rd Thursday)', '3rd Thursday monthly recurring food truck slot. Reliable calendar anchor', 'Fort Myers, FL', 'Fort Myers', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Costco Car Show', 'April 5, 9am–2pm. Corporate-affiliated event with high foot traffic. Sweeter Society was double-booked and sought a replacement dessert truck', 'Collier / Lee County Costco, FL', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, event_date, status, source, claimed) VALUES ('event', 'Punta Gorda TacoFest', 'May 2, 2026. 82 people interested. Taco festival format — strong food truck vendor opportunity', 'Laishley Park, 100 Nesbit St, Punta Gorda, FL 33950', 'Punta Gorda', '2026-05-02', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, event_date, status, source, claimed) VALUES ('event', 'SW Florida Food Fest & Craft Fair', 'May 30, 2026. Food vendors, marketplace vendors, event sponsors needed. Charity beneficiary: Guardians of Florida Animal Rescue. 82+ interested. Apply at BattleBrosEvents.com', 'Mike Greenwell Regional Park, Cape Coral area, FL', 'Cape Coral', '2026-05-30', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'Youth Flag Football League (5-Saturday Series)', '5 consecutive Saturdays: May 30, June 6, 13, 20, 27. 8:30AM–3PM each. 170 registered players, 500+ attendance expected. Sole food truck vendor slot (excludes iced coffee/lemonade and ice cream trucks). Beach-Bum Johnnie may have prior claim — unconfirmed', 'SWFL (exact address from Apple Maps — not captured)', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', 'American Briard Dog Club Show', 'Recurring food truck event in SWFL.', 'Lee County area', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, status, source, claimed) VALUES ('event', '1st Annual Boat & Marine Expo', 'Recurring food truck event in SWFL.', 'Lee County Civic Center', 'SWFL', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, event_date, status, source, claimed) VALUES ('event', 'Masters Watch Party', 'Recurring food truck event in Punta Gorda.', 'Founders Square at Babcock Ranch, Punta Gorda, FL', 'Punta Gorda', '2026-04-12', 'active', 'market_research', false);
+INSERT INTO listings (board, title, description, location, city, event_date, status, source, claimed) VALUES ('event', 'Global Running Day 5K — Cape Coral (Annual)', 'Recurring food truck event in Cape Coral.', 'Cape Coral, FL', 'Cape Coral', '2026-06-03', 'active', 'market_research', false);
