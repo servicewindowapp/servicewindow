@@ -518,6 +518,11 @@
       border: 1px solid var(--dark-border);
     }
 
+    .badge-example {
+      background: rgba(99,102,241,0.12);
+      color: #a5b4fc;
+    }
+
     .badge-unverified {
       background: rgba(250,200,60,0.1);
       color: #f0c040;
@@ -1506,6 +1511,76 @@
         </div>`
     }
 
+    // ─── RENDER EXAMPLE REQUESTS (shown when request board is empty) ───
+    function renderExampleRequests() {
+      const examples = [
+        {
+          title: 'HOA Monthly Food Truck Night — 700-Home Community',
+          description: 'Coral Lakes is a 700-home gated community in Cape Coral. We host a food truck every 3rd Friday, 5–9 PM. Looking for a reliable truck for a recurring monthly slot. Residents pay you directly — 100% of revenue is yours. Covered pavilion, easy access, regular crowd.',
+          city: 'Cape Coral',
+          event_date: '2026-05-16',
+          start_time: '17:00',
+          guest_min: 200, guest_max: 400,
+          budget: 'Revenue keep — resident direct pay',
+          cuisine: 'BBQ, Tacos, or Latin preferred',
+          trucks: 1, urgent: false,
+          poster: 'Coral Lakes HOA'
+        },
+        {
+          title: 'Weekly Corporate Lunch — 85 Employees',
+          description: 'Tech company at Forum business park, Fort Myers. Seeking a weekly Friday lunch truck partner. Employees pay you directly — keep 100% of revenue. Consistent crowd, covered canopy available, easy trailer access from the parking lot entrance. We prefer variety — different trucks each month.',
+          city: 'Fort Myers',
+          event_date: null,
+          start_time: '11:00',
+          guest_min: 75, guest_max: 100,
+          budget: 'Revenue keep — avg $12–15 per order',
+          cuisine: 'Open — variety preferred',
+          trucks: 1, urgent: false,
+          poster: 'Verified Event Organizer'
+        },
+        {
+          title: 'Private Birthday Party — Lely Resort, Naples',
+          description: 'Adult milestone birthday at a private residence in Lely Resort. Covered outdoor patio, parking for truck and trailer, kitchen access available. Alcohol provided by host — you handle food only. Looking for an upscale or specialty concept. Not a standard burger truck.',
+          city: 'Naples',
+          event_date: '2026-05-24',
+          start_time: '18:00',
+          guest_min: 50, guest_max: 75,
+          budget: '$600 flat fee + tips',
+          cuisine: 'Mediterranean, Asian Fusion, or Upscale American',
+          trucks: 1, urgent: false,
+          poster: 'Verified Member'
+        }
+      ]
+
+      const cards = examples.map(ex => {
+        const tags = [ex.city, ex.cuisine, ex.budget, `~${ex.guest_min}–${ex.guest_max} guests`]
+        if (ex.trucks > 1) tags.push(`${ex.trucks} trucks needed`)
+        const dateStr = ex.event_date ? formatDate(ex.event_date) : 'Recurring — ongoing'
+        return `
+          <div class="listing-card">
+            <div class="listing-card-top">
+              <div class="listing-type-icon">📋</div>
+              <div class="listing-card-title">${escHtml(ex.title)}</div>
+              <span class="badge badge-example">Example</span>
+            </div>
+            <p class="listing-desc">${escHtml(ex.description)}</p>
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fire)">${dateStr}${ex.start_time ? ' · ' + formatTime(ex.start_time) : ''}</div>
+            <div class="listing-tags">${tags.map(t => `<span class="listing-tag">${escHtml(t)}</span>`).join('')}</div>
+            <div class="listing-card-footer">
+              <span class="listing-poster">Posted by ${escHtml(ex.poster)}</span>
+              <a href="auth.html" class="btn-request" style="font-size:12px;padding:8px 14px">Create Account to Respond</a>
+            </div>
+          </div>`
+      }).join('')
+
+      const note = `<div style="grid-column:1/-1;padding:16px 20px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.15);border-radius:10px;margin-bottom:4px">
+        <span style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:rgba(255,200,120,0.95)">No open requests right now — here's what they look like.</span>
+        <span style="display:block;font-family:'Lora',serif;font-size:13px;color:var(--text-muted);margin-top:4px">Every booking request includes the event type, location, guest count, budget, and cuisine preference — so you can respond with an accurate bid. <a href="auth.html" style="color:var(--fire);text-decoration:none">Create a free account</a> to post a request or respond to one.</span>
+      </div>`
+
+      return note + cards
+    }
+
     // ─── RENDER EMPTY STATE ───
     function renderEmpty(board) {
       const msgs = {
@@ -1557,9 +1632,13 @@
       } else {
         const listings = await fetchListings(currentBoard)
         count = listings.length
-        cards = listings.length
-          ? listings.map(l => renderListingCard(l, currentBoard)).join('')
-          : renderEmpty(currentBoard)
+        if (currentBoard === 'request' && listings.length === 0) {
+          cards = renderExampleRequests()
+        } else {
+          cards = listings.length
+            ? listings.map(l => renderListingCard(l, currentBoard)).join('')
+            : renderEmpty(currentBoard)
+        }
       }
 
       grid.innerHTML = cards
