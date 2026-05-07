@@ -481,7 +481,7 @@
             <div class="plan-standard-price">Standard rate: <s>$49/mo</s> after founding period</div>
           </div>
           <div class="plan-trial">✓ 30-day free trial — no credit card required</div>
-          <a href="auth.html?role=truck&plan=standard" class="plan-cta plan-cta-primary">Start Free Trial</a>
+          <a href="auth.html?role=truck&plan=standard" class="plan-cta plan-cta-primary" id="std-cta">Start Free Trial</a>
           <hr class="plan-divider">
           <ul class="plan-features">
             <li>Verified operator badge on your profile</li>
@@ -508,7 +508,7 @@
             <div class="plan-standard-price">Standard rate: <s>$79/mo</s> after founding period</div>
           </div>
           <div class="plan-trial">✓ 30-day free trial — no credit card required</div>
-          <a href="auth.html?role=truck&plan=pro" class="plan-cta plan-cta-primary">Start Free Trial</a>
+          <a href="auth.html?role=truck&plan=pro" class="plan-cta plan-cta-primary" id="pro-cta">Start Free Trial</a>
           <hr class="plan-divider">
           <ul class="plan-features">
             <li>Everything in Standard</li>
@@ -766,6 +766,130 @@
     </footer>
 
   </div><!-- /page -->
+
+  <!-- Auth-aware checkout flow for trialing trucks (OI-022) -->
+  <script type="module">
+    import { supabase } from './supabase-client.js'
+
+    const CHECKOUT_URL = 'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-checkout-session'
+
+    async function startCheckout(plan) {
+      const billing = document.getElementById('billingToggle')?.classList.contains('on') ? 'annual' : 'monthly'
+      const btnId = plan === 'standard' ? 'std-cta' : 'pro-cta'
+      const btn = document.getElementById(btnId)
+      const orig = btn?.textContent
+      if (btn) { btn.textContent = 'Redirecting…'; btn.disabled = true }
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { window.location.href = 'auth.html'; return }
+
+        const res = await fetch(CHECKOUT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + session.access_token
+          },
+          body: JSON.stringify({ plan, billing })
+        })
+        const body = await res.json()
+        if (body.url) {
+          window.location.href = body.url
+        } else {
+          console.error('[checkout]', body.error)
+          alert('Unable to start checkout — please try again or email support@servicewindow.app')
+          if (btn) { btn.textContent = orig; btn.disabled = false }
+        }
+      } catch (e) {
+        console.error('[checkout]', e)
+        alert('Unable to start checkout — please try again or email support@servicewindow.app')
+        if (btn) { btn.textContent = orig; btn.disabled = false }
+      }
+    }
+
+    function activateUpgradeMode() {
+      // Nav: swap "Get Started Free" → "My Dashboard"
+      const navCta = document.querySelector('a.nav-cta')
+      if (navCta) { navCta.textContent = 'My Dashboard'; navCta.href = 'truck-dashboard.html' }
+      const mobileCta = document.querySelector('.mobile-cta')
+      if (mobileCta) { mobileCta.textContent = 'My Dashboard'; mobileCta.href = 'truck-dashboard.html' }
+
+      // Trial banner — inserted inside .page before the hero
+      const banner = document.createElement('div')
+      banner.id = 'trial-banner'
+      banner.style.cssText = [
+        'background:rgba(255,107,53,0.10)',
+        'border-bottom:1px solid rgba(255,107,53,0.25)',
+        'padding:12px 20px',
+        'text-align:center',
+      ].join(';')
+      banner.innerHTML = `
+        <span style="font-family:'Sora',sans-serif;font-size:13px;color:var(--fire);">
+          <strong>You're on your free trial.</strong>
+          Subscribe below to keep your listing active and lock in your founding rate before the window closes.
+          <a href="truck-dashboard.html" style="color:rgba(255,255,255,0.55);margin-left:14px;font-size:12px;text-decoration:underline;">Back to dashboard →</a>
+        </span>`
+      const page = document.querySelector('.page')
+      if (page) page.prepend(banner)
+
+      // Standard CTA → checkout
+      const stdCta = document.getElementById('std-cta')
+      if (stdCta) {
+        stdCta.textContent = 'Subscribe — Founding $29/mo'
+        stdCta.removeAttribute('href')
+        stdCta.style.cursor = 'pointer'
+        stdCta.addEventListener('click', e => { e.preventDefault(); startCheckout('standard') })
+      }
+
+      // Pro CTA → checkout
+      const proCta = document.getElementById('pro-cta')
+      if (proCta) {
+        proCta.textContent = 'Subscribe — Founding $49/mo'
+        proCta.removeAttribute('href')
+        proCta.style.cursor = 'pointer'
+        proCta.addEventListener('click', e => { e.preventDefault(); startCheckout('pro') })
+      }
+
+      // CTA strip: primary → Standard checkout
+      const stripPrimary = document.querySelector('.cta-strip .btn-primary')
+      if (stripPrimary) {
+        stripPrimary.textContent = 'Subscribe — Lock In Founding Rate'
+        stripPrimary.removeAttribute('href')
+        stripPrimary.style.cursor = 'pointer'
+        stripPrimary.addEventListener('click', e => { e.preventDefault(); startCheckout('standard') })
+      }
+      // CTA strip: outline → back to dashboard
+      const stripOutline = document.querySelector('.cta-strip .btn-outline')
+      if (stripOutline) {
+        stripOutline.textContent = 'Back to Dashboard'
+        stripOutline.href = 'truck-dashboard.html'
+      }
+    }
+
+    async function initPricingAuth() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) return // not logged in — default public behavior
+
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role, subscription_status')
+          .eq('id', session.user.id)
+          .single()
+
+        if (error || !profile) return
+        if (profile.role !== 'truck') return
+        if (profile.subscription_status !== 'trialing' && profile.subscription_status !== 'pending') return
+
+        activateUpgradeMode()
+      } catch (e) {
+        console.error('[pricing auth init]', e)
+        // fail silently — page remains functional in unauthenticated mode
+      }
+    }
+
+    initPricingAuth()
+  </script>
 
   <script>
     // Mobile menu
