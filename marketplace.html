@@ -1349,7 +1349,7 @@
               'addressCountry': 'US'
             },
             'areaServed': truck.city || 'Southwest Florida',
-            'url': `https://servicewindow.app/marketplace.html#truck-${truck.id}`
+            'url': `https://servicewindow.app/truck-profile.html?id=${truck.id}`
           }
         }))
       }
@@ -1460,7 +1460,7 @@
               ${escHtml(radius)}
             </span>
             <div style="display:flex;gap:8px">
-              <button class="btn-view" onclick="window.openTruckModal('${truck.id}')">View</button>
+              <a href="truck-profile.html?id=${truck.id}" class="btn-view">View Profile</a>
               <a href="${userSession ? 'planner-dashboard.html' : 'auth.html'}" class="btn-request">Request</a>
             </div>
           </div>

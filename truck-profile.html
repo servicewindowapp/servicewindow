@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="google" content="notranslate">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Static fallbacks — overwritten by JS after profile loads -->
+  <title>Food Truck Profile — ServiceWindow SWFL</title>
+  <meta name="description" content="Verified food truck operator on ServiceWindow, the Southwest Florida food truck marketplace.">
+  <meta property="og:title" content="Food Truck Profile — ServiceWindow">
+  <meta property="og:description" content="Verified food truck operator serving Southwest Florida. Book direct on ServiceWindow.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://servicewindow.app/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://servicewindow.app/og-image.png">
+  <link id="canonical-link" rel="canonical" href="https://servicewindow.app/truck-profile.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fire: #FF6B35;
+      --navy: #0D1B2A;
+      --dark-section: #0d1f2d;
+      --dark-alt: #111f2e;
+      --dark-card: rgba(255,255,255,0.06);
+      --dark-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.85);
+      --text-muted: rgba(255,255,255,0.6);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Lora', Georgia, serif; background: var(--navy); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--navy); border-bottom: 1px solid var(--dark-border);
+      padding: 0 24px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 40px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
+    .nav-links a { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-cta { background: var(--fire) !important; color: white !important; padding: 9px 20px; border-radius: 8px; font-weight: 600 !important; white-space: nowrap; }
+    .nav-cta:hover { background: #e55a2b !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: white; border-radius: 2px; }
+    .mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; background: var(--navy); border-bottom: 1px solid var(--dark-border); padding: 20px; flex-direction: column; gap: 16px; z-index: 99; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 500; color: var(--text-secondary); text-decoration: none; padding: 12px 0; border-bottom: 1px solid var(--dark-border); }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu .mobile-cta { background: var(--fire); color: white !important; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600 !important; border-bottom: none !important; }
+
+    /* ─── PAGE SHELL ─── */
+    .page { padding-top: 64px; min-height: calc(100vh - 64px); }
+
+    /* ─── LOADING STATE ─── */
+    #profile-loading {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 400px; flex-direction: column; gap: 16px;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--dark-border); border-top-color: var(--fire);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-muted); }
+
+    /* ─── ERROR STATE ─── */
+    #profile-error { display: none; text-align: center; padding: 80px 24px; }
+    #profile-error h2 { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 700; color: white; margin-bottom: 12px; }
+    #profile-error p { color: var(--text-muted); margin-bottom: 28px; }
+
+    /* ─── BACK LINK ─── */
+    .back-bar {
+      padding: 20px 24px 0;
+      max-width: 1000px; margin: 0 auto;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text-secondary); }
+    .back-link svg { flex-shrink: 0; }
+
+    /* ─── PROFILE HERO ─── */
+    .profile-hero {
+      padding: 32px 24px 40px;
+      max-width: 1000px; margin: 0 auto;
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .hero-inner { display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+    .truck-avatar-lg {
+      width: 80px; height: 80px; flex-shrink: 0;
+      background: rgba(255,107,53,0.12); border: 1px solid rgba(255,107,53,0.2);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+    }
+    .hero-text { flex: 1; min-width: 200px; }
+    .truck-name-h1 {
+      font-family: 'Sora', sans-serif; font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800; color: white; margin-bottom: 6px; line-height: 1.2;
+    }
+    .truck-meta-line {
+      font-family: 'DM Mono', monospace; font-size: 13px;
+      color: var(--text-muted); margin-bottom: 14px;
+    }
+    .truck-meta-line span + span::before { content: ' · '; }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .badge-verified { background: rgba(80,200,120,0.15); color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
+    .badge-fundraiser { background: rgba(255,107,53,0.12); color: var(--fire); border: 1px solid rgba(255,107,53,0.25); }
+    .badge-veteran { background: rgba(100,149,237,0.15); color: #6495ed; border: 1px solid rgba(100,149,237,0.3); }
+
+    /* ─── PROFILE BODY ─── */
+    .profile-body {
+      max-width: 1000px; margin: 0 auto;
+      padding: 40px 24px 64px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* Left column */
+    .profile-left { display: flex; flex-direction: column; gap: 32px; }
+    .profile-section-label {
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--fire); text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+    .profile-bio {
+      font-size: 1rem; color: var(--text-secondary);
+      line-height: 1.75; white-space: pre-wrap;
+    }
+    .detail-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .detail-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+    .detail-value { font-size: 14px; color: var(--text-secondary); }
+    .detail-value a { color: var(--fire); text-decoration: none; }
+    .detail-value a:hover { text-decoration: underline; }
+
+    /* Right column — CTA card */
+    .cta-card {
+      background: var(--dark-card); border: 1px solid var(--dark-border);
+      border-radius: 16px; padding: 28px 24px;
+      position: sticky; top: 84px;
+    }
+    .cta-card-title {
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700;
+      color: white; margin-bottom: 8px;
+    }
+    .cta-card-sub {
+      font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;
+    }
+    .btn-book {
+      display: block; width: 100%; text-align: center;
+      background: var(--fire); color: white;
+      padding: 13px 20px; border-radius: 10px;
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: background 0.2s; margin-bottom: 10px;
+    }
+    .btn-book:hover { background: #e55a2b; }
+    .btn-browse {
+      display: block; width: 100%; text-align: center;
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--dark-border); padding: 11px 20px; border-radius: 10px;
+      font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .btn-browse:hover { border-color: rgba(255,255,255,0.3); color: white; }
+    .cta-note {
+      margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--dark-border);
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); line-height: 1.5;
+    }
+    .cta-note a { color: var(--fire); text-decoration: none; }
+
+    /* Member since chip */
+    .member-since {
+      margin-top: 20px;
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ─── FOOTER ─── */
+    footer { background: #07111a; border-top: 1px solid var(--dark-border); padding: 48px 24px 32px; }
+    .footer-inner { max-width: 1000px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; margin-bottom: 40px; }
+    .footer-brand p { font-size: 13px; color: var(--text-muted); margin-top: 10px; max-width: 260px; line-height: 1.5; }
+    .footer-links-group h4 { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: white; margin-bottom: 14px; }
+    .footer-links-group a { display: block; font-size: 13px; color: var(--text-muted); text-decoration: none; margin-bottom: 8px; transition: color 0.2s; }
+    .footer-links-group a:hover { color: white; }
+    .footer-bottom { border-top: 1px solid var(--dark-border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p, .footer-cities { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .profile-body { grid-template-columns: 1fr; }
+      .cta-card { position: static; }
+      .footer-top { flex-direction: column; gap: 28px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html"><img src="logo.png" class="nav-logo" alt="ServiceWindow"></a>
+    <ul class="nav-links">
+      <li><a href="marketplace.html">Browse Trucks</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="auth.html?mode=login" id="nav-login">Log In</a></li>
+      <li><a href="auth.html" class="nav-cta" id="nav-cta">Get Started Free</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="marketplace.html">Browse Trucks</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="auth.html?mode=login">Log In</a>
+    <a href="auth.html" class="mobile-cta">Get Started Free</a>
+  </div>
+
+  <div class="page">
+
+    <!-- LOADING -->
+    <div id="profile-loading">
+      <div class="spinner"></div>
+      <span class="loading-text">Loading truck profile…</span>
+    </div>
+
+    <!-- ERROR -->
+    <div id="profile-error">
+      <h2>Truck Not Found</h2>
+      <p>This profile doesn't exist or hasn't been verified yet.</p>
+      <a href="marketplace.html" class="btn-book" style="display:inline-block;width:auto;padding:13px 28px;">Browse All Trucks</a>
+    </div>
+
+    <!-- PROFILE (populated by JS) -->
+    <div id="profile-content" style="display:none">
+
+      <div class="back-bar">
+        <a href="marketplace.html" class="back-link">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Trucks
+        </a>
+      </div>
+
+      <!-- HERO -->
+      <div class="profile-hero">
+        <div class="hero-inner">
+          <div class="truck-avatar-lg" id="p-avatar"></div>
+          <div class="hero-text">
+            <h1 class="truck-name-h1" id="p-name"></h1>
+            <div class="truck-meta-line" id="p-meta"></div>
+            <div class="badges" id="p-badges"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="profile-body">
+
+        <!-- Left: details -->
+        <div class="profile-left">
+
+          <!-- Bio -->
+          <div id="p-bio-section">
+            <div class="profile-section-label">About</div>
+            <p class="profile-bio" id="p-bio"></p>
+          </div>
+
+          <!-- Details -->
+          <div id="p-details-section">
+            <div class="profile-section-label">Details</div>
+            <div id="p-details-list"></div>
+          </div>
+
+        </div>
+
+        <!-- Right: CTA card -->
+        <div class="cta-card">
+          <div class="cta-card-title">Book This Truck</div>
+          <div class="cta-card-sub" id="cta-sub">Post your event details and this operator will receive your request directly.</div>
+          <a href="auth.html" id="btn-book" class="btn-book">Request This Truck</a>
+          <a href="marketplace.html" class="btn-browse">Browse All Trucks</a>
+          <div class="cta-note">
+            Free for event planners, HOA managers, and venues. <a href="pricing.html">Learn more →</a>
+          </div>
+          <div class="member-since" id="p-member-since"></div>
+        </div>
+
+      </div>
+
+    </div><!-- /profile-content -->
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <img src="logo.png" alt="ServiceWindow" style="height:36px;width:auto;">
+            <p>The verified food truck marketplace for Southwest Florida. Where events find their truck.</p>
+          </div>
+          <div class="footer-links-group">
+            <h4>Platform</h4>
+            <a href="marketplace.html">Browse Trucks</a>
+            <a href="venues.html">Venues</a>
+            <a href="property.html">Parking &amp; Storage</a>
+            <a href="jobs.html">Jobs Board</a>
+          </div>
+          <div class="footer-links-group">
+            <h4>Operators</h4>
+            <a href="auth.html?role=truck">List Your Truck</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="auth.html?mode=login">Log In</a>
+          </div>
+          <div class="footer-links-group">
+            <h4>Company</h4>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 ServiceWindow. All rights reserved.</p>
+          <div class="footer-cities">Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /page -->
+
+  <!-- Mobile menu toggle -->
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('open')
+    })
+  </script>
+
+  <!-- Profile loader -->
+  <script type="module">
+    import { supabase } from './supabase-client.js'
+
+    const CUISINE_EMOJI = {
+      bbq: '🍖', barbecue: '🍖', barbeque: '🍖',
+      mexican: '🌮', tacos: '🌮', taco: '🌮',
+      seafood: '🦞', fish: '🐟',
+      asian: '🍜', thai: '🍜', chinese: '🥢', japanese: '🍱', sushi: '🍣',
+      italian: '🍕', pizza: '🍕', pasta: '🍝',
+      american: '🍔', burgers: '🍔', burger: '🍔',
+      dessert: '🍦', ice: '🍦', sweets: '🍩', donuts: '🍩',
+      mediterranean: '🫙', greek: '🫙',
+      indian: '🍛', curry: '🍛',
+      caribbean: '🥘', cuban: '🥘',
+      breakfast: '🥞', brunch: '🥞',
+      vegan: '🥗', vegetarian: '🥗', healthy: '🥗',
+      wings: '🍗', chicken: '🍗',
+      sandwiches: '🥪', sandwich: '🥪',
+    }
+
+    function getCuisineEmoji(cuisine) {
+      if (!cuisine) return '🚚'
+      const key = cuisine.toLowerCase()
+      for (const [k, v] of Object.entries(CUISINE_EMOJI)) {
+        if (key.includes(k)) return v
+      }
+      return '🚚'
+    }
+
+    function escHtml(str) {
+      if (!str) return ''
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    }
+
+    function formatDate(iso) {
+      if (!iso) return ''
+      const d = new Date(iso)
+      return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    }
+
+    function show(id) { document.getElementById(id).style.display = '' }
+    function hide(id) { document.getElementById(id).style.display = 'none' }
+
+    async function loadProfile() {
+      const params = new URLSearchParams(window.location.search)
+      const truckId = params.get('id')
+
+      if (!truckId) {
+        window.location.href = 'marketplace.html'
+        return
+      }
+
+      try {
+        const { data: truck, error } = await supabase
+          .from('profiles')
+          .select('id, business_name, city, cuisine_type, bio, service_radius, is_verified, is_fundraiser_friendly, is_veteran_owned, website, uber_eats_url, doordash_url, created_at')
+          .eq('id', truckId)
+          .eq('role', 'truck')
+          .eq('is_verified', true)
+          .single()
+
+        if (error || !truck) {
+          hide('profile-loading')
+          show('profile-error')
+          return
+        }
+
+        renderProfile(truck)
+
+      } catch (e) {
+        console.error('[truck-profile]', e)
+        hide('profile-loading')
+        show('profile-error')
+      }
+    }
+
+    function renderProfile(truck) {
+      const name    = truck.business_name || 'Food Truck'
+      const city    = truck.city || 'Southwest Florida'
+      const cuisine = truck.cuisine_type || ''
+      const emoji   = getCuisineEmoji(cuisine)
+      const bio     = truck.bio || 'Verified food truck operator serving Southwest Florida.'
+      const pageUrl = `https://servicewindow.app/truck-profile.html?id=${truck.id}`
+
+      // ── Meta / SEO ──
+      document.title = `${name} — Food Truck in ${city} | ServiceWindow`
+      document.querySelector('meta[name="description"]').content =
+        `${name} is a verified food truck serving ${city}${cuisine ? ', specializing in ' + cuisine : ''}. Book on ServiceWindow — the SWFL food truck marketplace.`
+      document.querySelector('meta[property="og:title"]').content   = `${name} — Food Truck in ${city} | ServiceWindow`
+      document.querySelector('meta[property="og:description"]').content =
+        `Verified food truck in ${city}${cuisine ? ' · ' + cuisine : ''}. Book direct on ServiceWindow.`
+      document.querySelector('meta[name="twitter:card"]').content   = 'summary_large_image'
+      document.getElementById('canonical-link').href = pageUrl
+
+      // ── JSON-LD (injected dynamically) ──
+      const ld = {
+        '@context': 'https://schema.org',
+        '@type': 'FoodEstablishment',
+        'name': name,
+        'description': bio,
+        'url': pageUrl,
+        'image': 'https://servicewindow.app/og-image.png',
+        'servesCuisine': cuisine || undefined,
+        'address': {
+          '@type': 'PostalAddress',
+          'addressLocality': city,
+          'addressRegion': 'FL',
+          'addressCountry': 'US'
+        },
+        'areaServed': city,
+        'hasOfferCatalog': {
+          '@type': 'OfferCatalog',
+          'name': 'Food Truck Catering',
+          'itemListElement': [{
+            '@type': 'Offer',
+            'name': 'Food Truck Booking',
+            'description': 'Book this food truck for events, HOA gatherings, private parties, and venue partnerships.',
+            'url': pageUrl
+          }]
+        }
+      }
+      if (truck.website) ld.sameAs = [truck.website]
+      const ldScript = document.createElement('script')
+      ldScript.type = 'application/ld+json'
+      ldScript.textContent = JSON.stringify(ld)
+      document.head.appendChild(ldScript)
+
+      // ── DOM: Avatar ──
+      document.getElementById('p-avatar').textContent = emoji
+
+      // ── DOM: Name ──
+      document.getElementById('p-name').textContent = name
+
+      // ── DOM: Meta line ──
+      const metaParts = [city]
+      if (cuisine) metaParts.push(cuisine)
+      document.getElementById('p-meta').innerHTML =
+        metaParts.map(p => `<span>${escHtml(p)}</span>`).join('')
+
+      // ── DOM: Badges ──
+      const badgesEl = document.getElementById('p-badges')
+      const badgeHtml = []
+      if (truck.is_verified)           badgeHtml.push('<span class="badge badge-verified">✓ Verified</span>')
+      if (truck.is_fundraiser_friendly) badgeHtml.push('<span class="badge badge-fundraiser">Fundraiser Friendly</span>')
+      if (truck.is_veteran_owned)       badgeHtml.push('<span class="badge badge-veteran">Veteran Owned</span>')
+      badgesEl.innerHTML = badgeHtml.join('')
+
+      // ── DOM: Bio ──
+      document.getElementById('p-bio').textContent = bio
+
+      // ── DOM: Details list ──
+      const details = []
+      if (city) {
+        details.push({ icon: '📍', label: 'Based in', value: city })
+      }
+      if (truck.service_radius) {
+        details.push({ icon: '🗺️', label: 'Service radius', value: `Up to ${truck.service_radius} miles from base` })
+      }
+      if (cuisine) {
+        details.push({ icon: '🍽️', label: 'Cuisine', value: cuisine })
+      }
+      if (truck.website) {
+        const display = truck.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
+        details.push({ icon: '🌐', label: 'Website', value: `<a href="${escHtml(truck.website)}" target="_blank" rel="noopener">${escHtml(display)}</a>` })
+      }
+      if (truck.uber_eats_url) {
+        details.push({ icon: '🛵', label: 'Uber Eats', value: `<a href="${escHtml(truck.uber_eats_url)}" target="_blank" rel="noopener">Order online →</a>` })
+      }
+      if (truck.doordash_url) {
+        details.push({ icon: '🛵', label: 'DoorDash', value: `<a href="${escHtml(truck.doordash_url)}" target="_blank" rel="noopener">Order online →</a>` })
+      }
+
+      const detailsList = document.getElementById('p-details-list')
+      if (details.length === 0) {
+        document.getElementById('p-details-section').style.display = 'none'
+      } else {
+        detailsList.innerHTML = details.map(d => `
+          <div class="detail-row">
+            <div class="detail-icon">${d.icon}</div>
+            <div>
+              <div class="detail-label">${d.label}</div>
+              <div class="detail-value">${d.value}</div>
+            </div>
+          </div>`).join('')
+      }
+
+      // ── DOM: Member since ──
+      if (truck.created_at) {
+        document.getElementById('p-member-since').textContent = `Member since ${formatDate(truck.created_at)}`
+      }
+
+      // ── Auth-aware CTA ──
+      initCta()
+
+      // ── Show profile ──
+      hide('profile-loading')
+      document.getElementById('profile-content').style.display = ''
+    }
+
+    async function initCta() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        const btn = document.getElementById('btn-book')
+        const sub = document.getElementById('cta-sub')
+
+        if (session) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single()
+
+          if (profile?.role === 'truck') {
+            // Truck viewing another truck's profile
+            btn.href = 'marketplace.html?board=request'
+            btn.textContent = 'Browse Booking Requests'
+            sub.textContent = 'Browse open requests from event planners and HOAs looking for trucks.'
+          } else {
+            // Demand-side user — route to their dashboard
+            const dashMap = {
+              organizer: 'planner-dashboard.html',
+              venue: 'venue-dashboard.html',
+              property: 'property-dashboard.html',
+              service_provider: 'service-provider-dashboard.html',
+              job_seeker: 'jobs-dashboard.html',
+              admin: 'admin-dashboard.html'
+            }
+            btn.href = dashMap[profile?.role] || 'planner-dashboard.html'
+            btn.textContent = 'Post a Booking Request'
+            sub.textContent = 'Post your event details and get responses from verified trucks like this one.'
+          }
+          // Update nav CTA
+          const navCta = document.getElementById('nav-cta')
+          if (navCta) { navCta.textContent = 'My Dashboard'; navCta.href = dashMap?.[profile?.role] || 'planner-dashboard.html' }
+        }
+        // If not logged in, defaults (auth.html CTA) remain
+      } catch (e) {
+        console.error('[cta init]', e)
+      }
+    }
+
+    loadProfile()
+  </script>
+
+</body>
+</html>
