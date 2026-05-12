@@ -255,6 +255,8 @@
     .btn-complete { padding: 5px 12px; background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); border-radius: 6px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
     .btn-complete:hover { background: rgba(59,130,246,0.22); }
     .btn-review { padding: 5px 12px; background: rgba(255,107,53,0.12); color: var(--fire); border: 1px solid rgba(255,107,53,0.25); border-radius: 6px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-msg { padding: 5px 12px; font-size: 11px; font-family: 'Sora', sans-serif; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid var(--dark-border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .btn-msg:hover { border-color: var(--fire); color: var(--fire); }
     .action-group { display: flex; gap: 6px; flex-wrap: wrap; }
 
     /* FORM STYLES */
@@ -402,7 +404,7 @@
         <span class="nav-icon">✉</span> Messages
         <span class="nav-badge" id="messages-badge" style="display:none">0</span>
       </button>
-      <button class="nav-item" id="nav-browse-marketplace" onclick="window.location.href='marketplace.html'">
+      <button class="nav-item" id="nav-browse-marketplace" onclick="window.location.href='marketplace.html?board=request'">
         <span class="nav-icon">🏪</span> Browse Marketplace
       </button>
       <button class="nav-item" data-section="profile">
@@ -1437,16 +1439,26 @@ async function loadAcceptedBookings() {
     const isPast = b.event_date && b.event_date < todayStr
     const canComplete = b.status==='accepted' && isPast
     const canReview   = b.status==='completed' && !reviewedTruckIds.has(b.requester_id)
-    let action = '—'
-    if (canComplete) action = `<button class="btn-complete" onclick="markComplete('${b.id}')">Mark Complete</button>`
-    else if (b.status==='completed') {
-      action = canReview
+    const requesterName = esc(b.requester?.business_name||b.requester?.contact_name||'—')
+    const msgBtn = b.requester_id
+      ? `<button class="btn-msg" onclick="startConversation('${b.requester_id}','${requesterName}')">Message</button>`
+      : ''
+    let action
+    if (canComplete) {
+      action = `<div class="action-group">${msgBtn}<button class="btn-complete" onclick="markComplete('${b.id}')">Mark Complete</button></div>`
+    } else if (b.status==='accepted') {
+      action = `<div class="action-group">${msgBtn}<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Upcoming</span></div>`
+    } else if (b.status==='completed') {
+      const reviewBtn = canReview
         ? `<button class="btn-review" onclick="openReviewModal('${b.requester_id}','${esc(b.event_type||'Event')}')">Leave Review</button>`
         : `<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Reviewed</span>`
+      action = `<div class="action-group">${msgBtn}${reviewBtn}</div>`
+    } else {
+      action = '—'
     }
     return `<tr id="arow-${b.id}">
       <td><div class="td-name">${esc(b.event_type||'Event')}</div>
-        <div class="td-sub">From: ${esc(b.requester?.business_name||b.requester?.contact_name||'—')}</div></td>
+        <div class="td-sub">From: ${requesterName}</div></td>
       <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
       <td>${esc(b.city||'—')}</td>
       <td><span class="pill pill-${b.status}">${b.status}</span></td>
@@ -1678,6 +1690,14 @@ document.getElementById('btn-mark-all-read')?.addEventListener('click', async ()
   document.getElementById('notif-dot').style.display='none'
   showToast('All messages marked as read')
 })
+
+function convIdFor(a, b) { return [a, b].sort().join('_') }
+
+window.startConversation = function(recipId, recipName) {
+  const convId = convIdFor(userId, recipId)
+  showSection('messages')
+  openThread(convId, recipId, recipName)
+}
 
 document.getElementById('msg-panel-back').addEventListener('click', () => {
   activeConvId=null; activeRecipId=null
@@ -1983,7 +2003,7 @@ async function loadMarketplaceRequests() {
   if (!data || data.length === 0) {
     el.innerHTML = `<div style="padding:16px 18px">
       <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);margin-bottom:10px">No direct requests yet.</div>
-      <button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="window.location.href='marketplace.html'">Browse Open Marketplace</button>
+      <button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="window.location.href='marketplace.html?board=request'">Browse Open Marketplace</button>
     </div>`
     return
   }

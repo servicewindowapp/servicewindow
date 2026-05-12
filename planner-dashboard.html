@@ -368,6 +368,42 @@
     .review-textarea:focus { border-color: rgba(255,255,255,0.3); }
     .review-modal-actions { display: flex; gap: 10px; }
 
+    /* TWO-PANEL MESSAGES */
+    .messages-layout { display: flex; height: calc(100vh - 52px); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; }
+    @media (max-width: 767px) { .messages-layout { height: calc(100vh - 104px); } }
+    .msg-thread-list { width: 260px; flex-shrink: 0; border-right: 1px solid var(--dark-border); display: flex; flex-direction: column; background: rgba(255,255,255,0.02); }
+    @media (max-width: 600px) { .msg-thread-list { width: 100%; border-right: none; } .msg-thread-list.hidden-mobile { display: none; } .msg-main-panel.hidden-mobile { display: none; } }
+    .msg-list-head { padding: 14px; border-bottom: 1px solid var(--dark-border); display: flex; align-items: center; justify-content: space-between; }
+    .msg-list-head-title { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; }
+    .msg-thread { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s; }
+    .msg-thread:hover { background: rgba(255,255,255,0.04); }
+    .msg-thread.active { background: rgba(255,107,53,0.08); }
+    .msg-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,107,53,0.2); color: var(--fire); font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .msg-thread-info { flex: 1; min-width: 0; }
+    .msg-thread-name { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .msg-thread-preview { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'DM Mono', monospace; }
+    .msg-thread-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .msg-thread-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+    .msg-unread-dot { width: 7px; height: 7px; background: var(--fire); border-radius: 50%; }
+    .msg-main-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .msg-panel-head { padding: 14px 16px; border-bottom: 1px solid var(--dark-border); display: flex; align-items: center; gap: 10px; }
+    .msg-panel-back { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; display: none; }
+    @media (max-width: 600px) { .msg-panel-back { display: block; } }
+    .msg-panel-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; }
+    .msg-bubbles { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .msg-bubble { max-width: 70%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; font-family: 'Lora', serif; }
+    .msg-bubble.them { background: rgba(255,255,255,0.06); border: 1px solid var(--dark-border); border-radius: 12px 12px 12px 0; align-self: flex-start; }
+    .msg-bubble.me { background: var(--fire); color: white; border-radius: 12px 12px 0 12px; align-self: flex-end; }
+    .msg-bubble-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+    .msg-input-row { padding: 12px 14px; border-top: 1px solid var(--dark-border); display: flex; gap: 8px; align-items: center; }
+    .msg-input { flex: 1; height: 40px; background: rgba(255,255,255,0.06); border: 1px solid var(--dark-border); border-radius: 8px; padding: 0 12px; color: var(--text-primary); font-family: 'Sora', sans-serif; font-size: 13px; outline: none; transition: border-color 0.15s; }
+    .msg-input:focus { border-color: var(--fire); }
+    .msg-send-btn { width: 40px; height: 40px; background: var(--fire); border: none; border-radius: 8px; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .msg-send-btn:hover { background: #e55a26; }
+    .msg-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 12px; text-align: center; padding: 24px; }
+    .btn-msg { padding: 5px 12px; font-size: 11px; font-family: 'Sora', sans-serif; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid var(--dark-border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .btn-msg:hover { border-color: var(--fire); color: var(--fire); }
+
     @media (max-width: 768px) {
       .mobile-topbar { display: flex; }
       .main-content { padding-top: 56px; }
@@ -432,7 +468,11 @@
       </button>
       <button class="nav-item" data-section="bookings">
         <span class="nav-icon">◷</span> Bookings
-        <span class="nav-badge" id="bookings-badge"></span>
+        <span class="nav-badge" id="bookings-badge" style="display:none">0</span>
+      </button>
+      <button class="nav-item" data-section="messages">
+        <span class="nav-icon">✉</span> Messages
+        <span class="nav-badge" id="messages-badge" style="display:none">0</span>
       </button>
       <button class="nav-item" onclick="window.location.href='marketplace.html'">
         <span class="nav-icon">🔍</span> Browse Trucks
@@ -646,6 +686,34 @@
       </div>
     </section>
 
+    <!-- MESSAGES -->
+    <section class="section" id="section-messages" style="padding:0;max-width:none">
+      <div class="messages-layout">
+        <div class="msg-thread-list" id="msg-thread-list">
+          <div class="msg-list-head">
+            <span class="msg-list-head-title">Messages</span>
+            <button class="btn-outline" style="padding:4px 10px;font-size:11px" id="btn-mark-all-read">All Read</button>
+          </div>
+          <div id="msg-threads"></div>
+          <div class="msg-empty" id="msg-threads-empty" style="display:none">No messages yet.<br><span style="font-size:11px;margin-top:8px;display:block">Accept a booking to start messaging a truck.</span></div>
+        </div>
+        <div class="msg-main-panel" id="msg-main-panel">
+          <div class="msg-panel-head" id="msg-panel-head" style="display:none">
+            <button class="msg-panel-back" id="msg-panel-back">←</button>
+            <div>
+              <div class="msg-panel-name" id="msg-panel-name">—</div>
+            </div>
+          </div>
+          <div class="msg-bubbles" id="msg-bubbles"></div>
+          <div class="msg-input-row" id="msg-input-row" style="display:none">
+            <input class="msg-input" id="msg-input" placeholder="Type a message…" type="text">
+            <button class="msg-send-btn" id="msg-send-btn">➤</button>
+          </div>
+          <div class="msg-empty" id="msg-select-prompt">Select a conversation to view messages.</div>
+        </div>
+      </div>
+    </section>
+
     <!-- PROFILE -->
     <section class="section" id="section-profile">
       <div class="section-header">
@@ -836,10 +904,15 @@
     }
     empty.style.display = 'none'
 
-    tbody.innerHTML = data.map(b => `
+    tbody.innerHTML = data.map(b => {
+      const truckName = esc(b.truck?.business_name || b.truck?.contact_name || '—')
+      const msgBtn = b.truck_id
+        ? `<button class="btn-msg" onclick="startConversation('${b.truck_id}','${truckName}')">Message</button>`
+        : ''
+      return `
       <tr id="brow-${b.id}">
         <td>
-          <div class="td-name">${esc(b.truck?.business_name || b.truck?.contact_name || '—')}</div>
+          <div class="td-name">${truckName}</div>
           ${b.truck?.is_verified ? '<span class="badge-verified" style="margin-top:4px;display:inline-block">Verified</span>' : ''}
         </td>
         <td>${esc(b.event_type || '—')}</td>
@@ -854,14 +927,15 @@
                  <button class="btn-decline" onclick="respondBooking('${b.id}','declined')">Decline</button>
                </div>`
             : b.status === 'accepted'
-            ? `<button class="btn-complete" onclick="markComplete('${b.id}')">Mark Complete</button>`
+            ? `<div class="action-group">${msgBtn}<button class="btn-complete" onclick="markComplete('${b.id}')">Mark Complete</button></div>`
             : b.status === 'completed'
-            ? reviewedTruckIds.has(b.truck_id)
-              ? '<span style="color:#50c878;font-family:\'DM Mono\',monospace;font-size:11px">✓ Reviewed</span>'
-              : `<button class="btn-review" onclick="openReviewModal('${b.truck_id || ''}','${esc(b.truck?.business_name || b.truck?.contact_name || 'this truck')}')">Leave a Review</button>`
+            ? `<div class="action-group">${msgBtn}${reviewedTruckIds.has(b.truck_id)
+                ? '<span style="color:#50c878;font-family:\'DM Mono\',monospace;font-size:11px">✓ Reviewed</span>'
+                : `<button class="btn-review" onclick="openReviewModal('${b.truck_id || ''}','${truckName}')">Leave a Review</button>`}</div>`
             : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
         </td>
-      </tr>`).join('')
+      </tr>`
+    }).join('')
   }
 
   window.respondBooking = async function(id, status) {
@@ -1001,10 +1075,154 @@
     document.querySelectorAll('.nav-item[data-section]').forEach(b => {
       b.classList.toggle('active', b.dataset.section === name)
     })
+    if (name === 'messages') initMessages()
   }
 
   document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
     btn.addEventListener('click', () => showSection(btn.dataset.section))
+  })
+
+  // ─── MESSAGES ─────────────────────────────────────────────
+  let activeConvId = null, activeRecipId = null
+
+  function convIdFor(a, b) { return [a, b].sort().join('_') }
+
+  function esc(s) { if (s==null) return ''; return s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+  function fmtDate(d) { if (!d) return '—'; return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) }
+  function showToast(msg, isError=false) {
+    const t = document.getElementById('toast')
+    t.textContent=msg; t.className='toast'+(isError?' error':''); t.classList.add('show')
+    setTimeout(()=>t.classList.remove('show'),3000)
+  }
+
+  async function initMessages() {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at, sender:sender_id(id,business_name,contact_name), recipient:recipient_id(id,business_name,contact_name)')
+      .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
+      .order('created_at', {ascending:false})
+
+    const threadsEl = document.getElementById('msg-threads')
+    const emptyEl   = document.getElementById('msg-threads-empty')
+    if (error || !data || !data.length) { threadsEl.innerHTML=''; emptyEl.style.display='flex'; return }
+    emptyEl.style.display = 'none'
+
+    const threads = {}
+    data.forEach(m => {
+      if (!threads[m.conversation_id]) {
+        const other = m.sender_id === userId ? m.recipient : m.sender
+        threads[m.conversation_id] = { convId:m.conversation_id, other, latest:m, unread:0 }
+      }
+      if (!m.is_read && m.recipient_id === userId) threads[m.conversation_id].unread++
+    })
+
+    const totalUnread = Object.values(threads).reduce((s,t)=>s+t.unread,0)
+    if (totalUnread > 0) {
+      const mb = document.getElementById('messages-badge')
+      mb.textContent = totalUnread; mb.style.display='inline-block'
+    }
+
+    threadsEl.innerHTML = Object.values(threads).map(t => {
+      const name = t.other?.business_name || t.other?.contact_name || 'Unknown'
+      const initials = name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()
+      const preview = (t.latest.content||'').substring(0,60)
+      const timeStr = new Date(t.latest.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})
+      return `<div class="msg-thread" data-conv="${t.convId}" data-recip="${t.other?.id||''}" data-name="${esc(name)}" onclick="openThread('${t.convId}','${t.other?.id||''}','${esc(name)}')">
+        <div class="msg-avatar">${initials}</div>
+        <div class="msg-thread-info">
+          <div class="msg-thread-name">${esc(name)}</div>
+          <div class="msg-thread-preview">${esc(preview)}</div>
+        </div>
+        <div class="msg-thread-meta">
+          <span class="msg-thread-time">${timeStr}</span>
+          ${t.unread>0?'<span class="msg-unread-dot" id="udot-'+t.convId+'"></span>':''}
+        </div>
+      </div>`
+    }).join('')
+  }
+
+  window.openThread = async function(convId, recipId, name) {
+    activeConvId = convId; activeRecipId = recipId
+    document.querySelectorAll('.msg-thread').forEach(t => t.classList.toggle('active', t.dataset.conv===convId))
+    const nameEl    = document.getElementById('msg-panel-name')
+    const headEl    = document.getElementById('msg-panel-head')
+    const inputRow  = document.getElementById('msg-input-row')
+    const promptEl  = document.getElementById('msg-select-prompt')
+    nameEl.textContent = name
+    headEl.style.display = 'flex'
+    inputRow.style.display = 'flex'
+    promptEl.style.display = 'none'
+
+    await supabase.from('messages').update({is_read:true}).eq('conversation_id',convId).eq('recipient_id',userId)
+    const udot = document.getElementById('udot-'+convId)
+    if (udot) udot.remove()
+
+    const { data } = await supabase.from('messages')
+      .select('id, sender_id, content, created_at')
+      .eq('conversation_id', convId)
+      .order('created_at', {ascending:true})
+
+    const bubblesEl = document.getElementById('msg-bubbles')
+    bubblesEl.innerHTML = (data||[]).map(m => {
+      const isMe = m.sender_id === userId
+      const t = new Date(m.created_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})
+      return `<div style="display:flex;flex-direction:column;align-self:${isMe?'flex-end':'flex-start'}">
+        <div class="msg-bubble ${isMe?'me':'them'}">${esc(m.content)}</div>
+        <div class="msg-bubble-time" style="text-align:${isMe?'right':'left'}">${t}</div>
+      </div>`
+    }).join('')
+    bubblesEl.scrollTop = bubblesEl.scrollHeight
+
+    const totalUnread = document.querySelectorAll('.msg-unread-dot').length
+    const mb = document.getElementById('messages-badge')
+    if (totalUnread===0) mb.style.display='none'; else mb.textContent = totalUnread
+
+    // Mobile: hide thread list, show panel
+    document.getElementById('msg-thread-list').classList.add('hidden-mobile')
+    document.getElementById('msg-main-panel').classList.remove('hidden-mobile')
+  }
+
+  window.startConversation = function(recipId, recipName) {
+    const convId = convIdFor(userId, recipId)
+    showSection('messages')
+    openThread(convId, recipId, recipName)
+  }
+
+  document.getElementById('msg-send-btn').addEventListener('click', sendMessage)
+  document.getElementById('msg-input').addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()} })
+
+  async function sendMessage() {
+    const input = document.getElementById('msg-input')
+    const content = input.value.trim()
+    if (!content || !activeConvId || !activeRecipId) return
+    input.value = ''
+    const { error } = await supabase.from('messages').insert({
+      conversation_id: activeConvId,
+      sender_id:    userId,
+      recipient_id: activeRecipId,
+      content,
+      is_read: false
+    })
+    if (error) { showToast('Could not send message', true); return }
+    const t = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})
+    const bubblesEl = document.getElementById('msg-bubbles')
+    bubblesEl.insertAdjacentHTML('beforeend', `
+      <div style="display:flex;flex-direction:column;align-self:flex-end">
+        <div class="msg-bubble me">${esc(content)}</div>
+        <div class="msg-bubble-time" style="text-align:right">${t}</div>
+      </div>`)
+    bubblesEl.scrollTop = bubblesEl.scrollHeight
+  }
+
+  document.getElementById('btn-mark-all-read')?.addEventListener('click', async () => {
+    await supabase.from('messages').update({is_read:true}).eq('recipient_id',userId)
+    document.querySelectorAll('.msg-unread-dot').forEach(d => d.remove())
+    document.getElementById('messages-badge').style.display='none'
+  })
+
+  document.getElementById('msg-panel-back')?.addEventListener('click', () => {
+    document.getElementById('msg-thread-list').classList.remove('hidden-mobile')
+    document.getElementById('msg-main-panel').classList.add('hidden-mobile')
   })
 
   document.getElementById('btn-signout').addEventListener('click', async () => {
