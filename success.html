@@ -181,10 +181,59 @@
   <script type="module">
     import { supabase } from './supabase-client.js'
 
-    // Verify user is logged in — if not, redirect to auth
     const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      window.location.href = 'auth.html?mode=login'
+    if (!session) { window.location.href = 'auth.html?mode=login' }
+
+    const params  = new URLSearchParams(window.location.search)
+    const plan      = params.get('plan')
+    const sessionId = params.get('session_id')
+
+    if (plan === 'advertiser' && sessionId) {
+      // Verify the Stripe session and activate the advertiser subscription
+      try {
+        const res = await fetch(
+          'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/advertiser-verify',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + session.access_token,
+            },
+            body: JSON.stringify({ session_id: sessionId }),
+          }
+        )
+        const body = await res.json()
+
+        // Update page content for advertiser context
+        document.querySelector('h1').textContent = 'You\'re an Advertiser.'
+        document.querySelector('.sub').textContent =
+          'Your $19/mo ServiceWindow Advertiser subscription is active. Your ad is now visible to verified food truck operators in SWFL.'
+        document.querySelector('.status-row').innerHTML =
+          '<div class="status-dot"></div> Advertiser · Subscription active'
+
+        const steps = document.querySelector('.steps')
+        if (steps) {
+          steps.innerHTML = `
+            <div class="steps-title">Next steps</div>
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-text"><strong>Submit your ad.</strong> Go to your dashboard and complete your ad — headline, description, and contact info. It goes live after a quick review (typically within 24 hours).</div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-text"><strong>Get in front of SWFL trucks.</strong> Your ad appears in the dashboard of every verified truck operator on the platform — directly where they check for bookings and opportunities.</div>
+            </div>`
+        }
+
+        const dashboardBtn = document.getElementById('dashboardBtn')
+        if (dashboardBtn && body.dashboard) {
+          dashboardBtn.href = body.dashboard
+          dashboardBtn.textContent = 'Go to My Dashboard →'
+        }
+      } catch (e) {
+        console.error('[success advertiser verify]', e)
+        // Non-fatal — page still shows success, user can navigate manually
+      }
     }
   </script>
 
