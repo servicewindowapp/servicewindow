@@ -402,6 +402,9 @@
         <span class="nav-icon">✉</span> Messages
         <span class="nav-badge" id="messages-badge" style="display:none">0</span>
       </button>
+      <button class="nav-item" id="nav-browse-marketplace" onclick="window.location.href='marketplace.html'">
+        <span class="nav-icon">🏪</span> Browse Marketplace
+      </button>
       <button class="nav-item" data-section="profile">
         <span class="nav-icon">◉</span> My Profile
       </button>
@@ -490,10 +493,11 @@
         </div>
       </div>
 
-      <!-- NEW MARKETPLACE REQUESTS -->
+      <!-- NEW BOOKING REQUESTS -->
       <div class="marketplace-req-wrap">
         <div class="marketplace-req-hd">
-          <div class="marketplace-req-title">New Marketplace Requests</div>
+          <div class="marketplace-req-title">New Booking Requests</div>
+          <button class="btn-outline" style="font-size:11px;padding:5px 12px" onclick="showSection('inbox')">View All</button>
         </div>
         <div id="marketplace-req-list">
           <div style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">Loading…</div>
@@ -518,10 +522,6 @@
         </div>
       </div>
 
-      <!-- CTA ROW -->
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <button class="btn-outline" onclick="window.location.href='marketplace.html'">Browse Marketplace</button>
-      </div>
     </section>
 
     <!-- CALENDAR -->
@@ -1969,36 +1969,34 @@ async function loadUpcomingBookings() {
   }).join('')
 }
 
-// ─── MARKETPLACE REQUESTS (Overview) ──────────────────
+// ─── BOOKING REQUESTS (Overview) ──────────────────────
+// Shows direct booking requests sent to THIS truck (pending bookings where truck_id = userId)
 async function loadMarketplaceRequests() {
   const { data } = await supabase
-    .from('listings')
-    .select('id, title, city, event_date, budget_range, board')
-    .in('board', ['request', 'event'])
-    .eq('status', 'active')
+    .from('bookings')
+    .select('id, event_type, event_date, city, budget_range, requester:requester_id(business_name, contact_name)')
+    .eq('truck_id', userId)
+    .eq('status', 'pending')
     .order('created_at', { ascending: false })
     .limit(5)
   const el = document.getElementById('marketplace-req-list')
   if (!data || data.length === 0) {
-    el.innerHTML = '<div style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No open requests right now.</div>'
+    el.innerHTML = `<div style="padding:16px 18px">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);margin-bottom:10px">No direct requests yet.</div>
+      <button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="window.location.href='marketplace.html'">Browse Open Marketplace</button>
+    </div>`
     return
   }
-  el.innerHTML = data.map(r => {
-    const label = r.board === 'event' ? 'Apply' : 'Bid'
-    const parts = [r.event_date ? fmtDate(r.event_date) : null, r.city || null, r.budget_range || null].filter(Boolean)
+  el.innerHTML = data.map(b => {
+    const requester = b.requester?.business_name || b.requester?.contact_name || 'Someone'
+    const parts = [b.event_date ? fmtDate(b.event_date) : null, b.city || null, b.budget_range || null].filter(Boolean)
     const meta = parts.join(' · ')
     return `<div class="req-card">
       <div>
-        <div class="req-card-name">${esc(r.title)}</div>
-        <div class="req-card-meta">${meta || '—'}</div>
+        <div class="req-card-name">${esc(b.event_type || 'Booking Request')}</div>
+        <div class="req-card-meta">From: ${esc(requester)}${meta ? ' · ' + meta : ''}</div>
       </div>
-      <button class="btn-bid"
-        data-lid="${esc(r.id)}"
-        data-title="${esc(r.title)}"
-        data-meta="${esc(meta)}"
-        onclick="openBidModal(this.dataset.lid, this.dataset.title, this.dataset.meta)">
-        ${label}
-      </button>
+      <button class="btn-bid" onclick="showSection('inbox')">Review</button>
     </div>`
   }).join('')
 }

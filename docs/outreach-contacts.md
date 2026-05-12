@@ -1,6 +1,6 @@
 # ServiceWindow — Outreach Contact Reference
 > Pulled from daily market research scrapes. See Market Research folder for full detail.
-> Updated: 2026-04-18
+> Updated: 2026-05-09
 
 ---
 
@@ -8,11 +8,15 @@
 
 | Name | Role/Org | Location | Need | Contact | Priority |
 |------|----------|----------|------|---------|----------|
+| **Fabi Ximena** | Community organizer | Fort Myers | Breakfast/coffee truck 2nd Saturday June + July — recurring monthly. 18 comments. | FB DM (SWFL Food Truck Depot) | **CRITICAL — recurring, hot** |
 | Tiffany Allard | HOA organizer, Coral Lakes Assn | NE Cape Coral | 2nd Saturdays recurring all year, 700+ homes, 1 food + 1 dessert truck | FB DM | HIGH — recurring |
 | Angela Krinke | HOA mgr, Somerset @ The Plantation | Fort Myers | April 25 open + all summer, 950+ homes | FB DM | HIGH |
 | Kevin Rueda | Property mgr, Murano at Three Oaks | Fort Myers | Breakfast/brunch trucks April-May | FB DM | HIGH |
 | Brittany Axelson | Venue owner, Brookside Beer Market | Naples | Saturdays 5-9pm + Sundays 12-8pm, recurring | FB DM | HIGH |
 | Hakeem Samara | RAD Winery | Estero | Afternoon/evening recurring slots | FB DM | HIGH |
+| **Ryan Caviness** | Individual/event organizer | Naples | Recurring truck bookings — 2 separate requests captured (last-minute + planned Saturday). | FB id: 745018687 | HIGH — recurring buyer |
+| **Gigi Raven** | Individual | Punta Gorda | Urgent: needed truck 5/9-5/10 1-5pm. 7 comments. Last-minute use case. | FB DM (SWFL Food Truck Depot) | MEDIUM |
+| **Christina Wedler Hillman / Bar 17** | Bar, Punta Gorda | Punta Gorda | Burger/BBQ truck for bar 12:30-5pm recurring. Joe: 516-322-8670 | 516-322-8670 | MEDIUM — venue partner |
 | Carol Schreder Czech | HOA, Naples Park Area Assn | Naples | Mixer May 1, 5:30-7:30pm, ~40 guests | FB DM | MEDIUM |
 | South Cape Run Club | Event org | Cape Coral | June 3 Global Running Day 5K, 6-8pm | FB DM (comments off) | MEDIUM |
 | Battle Bros Events | Event org | Fort Myers | May 30 Food Fest, Mike Greenwell Park | Vendors@BattleBrosEvents.com | MEDIUM |
@@ -31,6 +35,8 @@
 | Dave's Neapolitan Pizza | Pizza | SWFL | 40-spot pizza classes sell out, strong brand | FB DM | HIGH |
 | Freshly Prepped | Healthy | Charlotte County | Booking May-Dec 2026 | FB DM | HIGH |
 | Lakota by Chef Court | Native/American | SWFL | Responded to Earth Day booking request | FB DM | HIGH |
+| **The Cozy Cup / Grazing Garden SW FL** | Coffee/Café/Grazing | Punta Gorda / Cape Coral / Ft Myers | Actively booking summer community stops via FB — doing SW's job manually. No minimums. | FB DM (id: 61570937394772) | **HIGH — prime onboarding target** |
+| **Top Notch Smokehouse** | BBQ / Catering | Port Charlotte | Active 5/9 at Lowe's 2000 Tamiami Trail. Has catering/events capability. No platform. | FB DM (SWFL Food Truck Depot) | HIGH |
 | Lazy Baker Pizza Maker | Pizza | SWFL | New member Group 1 | FB DM | MEDIUM |
 | Vibe Catering & Events | Catering | SWFL | New member Group 1, catering focus | FB DM | MEDIUM |
 | Butts & Racks BBQ LLC | BBQ | SWFL | New member Group 1 | FB DM | MEDIUM |
