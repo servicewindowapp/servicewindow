@@ -400,6 +400,9 @@
       <button class="nav-item" data-section="post-listing">
         <span class="nav-icon">+</span> Post a Listing
       </button>
+      <button class="nav-item" data-section="my-ad">
+        <span class="nav-icon">📣</span> My Ad
+      </button>
       <button class="nav-item" data-section="profile">
         <span class="nav-icon">○</span> Property Profile
       </button>
@@ -743,6 +746,72 @@
       </div>
     </section>
 
+    <!-- ─── MY AD ─── -->
+    <section class="section" id="section-my-ad">
+      <div class="section-header">
+        <h1>My Ad</h1>
+        <p>Advertise your parking spots or storage directly to verified food truck operators in their dashboard. $19/mo — billed separately once the ad tier launches.</p>
+      </div>
+
+      <!-- STATUS CARD (shown when ad exists) -->
+      <div id="ad-status-card" style="display:none;margin-bottom:24px">
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--dark-border);border-radius:12px;padding:20px 24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+            <div>
+              <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700" id="ad-status-headline">—</div>
+              <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:3px">Current ad status: <span id="ad-status-pill" style="font-weight:700">—</span></div>
+            </div>
+            <button class="btn-outline" id="btn-edit-ad" style="font-size:12px;padding:6px 14px">Edit Ad</button>
+          </div>
+          <div id="ad-status-body" style="font-size:13px;color:var(--text-secondary);line-height:1.55"></div>
+          <div id="ad-status-note" style="margin-top:10px;padding:10px 14px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.7);display:none"></div>
+        </div>
+      </div>
+
+      <!-- AD FORM -->
+      <div class="form-card" id="ad-form-card">
+        <form id="ad-form">
+          <input type="hidden" id="ad-id">
+          <div class="profile-grid">
+            <div class="field-group full">
+              <label for="ad-headline">Headline *</label>
+              <input type="text" id="ad-headline" placeholder="e.g. Covered Parking Available for Food Trucks — Fort Myers, $150/mo" required maxlength="100">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:4px">100 characters max. Be specific and lead with your value.</div>
+            </div>
+            <div class="field-group full">
+              <label for="ad-body">Description</label>
+              <textarea id="ad-body" placeholder="Location, available spots, dimensions, electric hookup, pricing, availability. This appears directly in the truck operator's dashboard." rows="3" maxlength="280"></textarea>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:4px">280 characters max.</div>
+            </div>
+            <div class="field-group">
+              <label for="ad-phone">Contact Phone</label>
+              <input type="tel" id="ad-phone" placeholder="(239) 555-0100">
+            </div>
+            <div class="field-group">
+              <label for="ad-email">Contact Email</label>
+              <input type="email" id="ad-email" placeholder="you@example.com">
+            </div>
+            <div class="field-group">
+              <label for="ad-cta-url">Website / Listing URL</label>
+              <input type="url" id="ad-cta-url" placeholder="https://…">
+            </div>
+            <div class="field-group">
+              <label for="ad-cta-label">Button Label</label>
+              <input type="text" id="ad-cta-label" placeholder="Learn More" maxlength="30" value="Learn More">
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+            <button type="submit" class="btn-primary" id="ad-submit-btn">Submit Ad for Review</button>
+            <button type="button" class="btn-outline" id="ad-cancel-btn" style="display:none">Cancel Edit</button>
+            <span id="ad-form-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
+          </div>
+          <div style="margin-top:14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);line-height:1.6">
+            ℹ After submitting, your ad will be reviewed by the ServiceWindow team (typically within 24 hours). Approved ads appear in the truck operator dashboard. The $19/mo advertising tier will be billed once the payment system is live — early submitters will be grandfathered at this rate.
+          </div>
+        </form>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -782,6 +851,7 @@
     await loadAllListings()
     renderOverview()
     renderMyListings()
+    loadMyAd()
   }
 
   // ─── SIDEBAR META ─────────────────────────────────────────
@@ -1175,6 +1245,103 @@
     t.className = 'toast' + (error ? ' error' : '') + ' show'
     setTimeout(() => t.classList.remove('show'), 3200)
   }
+
+  // ─── MY AD ────────────────────────────────────────────────────
+  let existingAdId = null
+
+  async function loadMyAd() {
+    const { data } = await supabase
+      .from('ads')
+      .select('id, headline, body, cta_label, cta_url, contact_phone, contact_email, status, admin_notes')
+      .eq('advertiser_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (!data) return // no ad yet — form stays visible
+
+    existingAdId = data.id
+    const statusCard = document.getElementById('ad-status-card')
+    const formCard   = document.getElementById('ad-form-card')
+    statusCard.style.display = 'block'
+    document.getElementById('ad-status-headline').textContent = data.headline
+    const pill = document.getElementById('ad-status-pill')
+    const statusColors = { active:'#50c878', pending:'#f6ad55', paused:'#a0aec0', rejected:'#fc8181' }
+    pill.textContent = data.status
+    pill.style.color = statusColors[data.status] || '#fff'
+    document.getElementById('ad-status-body').textContent = data.body || ''
+
+    const note = document.getElementById('ad-status-note')
+    if (data.status === 'pending') {
+      note.textContent = '⏳ Under review — we\'ll activate your ad within 24 hours.'
+      note.style.display = 'block'
+    } else if (data.status === 'rejected' && data.admin_notes) {
+      note.textContent = '✗ Rejected: ' + data.admin_notes
+      note.style.display = 'block'
+    }
+
+    // Pre-fill form for editing
+    document.getElementById('ad-id').value           = data.id
+    document.getElementById('ad-headline').value     = data.headline || ''
+    document.getElementById('ad-body').value         = data.body || ''
+    document.getElementById('ad-phone').value        = data.contact_phone || ''
+    document.getElementById('ad-email').value        = data.contact_email || ''
+    document.getElementById('ad-cta-url').value      = data.cta_url || ''
+    document.getElementById('ad-cta-label').value    = data.cta_label || 'Learn More'
+
+    // Hide form until user clicks Edit
+    formCard.style.display = 'none'
+    document.getElementById('ad-submit-btn').textContent = 'Save Changes'
+    document.getElementById('ad-cancel-btn').style.display = 'inline-flex'
+  }
+
+  document.getElementById('btn-edit-ad')?.addEventListener('click', () => {
+    document.getElementById('ad-form-card').style.display = 'block'
+    document.getElementById('ad-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
+
+  document.getElementById('ad-cancel-btn')?.addEventListener('click', () => {
+    document.getElementById('ad-form-card').style.display = 'none'
+  })
+
+  document.getElementById('ad-form')?.addEventListener('submit', async e => {
+    e.preventDefault()
+    const btn = document.getElementById('ad-submit-btn')
+    const statusEl = document.getElementById('ad-form-status')
+    btn.disabled = true; btn.textContent = 'Saving…'
+
+    const payload = {
+      advertiser_id:  userId,
+      ad_type:        'property',
+      headline:       document.getElementById('ad-headline').value.trim(),
+      body:           document.getElementById('ad-body').value.trim() || null,
+      contact_phone:  document.getElementById('ad-phone').value.trim() || null,
+      contact_email:  document.getElementById('ad-email').value.trim() || null,
+      cta_url:        document.getElementById('ad-cta-url').value.trim() || null,
+      cta_label:      document.getElementById('ad-cta-label').value.trim() || 'Learn More',
+      status:         'pending'
+    }
+
+    const adId = document.getElementById('ad-id').value
+    let error
+    if (adId) {
+      ;({ error } = await supabase.from('ads').update(payload).eq('id', adId).eq('advertiser_id', userId))
+    } else {
+      ;({ error } = await supabase.from('ads').insert(payload))
+    }
+
+    btn.disabled = false
+    btn.textContent = adId ? 'Save Changes' : 'Submit Ad for Review'
+
+    if (error) {
+      statusEl.textContent = 'Error: ' + error.message
+      statusEl.style.color = '#fc8181'
+      return
+    }
+    statusEl.textContent = adId ? 'Changes saved — under review.' : 'Submitted — under review.'
+    statusEl.style.color = '#50c878'
+    await loadMyAd()
+  })
 
   // ─── MOBILE NAV ──────────────────────────────────────────────
   const mobileHamburger = document.getElementById('mobileHamburger')
