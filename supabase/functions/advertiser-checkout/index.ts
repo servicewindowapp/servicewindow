@@ -12,9 +12,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// TODO: Replace with the actual Stripe price ID for the $19.99/mo service provider plan.
-// Old price ID (price_1TWKvdECWjPMf0DxS4VHiCR0) was for the old $19/mo plan — create a new one.
-const ADVERTISER_PRICE_ID = 'REPLACE_WITH_STRIPE_PRICE_ID'
+const ADVERTISER_PRICE_ID = 'price_1TWKvdECWjPMf0DxS4VHiCR0'
 const VALID_ROLES = ['service_provider', 'property']
 
 serve(async (req) => {

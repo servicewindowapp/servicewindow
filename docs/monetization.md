@@ -9,7 +9,7 @@
 | Stream | Rate | Who | Status |
 |--------|------|-----|--------|
 | Truck Operator | $39.99/mo | Food truck operators | Primary |
-| Service Provider Listing | $19.99/mo | Commissaries, suppliers, repair | Secondary |
+| Service Provider Listing | $19/mo | Commissaries, suppliers, repair | Secondary |
 | Property/Storage Advertising | TBD small monthly fee | Property owners who want truck visibility | Secondary |
 
 ### Free-Forever Users
@@ -52,7 +52,7 @@
 
 ### Year 1 Targets (SWFL only)
 - 50 paying truck subscriptions @ $39.99/mo = $2,000/mo = $24,000/yr
-- 10 service provider listings @ $19.99/mo = $200/mo = $2,400/yr
+- 10 service provider listings @ $19/mo = $190/mo = $2,280/yr
 - 5 property advertisers @ $25/mo = $125/mo = $1,500/yr
 - **Total Year 1 ARR (conservative)**: ~$27,900
 

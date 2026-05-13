@@ -370,6 +370,76 @@
     }
     .btn-secondary:hover { border-color: rgba(255,255,255,0.6); }
 
+    /* ─── VETERAN / FOUNDER ELEMENTS ─── */
+    .hero-badges {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .hero-badge-veteran {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 5px 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .founder-card {
+      margin-top: 40px;
+      background: rgba(255,107,53,0.06);
+      border: 1px solid rgba(255,107,53,0.2);
+      border-radius: 14px;
+      padding: 28px 32px;
+    }
+    .founder-badge-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .founder-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .founder-badge.veteran {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.75);
+    }
+    .founder-badge.local {
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.25);
+      color: var(--fire);
+    }
+    .founder-card blockquote {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 14px;
+      border: none;
+      padding: 0;
+    }
+    .founder-attribution {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
     /* ─── FOOTER ─── */
     footer { background: #07111a; color: rgba(255,255,255,0.7); padding: 48px 20px 24px; }
     .footer-inner { max-width: 1100px; margin: 0 auto; }
@@ -440,7 +510,10 @@
 
   <!-- ─── HERO ─── -->
   <section class="hero">
-    <div class="hero-badge">Southwest Florida · Launching 2026</div>
+    <div class="hero-badges">
+      <div class="hero-badge">Southwest Florida · Launching 2026</div>
+      <div class="hero-badge-veteran">★ Veteran-Owned</div>
+    </div>
     <h1>Built for SWFL.<br>Built to <span class="accent">replace the chaos.</span></h1>
     <p>ServiceWindow is the verified food truck marketplace for Southwest Florida. We built it because Facebook groups aren't a platform — they're a workaround.</p>
   </section>
@@ -451,9 +524,19 @@
       <div class="section-label">Our Story</div>
       <h2>The problem was obvious. The solution wasn't.</h2>
       <p>In Southwest Florida, the food truck industry runs on Facebook groups. <strong>34,900 members</strong> in one group alone — HOA managers posting booking requests and getting buried under 44 unorganized comments. Trucks shouting availability into a feed that never stops scrolling. And scammers. Constant scam warnings, posted by admins every single day.</p>
-      <p>The demand was real. The supply was real. The infrastructure connecting them was a social media platform that was never designed for it.</p>
+      <p>This wasn't an observation from the outside. ServiceWindow was built by a Southwest Florida food truck owner who operated here, chased bookings through comment threads, watched opportunities fall through because there was no real infrastructure to hold them, and eventually closed the truck. The problem didn't go away. So instead of moving on, we built the fix.</p>
+      <p>The demand was real. The supply was real. What was missing was a platform actually designed for the job — not a social media workaround that everyone had quietly agreed to tolerate.</p>
       <p>ServiceWindow was built to fix that. A purpose-built marketplace where <strong>every truck is verified</strong>, every booking request gets a structured response, and HOA managers can find the right truck for their 950-home community without posting in a comment thread.</p>
       <p>We started with Region 1 — <strong>21 cities across Lee, Collier, Sarasota, Charlotte, and Hendry counties</strong> — because SWFL has one of the most active food truck communities in Florida and the clearest gap between what the market needs and what currently exists.</p>
+
+      <div class="founder-card">
+        <div class="founder-badge-row">
+          <span class="founder-badge veteran">★ Veteran-Owned</span>
+          <span class="founder-badge local">Fort Myers, FL</span>
+        </div>
+        <blockquote>"I ran a food truck in Southwest Florida. I lived the Facebook comment chaos from inside it. When I closed the truck, I couldn't stop thinking about how broken the whole system was — for operators and for the people trying to book them. So I built what should have existed."</blockquote>
+        <div class="founder-attribution">— SWFL Food Truck Operator &amp; US Air Force Veteran, ServiceWindow Founder</div>
+      </div>
     </div>
   </section>
 
@@ -552,7 +635,7 @@
       </div>
       <div class="footer-bottom">
         <p>&copy; 2026 ServiceWindow. All rights reserved.</p>
-        <div>Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
+        <div>Veteran-Owned · Fort Myers, FL &nbsp;·&nbsp; Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
       </div>
     </div>
   </footer>

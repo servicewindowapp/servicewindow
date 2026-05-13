@@ -376,6 +376,18 @@
 
     .trust-icon svg { width: 9px; height: 9px; fill: var(--fire); }
 
+    .trust-item.veteran { color: rgba(255,255,255,0.75); }
+    .trust-item.veteran .trust-icon { background: rgba(255,255,255,0.08); }
+    .trust-item.veteran .trust-icon svg { fill: rgba(255,255,255,0.75); }
+
+    .founder-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--fire);
+      margin-top: 14px;
+      opacity: 0.85;
+    }
+
     /* ─── SECTION BASE ─── */
     section { padding: 80px 20px; }
 
@@ -1235,6 +1247,10 @@
           <div class="trust-icon"><svg viewBox="0 0 10 10"><path d="M2 5l2 2 4-4"/></svg></div>
           Free for event planners
         </div>
+        <div class="trust-item veteran">
+          <div class="trust-icon"><svg viewBox="0 0 10 10"><path d="M5 1l.9 2 2.1.3-1.5 1.5.3 2.1L5 6l-1.8 1 .3-2.1L2 3.3l2.1-.3z"/></svg></div>
+          Veteran-owned
+        </div>
       </div>
     </div>
   </section>
@@ -1245,6 +1261,7 @@
       <div class="section-label">The Problem</div>
       <h2 class="section-title">Facebook groups weren't built for this.</h2>
       <p class="section-sub">Every week, hundreds of booking requests and truck availability posts go through Facebook — with no verification, no confirmation, and no accountability.</p>
+      <p class="founder-note">Built by a SWFL food truck owner who ran one, felt this firsthand, and built the fix.</p>
       <div class="problem-grid">
         <div class="problem-card bad">
           <div class="problem-card-label">Facebook Groups</div>
@@ -1494,7 +1511,7 @@
           <div class="pricing-label">For Service Providers</div>
           <div class="pricing-name">Vendor Listing</div>
           <div class="pricing-price">
-            <span class="pricing-amount">$19.99</span>
+            <span class="pricing-amount">$19</span>
             <span class="pricing-period">/mo</span>
           </div>
           <ul class="pricing-features">
@@ -1632,7 +1649,7 @@
       </div>
       <div class="footer-bottom">
         <p>&copy; 2026 ServiceWindow. All rights reserved.</p>
-        <div class="footer-cities">Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
+        <div class="footer-cities">Veteran-Owned · Fort Myers, FL &nbsp;·&nbsp; Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
       </div>
     </div>
   </footer>
