@@ -725,10 +725,20 @@
       <h2>Got a truck? You should be on here.</h2>
       <p>ServiceWindow connects verified SWFL food trucks with HOAs, venues, event planners, and private parties — all in one place.</p>
       <div class="cta-strip-actions">
-        <a href="auth.html?role=truck" class="btn-primary">List Your Truck Free →</a>
+        <a href="list-your-truck.html" class="btn-primary">List Your Truck Free →</a>
         <a href="pricing.html" class="btn-outline">See Pricing</a>
       </div>
     </div>
+  </div>
+
+  <!-- ─── COMMUNITY LISTINGS ─── -->
+  <div id="communitySection">
+    <div class="community-header">
+      <h2>Community Listings</h2>
+      <span id="communityCount"></span>
+    </div>
+    <p class="community-note">Self-submitted by operators. Contact them directly using the info provided. Not yet verified by ServiceWindow — use your judgment.</p>
+    <div class="truck-grid" id="communityGrid"></div>
   </div>
 
   <!-- ─── FOOTER ─── -->
@@ -883,7 +893,7 @@
               : 'Try broadening your search — remove a filter and see what\'s available.'}
             </p>
             ${allTrucks.length === 0
-              ? `<a href="auth.html?role=truck" class="btn-outline">List Your Truck →</a>`
+              ? `<a href="list-your-truck.html" class="btn-outline">List Your Truck →</a>`
               : `<button class="btn-outline" onclick="clearFilters()">Clear Filters</button>`
             }
           </div>
@@ -1023,8 +1033,135 @@
       const { data: { session } } = await supabase.auth.getSession()
       userSession = session
       loadTrucks()
+      loadSubmissions()
     })()
+
+    // ─── COMMUNITY LISTINGS (truck_submissions) ───
+    async function loadSubmissions() {
+      const { data, error } = await supabase
+        .from('truck_submissions')
+        .select('id, business_name, cuisine_type, cities_served, contact_phone, facebook_url, description')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+
+      if (error || !data || data.length === 0) return
+
+      const section = document.getElementById('communitySection')
+      const grid = document.getElementById('communityGrid')
+      section.style.display = 'block'
+
+      const countEl = document.getElementById('communityCount')
+      countEl.textContent = `${data.length} self-listed truck${data.length !== 1 ? 's' : ''} — not yet verified`
+
+      data.forEach(t => {
+        const name = escHtml(t.business_name || 'Unnamed Truck')
+        const cuisine = escHtml(t.cuisine_type || '')
+        const cities = Array.isArray(t.cities_served) ? t.cities_served.slice(0, 3).map(escHtml).join(', ') : ''
+        const phone = escHtml(t.contact_phone || '')
+        const fb = t.facebook_url ? `<a href="${escHtml(t.facebook_url)}" target="_blank" rel="noopener" class="sub-link">Facebook →</a>` : ''
+        const bio = escHtml(t.description || '')
+
+        const card = document.createElement('div')
+        card.className = 'truck-card sub-card'
+        card.innerHTML = `
+          <div class="truck-card-body">
+            <div class="truck-card-header">
+              <div class="truck-name">${name}</div>
+              <span class="badge-unverified">Unverified</span>
+            </div>
+            <div class="truck-meta">
+              ${cuisine ? `<span class="meta-pill cuisine">${cuisine}</span>` : ''}
+              ${cities ? `<span class="meta-pill">📍 ${cities}</span>` : ''}
+            </div>
+            ${bio ? `<p class="truck-bio">${bio}</p>` : ''}
+            ${phone ? `<p class="sub-contact">📞 ${phone}</p>` : ''}
+            ${fb}
+          </div>
+          <div class="truck-card-footer">
+            <a href="list-your-truck.html" class="btn-request" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15)">Claim This Listing →</a>
+          </div>
+        `
+        grid.appendChild(card)
+      })
+    }
   </script>
+
+  <style>
+    /* ─── COMMUNITY LISTINGS SECTION ─── */
+    #communitySection {
+      display: none;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .community-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 40px;
+    }
+
+    .community-header h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    #communityCount {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .community-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .badge-unverified {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      background: rgba(255,200,0,0.1);
+      color: rgba(255,210,60,0.9);
+      border: 1px solid rgba(255,210,60,0.2);
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sub-card { opacity: 0.85; }
+    .sub-card:hover { opacity: 1; }
+
+    .sub-contact {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .sub-link {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--fire);
+      text-decoration: none;
+      margin-top: 8px;
+    }
+
+    .sub-link:hover { text-decoration: underline; }
+  </style>
 
 </body>
 </html>

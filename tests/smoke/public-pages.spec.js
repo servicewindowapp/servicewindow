@@ -17,7 +17,8 @@ const { test, expect } = require('@playwright/test');
 const PUBLIC_PAGES = [
   { path: '/',                 label: 'Landing page' },
   { path: '/marketplace.html', label: 'Marketplace' },
-  { path: '/find-trucks.html', label: 'Find trucks' },
+  { path: '/find-trucks.html',       label: 'Find trucks' },
+  { path: '/list-your-truck.html',   label: 'List your truck' },
   { path: '/auth.html',        label: 'Auth' },
   { path: '/pricing.html',     label: 'Pricing' },
   { path: '/about.html',       label: 'About' },
