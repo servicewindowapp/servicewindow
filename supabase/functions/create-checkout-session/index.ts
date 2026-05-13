@@ -12,9 +12,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// TODO: Replace with the actual Stripe price ID for the $39.99/mo truck plan.
-// Create in Stripe dashboard: Products → Add product → $39.99/mo recurring → copy price ID.
-const TRUCK_PRICE_ID = 'REPLACE_WITH_STRIPE_PRICE_ID'
+const TRUCK_PRICE_ID = 'price_1TWigOECWjPMf0DxEKA2iHpU'
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
