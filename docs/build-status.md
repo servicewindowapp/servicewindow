@@ -60,7 +60,7 @@
 | CNAME file | ❓ Confirm | Should exist in repo root |
 | Supabase schema | ❓ Confirm | Tables deployed to production? |
 | Supabase Edge Functions | ❓ Confirm | Stripe, email deployed? |
-| Stripe products/prices | ❓ Confirm | $29 founding, $49 standard configured? |
+| Stripe products/prices | ⚠️ TODO | New products needed: $39.99/mo truck, $19.99/mo SP. Old price IDs in Edge Functions must be updated. |
 | Resend email | ❓ Confirm | Domain verified, API key set? |
 
 ---

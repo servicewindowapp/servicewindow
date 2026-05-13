@@ -4,14 +4,14 @@
     <meta name="google" content="notranslate">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ServiceWindow pricing — join as a verified food truck operator starting at $29/mo. Event planners, HOA managers, and venues always free.">
+  <meta name="description" content="ServiceWindow pricing — food truck operators $39.99/mo with a 30-day free trial. Event planners, HOA managers, and venues always free.">
   <link rel="canonical" href="https://servicewindow.app/pricing.html">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Pricing — ServiceWindow SWFL",
-    "description": "ServiceWindow pricing. Food truck operators from $29/mo founding rate with a 30-day free trial. Event planners, HOA managers, and venues are always free.",
+    "description": "ServiceWindow pricing. Food truck operators $39.99/mo with a 30-day free trial, no credit card required. Event planners, HOA managers, and venues are always free.",
     "url": "https://servicewindow.app/pricing.html",
     "provider": {
       "@type": "Organization",
@@ -24,17 +24,9 @@
       "itemListElement": [
         {
           "@type": "Offer",
-          "name": "Food Truck Operator — Founding Rate",
-          "description": "List your verified food truck on the SWFL marketplace. Founding rate locked in forever. Includes 30-day free trial with no credit card required.",
-          "price": "29.00",
-          "priceCurrency": "USD",
-          "eligibleRegion": { "@type": "AdministrativeArea", "name": "Southwest Florida" }
-        },
-        {
-          "@type": "Offer",
-          "name": "Food Truck Operator — Standard Rate",
-          "description": "Standard monthly membership for food truck operators on ServiceWindow.",
-          "price": "49.00",
+          "name": "Food Truck Operator",
+          "description": "List your verified food truck on the SWFL marketplace. Includes 30-day free trial with no credit card required.",
+          "price": "39.99",
           "priceCurrency": "USD",
           "eligibleRegion": { "@type": "AdministrativeArea", "name": "Southwest Florida" }
         },
@@ -55,8 +47,8 @@
         {
           "@type": "Offer",
           "name": "Service Provider",
-          "description": "Commissaries, suppliers, and service providers advertising to food truck operators.",
-          "price": "39.00",
+          "description": "Commissaries, suppliers, and service providers advertising to food truck operators. Includes 30-day free trial.",
+          "price": "19.99",
           "priceCurrency": "USD"
         }
       ]
@@ -417,7 +409,7 @@
     }
   </style>
   <meta property="og:title" content="Pricing — ServiceWindow">
-  <meta property="og:description" content="Transparent pricing for food trucks, venues, and event planners. Trucks from $29/mo founding rate. Planners always free.">
+  <meta property="og:description" content="Transparent pricing for food trucks, venues, and event planners. Trucks $39.99/mo with 30-day free trial. Planners always free.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://servicewindow.app/pricing.html">
   <meta property="og:image" content="https://servicewindow.app/og-image.png">
@@ -449,36 +441,26 @@
 
     <!-- HERO -->
     <section class="pricing-hero">
-      <div class="founding-badge">Founding Member Pricing — Limited Slots</div>
       <h1>Simple, honest pricing.<br>Free for the demand side.</h1>
       <p>Food trucks pay a flat monthly rate. HOA managers, event planners, and venues are always free. No commissions. No booking fees. No surprises.</p>
-
-      <div class="toggle-wrap">
-        <span class="toggle-label active" id="toggleLabelMonthly">Monthly</span>
-        <div class="toggle" id="billingToggle" role="switch" aria-checked="false"></div>
-        <span class="toggle-label" id="toggleLabelAnnual">Annual</span>
-        <span class="save-badge">Save 2 months</span>
-      </div>
     </section>
 
-    <!-- TRUCK PLANS -->
+    <!-- PAID PLANS -->
     <section class="pricing-section">
-      <div class="section-label">Food Truck Operators</div>
+      <div class="section-label">Paid Plans</div>
       <div class="section-title">Get in front of HOA managers, venues, and event planners actively looking for trucks.</div>
 
-      <div class="pricing-grid">
+      <div class="pricing-grid" style="max-width: 720px;">
 
-        <!-- Standard -->
-        <div class="plan-card">
-          <div class="plan-name">Standard</div>
+        <!-- Food Truck Operator -->
+        <div class="plan-card featured">
+          <div class="plan-name">Food Truck Operator</div>
           <div class="plan-desc">Everything you need to get verified, listed, and booked in SWFL.</div>
           <div class="plan-price-wrap">
             <div class="plan-price-founding">
-              <span class="plan-price-amount" id="stdPrice">$29</span>
+              <span class="plan-price-amount">$39.99</span>
               <span class="plan-period">/mo</span>
             </div>
-            <div class="founding-lock">🔒 Founding rate — locked forever</div>
-            <div class="plan-standard-price">Standard rate: <s>$49/mo</s> after founding period</div>
           </div>
           <div class="plan-trial">✓ 30-day free trial — no credit card required</div>
           <a href="auth.html?role=truck&plan=standard" class="plan-cta plan-cta-primary" id="std-cta">Start Free Trial</a>
@@ -491,33 +473,7 @@
             <li>HOA, venue, and event planner inquiries direct to your inbox</li>
             <li>Post shift availability for open dates</li>
             <li>Jobs board — post &amp; browse hiring listings</li>
-            <li>30-day free trial, cancel anytime</li>
-          </ul>
-        </div>
-
-        <!-- Pro -->
-        <div class="plan-card featured">
-          <div class="plan-name">Pro</div>
-          <div class="plan-desc">For operators running multiple bookings and building venue relationships.</div>
-          <div class="plan-price-wrap">
-            <div class="plan-price-founding">
-              <span class="plan-price-amount" id="proPrice">$49</span>
-              <span class="plan-period">/mo</span>
-            </div>
-            <div class="founding-lock">🔒 Founding rate — locked forever</div>
-            <div class="plan-standard-price">Standard rate: <s>$79/mo</s> after founding period</div>
-          </div>
-          <div class="plan-trial">✓ 30-day free trial — no credit card required</div>
-          <a href="auth.html?role=truck&plan=pro" class="plan-cta plan-cta-primary" id="pro-cta">Start Free Trial</a>
-          <hr class="plan-divider">
-          <ul class="plan-features">
-            <li>Everything in Standard</li>
-            <li>Priority placement in marketplace search results</li>
-            <li>Featured listing in your city &amp; cuisine category</li>
-            <li>Venue partnership requests — receive recurring slot offers</li>
-            <li>Booking history and analytics</li>
-            <li>Early access to new platform features</li>
-            <li>Premier verified badge (enhanced trust signal)</li>
+            <li>Cancel anytime — no contracts</li>
           </ul>
         </div>
 
@@ -527,13 +483,12 @@
           <div class="plan-desc">Commissaries, suppliers, repair services, and equipment vendors.</div>
           <div class="plan-price-wrap">
             <div class="plan-price-founding">
-              <span class="plan-price-amount" id="spPrice">$39</span>
+              <span class="plan-price-amount">$19.99</span>
               <span class="plan-period">/mo</span>
             </div>
-            <div style="margin-bottom: 8px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted);">No setup fee. Cancel anytime.</div>
           </div>
-          <div class="plan-trial">&nbsp;</div>
-          <a href="auth.html?role=service_provider" class="plan-cta plan-cta-secondary">Get Listed</a>
+          <div class="plan-trial">✓ 30-day free trial — no credit card required</div>
+          <a href="auth.html?role=service_provider" class="plan-cta plan-cta-secondary" id="sp-cta">Start Free Trial</a>
           <hr class="plan-divider">
           <ul class="plan-features">
             <li>Listed in the Vendor Services board</li>
@@ -541,13 +496,14 @@
             <li>Visible to all truck operators in the marketplace</li>
             <li>Direct inquiry from operators looking for your services</li>
             <li>SWFL-only network — no national noise</li>
+            <li>Cancel anytime — no contracts</li>
           </ul>
         </div>
 
       </div>
 
       <!-- Property/Storage add-on note -->
-      <div style="background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; max-width: 700px;">
+      <div style="background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; max-width: 700px; margin-top: 32px;">
         <div style="font-size: 24px;">🅿️</div>
         <div>
           <div style="font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 4px;">Property &amp; Storage Owners</div>
@@ -673,15 +629,7 @@
             What does the 30-day free trial include?
             <span class="faq-icon">+</span>
           </button>
-          <div class="faq-answer">You get full platform access — your verified profile is live, you appear in the marketplace, and you can receive and respond to booking requests. No credit card required to start. At the end of 30 days you'll be prompted to choose a plan.</div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">
-            What does "founding member rate — locked forever" mean?
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">Operators who join during the founding period pay $29/mo (Standard) or $49/mo (Pro) for as long as they stay active. When the founding period closes, new signups pay the standard rate of $49/mo or $79/mo. Your rate never increases as a founding member — it's locked at signup.</div>
+          <div class="faq-answer">Full platform access — your verified profile is live, you appear in the marketplace, and you can receive and respond to booking requests. No credit card required. At the end of 30 days you'll be prompted to subscribe to keep your listing active.</div>
         </div>
 
         <div class="faq-item">
@@ -722,7 +670,7 @@
     <!-- CTA STRIP -->
     <section class="cta-strip">
       <h2>Start your 30-day free trial today.</h2>
-      <p>No credit card required. Get verified and listed in the SWFL marketplace before the founding period closes.</p>
+      <p>No credit card required. Get verified and listed in the SWFL marketplace.</p>
       <div class="cta-strip-btns">
         <a href="auth.html?role=truck" class="btn-primary">List My Truck — Free Trial</a>
         <a href="auth.html?role=organizer" class="btn-outline">Find Trucks for My Event</a>
@@ -773,10 +721,10 @@
 
     const CHECKOUT_URL = 'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-checkout-session'
 
-    async function startCheckout(plan) {
-      const billing = document.getElementById('billingToggle')?.classList.contains('on') ? 'annual' : 'monthly'
-      const btnId = plan === 'standard' ? 'std-cta' : 'pro-cta'
-      const btn = document.getElementById(btnId)
+    // TODO: Update price ID in create-checkout-session Edge Function to the new $39.99/mo Stripe product
+    // when new Stripe product is created. Current price ID was for the old founding rate plan.
+    async function startCheckout() {
+      const btn = document.getElementById('std-cta')
       const orig = btn?.textContent
       if (btn) { btn.textContent = 'Redirecting…'; btn.disabled = true }
 
@@ -790,7 +738,7 @@
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + session.access_token
           },
-          body: JSON.stringify({ plan, billing })
+          body: JSON.stringify({ plan: 'standard', billing: 'monthly' })
         })
         const body = await res.json()
         if (body.url) {
@@ -826,37 +774,28 @@
       banner.innerHTML = `
         <span style="font-family:'Sora',sans-serif;font-size:13px;color:var(--fire);">
           <strong>You're on your free trial.</strong>
-          Subscribe below to keep your listing active and lock in your founding rate before the window closes.
+          Subscribe below to keep your listing active after your trial ends.
           <a href="truck-dashboard.html" style="color:rgba(255,255,255,0.55);margin-left:14px;font-size:12px;text-decoration:underline;">Back to dashboard →</a>
         </span>`
       const page = document.querySelector('.page')
       if (page) page.prepend(banner)
 
-      // Standard CTA → checkout
+      // Truck CTA → checkout
       const stdCta = document.getElementById('std-cta')
       if (stdCta) {
-        stdCta.textContent = 'Subscribe — Founding $29/mo'
+        stdCta.textContent = 'Subscribe — $39.99/mo'
         stdCta.removeAttribute('href')
         stdCta.style.cursor = 'pointer'
-        stdCta.addEventListener('click', e => { e.preventDefault(); startCheckout('standard') })
+        stdCta.addEventListener('click', e => { e.preventDefault(); startCheckout() })
       }
 
-      // Pro CTA → checkout
-      const proCta = document.getElementById('pro-cta')
-      if (proCta) {
-        proCta.textContent = 'Subscribe — Founding $49/mo'
-        proCta.removeAttribute('href')
-        proCta.style.cursor = 'pointer'
-        proCta.addEventListener('click', e => { e.preventDefault(); startCheckout('pro') })
-      }
-
-      // CTA strip: primary → Standard checkout
+      // CTA strip: primary → checkout
       const stripPrimary = document.querySelector('.cta-strip .btn-primary')
       if (stripPrimary) {
-        stripPrimary.textContent = 'Subscribe — Lock In Founding Rate'
+        stripPrimary.textContent = 'Subscribe — $39.99/mo'
         stripPrimary.removeAttribute('href')
         stripPrimary.style.cursor = 'pointer'
-        stripPrimary.addEventListener('click', e => { e.preventDefault(); startCheckout('standard') })
+        stripPrimary.addEventListener('click', e => { e.preventDefault(); startCheckout() })
       }
       // CTA strip: outline → back to dashboard
       const stripOutline = document.querySelector('.cta-strip .btn-outline')
@@ -896,30 +835,6 @@
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');
     hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
-
-    // Billing toggle (monthly/annual)
-    const toggle = document.getElementById('billingToggle');
-    const labelMonthly = document.getElementById('toggleLabelMonthly');
-    const labelAnnual = document.getElementById('toggleLabelAnnual');
-    let isAnnual = false;
-
-    const prices = {
-      standard: { monthly: '$29', annual: '$24' },
-      pro:      { monthly: '$49', annual: '$41' },
-      sp:       { monthly: '$39', annual: '$33' }
-    };
-
-    toggle.addEventListener('click', () => {
-      isAnnual = !isAnnual;
-      toggle.classList.toggle('on', isAnnual);
-      toggle.setAttribute('aria-checked', isAnnual);
-      labelMonthly.classList.toggle('active', !isAnnual);
-      labelAnnual.classList.toggle('active', isAnnual);
-
-      document.getElementById('stdPrice').textContent = isAnnual ? prices.standard.annual : prices.standard.monthly;
-      document.getElementById('proPrice').textContent = isAnnual ? prices.pro.annual : prices.pro.monthly;
-      document.getElementById('spPrice').textContent  = isAnnual ? prices.sp.annual  : prices.sp.monthly;
-    });
 
     // FAQ accordion
     function toggleFaq(btn) {

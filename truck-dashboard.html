@@ -1168,13 +1168,9 @@ function renderSidebarMeta() {
   document.getElementById('sidebar-name').textContent =
     profile.business_name || profile.contact_name || 'My Truck'
   const badge = document.getElementById('sub-badge')
-  if (profile.is_founding_member && profile.subscription_status === 'active') {
-    badge.textContent = 'Founding Member'; badge.className = 'sub-badge sub-founding'
-  } else {
-    const m = { trialing:'Free Trial', active:'Active', past_due:'Past Due', canceled:'Canceled', cancelled:'Canceled' }
-    badge.textContent = m[profile.subscription_status] || 'Free Trial'
-    badge.className = 'sub-badge sub-' + (profile.subscription_status || 'trialing')
-  }
+  const m = { trialing:'Free Trial', active:'Active', past_due:'Past Due', canceled:'Canceled', cancelled:'Canceled' }
+  badge.textContent = m[profile.subscription_status] || 'Free Trial'
+  badge.className = 'sub-badge sub-' + (profile.subscription_status || 'trialing')
 }
 
 // ─── OVERVIEW ─────────────────────────────────────────
@@ -1204,15 +1200,9 @@ async function loadOverview() {
 
   // Subscription card
   const ovBadge = document.getElementById('ov-sub-badge')
-  if (profile.is_founding_member && profile.subscription_status === 'active') {
-    ovBadge.textContent = 'Founding Member — $29/mo locked'
-    ovBadge.className = 'sub-badge sub-founding'
-  } else {
-    const pl = { standard:'Standard Plan', pro:'Pro Plan', free:'Free Trial' }
-    const sl = { trialing:'Trial', active:'Active', past_due:'Past Due', canceled:'Canceled' }
-    ovBadge.textContent = (pl[profile.subscription_plan]||'Standard Plan') + ' — ' + (sl[profile.subscription_status]||'Trial')
-    ovBadge.className = 'sub-badge sub-' + (profile.subscription_status||'trialing')
-  }
+  const sl = { trialing:'Trial', active:'Active', past_due:'Past Due', canceled:'Canceled' }
+  ovBadge.textContent = 'Truck Operator Plan — ' + (sl[profile.subscription_status]||'Trial')
+  ovBadge.className = 'sub-badge sub-' + (profile.subscription_status||'trialing')
   if (profile.subscription_status === 'trialing' && profile.trial_ends_at) {
     const days = Math.max(0, Math.ceil((new Date(profile.trial_ends_at)-Date.now())/86400000))
     document.getElementById('ov-sub-detail').textContent = 'Trial ends in ' + days + ' day' + (days!==1?'s':'')

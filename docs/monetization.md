@@ -1,5 +1,5 @@
 # ServiceWindow — Monetization Strategy
-> Based on market research and platform architecture analysis
+> Updated 2026-05-13 — simplified pricing, founding/Pro tiers removed
 
 ---
 
@@ -8,9 +8,8 @@
 ### Revenue Streams
 | Stream | Rate | Who | Status |
 |--------|------|-----|--------|
-| Truck Standard | $29/mo (founding) / $49/mo | Food truck operators | Primary |
-| Truck Pro | $49/mo (founding) / $79/mo | Food truck operators | Primary |
-| Service Provider Listing | $39/mo | Commissaries, suppliers, repair | Secondary |
+| Truck Operator | $39.99/mo | Food truck operators | Primary |
+| Service Provider Listing | $19.99/mo | Commissaries, suppliers, repair | Secondary |
 | Property/Storage Advertising | TBD small monthly fee | Property owners who want truck visibility | Secondary |
 
 ### Free-Forever Users
@@ -18,11 +17,10 @@
 - Venues: Free forever
 - Job seekers: Free to browse
 
-### Founding Member Program
-- Rate: $29/mo locked forever (never goes to $49/mo)
-- Scarcity: Limited slots — creates urgency
-- is_founding_member = true in profiles table
-- Tracked via Stripe price ID for $29/mo plan
+### Trial Terms
+- 30-day free trial for trucks and service providers
+- No credit card required
+- Single plan per role — no tiers, no annual billing in Phase 1
 
 ---
 
@@ -31,55 +29,45 @@
 ### 1. Featured Listing Upgrades (High Priority)
 **What**: Truck profiles pay to be featured at the top of marketplace results in their city/cuisine category.
 **Price point**: $15-25/mo add-on
-**Why it works**: Trucks are already competing in Facebook comments — paying for top placement is intuitive.
+**Why it works**: Trucks already compete in Facebook comments — paying for top placement is intuitive.
 
-### 2. "Verified" Badge Tiers
-**What**: Base verification is free with subscription. "Premier Verified" includes background check partner (e.g., Checkr), deeper food handler cert review.
-**Price point**: One-time $49 setup fee
-**Why it works**: Venues and HOAs will filter for Premier Verified when stakes are high (large events, weddings).
-
-### 3. Last-Minute Slot Boost (Future)
+### 2. Last-Minute Slot Boost (Future)
 **What**: Truck pays $5-10 to push an urgent available-slot notification to all demand-side users in their service area.
 **Why it works**: Earth Day scenario — truck pays $5, gets booked for a 5-hour event worth $500+. ROI is obvious.
 **Requires**: SMS/push notification infrastructure (Phase 2).
 
-### 4. Annual Subscription Discount
-**What**: Pay annually, save 2 months.
-**Founding truck annual**: $290/yr (vs. $348 monthly) — saves $58
-**Standard truck annual**: $490/yr (vs. $588 monthly)
-**Why it works**: Reduces churn, locks in revenue, improves LTV.
-
-### 5. Sponsorship — Event Listings
+### 3. Sponsorship — Event Listings
 **What**: Large event organizers (Battle Bros, festivals) pay to promote their event at the top of the Event Calendar.
 **Price point**: $50-150 per event
 **Why it works**: Events need trucks. Promoted events get filled faster. Organizers see the ROI immediately.
 
-### 6. White-Label for HOA Management Companies
+### 4. White-Label for HOA Management Companies
 **What**: Property management companies (managing 20+ communities) get a co-branded dashboard and bulk-post capabilities.
 **Price point**: $199-399/mo per management company
-**Why it works**: Tiffany Allard is one HOA manager. There are property management companies managing 50+ communities who would pay for a professional tool.
+**Why it works**: There are property management companies managing 50+ communities who would pay for a professional tool.
 
 ---
 
-## Unit Economics (Conservative)
+## Unit Economics
 
 ### Year 1 Targets (SWFL only)
-- 50 paying truck subscriptions @ $29/mo average = $1,450/mo = $17,400/yr
-- 10 service provider listings @ $39/mo = $390/mo = $4,680/yr
+- 50 paying truck subscriptions @ $39.99/mo = $2,000/mo = $24,000/yr
+- 10 service provider listings @ $19.99/mo = $200/mo = $2,400/yr
 - 5 property advertisers @ $25/mo = $125/mo = $1,500/yr
-- **Total Year 1 ARR (conservative)**: ~$23,580
+- **Total Year 1 ARR (conservative)**: ~$27,900
 
-### Break-even estimate
-- Supabase Pro: $25/mo
+### Operating Cost Baseline
+- Supabase Pro: $25/mo (needed for photo uploads, Phase 2)
 - Resend email: ~$0-20/mo (free tier covers early volume)
 - Stripe fees: 2.9% + $0.30 per transaction
 - Cloudflare/GitHub Pages: $0
 - **Fixed costs**: ~$50-100/mo initially
-- **Break-even**: ~4 paying truck subscriptions
+- **Break-even**: ~3 paying truck subscriptions
 
-### If founding rate fills (100 trucks @ $29/mo):
-- $2,900/mo recurring = $34,800/yr from trucks alone
-- This is achievable within 6 months given SWFL market size
+### Revenue Viability at $39.99/mo
+At 20 trucks (launch target): $800/mo — covers all operating costs.
+At 50 trucks: $2,000/mo — sustainable standalone.
+At 100 trucks + 20 SPs: ~$4,400/mo — self-funding Phase 2 development.
 
 ---
 
@@ -92,7 +80,7 @@
 ---
 
 ## Pricing Psychology Notes
-- "$29/mo" anchors against "$49/mo" standard — the founding framing creates urgency without a hard deadline
 - "No credit card for trial" removes the #1 signup friction for small business operators
 - Free forever for demand side creates network effects: more requesters = more truck sign-ups
 - The scam angle is a monetization lever: trucks pay because the platform keeps scammers out (value > cost)
+- $39.99 is below the $40 psychological ceiling — intentional

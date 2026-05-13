@@ -89,14 +89,15 @@ ServiceWindow (servicewindow.app) is a verified two-sided food truck marketplace
 ---
 
 ## Pricing
-| Role | Founding Rate | Standard Rate |
-|------|--------------|---------------|
-| Food Trucks | $29/mo (locked forever) | $49/mo |
-| Food Trucks Pro | $49/mo (locked forever) | $79/mo |
-| Service Providers | $39/mo | $39/mo |
-| Event Planners | Free | Free forever |
-| Venues | Free | Free forever |
-| Property/Storage | Free browse | Small monthly fee to advertise to trucks |
+| Role | Rate |
+|------|------|
+| Food Trucks | $39.99/mo (30-day free trial, no CC required) |
+| Service Providers | $19.99/mo (30-day free trial, no CC required) |
+| Event Planners | Free forever |
+| Venues | Free forever |
+| Property/Storage | Free to browse · small monthly fee to advertise to trucks |
+
+No founding rates. No Pro plan. No annual billing. Single tier per role.
 
 30-day free trial for trucks (no credit card required).
 

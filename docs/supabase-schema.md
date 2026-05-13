@@ -202,11 +202,9 @@ Never omit `--no-verify-jwt`.
 ---
 
 ## Stripe Pricing
-- Founding Standard: $29/mo locked forever (is_founding_member = true)
-- Standard: $49/mo
-- Founding Pro: $49/mo locked forever
-- Pro: $79/mo
-- Service Provider: $39/mo
+- Food Truck Operator: $39.99/mo (single plan, no tiers)
+- Service Provider: $19.99/mo (30-day free trial included)
+- NOTE: New Stripe products must be created for these prices. Existing Edge Functions have old price IDs that need updating.
 
 ### subscription_status lifecycle (trucks)
 | Value | When set |
