@@ -79,7 +79,7 @@
     .main-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
     .section { display: none; padding: 28px 32px; max-width: 1100px; }
     .section.active { display: block; }
-    @media (max-width: 767px) { .section { padding: 20px 16px; } }
+    @media (max-width: 767px) { .section { padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); } }
 
     .section-header { margin-bottom: 24px; }
     .section-header h1 { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }

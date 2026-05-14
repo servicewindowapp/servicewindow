@@ -424,7 +424,7 @@
         z-index: 5;
       }
       .sidebar-nav { padding-bottom: 120px; }
-      .section { padding: 20px 16px; }
+      .section { padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); }
       .form-grid { grid-template-columns: 1fr; }
       .card-grid { grid-template-columns: 1fr 1fr; }
       .main-content { -webkit-overflow-scrolling: touch; }
