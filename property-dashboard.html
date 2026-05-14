@@ -753,22 +753,12 @@
         <p>Advertise your parking spots or storage directly to verified food truck operators in their dashboard.</p>
       </div>
 
-      <!-- UPGRADE CARD (shown when not subscribed) -->
-      <div id="ad-upgrade-card" style="display:none;margin-bottom:24px">
-        <div style="background:rgba(255,107,53,0.07);border:1px solid rgba(255,107,53,0.25);border-radius:12px;padding:24px 28px">
-          <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:white;margin-bottom:6px">Activate Advertiser Placement — $19/mo</div>
-          <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:18px">Your ad appears directly in the dashboard of every verified truck operator in Southwest Florida. Subscribe to go live — ad content is reviewed within 24 hours.</div>
-          <button class="btn-primary" id="btn-advertiser-upgrade" style="font-size:13px;padding:10px 22px">Subscribe — $19/mo →</button>
-          <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">You can still draft your ad below before subscribing.</div>
-        </div>
-      </div>
-
-      <!-- ACTIVE SUBSCRIPTION BANNER (shown when subscribed) -->
-      <div id="ad-active-banner" style="display:none;margin-bottom:24px">
+      <!-- FREE TIER NOTICE -->
+      <div style="margin-bottom:24px">
         <div style="background:rgba(80,200,120,0.08);border:1px solid rgba(80,200,120,0.25);border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:10px">
           <span style="color:#50c878;font-size:16px">●</span>
-          <span style="font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:#50c878">Advertiser subscription active</span>
-          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-left:4px">$19/mo · Billed monthly</span>
+          <span style="font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:#50c878">Property listing ads are free</span>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-left:4px">Your ad reaches verified operators on the Vendor Services page</span>
         </div>
       </div>
 
@@ -825,7 +815,7 @@
             <span id="ad-form-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
           </div>
           <div style="margin-top:14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);line-height:1.6">
-            ℹ After submitting, your ad will be reviewed by the ServiceWindow team (typically within 24 hours). Approved ads appear in the truck operator dashboard. The $19/mo advertising tier will be billed once the payment system is live — early submitters will be grandfathered at this rate.
+            ℹ After submitting, your ad will be reviewed by the ServiceWindow team (typically within 24 hours). Approved ads appear on the ServiceWindow Vendor Services page and in the truck operator dashboard — free of charge.
           </div>
         </form>
       </div>
@@ -1269,12 +1259,6 @@
   let existingAdId = null
 
   async function loadMyAd() {
-    // Show/hide upgrade vs active banner based on subscription status
-    const isAdvertiser = profile?.subscription_plan === 'advertiser' &&
-                         profile?.subscription_status === 'active'
-    document.getElementById('ad-upgrade-card').style.display = isAdvertiser ? 'none'  : 'block'
-    document.getElementById('ad-active-banner').style.display = isAdvertiser ? 'block' : 'none'
-
     const { data } = await supabase
       .from('ads')
       .select('id, headline, body, cta_label, cta_url, contact_phone, contact_email, status, admin_notes')
@@ -1319,26 +1303,6 @@
     document.getElementById('ad-submit-btn').textContent = 'Save Changes'
     document.getElementById('ad-cancel-btn').style.display = 'inline-flex'
   }
-
-  document.getElementById('btn-advertiser-upgrade')?.addEventListener('click', async () => {
-    const btn = document.getElementById('btn-advertiser-upgrade')
-    btn.disabled = true; btn.textContent = 'Redirecting…'
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const res = await fetch(
-        'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/advertiser-checkout',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token },
-        }
-      )
-      const body = await res.json()
-      if (body.url) { window.location.href = body.url }
-      else { showToast('Unable to start checkout — try again', true); btn.disabled = false; btn.textContent = 'Subscribe — $19/mo →' }
-    } catch (e) {
-      showToast('Error starting checkout', true); btn.disabled = false; btn.textContent = 'Subscribe — $19/mo →'
-    }
-  })
 
   document.getElementById('btn-edit-ad')?.addEventListener('click', () => {
     document.getElementById('ad-form-card').style.display = 'block'

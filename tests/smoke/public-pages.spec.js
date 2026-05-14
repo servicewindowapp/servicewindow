@@ -29,6 +29,7 @@ const PUBLIC_PAGES = [
   { path: '/privacy.html',     label: 'Privacy policy' },
   { path: '/terms.html',       label: 'Terms of service' },
   { path: '/truck-profile.html', label: 'Truck profile (no id)' },
+  { path: '/vendor-services.html', label: 'Vendor services directory' },
 ];
 
 for (const { path, label } of PUBLIC_PAGES) {
