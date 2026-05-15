@@ -543,7 +543,13 @@
               <span class="role-icon">🔧</span>
               <div class="role-name">Service Provider</div>
               <div class="role-desc">Commissaries, suppliers, repair — list your services</div>
-              <div class="role-badge paid">30-day free trial · $19/mo</div>
+              <div class="role-badge free">Free forever</div>
+            </div>
+            <div class="role-card role-card-wide" data-role="job_seeker" onclick="selectRole(this)">
+              <span class="role-icon">💼</span>
+              <div class="role-name">Job Seeker</div>
+              <div class="role-desc">Browse food truck industry jobs and apply to verified SWFL operators hiring now</div>
+              <div class="role-badge free">Free forever</div>
             </div>
           </div>
 
@@ -575,7 +581,7 @@
           <div class="form-error" id="signupError"></div>
 
           <div class="form-group">
-            <label class="form-label">Business / Operation Name</label>
+            <label class="form-label" id="businessNameLabel">Business / Operation Name</label>
             <input type="text" class="form-input" id="businessName" placeholder="e.g. Fork In the Road" autocomplete="organization">
           </div>
 
@@ -688,12 +694,12 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Website or Facebook Page (optional)</label>
+            <label class="form-label">Website, LinkedIn, or Facebook (optional)</label>
             <input type="url" class="form-input" id="verifyWebsite" placeholder="https://..." autocomplete="url">
           </div>
 
           <div class="form-group">
-            <label class="form-label">Tell us a bit about your operation</label>
+            <label class="form-label" id="verifyBioLabel">Tell us a bit about your operation</label>
             <textarea class="form-input" id="verifyBio" rows="4" style="min-height:100px;resize:vertical" placeholder="What do you do? Where are you located? What events or venues are you looking for?"></textarea>
           </div>
 
@@ -817,9 +823,22 @@
       selectedRole = card.dataset.role
       document.getElementById('step1Next').disabled = false
 
-      // Show cuisine field for trucks
+      // Show cuisine field for trucks only
       document.getElementById('cuisineGroup').style.display = selectedRole === 'truck' ? 'block' : 'none'
       document.getElementById('trialNotice').style.display = selectedRole === 'truck' ? 'flex' : 'none'
+
+      // Relabel business name field for job seekers
+      const labelEl = document.getElementById('businessNameLabel')
+      const businessInput = document.getElementById('businessName')
+      if (selectedRole === 'job_seeker') {
+        labelEl.textContent = 'Your Full Name'
+        businessInput.placeholder = 'e.g. John Smith'
+        businessInput.setAttribute('autocomplete', 'name')
+      } else {
+        labelEl.textContent = 'Business / Operation Name'
+        businessInput.placeholder = 'e.g. Fork In the Road'
+        businessInput.setAttribute('autocomplete', 'organization')
+      }
 
       // Update step 2 copy
       const titles = {
@@ -827,7 +846,8 @@
         organizer: { title: 'Create your requester account.', sub: 'Free forever. Post events and book verified trucks across SWFL.' },
         venue: { title: 'Tell us about your venue.', sub: 'List your space and start attracting recurring food truck partnerships.' },
         property: { title: 'Create your property account.', sub: 'List parking spots or commissary storage for SWFL truck operators.' },
-        service_provider: { title: 'List your business on ServiceWindow.', sub: 'Get visible to verified SWFL food truck operators looking for your services.' }
+        service_provider: { title: 'List your business on ServiceWindow.', sub: 'Get visible to verified SWFL food truck operators looking for your services.' },
+        job_seeker: { title: 'Create your job seeker profile.', sub: 'Free forever. Browse live job listings and apply directly to verified SWFL operators.' }
       }
       if (titles[selectedRole]) {
         document.getElementById('step2Title').textContent = titles[selectedRole].title
@@ -846,6 +866,14 @@
       if (!selectedRole) return
       document.getElementById('step1').classList.remove('active')
       document.getElementById('step2').classList.add('active')
+      // Update step 3 bio label/placeholder for job seekers
+      if (selectedRole === 'job_seeker') {
+        document.getElementById('verifyBioLabel').textContent = 'Tell us about yourself'
+        document.getElementById('verifyBio').placeholder = 'What roles are you looking for? Any relevant experience? What cities in SWFL are you available in?'
+      } else {
+        document.getElementById('verifyBioLabel').textContent = 'Tell us a bit about your operation'
+        document.getElementById('verifyBio').placeholder = 'What do you do? Where are you located? What events or venues are you looking for?'
+      }
     }
 
     window.goToStep1 = function() {
@@ -899,8 +927,12 @@
       const bio = document.getElementById('verifyBio').value.trim()
       const website = document.getElementById('verifyWebsite').value.trim() || null
 
+      // For job seekers the "business name" field is their full name;
+      // fall back to firstName + lastName if somehow blank
+      const resolvedName = businessName || `${firstName} ${lastName}`.trim()
+
       // Guard: form fields must still be present (page wasn't refreshed mid-flow)
-      if (!email || !password || !businessName) {
+      if (!resolvedName || !email || !password) {
         showError(errEl, 'Something went wrong. Please start over.')
         return
       }
@@ -938,7 +970,7 @@
       const { error: profileError } = await supabase.from('profiles').upsert({
         id: userId,
         role: selectedRole,
-        business_name: businessName,
+        business_name: resolvedName,
         contact_name: `${firstName} ${lastName}`.trim(),
         email,
         phone,
