@@ -918,6 +918,13 @@
                 <label for="p-veteran">Veteran Owned</label>
               </div>
             </div>
+            <div class="field-group">
+              <div class="checkbox-row">
+                <input type="checkbox" id="p-standby">
+                <label for="p-standby">Available for Emergency Coverage</label>
+              </div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:4px;padding-left:24px">Planners can find you for same-day cancellation replacements</div>
+            </div>
           </div>
           <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
             <button type="submit" class="btn-primary">Save Profile</button>
@@ -1745,6 +1752,7 @@ function populateProfileForm() {
   if (p.bio)                 document.getElementById('p-bio').value      = p.bio
   if (p.is_fundraiser_friendly) document.getElementById('p-fundraiser').checked = true
   if (p.is_veteran_owned)       document.getElementById('p-veteran').checked    = true
+  document.getElementById('p-standby').checked = !!p.is_standby
 }
 
 document.getElementById('profile-form').addEventListener('submit', async (e) => {
@@ -1762,6 +1770,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     bio:                    document.getElementById('p-bio').value.trim()||null,
     is_fundraiser_friendly: document.getElementById('p-fundraiser').checked,
     is_veteran_owned:       document.getElementById('p-veteran').checked,
+    is_standby:             document.getElementById('p-standby').checked,
     updated_at:             new Date().toISOString()
   }
   const { error } = await supabase.from('profiles').update(updates).eq('id', userId)
