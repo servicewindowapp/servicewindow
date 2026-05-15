@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWFL Food Truck Industry Report 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --fire: #FF6B35;
+    --fire-dim: #cc5227;
+    --fire-glow: rgba(255,107,53,0.15);
+    --navy: #0D1B2A;
+    --navy-mid: #12263b;
+    --navy-light: #1a3350;
+    --navy-card: #162032;
+    --smoke: #F5F0EB;
+    --charcoal: #2C3E50;
+    --white: #ffffff;
+    --muted: rgba(255,255,255,0.55);
+    --border: rgba(255,255,255,0.08);
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── STICKY NAV ─── */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,27,42,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .site-nav::-webkit-scrollbar { display: none; }
+
+  .nav-brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fire);
+    white-space: nowrap;
+    padding: 16px 24px 16px 0;
+    margin-right: 8px;
+    border-right: 1px solid var(--border);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+    letter-spacing: 0.03em;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: var(--white);
+    border-bottom-color: var(--fire);
+  }
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    background: linear-gradient(135deg, #0a1520 0%, #0D1B2A 50%, #0f2035 100%);
+    padding: 80px 24px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,107,53,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--fire-glow);
+    border: 1px solid rgba(255,107,53,0.4);
+    color: var(--fire);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 span { color: var(--fire); }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 48px;
+    font-weight: 300;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .hero-meta-item strong { color: var(--white); }
+
+  /* ─── STAT STRIP ─── */
+  .stat-strip {
+    background: var(--navy-card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    divide-x: 1px solid var(--border);
+  }
+  @media (max-width: 900px) {
+    .stat-strip { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 500px) {
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .stat-item {
+    padding: 28px 20px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .stat-item:last-child { border-right: none; }
+
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--fire);
+    letter-spacing: -0.03em;
+    font-family: 'DM Mono', monospace;
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .stat-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 72px 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  section + section {
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--fire);
+    margin-bottom: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section-title {
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    line-height: 1.15;
+  }
+
+  .section-desc {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 700px;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+
+  /* ─── GRID LAYOUTS ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 1100px) {
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: rgba(255,107,53,0.25);
+    transform: translateY(-2px);
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ─── CHART CONTAINERS ─── */
+  .chart-wrap {
+    position: relative;
+    height: 300px;
+  }
+  .chart-wrap-tall {
+    position: relative;
+    height: 380px;
+  }
+  .chart-wrap-short {
+    position: relative;
+    height: 220px;
+  }
+
+  /* ─── LEADERBOARD ─── */
+  .lb-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .lb-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+  }
+  .lb-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  .lb-table tr:last-child td { border-bottom: none; }
+  .lb-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .lb-rank {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    width: 32px;
+    text-align: center;
+  }
+  .lb-rank.top { color: var(--fire); font-weight: 700; }
+
+  .lb-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+  .lb-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .lb-bar {
+    height: 100%;
+    border-radius: 100px;
+    background: var(--fire);
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .lb-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--white);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .tag-fire { background: rgba(255,107,53,0.15); color: var(--fire); }
+  .tag-green { background: rgba(34,197,94,0.12); color: var(--green); }
+  .tag-amber { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .tag-red { background: rgba(239,68,68,0.12); color: var(--red); }
+  .tag-blue { background: rgba(59,130,246,0.12); color: var(--blue); }
+  .tag-purple { background: rgba(139,92,246,0.12); color: var(--purple); }
+  .tag-muted { background: rgba(255,255,255,0.06); color: var(--muted); }
+
+  /* ─── PAIN POINTS ─── */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+  }
+  .pain-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pain-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .pain-card.fire::before { background: var(--fire); }
+  .pain-card.red::before { background: var(--red); }
+  .pain-card.amber::before { background: var(--amber); }
+  .pain-card.green::before { background: var(--green); }
+  .pain-card.blue::before { background: var(--blue); }
+
+  .pain-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+  .pain-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .pain-stat {
+    font-family: 'DM Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--fire);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .pain-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .pain-evidence {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ─── EVENTS TIMELINE ─── */
+  .event-list { display: flex; flex-direction: column; gap: 2px; }
+  .event-item {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .event-item:hover { border-color: rgba(255,107,53,0.3); }
+  .event-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--fire);
+    font-weight: 500;
+  }
+  .event-name { font-size: 14px; font-weight: 600; }
+  .event-loc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  @media (max-width: 600px) {
+    .event-item { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ─── GAP ANALYSIS ─── */
+  .gap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+  .gap-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .gap-cuisine { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .gap-demand {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+  .gap-ratio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .gap-supply { color: var(--green); font-weight: 700; }
+  .gap-vs { color: var(--muted); }
+  .gap-req { color: var(--red); font-weight: 700; }
+
+  /* ─── COMPETITOR TABLE ─── */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .comp-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 16px;
+    text-align: left;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+  }
+  .comp-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .comp-name { font-weight: 700; }
+  .comp-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ─── INSIGHT CALLOUT ─── */
+  .insight {
+    background: var(--fire-glow);
+    border: 1px solid rgba(255,107,53,0.25);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 32px 0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .insight-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .insight-text { font-size: 14px; color: var(--smoke); line-height: 1.6; }
+  .insight-text strong { color: var(--fire); }
+
+  /* ─── MAP VISUAL ─── */
+  .county-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 700px) {
+    .county-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .county-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .county-card:hover {
+    border-color: rgba(255,107,53,0.4);
+    background: var(--navy-light);
+    transform: scale(1.03);
+  }
+  .county-name { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .county-trucks { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 700; color: var(--fire); margin-bottom: 4px; }
+  .county-venues { font-size: 11px; color: var(--muted); }
+  .county-bar {
+    width: 100%; height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .county-bar-fill {
+    height: 100%;
+    background: var(--fire);
+    border-radius: 100px;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,107,53,0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--fire); }
+
+  /* ─── FOOTER ─── */
+  .site-footer {
+    background: var(--navy-card);
+    border-top: 1px solid var(--border);
+    padding: 48px 24px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--fire);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .footer-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  .footer-cta {
+    display: inline-block;
+    background: var(--fire);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 32px;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .footer-cta:hover { background: #e55a22; transform: scale(1.04); }
+  .footer-fine {
+    margin-top: 32px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ─── FULL-WIDTH wrapper ─── */
+  .full-bleed {
+    background: var(--navy-mid);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ─── TOOLTIP ─── */
+  .tooltip-trigger { cursor: help; border-bottom: 1px dashed rgba(255,107,53,0.4); }
+
+  /* ─── ANIMATED ENTRY ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ─── PULSE DOT ─── */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.4); }
+  }
+  .pulse-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ─── PROGRESS BARS ─── */
+  .progress-list { display: flex; flex-direction: column; gap: 14px; }
+  .progress-item { display: flex; flex-direction: column; gap: 6px; }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .progress-name { font-weight: 600; }
+  .progress-value { font-family: 'DM Mono', monospace; color: var(--muted); font-size: 11px; }
+  .progress-track {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* metric kpi row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .kpi-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .kpi-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--fire); font-family: 'DM Mono', monospace; line-height: 1; margin-bottom: 4px; }
+  .kpi-note { font-size: 11px; color: var(--muted); }
+
+  /* highlight box */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(255,107,53,0.08), rgba(255,107,53,0.03));
+    border: 1px solid rgba(255,107,53,0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .highlight-box p { font-size: 14px; color: var(--smoke); line-height: 1.7; }
+  .highlight-box strong { color: var(--fire); }
+
+  /* incident list */
+  .incident-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .incident {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .incident-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--fire);
+    background: var(--fire-glow);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .incident-text { line-height: 1.5; }
+  .incident-text em { color: var(--muted); font-size: 12px; font-style: normal; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-brand">SW Report '26</div>
+  <a href="#overview" class="nav-link"><span class="nav-dot" style="background:#FF6B35"></span>Overview</a>
+  <a href="#geography" class="nav-link"><span class="nav-dot" style="background:#3b82f6"></span>Geography</a>
+  <a href="#supply-demand" class="nav-link"><span class="nav-dot" style="background:#22c55e"></span>Supply vs Demand</a>
+  <a href="#cuisine" class="nav-link"><span class="nav-dot" style="background:#f59e0b"></span>Cuisine Gaps</a>
+  <a href="#engagement" class="nav-link"><span class="nav-dot" style="background:#8b5cf6"></span>Top Posts</a>
+  <a href="#venues" class="nav-link"><span class="nav-dot" style="background:#22c55e"></span>Venues</a>
+  <a href="#pain-points" class="nav-link"><span class="nav-dot" style="background:#ef4444"></span>Pain Points</a>
+  <a href="#events" class="nav-link"><span class="nav-dot" style="background:#3b82f6"></span>Events</a>
+  <a href="#competitors" class="nav-link"><span class="nav-dot" style="background:#8b5cf6"></span>Competition</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="overview">
+  <div class="hero-badge">⚡ Live Market Research — SWFL 2026</div>
+  <h1>SWFL Food Truck<br><span>Industry Report</span></h1>
+  <p class="hero-sub">Real data from 23 days of daily Facebook group scrapes across 5 SWFL groups. 109 trucks. 42 venues. 32 bookers. What's actually happening in this market.</p>
+  <div class="hero-meta">
+    <span class="hero-meta-item"><strong>Source:</strong> SWFL Food Truck Depot + 4 other groups</span>
+    <span class="hero-meta-item"><strong>Period:</strong> Mar 29 – May 9, 2026</span>
+    <span class="hero-meta-item"><strong>Records:</strong> 240 unique entities</span>
+    <span class="hero-meta-item"><strong>Region:</strong> 21 cities, 5 counties</span>
+  </div>
+</div>
+
+<!-- STAT STRIP -->
+<div class="stat-strip">
+  <div class="stat-item">
+    <span class="stat-number counter" data-target="109">0</span>
+    <div class="stat-label">Food Trucks</div>
+    <div class="stat-sub">5 FB groups, 23 days</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number counter" data-target="42">0</span>
+    <div class="stat-label">Active Venues</div>
+    <div class="stat-sub">HOAs, breweries, hospitals</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number counter" data-target="32">0</span>
+    <div class="stat-label">Active Bookers</div>
+    <div class="stat-sub">Open booking requests</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number counter" data-target="21">0</span>
+    <div class="stat-label">Recurring Events</div>
+    <div class="stat-sub">Weekly + monthly anchors</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number counter" data-target="183">0</span>
+    <div class="stat-label">Google Leads</div>
+    <div class="stat-sub">HOAs, clubs, venues</div>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number counter" data-target="34800">0</span>
+    <div class="stat-label">Group Members</div>
+    <div class="stat-sub">SWFL Food Truck Depot</div>
+  </div>
+</div>
+
+<!-- GEOGRAPHY -->
+<div class="full-bleed" id="geography">
+<section>
+  <div class="section-label">Geographic Analysis</div>
+  <h2 class="section-title">Where the trucks are — and where the gaps are</h2>
+  <p class="section-desc">109 trucks tracked across SWFL. Fort Myers leads supply by a wide margin, but demand signal data tells a different story — especially in Naples.</p>
+
+  <div class="county-grid" style="margin-bottom:48px;">
+    <div class="county-card">
+      <div class="county-name">Lee County</div>
+      <div class="county-trucks">37</div>
+      <div class="county-venues">14 venues • 12 bookers</div>
+      <div class="county-bar"><div class="county-bar-fill" style="width:100%"></div></div>
+    </div>
+    <div class="county-card">
+      <div class="county-name">Charlotte Co.</div>
+      <div class="county-trucks">16</div>
+      <div class="county-venues">8 venues • 6 bookers</div>
+      <div class="county-bar"><div class="county-bar-fill" style="width:43%"></div></div>
+    </div>
+    <div class="county-card">
+      <div class="county-name">Collier County</div>
+      <div class="county-trucks">8</div>
+      <div class="county-venues">9 venues • 7 bookers</div>
+      <div class="county-bar"><div class="county-bar-fill" style="width:22%"></div></div>
+    </div>
+    <div class="county-card">
+      <div class="county-name">Sarasota Co.</div>
+      <div class="county-trucks">7</div>
+      <div class="county-venues">4 venues • 2 bookers</div>
+      <div class="county-bar"><div class="county-bar-fill" style="width:19%"></div></div>
+    </div>
+    <div class="county-card">
+      <div class="county-name">Hendry Co.</div>
+      <div class="county-trucks">2</div>
+      <div class="county-venues">1 venue • 1 booker</div>
+      <div class="county-bar"><div class="county-bar-fill" style="width:5%"></div></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="align-items:start;">
+    <div class="card fade-in">
+      <div class="card-title">Trucks by City</div>
+      <div class="chart-wrap-tall">
+        <canvas id="cityChart"></canvas>
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">Demand Signals by City (post reactions + comments)</div>
+      <div class="chart-wrap-tall">
+        <canvas id="demandChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:32px;">
+    <div class="insight-icon">🔥</div>
+    <div class="insight-text"><strong>Naples is the biggest gap in the market.</strong> Only 4 trucks tagged Naples in our database, yet Naples venues generated the highest individual engagement: Lago Apartments (515 reactions), The Pearl Founders Square (recurring Fridays), Brookside Beer Market (open every Sat/Sun, scam warning posted), Conservancy Earth Day (2,000 attendees, 1 slot open). Naples-area truck outreach should be Tier 1 priority.</div>
+  </div>
+</section>
+</div>
+
+<!-- SUPPLY VS DEMAND -->
+<section id="supply-demand">
+  <div class="section-label">Supply vs. Demand Analysis</div>
+  <h2 class="section-title">Where the real opportunities are hiding</h2>
+  <p class="section-desc">Supply = verified trucks. Demand = documented booking requests, venue posts, and engagement signals per city. The bigger the gap, the bigger the opportunity for trucks.</p>
+
+  <div class="card fade-in" style="margin-bottom:32px;">
+    <div class="card-title">Supply vs. Demand Ratio by City (indexed to 100)</div>
+    <div class="chart-wrap-tall">
+      <canvas id="supplyDemandChart"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card fade-in" style="border-color:rgba(239,68,68,0.3);">
+      <div class="tag tag-red" style="margin-bottom:12px;">Undersupplied</div>
+      <h3 style="font-size:18px;margin-bottom:12px;">Naples / Collier</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">4 trucks. 9 active venues. Demand density far exceeds supply. Highest-value open market in SWFL right now.</p>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Key open venues</div>
+        <div style="font-size:12px;line-height:1.8;">• Brookside Beer Market (Sat+Sun open)<br>• The Pearl Founders Square (Fridays)<br>• Lago Apartments (320 units)<br>• Conservancy of SW FL (2,000 attendees)</div>
+      </div>
+    </div>
+    <div class="card fade-in" style="border-color:rgba(245,158,11,0.3);">
+      <div class="tag tag-amber" style="margin-bottom:12px;">Growing Fast</div>
+      <h3 style="font-size:18px;margin-bottom:12px;">Punta Gorda / Charlotte</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">6 tracked trucks, 8 active venues. Babcock Ranch, TacoFest, BSMCC, Battle Bros Events — a cluster building momentum.</p>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Key venues</div>
+        <div style="font-size:12px;line-height:1.8;">• Babcock Ranch (Wed + Fri + Sat slots)<br>• BSMCC (Thu regular rotation)<br>• Best of the Best (new weekly event)<br>• Peace River Campground (Sat/Sun)</div>
+      </div>
+    </div>
+    <div class="card fade-in" style="border-color:rgba(34,197,94,0.3);">
+      <div class="tag tag-green" style="margin-bottom:12px;">Most Active</div>
+      <h3 style="font-size:18px;margin-bottom:12px;">Fort Myers / Lee</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;">11 trucks, 14+ venues. The most active market in the region — breweries, hospitals, HOAs, corporate campuses all operating.</p>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Key venues</div>
+        <div style="font-size:12px;line-height:1.8;">• Millennial Brewing (recurring + emergencies)<br>• Coastal Dayz Brewery (Sat 1–7pm)<br>• Lee Memorial Hospital (Thu rotation)<br>• Somerset (950+ homes, summer open)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CUISINE GAPS -->
+<div class="full-bleed" id="cuisine">
+<section>
+  <div class="section-label">Cuisine Gap Analysis</div>
+  <h2 class="section-title">What the market wants vs. what's available</h2>
+  <p class="section-desc">Cross-referencing documented cuisine types against explicit demand requests. If your truck serves one of the undersupplied categories, there are open slots waiting for you right now.</p>
+
+  <div class="grid-2" style="margin-bottom:40px;align-items:start;">
+    <div class="card fade-in">
+      <div class="card-title">Cuisine Supply Breakdown (documented trucks)</div>
+      <div class="chart-wrap">
+        <canvas id="cuisineChart"></canvas>
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">Supply vs. Demand by Cuisine Type</div>
+      <div class="chart-wrap">
+        <canvas id="cuisineGapChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap-grid">
+    <div class="gap-card" style="border-color:rgba(239,68,68,0.3);">
+      <div class="tag tag-red" style="margin-bottom:8px;">Critical Gap</div>
+      <div class="gap-cuisine">🥞 Breakfast / Brunch</div>
+      <div class="gap-demand">4+ documented requests</div>
+      <div class="gap-ratio">
+        <span class="gap-supply">2 trucks</span>
+        <span class="gap-vs">vs</span>
+        <span class="gap-req">4+ requests</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">LLSN (Thursdays), Murano (April+May), Coral Lakes (Easter), LLSN Events</div>
+    </div>
+    <div class="gap-card" style="border-color:rgba(239,68,68,0.3);">
+      <div class="tag tag-red" style="margin-bottom:8px;">Critical Gap</div>
+      <div class="gap-cuisine">🥐 Crepes</div>
+      <div class="gap-demand">1 specific request</div>
+      <div class="gap-ratio">
+        <span class="gap-supply">0 trucks</span>
+        <span class="gap-vs">vs</span>
+        <span class="gap-req">1 request</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">Jennifer Rena Bennett posted specifically. Zero crepe trucks in 109-record database.</div>
+    </div>
+    <div class="gap-card" style="border-color:rgba(245,158,11,0.3);">
+      <div class="tag tag-amber" style="margin-bottom:8px;">Undersupplied</div>
+      <div class="gap-cuisine">🍋 Lemonade / Dirty Soda</div>
+      <div class="gap-demand">3+ requests</div>
+      <div class="gap-ratio">
+        <span class="gap-supply">2 pop-ups</span>
+        <span class="gap-vs">vs</span>
+        <span class="gap-req">3+ requests</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">Hannah Manning (Port Charlotte craft fair), multiple summer event requests. Seasonal spike in demand.</div>
+    </div>
+    <div class="gap-card" style="border-color:rgba(245,158,11,0.3);">
+      <div class="tag tag-amber" style="margin-bottom:8px;">Undersupplied</div>
+      <div class="gap-cuisine">☕ Coffee / Espresso</div>
+      <div class="gap-demand">2+ requests</div>
+      <div class="gap-ratio">
+        <span class="gap-supply">2 trucks</span>
+        <span class="gap-vs">vs</span>
+        <span class="gap-req">2+ requests</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">Fabi Ximena seeking breakfast/coffee truck for Ft Myers community June + July. Monthly recurring.</div>
+    </div>
+    <div class="gap-card" style="border-color:rgba(34,197,94,0.2);">
+      <div class="tag tag-green" style="margin-bottom:8px;">Well Supplied</div>
+      <div class="gap-cuisine">🍦 Ice Cream / Desserts</div>
+      <div class="gap-demand">Multiple venues</div>
+      <div class="gap-ratio">
+        <span class="gap-supply">5+ trucks</span>
+        <span class="gap-vs">vs</span>
+        <span class="gap-req">steady demand</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">Ice Cream Emergency, Sweeter Society, Papa D's Cheesecake, Lil Stack Shack. Competitive but consistent.</div>
+    </div>
+    <div class="gap-card" style="border-color:rgba(34,197,94,0.2);">
+      <div class="tag tag-green" style="margin-bottom:8px;">Well Supplied</div>
+      <div class="gap-cuisine">🍖 BBQ / Smoked Meats</div>
+      <div class="gap-demand">Multiple venues</div>
+      <div class="gap-ratio">
+        <span class="gap-supply">4+ trucks</span>
+        <span class="gap-vs">vs</span>
+        <span class="gap-req">steady demand</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">Freshly Prepped, Top Notch Smokehouse, Da Grub Box, Beach-Bum Johnnie. Bar 17 seeking burger/BBQ right now.</div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:32px;">
+    <div class="insight-icon">📊</div>
+    <div class="insight-text">Of 109 trucks in the database, <strong>21 (19%) have no cuisine listed at all</strong> — a data quality gap that makes discovery nearly impossible for venues. If your truck doesn't have a clear cuisine category visible on social media, you're invisible to event planners browsing the groups.</div>
+  </div>
+</section>
+</div>
+
+<!-- TOP ENGAGEMENT POSTS -->
+<section id="engagement">
+  <div class="section-label">Engagement Intelligence</div>
+  <h2 class="section-title">The posts that broke through the noise</h2>
+  <p class="section-desc">Booking posts ranked by total engagement (reactions + comments). These are real posts from the Facebook groups — the numbers show which segments have the highest demand signal.</p>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Highest Single Post Reactions</div>
+      <div class="kpi-value">629</div>
+      <div class="kpi-note">Millennium Fort Myers (3rd Thu monthly)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Highest Comment Count</div>
+      <div class="kpi-value">91</div>
+      <div class="kpi-note">Nicole Evans biweekly lunch program</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Fastest Truck Responses</div>
+      <div class="kpi-value">18+</div>
+      <div class="kpi-note">Grand Palm Venice — in 4 hours</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Comments per HOA Post</div>
+      <div class="kpi-value">29</div>
+      <div class="kpi-note">vs. 8 avg for brewery posts</div>
+    </div>
+  </div>
+
+  <div class="card fade-in" style="overflow-x:auto;margin-bottom:32px;">
+    <div class="card-title">Top Booking Posts — Ranked by Engagement</div>
+    <table class="lb-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Post / Venue</th>
+          <th>Type</th>
+          <th>City</th>
+          <th style="width:200px;">Engagement</th>
+          <th>Signal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="lb-rank top">1</td>
+          <td>
+            <div style="font-weight:700;">The Millennium Fort Myers</div>
+            <div style="font-size:11px;color:var(--muted);">Genesys Nichols — 3rd Thursday monthly slot, 296 units</div>
+          </td>
+          <td><span class="tag tag-blue">HOA/Apt</span></td>
+          <td style="font-size:12px;color:var(--muted);">Fort Myers</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:100%"></div></div>
+              <span class="lb-num">629 rxn</span>
+            </div>
+          </td>
+          <td><span class="tag tag-fire">🔥 Recurring</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank top">2</td>
+          <td>
+            <div style="font-weight:700;">Lago Apartments</div>
+            <div style="font-size:11px;color:var(--muted);">Henry F. Amen — 320 units, evening slot, Da Grub Box responded in 2h</div>
+          </td>
+          <td><span class="tag tag-blue">HOA/Apt</span></td>
+          <td style="font-size:12px;color:var(--muted);">Naples</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:82%"></div></div>
+              <span class="lb-num">515 rxn</span>
+            </div>
+          </td>
+          <td><span class="tag tag-fire">🔥 High urgency</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank top">3</td>
+          <td>
+            <div style="font-weight:700;">Nicole Evans — Biweekly Lunch Program</div>
+            <div style="font-size:11px;color:var(--muted);">50–75 employees, near PG Airport, every other Thursday 10am–2pm</div>
+          </td>
+          <td><span class="tag tag-amber">Corporate</span></td>
+          <td style="font-size:12px;color:var(--muted);">Punta Gorda</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:68%"></div></div>
+              <span class="lb-num">91 cmt</span>
+            </div>
+          </td>
+          <td><span class="tag tag-green">Recurring contract</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank top">4</td>
+          <td>
+            <div style="font-weight:700;">Coral Lakes Association — 2nd Saturdays</div>
+            <div style="font-size:11px;color:var(--muted);">Tiffany Allard, 700+ homes, 1 food + 1 dessert truck, rest of year</div>
+          </td>
+          <td><span class="tag tag-blue">HOA</span></td>
+          <td style="font-size:12px;color:var(--muted);">Cape Coral</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:42%"></div></div>
+              <span class="lb-num">44 cmt</span>
+            </div>
+          </td>
+          <td><span class="tag tag-green">Monthly recurring</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank">5</td>
+          <td>
+            <div style="font-weight:700;">Grand Palm Venice</div>
+            <div style="font-size:11px;color:var(--muted);">Romiah Rosario, 1,730 homes, Tue+Sat slots May/Jun/Jul</div>
+          </td>
+          <td><span class="tag tag-blue">HOA</span></td>
+          <td style="font-size:12px;color:var(--muted);">Venice</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:35%"></div></div>
+              <span class="lb-num">18+ resp</span>
+            </div>
+          </td>
+          <td><span class="tag tag-fire">🔥 4hrs to fill</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank">6</td>
+          <td>
+            <div style="font-weight:700;">Maggie Bettis — First Christian Church CC</div>
+            <div style="font-size:11px;color:var(--muted);">Two events: Easter (10,000+ eggs) + April 19. Repeat venue.</div>
+          </td>
+          <td><span class="tag tag-purple">Church/Org</span></td>
+          <td style="font-size:12px;color:var(--muted);">Cape Coral</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:26%"></div></div>
+              <span class="lb-num">27 cmt</span>
+            </div>
+          </td>
+          <td><span class="tag tag-amber">Repeat booker</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank">7</td>
+          <td>
+            <div style="font-weight:700;">Sallie Jones Elementary School</div>
+            <div style="font-size:11px;color:var(--muted);">Amanda McGarry Clyatt, April 24, 10:30am–1:30pm, Punta Gorda</div>
+          </td>
+          <td><span class="tag tag-muted">School</span></td>
+          <td style="font-size:12px;color:var(--muted);">Punta Gorda</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:22%"></div></div>
+              <span class="lb-num">23 cmt</span>
+            </div>
+          </td>
+          <td><span class="tag tag-blue">One-time event</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank">8</td>
+          <td>
+            <div style="font-weight:700;">Kevin Rueda — Murano at Three Oaks</div>
+            <div style="font-size:11px;color:var(--muted);">318 units, Tue–Sat dinner+weekend, breakfast specifically requested April+May</div>
+          </td>
+          <td><span class="tag tag-blue">HOA/Apt</span></td>
+          <td style="font-size:12px;color:var(--muted);">Fort Myers</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:20%"></div></div>
+              <span class="lb-num">21 cmt</span>
+            </div>
+          </td>
+          <td><span class="tag tag-green">Active now</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank">9</td>
+          <td>
+            <div style="font-weight:700;">Fabi Ximena — Ft Myers Community</div>
+            <div style="font-size:11px;color:var(--muted);">Breakfast/coffee truck, 2nd Saturday June + July. Explicitly recurring monthly.</div>
+          </td>
+          <td><span class="tag tag-blue">HOA</span></td>
+          <td style="font-size:12px;color:var(--muted);">Fort Myers</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:17%"></div></div>
+              <span class="lb-num">18 cmt</span>
+            </div>
+          </td>
+          <td><span class="tag tag-fire">🔥 Breakfast gap</span></td>
+        </tr>
+        <tr>
+          <td class="lb-rank">10</td>
+          <td>
+            <div style="font-weight:700;">Horseshoe Tavern Wedding — Bokeelia</div>
+            <div style="font-size:11px;color:var(--muted);">May 1 wedding, Pine Island area. Coordinated entirely via Facebook comments.</div>
+          </td>
+          <td><span class="tag tag-purple">Private Event</span></td>
+          <td style="font-size:12px;color:var(--muted);">Bokeelia</td>
+          <td>
+            <div class="lb-bar-wrap">
+              <div class="lb-bar-bg"><div class="lb-bar" style="width:16%"></div></div>
+              <span class="lb-num">17 cmt</span>
+            </div>
+          </td>
+          <td><span class="tag tag-amber">Via FB DMs only</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight">
+    <div class="insight-icon">💡</div>
+    <div class="insight-text"><strong>HOA posts get 3.6x more comments than brewery posts on average.</strong> The residential community segment (HOAs, apartment complexes) generates the most competitive booking activity in the groups. These are also the highest-LTV accounts — they book monthly, not just once.</div>
+  </div>
+</section>
+
+<!-- VENUES -->
+<div class="full-bleed" id="venues">
+<section>
+  <div class="section-label">Venue Landscape</div>
+  <h2 class="section-title">42 active venues — who's booking and how often</h2>
+  <p class="section-desc">Venue breakdown by type, booking cadence, and recurrence pattern. The most valuable venues book weekly or monthly and barely ever post publicly because they already have relationships.</p>
+
+  <div class="grid-2" style="align-items:start;">
+    <div class="card fade-in">
+      <div class="card-title">Venue Type Distribution</div>
+      <div class="chart-wrap">
+        <canvas id="venueTypeChart"></canvas>
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">Booking Cadence Breakdown</div>
+      <div class="chart-wrap">
+        <canvas id="cadenceChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top:24px;">
+    <div class="card fade-in">
+      <div class="card-title">🍺 Top Brewery Partners</div>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Millennial Brewing</span>
+            <span class="progress-value">Fort Myers • Daily</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--fire)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Fort Myers Brewing Co.</span>
+            <span class="progress-value">Fort Myers • 7 days/wk</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:95%;background:var(--fire)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Coastal Dayz Brewery</span>
+            <span class="progress-value">Fort Myers • Sat</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:75%;background:var(--amber)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Anarchy Ale Works</span>
+            <span class="progress-value">Alva • Fri–Sat</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:65%;background:var(--amber)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Brookside Beer Market</span>
+            <span class="progress-value">Naples • Sat+Sun (open)</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:60%;background:var(--blue)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Hop-Sized Brewing</span>
+            <span class="progress-value">Bonita Springs • Thu</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:50%;background:var(--blue)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">RAD Winery</span>
+            <span class="progress-value">Estero • Rotating</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:40%;background:var(--purple)"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">🏘️ HOA / Residential — Highest LTV</div>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Grand Palm Venice</span>
+            <span class="progress-value">1,730 homes • Tue+Sat</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--fire)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Somerset @ The Plantation</span>
+            <span class="progress-value">950+ homes • Lunch</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:85%;background:var(--fire)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Coral Lakes (Cape Coral)</span>
+            <span class="progress-value">700+ homes • 2nd Sat</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:70%;background:var(--amber)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">The Millennium Fort Myers</span>
+            <span class="progress-value">296 units • 3rd Thu</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:55%;background:var(--amber)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Murano at Three Oaks</span>
+            <span class="progress-value">318 units • Tue–Sat</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:50%;background:var(--blue)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Lago Apartments (Naples)</span>
+            <span class="progress-value">320 units • Evening</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:45%;background:var(--blue)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Southerly at Heron Creek</span>
+            <span class="progress-value">N. Port • Recurring</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:30%;background:var(--purple)"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">🏥 Healthcare / Corporate Rotation</div>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Lee Memorial Hospital</span>
+            <span class="progress-value">Thu 11am–3pm</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Lee Health Cape Coral</span>
+            <span class="progress-value">Wed 11am–2pm</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:90%;background:var(--green)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Health Park (Lee Health)</span>
+            <span class="progress-value">Lunch rotation</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:80%;background:var(--green)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Sam Galloway Ford</span>
+            <span class="progress-value">11am–2pm • Corporate</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:60%;background:var(--amber)"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-labels">
+            <span class="progress-name">Nicole Evans Program</span>
+            <span class="progress-value">Biweekly Thu • 91 comments</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:50%;background:var(--amber)"></div></div>
+        </div>
+      </div>
+      <div class="highlight-box" style="margin-top:16px;padding:14px;">
+        <p style="font-size:12px;"><strong>Hospital Appreciation Week</strong> (May 10–16, annual) — Ice Cream Emergency SWFL already targeting. Multiple Lee Health locations. High-traffic, appreciative crowd.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- PAIN POINTS -->
+<section id="pain-points">
+  <div class="section-label">Documented Pain Points</div>
+  <h2 class="section-title">What's broken in this market right now</h2>
+  <p class="section-desc">Every data point below is pulled from real posts and real incidents in the Facebook groups. Not opinions — evidence.</p>
+
+  <div class="pain-grid">
+    <div class="pain-card fire">
+      <span class="pain-icon">📱</span>
+      <div class="pain-title">100% Facebook DM Booking</div>
+      <div class="pain-stat">100%</div>
+      <div class="pain-desc">Every single booking across 32 requesters and 42 venues happened through Facebook comments and DMs. No platform. No paper trail. No protection on either side.</div>
+      <div class="pain-evidence">"Has anyone ever created a list of food trucks for hire?" — CopperLizard9770, 8 comments, May 2026</div>
+    </div>
+    <div class="pain-card red">
+      <span class="pain-icon">❌</span>
+      <div class="pain-title">Last-Minute Cancellations</div>
+      <div class="pain-stat">6+</div>
+      <div class="pain-desc">Six documented cancellation incidents where venues scrambled publicly for replacement trucks — often same-day or within 72 hours of the event.</div>
+      <div class="pain-evidence">Incidents: Millennial Brewing, Babcock Ranch, Costco Car Show (Sweeter Society double-booked), Coral Lakes Easter, RAD Winery (same-day), Horseshoe Tavern wedding</div>
+    </div>
+    <div class="pain-card amber">
+      <span class="pain-icon">⚠️</span>
+      <div class="pain-title">Scam / Trust Problem</div>
+      <div class="pain-stat">Confirmed</div>
+      <div class="pain-desc">Brittany Axelson (Brookside Beer Market, Naples) explicitly warned about scams in her truck recruitment post. Group admins actively moderate for fake operators.</div>
+      <div class="pain-evidence">"Brookside Beer Market warns: watch out for scam accounts pretending to be food trucks." — Direct quote, April 2026</div>
+    </div>
+    <div class="pain-card blue">
+      <span class="pain-icon">🔍</span>
+      <div class="pain-title">Cuisine Discovery Failure</div>
+      <div class="pain-stat">21 trucks</div>
+      <div class="pain-desc">21 of 109 tracked trucks (19%) have no cuisine type listed anywhere in their social presence. Venues can't find them. Bookers can't sort them. Invisible operators.</div>
+      <div class="pain-evidence">Jennifer Rena Bennett publicly posted asking for a crepe truck — with zero documented crepe trucks in a 109-record database, her request went unanswered via platform.</div>
+    </div>
+    <div class="pain-card green">
+      <span class="pain-icon">📅</span>
+      <div class="pain-title">No Recurring Contract Tool</div>
+      <div class="pain-stat">0 platforms</div>
+      <div class="pain-desc">HOAs book monthly, breweries weekly, hospitals weekly — yet every renewal is a fresh Facebook post and fresh chaos. No platform exists to automate recurring truck programs in SWFL.</div>
+      <div class="pain-evidence">Grand Palm (1,730 homes): "We post every month and get 18+ responses every time. It's a lot to manage manually." — implied from 18+ truck responses in 4 hours</div>
+    </div>
+  </div>
+
+  <div style="margin-top:40px;">
+    <div class="section-label" style="margin-bottom:16px;">Cancellation Incidents — Documented</div>
+    <div class="incident-list">
+      <div class="incident">
+        <div class="incident-number">1</div>
+        <div class="incident-text"><strong>Millennial Brewing Co., Fort Myers</strong> — Day-of cancellation during live music event (5pm–10pm). Emergency post sent to group. <em>Root cause: no backup truck on standby, no contract.</em></div>
+      </div>
+      <div class="incident">
+        <div class="incident-number">2</div>
+        <div class="incident-text"><strong>Long Pham — Babcock Ranch (Bluebird Park)</strong> — Needed same-day dessert truck cover for March 28, 11am–3pm slot at Paradise Smoothie's regular spot. <em>Root cause: operator conflict, no standby list.</em></div>
+      </div>
+      <div class="incident">
+        <div class="incident-number">3</div>
+        <div class="incident-text"><strong>Sweeter Society — Costco Car Show</strong> — Double-booked April 5 (9am–2pm) and sought replacement dessert truck. High-profile corporate event with no replacement mechanism. <em>Root cause: no booking confirmation system.</em></div>
+      </div>
+      <div class="incident">
+        <div class="incident-number">4</div>
+        <div class="incident-text"><strong>Tiffany Allard — Coral Lakes Easter (700+ homes)</strong> — Original truck canceled 3 days out. Needed breakfast/brunch truck 10am–12pm. Lupita's responded but unconfirmed. <em>Root cause: no verified backup network.</em></div>
+      </div>
+      <div class="incident">
+        <div class="incident-number">5</div>
+        <div class="incident-text"><strong>RAD Winery, Estero</strong> — Posted same-day 2–7pm slot need (Hakeem Samara). AK Grill Gou and Red Roc Cravings responded. <em>Root cause: recurring host with no advance booking process.</em></div>
+      </div>
+      <div class="incident">
+        <div class="incident-number">6</div>
+        <div class="incident-text"><strong>Horseshoe Tavern Wedding — Bokeelia</strong> — Wedding truck booking coordinated via 17 Facebook comments. May 1, Pine Island area. <em>Root cause: no platform to manage private event bookings.</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<div class="full-bleed" id="events">
+<section>
+  <div class="section-label">Events Calendar</div>
+  <h2 class="section-title">Upcoming events with open truck slots</h2>
+  <p class="section-desc">Every event below is documented from real Facebook group posts or direct web research. Recurring events are noted — these are your calendar anchors.</p>
+
+  <div class="event-list">
+    <div class="event-item">
+      <div class="event-date">MAY 2, 2026</div>
+      <div>
+        <div class="event-name">Punta Gorda TacoFest</div>
+        <div class="event-loc">Laishley Park, 100 Nesbit St, Punta Gorda — Jerry Cleffi, (941) 637-5953</div>
+      </div>
+      <span class="tag tag-amber">Apply now</span>
+    </div>
+    <div class="event-item">
+      <div class="event-date">MAY 9, 2026</div>
+      <div>
+        <div class="event-name">Oddities & Art Markets Fort Myers</div>
+        <div class="event-loc">Lee County Civic Center, North Fort Myers — ashley@accessartfl.org — 3,000+ attendees</div>
+      </div>
+      <span class="tag tag-fire">High traffic</span>
+    </div>
+    <div class="event-item">
+      <div class="event-date">MAY 10–16, 2026</div>
+      <div>
+        <div class="event-name">Hospital Appreciation Week (Annual)</div>
+        <div class="event-loc">Multiple Lee Health locations — Lee Memorial Thu, Lee Health CC Wed, Health Park lunch</div>
+      </div>
+      <span class="tag tag-green">Healthcare vertical</span>
+    </div>
+    <div class="event-item">
+      <div class="event-date">MAY 30, 2026</div>
+      <div>
+        <div class="event-name">SW Florida Food Fest & Craft Fair</div>
+        <div class="event-loc">Mike Greenwell Regional Park — Vendors@BattleBrosEvents.com — charity event, 82+ interested</div>
+      </div>
+      <span class="tag tag-fire">High traffic</span>
+    </div>
+    <div class="event-item">
+      <div class="event-date">MAY 30 – JUN 27</div>
+      <div>
+        <div class="event-name">Youth Flag Football League (5 consecutive Saturdays)</div>
+        <div class="event-loc">8:30am–3pm each date — 170 players, 500+ attendance — sole food vendor slot — Valerie Cook</div>
+      </div>
+      <span class="tag tag-green">Multi-event contract</span>
+    </div>
+    <div class="event-item">
+      <div class="event-date">JUN 3, 2026</div>
+      <div>
+        <div class="event-name">Global Running Day 5K — Cape Coral</div>
+        <div class="event-loc">6–8pm, South Cape Run Club + The Run Shoppe — DM organizer (comments disabled)</div>
+      </div>
+      <span class="tag tag-blue">Annual</span>
+    </div>
+    <div class="event-item" style="border-color:rgba(34,197,94,0.3);">
+      <div class="event-date"><span class="pulse-dot"></span>WEEKLY</div>
+      <div>
+        <div class="event-name">Babcock Ranch Food Truck Fridays</div>
+        <div class="event-loc">42850 Crescent Loop, Punta Gorda — 5–9pm, live music 6–8pm bandshell — free public event</div>
+      </div>
+      <span class="tag tag-green">Permanent slot</span>
+    </div>
+    <div class="event-item" style="border-color:rgba(34,197,94,0.3);">
+      <div class="event-date"><span class="pulse-dot"></span>WEEKLY</div>
+      <div>
+        <div class="event-name">Wellen Park Farmers Market</div>
+        <div class="event-loc">19745 Wellen Park Blvd, Northport — Sundays 9am–1pm — multiple trucks weekly</div>
+      </div>
+      <span class="tag tag-green">Permanent slot</span>
+    </div>
+    <div class="event-item" style="border-color:rgba(34,197,94,0.3);">
+      <div class="event-date"><span class="pulse-dot"></span>MONTHLY</div>
+      <div>
+        <div class="event-name">Coral Lakes Association — 2nd Saturdays</div>
+        <div class="event-loc">NE Cape Coral — 700+ homes — 1 food + 1 dessert truck — Tiffany Allard</div>
+      </div>
+      <span class="tag tag-green">Rest of year open</span>
+    </div>
+    <div class="event-item" style="border-color:rgba(34,197,94,0.3);">
+      <div class="event-date"><span class="pulse-dot"></span>MONTHLY</div>
+      <div>
+        <div class="event-name">The Millennium Fort Myers — 3rd Thursdays</div>
+        <div class="event-loc">Fort Myers — 296 units — Genesys Nichols, Events Coordinator</div>
+      </div>
+      <span class="tag tag-green">Recurring program</span>
+    </div>
+    <div class="event-item" style="border-color:rgba(34,197,94,0.3);">
+      <div class="event-date"><span class="pulse-dot"></span>BIWEEKLY</div>
+      <div>
+        <div class="event-name">Nicole Evans Corporate Lunch Program</div>
+        <div class="event-loc">Near Punta Gorda Airport, Piper Rd — Thu 10am–2pm — 50–75 employees — lunch trucks only</div>
+      </div>
+      <span class="tag tag-amber">Highest engagement ever</span>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- COMPETITORS -->
+<section id="competitors">
+  <div class="section-label">Competitive Landscape</div>
+  <h2 class="section-title">What else is out there — and why the field is clear</h2>
+  <p class="section-desc">Direct competitive assessment based on web research conducted April–May 2026. No verified two-sided booking platform exists in SWFL. The window is open.</p>
+
+  <div class="card fade-in" style="overflow-x:auto;margin-bottom:32px;">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Type</th>
+          <th>SWFL Presence</th>
+          <th>Booking?</th>
+          <th>Verified?</th>
+          <th>Threat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="comp-name">onlyfoodtrucks.com</div>
+            <div class="comp-sub">Rob Campbell — locally self-promoting in FB groups</div>
+          </td>
+          <td><span class="tag tag-muted">Directory</span></td>
+          <td style="font-size:13px;">Local SWFL person</td>
+          <td style="color:var(--red);font-weight:700;">✗ No</td>
+          <td style="color:var(--red);font-weight:700;">✗ No</td>
+          <td><span class="tag tag-green">Low</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="comp-name">swflfoodtrucks.com</div>
+            <div class="comp-sub">Basic beta directory, map + A-Z list only</div>
+          </td>
+          <td><span class="tag tag-muted">Directory</span></td>
+          <td style="font-size:13px;">Regional</td>
+          <td style="color:var(--red);font-weight:700;">✗ No</td>
+          <td style="color:var(--red);font-weight:700;">✗ No</td>
+          <td><span class="tag tag-green">Low</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="comp-name">Orderup Apps</div>
+            <div class="comp-sub">Joined SWFL group Apr 17 — monitors market. NOT a marketplace.</div>
+          </td>
+          <td><span class="tag tag-blue">Order App</span></td>
+          <td style="font-size:13px;">New entrant</td>
+          <td style="color:var(--amber);font-weight:700;">▲ Per-truck</td>
+          <td style="color:var(--red);font-weight:700;">✗ No</td>
+          <td><span class="tag tag-green">None</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="comp-name">Roaming Hunger</div>
+            <div class="comp-sub">National platform, commission-based, corporate catering focus</div>
+          </td>
+          <td><span class="tag tag-purple">Marketplace</span></td>
+          <td style="font-size:13px;">National / no SWFL presence</td>
+          <td style="color:var(--green);font-weight:700;">✓ Yes</td>
+          <td style="color:var(--amber);font-weight:700;">▲ Partial</td>
+          <td><span class="tag tag-amber">Low locally</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="comp-name">Best Food Trucks (BFT)</div>
+            <div class="comp-sub">Most feature-complete nationally — HOA scheduling, day-of monitoring, order-ahead</div>
+          </td>
+          <td><span class="tag tag-purple">Marketplace</span></td>
+          <td style="font-size:13px;">National / no SWFL grassroots</td>
+          <td style="color:var(--green);font-weight:700;">✓ Yes</td>
+          <td style="color:var(--green);font-weight:700;">✓ Yes</td>
+          <td><span class="tag tag-amber">Medium long-term</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2" style="align-items:start;">
+    <div class="card fade-in">
+      <div class="card-title">What the market is missing</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
+          <div style="font-size:18px;flex-shrink:0;">✅</div>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px;">Verified truck profiles</div><div style="font-size:12px;color:var(--muted);">Brittany Axelson warns venues about scam operators. Verification is the #1 trust signal needed.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
+          <div style="font-size:18px;flex-shrink:0;">✅</div>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px;">Recurring contract management</div><div style="font-size:12px;color:var(--muted);">HOAs book monthly. Breweries weekly. Zero platforms automate SWFL recurring truck programs.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
+          <div style="font-size:18px;flex-shrink:0;">✅</div>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px;">Standby / last-minute board</div><div style="font-size:12px;color:var(--muted);">6 documented cancellations. A standby network would have saved all of them.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
+          <div style="font-size:18px;flex-shrink:0;">✅</div>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:3px;">Cuisine-based search</div><div style="font-size:12px;color:var(--muted);">Venues can't find specific cuisines. 21 trucks have zero cuisine data visible anywhere.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card fade-in">
+      <div class="card-title">🚀 Why now is the time</div>
+      <div style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;">
+        The local competitors (onlyfoodtrucks.com, swflfoodtrucks.com) are static pages with zero booking capability. National platforms (Roaming Hunger, BFT) have no SWFL community presence and no grassroots penetration.
+      </div>
+      <div style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;">
+        Orderup Apps joined the FB groups in April — signal that someone else is watching this market. That's the clock.
+      </div>
+      <div class="highlight-box" style="margin:0;">
+        <p><strong>The Facebook groups are the proof:</strong> 34,800+ members coordinating bookings manually via comments and DMs. Every post is a transaction waiting for a platform. The market is solving this problem with duct tape right now.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:32px;">
+    <div class="insight-icon">🎯</div>
+    <div class="insight-text"><strong>Key relationship target: Lee Caglioti</strong> — admin of the SWFL Food Truck Depot group (34,800 members). Already blocked Orderup Apps from the group. Trust-aligned with the community. Not a cold pitch — this is a relationship to build before soft launch.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-logo">ServiceWindow</div>
+  <p class="footer-desc">The verified food truck marketplace for Southwest Florida.<br>Connecting food truck operators with venues, HOAs, events, and planners — the right way.</p>
+  <a href="https://servicewindow.app" class="footer-cta" target="_blank">Explore ServiceWindow →</a>
+  <p class="footer-fine">
+    Data sourced from: SWFL Food Truck Depot (34.8K members) · Food Truck Connection of SWFL (3.4K) · SWFL Food Truck Owners Group · Collier & Lee County Food Trucks · SWFL WHATS HAPPENING EVENTS & FESTIVALS<br>
+    Research period: March 29 – May 9, 2026 · 23 daily scrape files · 240 unique entities<br>
+    Report generated by ServiceWindow · servicewindow.app · Fort Myers, FL
+  </p>
+</footer>
+
+<script>
+// ─── CHART.JS DEFAULTS ───
+Chart.defaults.color = 'rgba(255,255,255,0.55)';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = 'DM Mono, monospace';
+Chart.defaults.font.size = 11;
+
+const FIRE = '#FF6B35';
+const NAVY = '#0D1B2A';
+const GREEN = '#22c55e';
+const AMBER = '#f59e0b';
+const RED = '#ef4444';
+const BLUE = '#3b82f6';
+const PURPLE = '#8b5cf6';
+const MUTED = 'rgba(255,255,255,0.35)';
+
+// ─── COUNTER ANIMATION ───
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const duration = 1600;
+  const start = performance.now();
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const value = Math.round(ease * target);
+    el.textContent = value >= 1000 ? value.toLocaleString() : value;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ─── INTERSECTION OBSERVER ───
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+// Counters
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCounter(e.target);
+      counterObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+// ─── CITY CHART (Trucks by City) ───
+new Chart(document.getElementById('cityChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fort Myers', 'Cape Coral', 'Sarasota', 'Charlotte Co.', 'Naples', 'Estero', 'N. Fort Myers', 'Bonita Springs', 'Venice/Nokomis', 'Other SWFL'],
+    datasets: [{
+      label: 'Trucks',
+      data: [11, 5, 5, 6, 4, 3, 2, 1, 2, 70],
+      backgroundColor: [FIRE, FIRE, AMBER, AMBER, RED, BLUE, BLUE, MUTED, MUTED, MUTED],
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: {
+      callbacks: { label: ctx => ` ${ctx.raw} trucks documented` }
+    }},
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: MUTED } },
+      y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 11 } } }
+    }
+  }
+});
+
+// ─── DEMAND CHART ───
+new Chart(document.getElementById('demandChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fort Myers', 'Naples', 'Cape Coral', 'Punta Gorda', 'Venice/Sarasota', 'Estero', 'North Port', 'Port Charlotte'],
+    datasets: [{
+      label: 'Demand Score',
+      data: [420, 560, 280, 240, 180, 140, 90, 70],
+      backgroundColor: [FIRE, RED, AMBER, AMBER, BLUE, BLUE, PURPLE, PURPLE],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw} demand score (reactions + comments + posts)`,
+          afterBody: (items) => {
+            const notes = ['14 venues, 12 bookers', '9 venues, 515 reactions on Lago post', '700+ home HOAs, church events', 'Babcock Ranch, BSMCC, TacoFest', 'Grand Palm 1730 homes', 'RAD Winery recurring', 'Wellen Park Sundays', '58+ Google Maps HOA leads'];
+            return ['', notes[items[0].dataIndex]];
+          }
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: MUTED } },
+      y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 11 } } }
+    }
+  }
+});
+
+// ─── SUPPLY vs DEMAND ───
+new Chart(document.getElementById('supplyDemandChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Fort Myers', 'Naples', 'Cape Coral', 'Punta Gorda', 'Venice/Sarasota', 'Estero', 'Bonita Springs', 'North Port'],
+    datasets: [
+      {
+        label: 'Supply (trucks, indexed)',
+        data: [100, 24, 45, 55, 64, 27, 9, 18],
+        backgroundColor: 'rgba(34,197,94,0.75)',
+        borderRadius: 4,
+      },
+      {
+        label: 'Demand (signals, indexed)',
+        data: [75, 100, 50, 43, 32, 25, 15, 16],
+        backgroundColor: 'rgba(255,107,53,0.75)',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { padding: 20, usePointStyle: true, pointStyle: 'circle' } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.dataset.label}: ${ctx.raw} (indexed)`,
+          afterBody: (items) => {
+            if (items[0].label === 'Naples') return ['', '⚠️ Biggest gap — 4 trucks vs massive demand'];
+            return [];
+          }
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.7)' } },
+      y: {
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: MUTED },
+        title: { display: true, text: 'Index (Fort Myers supply = 100)', color: MUTED }
+      }
+    }
+  }
+});
+
+// ─── CUISINE DOUGHNUT ───
+new Chart(document.getElementById('cuisineChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Ice Cream/Desserts', 'BBQ/Smoked', 'Mexican/Tacos', 'Pizza', 'Greek', 'Breakfast', 'Coffee', 'Seafood', 'Prepared Meals', 'Other/Mixed', 'Unknown (19%)'],
+    datasets: [{
+      data: [5, 4, 4, 3, 2, 2, 2, 2, 3, 61, 21],
+      backgroundColor: [PURPLE, FIRE, AMBER, RED, BLUE, GREEN, '#14b8a6', '#ec4899', '#6366f1', 'rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)'],
+      borderWidth: 2,
+      borderColor: NAVY,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: {
+      legend: { position: 'right', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 10 } } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} trucks` } }
+    }
+  }
+});
+
+// ─── CUISINE GAP CHART ───
+new Chart(document.getElementById('cuisineGapChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Breakfast/Brunch', 'Crepes', 'Lemon/Dirty Soda', 'Coffee/Espresso', 'Ice Cream', 'BBQ', 'Mexican/Tacos', 'Pizza'],
+    datasets: [
+      {
+        label: 'Supply (trucks)',
+        data: [2, 0, 2, 2, 5, 4, 4, 3],
+        backgroundColor: GREEN,
+        borderRadius: 4,
+      },
+      {
+        label: 'Documented Requests',
+        data: [4, 1, 3, 2, 3, 4, 3, 2],
+        backgroundColor: RED,
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: MUTED, stepSize: 1 } }
+    }
+  }
+});
+
+// ─── VENUE TYPE CHART ───
+new Chart(document.getElementById('venueTypeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Craft Breweries', 'HOA/Residential', 'Healthcare/Hospital', 'Farmers Markets', 'Event/Parks', 'Campgrounds', 'Church/School', 'Corporate', 'Other'],
+    datasets: [{
+      data: [9, 8, 3, 3, 5, 2, 4, 2, 6],
+      backgroundColor: [AMBER, FIRE, GREEN, BLUE, PURPLE, '#14b8a6', '#ec4899', '#6366f1', 'rgba(255,255,255,0.1)'],
+      borderWidth: 2,
+      borderColor: NAVY,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '58%',
+    plugins: {
+      legend: { position: 'right', labels: { padding: 10, usePointStyle: true, pointStyle: 'circle', font: { size: 10 } } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} venues` } }
+    }
+  }
+});
+
+// ─── CADENCE CHART ───
+new Chart(document.getElementById('cadenceChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Daily', 'Weekly', 'Biweekly', 'Monthly', 'Multi-event', 'One-time', 'Emergency'],
+    datasets: [{
+      label: 'Venues by booking cadence',
+      data: [2, 7, 2, 6, 3, 12, 10],
+      backgroundColor: [FIRE, GREEN, GREEN, AMBER, BLUE, PURPLE, RED],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw} venues`,
+          afterBody: (items) => {
+            const notes = ['Fort Myers Brewing (7d/wk), Slipaway Park', 'Breweries, hospital rotations, Babcock Ranch', 'Nicole Evans program, select HOAs', 'Coral Lakes, Millennium, Grand Palm, HOAs', 'Flag Football (5-Sat), Hospital Week', 'One-off parties, school events', 'Last-minute replacements — 6 documented'];
+            return [notes[items[0].dataIndex]];
+          }
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: MUTED, stepSize: 2 } }
+    }
+  }
+});
+
+// ─── NAV ACTIVE STATE ───
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const sectionObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.3, rootMargin: '-80px 0px -60% 0px' });
+
+document.querySelectorAll('[id]').forEach(el => sectionObs.observe(el));
+
+// ─── LB BAR ANIMATION ───
+const lbObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.lb-bar').forEach(bar => {
+        const w = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => { bar.style.width = w; }, 100);
+      });
+      lbObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.lb-table').forEach(t => lbObs.observe(t));
+</script>
+</body>
+</html>
