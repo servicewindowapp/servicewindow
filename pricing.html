@@ -46,8 +46,8 @@
         },
         {
           "@type": "Offer",
-          "name": "Vendor Directory",
-          "description": "Commissaries, suppliers, repair services, and equipment vendors. Free directory listing — no subscription required.",
+          "name": "Event Planner / HOA / Venue",
+          "description": "Post events, book trucks, list venues or parking spaces. Free forever for all demand-side roles.",
           "price": "0.00",
           "priceCurrency": "USD"
         }
@@ -175,11 +175,6 @@
     .plan-card:hover { border-color: rgba(255,107,53,0.4); }
     .plan-card.featured {
       border-color: var(--fire); background: rgba(255,107,53,0.04);
-    }
-    .plan-card.featured::before {
-      content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-      background: var(--fire); color: white; padding: 4px 14px; border-radius: 20px;
-      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; white-space: nowrap;
     }
     .plan-name {
       font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
@@ -404,10 +399,10 @@
 
     <!-- PAID PLANS -->
     <section class="pricing-section">
-      <div class="section-label">Paid Plans</div>
+      <div class="section-label">Operator Plan</div>
       <div class="section-title">Get in front of HOA managers, venues, and event planners actively looking for trucks.</div>
 
-      <div class="pricing-grid" style="max-width: 720px;">
+      <div class="pricing-grid" style="max-width: 480px;">
 
         <!-- Food Truck Operator -->
         <div class="plan-card featured">
@@ -429,42 +424,20 @@
             <li>Async messaging with organizers</li>
             <li>Post your available dates on the Shift Marketplace</li>
             <li>Dashboard: bookings, inbox, calendar, history</li>
+            <li>Access to the full Vendor Directory for commissaries, repair &amp; supplies</li>
             <li>Jobs board — post &amp; browse hiring listings</li>
             <li>Cancel anytime — no contracts</li>
-          </ul>
-        </div>
-
-        <!-- Service Provider -->
-        <div class="plan-card">
-          <div class="plan-name">Vendor Directory</div>
-          <div class="plan-desc">Commissaries, suppliers, repair services, insurance, and equipment vendors.</div>
-          <div class="plan-price-wrap">
-            <div class="plan-price-row">
-              <span class="plan-price-amount">$0</span>
-              <span class="plan-period"> / forever</span>
-            </div>
-          </div>
-          <div class="plan-trial">✓ No subscription, no trial — list immediately</div>
-          <a href="vendor-services.html" class="plan-cta plan-cta-secondary" id="sp-cta">List Your Business Free</a>
-          <hr class="plan-divider">
-          <ul class="plan-features">
-            <li>Listed on the public Vendor Services directory</li>
-            <li>Category pages for commissary, repair, insurance &amp; more</li>
-            <li>Visible to every verified SWFL truck operator</li>
-            <li>Contact info, website, and service area displayed</li>
-            <li>SEO-optimized pages for food-truck-specific searches</li>
-            <li>No account required — submit via quick form</li>
           </ul>
         </div>
 
       </div>
 
       <!-- Property/Storage add-on note -->
-      <div style="background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; max-width: 700px; margin-top: 32px;">
+      <div style="background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; max-width: 480px; margin-top: 32px;">
         <div style="font-size: 24px;">🅿️</div>
         <div>
           <div style="font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 4px;">Property &amp; Storage Owners</div>
-          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Browsing parking and storage listings is free. Advertising your lot directly to food truck operators is a small monthly fee. <a href="auth.html?role=property" style="color: var(--fire); text-decoration: none;">List your property →</a></div>
+          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Listing your parking spots or commissary storage is free. Get visible to verified SWFL truck operators actively looking for lots. <a href="auth.html?role=property" style="color: var(--fire); text-decoration: none;">List your property →</a></div>
         </div>
       </div>
 
