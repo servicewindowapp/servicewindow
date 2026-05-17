@@ -254,14 +254,14 @@
     }
 
     .results-count {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--text-muted);
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
     }
 
     .results-count span {
-      color: var(--fire);
-      font-weight: 500;
+      color: white;
     }
 
     /* ─── MAIN CONTENT ─── */
@@ -720,6 +720,16 @@
       </div>
     </div>
 
+    <!-- ─── COMMUNITY LISTINGS ─── -->
+    <div id="communitySection">
+    <div class="community-header">
+      <h2>Community Listings</h2>
+      <span id="communityCount"></span>
+    </div>
+    <p class="community-note">Self-submitted by operators. Contact them directly using the info provided. Not yet verified by ServiceWindow — use your judgment.</p>
+    <div class="truck-grid" id="communityGrid"></div>
+  </div>
+
     <!-- ─── CTA STRIP ─── -->
     <div class="cta-strip" style="margin-top:48px">
       <h2>Got a truck? You should be on here.</h2>
@@ -729,16 +739,6 @@
         <a href="pricing.html" class="btn-outline">See Pricing</a>
       </div>
     </div>
-  </div>
-
-  <!-- ─── COMMUNITY LISTINGS ─── -->
-  <div id="communitySection">
-    <div class="community-header">
-      <h2>Community Listings</h2>
-      <span id="communityCount"></span>
-    </div>
-    <p class="community-note">Self-submitted by operators. Contact them directly using the info provided. Not yet verified by ServiceWindow — use your judgment.</p>
-    <div class="truck-grid" id="communityGrid"></div>
   </div>
 
   <!-- ─── FOOTER ─── -->
@@ -780,11 +780,7 @@
   </footer>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    const SUPABASE_URL = 'https://krmfxedkxoyzkeqnijcd.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtybWZ4ZWRreG95emtlcW5pamNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjg1NDMsImV4cCI6MjA4OTk0NDU0M30._oSoUIyo5vhdYCtQtgZYfbRBHvf1bNisdSJ4yxiE3yo'
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    import { supabase } from './supabase-client.js'
 
     // ─── STATE ───
     let allTrucks = []
@@ -1092,9 +1088,7 @@
     /* ─── COMMUNITY LISTINGS SECTION ─── */
     #communitySection {
       display: none;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px 80px;
+      margin-top: 48px;
     }
 
     .community-header {
@@ -1167,3 +1161,4 @@
 
 </body>
 </html>
+                                                                   

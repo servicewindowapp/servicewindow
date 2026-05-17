@@ -505,6 +505,7 @@
       <div class="user-name" id="sidebar-name">—</div>
       <div class="free-badge">Free Forever</div>
       <button class="btn-signout" id="btn-signout">Sign Out</button>
+      <p style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.2);text-align:center;margin:10px 0 0;line-height:1.6;"><a href="privacy.html" style="color:rgba(255,255,255,0.25);text-decoration:none;">Privacy</a> &nbsp;&middot;&nbsp; <a href="terms.html" style="color:rgba(255,255,255,0.25);text-decoration:none;">Terms</a></p>
     </div>
   </aside>
 
@@ -1483,15 +1484,14 @@
     })
     if (error) { showToast('Error posting replacement request', true); console.error(error); return }
     showToast('Urgent replacement request posted')
-    await Promise.all([loadRequests(), loadOverview()])
-    showSection('requests')
-  }
 
-  init().catch(err => {
-    console.error('Dashboard init error:', err)
-    document.getElementById('loading-screen').innerHTML =
-      '<div style="text-align:center;padding:40px"><p style="color:#ff8080;font-family:Sora,sans-serif;font-size:14px">Error loading dashboard. Please refresh.</p></div>'
-  })
-</script>
-</body>
-</html>
+    // Notify standby trucks — fire-and-forget, don't block the UI
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return
+      fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/notify-standby-trucks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + session.access_token
+        },
+     

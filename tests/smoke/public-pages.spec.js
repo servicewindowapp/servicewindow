@@ -30,6 +30,7 @@ const PUBLIC_PAGES = [
   { path: '/terms.html',       label: 'Terms of service' },
   { path: '/truck-profile.html', label: 'Truck profile (no id)' },
   { path: '/vendor-services.html', label: 'Vendor services directory' },
+  { path: '/punta-gorda-food-trucks.html', label: 'Punta Gorda food trucks (SEO)' },
 ];
 
 for (const { path, label } of PUBLIC_PAGES) {

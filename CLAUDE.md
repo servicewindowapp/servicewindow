@@ -5,16 +5,16 @@
 
 ## Brain Integration — Session Protocol
 
-Read at session start (in order):
-1. `E:\Brain\Claude\ServiceWindow-Context.md` — current state, what's built, what's open
-2. `E:\Brain\Claude\Session-Log.md` — recent session history (last 2–3 entries)
-3. `E:\Brain\Claude\Open-Issues.md` — active bugs and blockers with IDs
+**Session start — read ONE file only:**
+`E:\Brain\Claude\ServiceWindow-Context.md`
 
-Update at session end (every session that touches tracked files):
-1. `ServiceWindow-Context.md` — revise "What's Incomplete / Open" table
-2. `Session-Log.md` — prepend new entry (what was done, state, next priorities)
-3. `Open-Issues.md` — mark resolved, add new with OI-### IDs
-4. `E:\Brain\Daily\YYYY-MM-DD.md` — create/update with sprint status table
+Read Session-Log.md or Open-Issues.md only if the task explicitly requires prior session history or bug tracking.
+
+**Session end — update these files (keep each update lean):**
+1. `ServiceWindow-Context.md` — update "What's Incomplete / Open" table and "This Session's Focus"
+2. `Session-Log.md` — prepend 1 new entry (cap: last 2 sessions total, archive the rest)
+3. `Open-Issues.md` — mark resolved items deleted (not annotated), add new OI-### rows only
+4. `E:\Brain\Daily\YYYY-MM-DD.md` — one-line sprint status only
 
 ---
 
@@ -86,7 +86,13 @@ No founding rates. No Pro plan. No annual billing. SP $19/mo paywall retired —
 | `truck-profile.html` | Public truck profile (`?id=UUID`) |
 
 ### SEO Pages
-`fort-myers-food-trucks.html` · `cape-coral-food-trucks.html` · `swfl-food-truck-catering.html` · `food-truck-events-fort-myers.html` · `naples-food-trucks.html` · `bonita-springs-food-trucks.html`
+`fort-myers-food-trucks.html` · `cape-coral-food-trucks.html` · `swfl-food-truck-catering.html` · `food-truck-events-fort-myers.html` · `naples-food-trucks.html` · `bonita-springs-food-trucks.html` · `punta-gorda-food-trucks.html`
+
+### Other Pages
+| File | Purpose |
+|------|---------|
+| `api.html` | API documentation / reference |
+| `swfl-food-truck-report.html` | SWFL food truck market research report |
 
 ### Dashboards
 | File | Role |

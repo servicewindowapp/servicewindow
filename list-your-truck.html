@@ -9,6 +9,7 @@
   <meta property="og:title" content="List Your Truck — ServiceWindow SWFL">
   <meta property="og:description" content="Get found by event planners, HOAs, and venues across Southwest Florida. Free listing. No Facebook group required.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://servicewindow.app/og-image.png">
   <meta property="og:url" content="https://servicewindow.app/list-your-truck.html">
   <link rel="canonical" href="https://servicewindow.app/list-your-truck.html">
   <title>List Your Truck — ServiceWindow SWFL</title>
@@ -597,7 +598,7 @@
         <div class="benefit-icon">🔍</div>
         <div class="benefit-copy">
           <h3>Get found before we launch</h3>
-          <p>Your listing is indexed by Google immediately. People searching "food truck for hire Cape Coral" or "Naples event catering truck" find you here — not buried in a Facebook group.</p>
+          <p>Your listing is submitted to Google as soon as it's approved. People searching "food truck for hire Cape Coral" or "Naples event catering truck" find you here — not buried in a Facebook group.</p>
         </div>
       </div>
 
@@ -708,6 +709,7 @@
 
         <button type="submit" class="btn-submit" id="submitBtn">Get Listed →</button>
         <p class="form-fine-print">Your listing will appear in the public directory immediately.<br>We review all submissions within 24 hours.</p>
+        <p class="form-fine-print" style="margin-top:8px;">By submitting you agree to our <a href="terms.html" style="color:rgba(255,255,255,0.45);text-decoration:underline;">Terms of Service</a> and <a href="privacy.html" style="color:rgba(255,255,255,0.45);text-decoration:underline;">Privacy Policy</a>.</p>
       </form>
 
       <!-- Success state -->
@@ -727,16 +729,13 @@
       <div class="footer-bottom">
         <p>&copy; 2026 ServiceWindow. All rights reserved.</p>
         <div class="footer-cities">Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
+        <div class="footer-cities" style="margin-top:8px;"><a href="privacy.html" style="color:rgba(255,255,255,0.35);text-decoration:none;">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html" style="color:rgba(255,255,255,0.35);text-decoration:none;">Terms of Service</a></div>
       </div>
     </div>
   </footer>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    const SUPABASE_URL = 'https://krmfxedkxoyzkeqnijcd.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtybWZ4ZWRreG95emtlcW5pamNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjg1NDMsImV4cCI6MjA4OTk0NDU0M30._oSoUIyo5vhdYCtQtgZYfbRBHvf1bNisdSJ4yxiE3yo'
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    import { supabase } from './supabase-client.js'
 
     const CITIES = [
       'Cape Coral','Fort Myers','Lehigh Acres','Bonita Springs','North Fort Myers',

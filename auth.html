@@ -483,6 +483,33 @@
     .btn-submit.loading .btn-text { display: none; }
 
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .legal-consent {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin: 10px 0 0;
+      line-height: 1.5;
+    }
+    .legal-consent a {
+      color: var(--text-muted);
+      text-decoration: underline;
+    }
+    .legal-consent a:hover { color: white; }
+
+    .auth-footer {
+      text-align: center;
+      padding: 24px 16px 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+    }
+    .auth-footer a {
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+    }
+    .auth-footer a:hover { color: rgba(255,255,255,0.6); }
   </style>
   <meta property="og:title" content="Sign Up or Log In — ServiceWindow">
   <meta property="og:description" content="Create your free ServiceWindow account. Food trucks, event planners, venues, and property owners — get verified and start booking.">
@@ -709,6 +736,7 @@
             <span class="btn-text">Submit for Verification</span>
             <div class="spinner"></div>
           </button>
+          <p class="legal-consent">By creating an account you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</p>
           <button class="btn-back" onclick="backToStep2()">← Back</button>
         </div>
 
@@ -762,13 +790,12 @@
     </div>
   </div>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  <footer class="auth-footer">
+    <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Service</a>
+  </footer>
 
-    const SUPABASE_URL = 'https://krmfxedkxoyzkeqnijcd.supabase.co'
-    // NOTE: Replace SUPABASE_ANON_KEY with your actual anon key from the Supabase dashboard
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtybWZ4ZWRreG95emtlcW5pamNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjg1NDMsImV4cCI6MjA4OTk0NDU0M30._oSoUIyo5vhdYCtQtgZYfbRBHvf1bNisdSJ4yxiE3yo'
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  <script type="module">
+    import { supabase } from './supabase-client.js'
 
     // Expose to global scope for onclick handlers
     window.supabase = supabase
