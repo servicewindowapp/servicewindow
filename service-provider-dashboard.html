@@ -527,6 +527,7 @@
                 <option>Naples Manor</option>
                 <option>Naples Park</option>
                 <option>Sarasota</option>
+                <option>North Port</option>
                 <option>Punta Gorda</option>
                 <option>Port Charlotte</option>
                 <option>Englewood</option>
@@ -610,6 +611,7 @@
                 <option>Naples Manor</option>
                 <option>Naples Park</option>
                 <option>Sarasota</option>
+                <option>North Port</option>
                 <option>Punta Gorda</option>
                 <option>Port Charlotte</option>
                 <option>Englewood</option>
@@ -800,7 +802,7 @@
     if (allListings) {
       const citySet = new Set()
       allListings.forEach(l => {
-        // If service_area is "All of SWFL" count as all 21 cities
+        // If service_area is "All of SWFL" count as all 22 cities
         const meta = l.metadata || {}
         if (meta.service_area === 'All of SWFL') {
           // Just mark with a special flag — show "All SWFL"

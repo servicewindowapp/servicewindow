@@ -88,6 +88,11 @@ No founding rates. No Pro plan. No annual billing. SP $19/mo paywall retired —
 ### SEO Pages
 `fort-myers-food-trucks.html` · `cape-coral-food-trucks.html` · `swfl-food-truck-catering.html` · `food-truck-events-fort-myers.html` · `naples-food-trucks.html` · `bonita-springs-food-trucks.html` · `punta-gorda-food-trucks.html`
 
+### Coverage — 22 Cities
+Cape Coral · Fort Myers · Lehigh Acres · Bonita Springs · North Fort Myers · Estero · Sanibel · Fort Myers Beach · Naples · Immokalee · Marco Island · Golden Gate · Lely Resort · Ave Maria · Naples Manor · Naples Park · Sarasota · North Port · Punta Gorda · Port Charlotte · Englewood · LaBelle
+
+**Copy Rules:** City count is always 22. North Port always follows Sarasota in all lists (both Sarasota County).
+
 ### Other Pages
 | File | Purpose |
 |------|---------|
