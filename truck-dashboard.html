@@ -1865,6 +1865,13 @@ document.getElementById('msg-panel-back').addEventListener('click', () => {
 document.getElementById('notifBellBtn').addEventListener('click', () => { location.hash='messages' })
 
 // ─── PROFILE ─────────────────────────────────────────
+function checkProfileCompletion() {
+  const p = profile
+  const incomplete = !p.cuisine_type || !p.service_radius || !p.phone
+  const banner = document.getElementById('profile-completion-banner')
+  if (banner) banner.style.display = incomplete ? 'flex' : 'none'
+}
+
 function populateProfileForm() {
   const p = profile
   if (p.business_name)       document.getElementById('p-business').value = p.business_name

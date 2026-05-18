@@ -203,6 +203,10 @@ CREATE POLICY "profiles_insert_own" ON profiles FOR INSERT WITH CHECK (auth.uid(
 CREATE POLICY "bookings_select" ON bookings FOR SELECT
   USING (auth.uid() = truck_id OR auth.uid() = requester_id);
 
+-- Promotions: active ads visible to all (public vendor directory)
+CREATE POLICY "promotions_select_active_public" ON promotions
+  FOR SELECT USING (status = 'active');
+
 -- Admin bypass
 CREATE POLICY "admin_all" ON profiles FOR ALL
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
