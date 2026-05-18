@@ -1723,7 +1723,7 @@ async function initMessages() {
   // Fetch all messages where user is sender or recipient, grouped by conversation
   const { data, error } = await supabase
     .from('messages')
-    .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at, sender:sender_id(id,business_name,contact_name), recipient:recipient_id(id,business_name,contact_name)')
+    .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at, sender:profiles!sender_id(id,business_name,contact_name), recipient:profiles!recipient_id(id,business_name,contact_name)')
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
     .order('created_at', {ascending:false})
 
@@ -2095,6 +2095,7 @@ async function loadAds() {
     .from('promotions')
     .select('id, ad_type, headline, body, cta_label, cta_url, contact_phone, contact_email, advertiser:advertiser_id(business_name)')
     .eq('status', 'active')
+    .order('featured_until', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
     .limit(3)
 
