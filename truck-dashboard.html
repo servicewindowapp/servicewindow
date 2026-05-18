@@ -1720,10 +1720,10 @@ document.getElementById('jobs-form').addEventListener('submit', async (e) => {
 
 // ─── MESSAGES (TWO-PANEL) ─────────────────────────────
 async function initMessages() {
-  // Fetch all messages where user is sender or recipient, grouped by conversation
+  // Fetch messages without embedded joins to avoid ambiguous FK errors
   const { data, error } = await supabase
     .from('messages')
-    .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at, sender:profiles!sender_id(id,business_name,contact_name), recipient:profiles!recipient_id(id,business_name,contact_name)')
+    .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at')
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
     .order('created_at', {ascending:false})
 
@@ -1732,12 +1732,20 @@ async function initMessages() {
   if (error || !data || !data.length) { threadsEl.innerHTML=''; emptyEl.style.display='flex'; return }
   emptyEl.style.display = 'none'
 
+  // Collect unique other-user IDs, then fetch profiles in one query
+  const otherIds = [...new Set(data.map(m => m.sender_id === userId ? m.recipient_id : m.sender_id).filter(Boolean))]
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('id, business_name, contact_name')
+    .in('id', otherIds)
+  const profileMap = Object.fromEntries((profileData||[]).map(p => [p.id, p]))
+
   // Group by conversation_id, keep latest message per thread
   const threads = {}
   data.forEach(m => {
     if (!threads[m.conversation_id]) {
-      const other = m.sender_id === userId ? m.recipient : m.sender
-      threads[m.conversation_id] = { convId:m.conversation_id, other, latest:m, unread:0 }
+      const otherId = m.sender_id === userId ? m.recipient_id : m.sender_id
+      threads[m.conversation_id] = { convId:m.conversation_id, other: profileMap[otherId] || {id:otherId}, latest:m, unread:0 }
     }
     if (!m.is_read && m.recipient_id === userId) threads[m.conversation_id].unread++
   })
