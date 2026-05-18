@@ -878,6 +878,8 @@
     const statusEl = document.getElementById('ad-form-status')
     btn.disabled = true; btn.textContent = 'Saving…'
 
+    const adId = document.getElementById('ad-id').value
+
     const rawCtaUrl = document.getElementById('ad-cta-url').value.trim()
     const ctaUrl = rawCtaUrl && !rawCtaUrl.match(/^https?:\/\//i)
       ? 'https://' + rawCtaUrl : rawCtaUrl || null
@@ -887,15 +889,13 @@
       ad_type:          'service_provider',
       service_category: document.getElementById('ad-category').value || null,
       headline:         document.getElementById('ad-headline').value.trim(),
-      body:           document.getElementById('ad-body').value.trim() || null,
-      contact_phone:  document.getElementById('ad-phone').value.trim() || null,
-      contact_email:  document.getElementById('ad-email').value.trim() || null,
-      cta_url:        ctaUrl,
-      cta_label:      document.getElementById('ad-cta-label').value.trim() || 'Learn More',
-      status:         'pending'
+      body:             document.getElementById('ad-body').value.trim() || null,
+      contact_phone:    document.getElementById('ad-phone').value.trim() || null,
+      contact_email:    document.getElementById('ad-email').value.trim() || null,
+      cta_url:          ctaUrl,
+      cta_label:        document.getElementById('ad-cta-label').value.trim() || 'Learn More',
+      ...(adId ? {} : { status: 'pending' })
     }
-
-    const adId = document.getElementById('ad-id').value
     let error
     if (adId) {
       ;({ error } = await supabase.from('promotions').update(payload).eq('id', adId).eq('advertiser_id', userId))
