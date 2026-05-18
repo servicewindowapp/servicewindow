@@ -359,13 +359,6 @@
       <button class="nav-item active" data-section="overview">
         <span class="nav-icon">▦</span> Dashboard
       </button>
-      <button class="nav-item" data-section="my-listings">
-        <span class="nav-icon">≡</span> My Listings
-        <span class="nav-badge" id="listings-badge"></span>
-      </button>
-      <button class="nav-item" data-section="post-service">
-        <span class="nav-icon">+</span> Post a Service
-      </button>
       <button class="nav-item" data-section="my-ad">
         <span class="nav-icon">📣</span> My Ad
       </button>
@@ -401,17 +394,18 @@
 
       <div class="card-grid">
         <div class="stat-card">
-          <div class="stat-label">Active Listings</div>
-          <div class="stat-value fire" id="ov-active">—</div>
+          <div class="stat-label">Trucks in SWFL</div>
+          <div class="stat-value fire" id="ov-swfl-trucks">—</div>
+          <div class="stat-sub">Your market</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Total Views</div>
-          <div class="stat-value" id="ov-views">0</div>
-          <div class="stat-sub">Coming soon</div>
+          <div class="stat-label">Trucks Near You</div>
+          <div class="stat-value" id="ov-local-trucks">—</div>
+          <div class="stat-sub" id="ov-local-city">In your city</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Cities Covered</div>
-          <div class="stat-value" id="ov-cities">—</div>
+          <div class="stat-label">Ad Status</div>
+          <div class="stat-value" id="ov-ad-status" style="font-size:14px;padding-top:8px">—</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Member Since</div>
@@ -419,152 +413,25 @@
         </div>
       </div>
 
-      <div class="table-container" id="ov-recent-wrap">
+      <div class="table-container" style="margin-top:24px">
         <div class="table-toolbar">
-          <span class="table-title">Recent Listings</span>
-          <button class="btn-outline" onclick="showSection('my-listings')" style="font-size:12px;padding:6px 14px">View All</button>
+          <span class="table-title">Profile Completeness</span>
+          <button class="btn-outline" onclick="showSection('profile')" style="font-size:12px;padding:6px 14px">Edit Profile</button>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Service Type</th>
-              <th>City</th>
-              <th>Status</th>
-              <th>Posted</th>
-            </tr>
-          </thead>
-          <tbody id="ov-recent-tbody">
-            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ─── MY LISTINGS ─── -->
-    <section class="section" id="section-my-listings">
-      <div class="section-header">
-        <h1>My Listings</h1>
-        <p>All service listings you've posted on the vendor marketplace.</p>
+        <div style="padding:16px 20px" id="completeness-list">
+          <div style="color:var(--text-muted);font-size:13px">Loading…</div>
+        </div>
       </div>
 
-      <div class="table-container">
+      <div class="table-container" style="margin-top:24px">
         <div class="table-toolbar">
-          <span class="table-title">Posted Listings</span>
-          <button class="btn-primary" onclick="startNewListing()" style="font-size:12px;padding:7px 16px">+ New Listing</button>
+          <span class="table-title">Quick Actions</span>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Service Type</th>
-              <th>City</th>
-              <th>Status</th>
-              <th>Posted</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="listings-tbody"></tbody>
-        </table>
-        <div class="empty-state" id="listings-empty" style="display:none">
-          <p>No service listings yet. Post your first listing to get discovered by food truck operators.</p>
-          <button class="btn-primary" onclick="startNewListing()">Post Your First Listing →</button>
+        <div style="padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px">
+          <a href="vendor-services.html" target="_blank" class="btn-outline" style="font-size:13px;padding:8px 16px;text-decoration:none">View Public Directory ↗</a>
+          <button class="btn-outline" onclick="showSection('my-ad')" style="font-size:13px;padding:8px 16px">Manage My Ad</button>
+          <button class="btn-outline" onclick="showSection('profile')" style="font-size:13px;padding:8px 16px">Update Profile</button>
         </div>
-      </div>
-    </section>
-
-    <!-- ─── POST A SERVICE ─── -->
-    <section class="section" id="section-post-service">
-      <div class="section-header">
-        <h1 id="form-heading">Post a Service</h1>
-        <p id="form-subhead">List your service on the vendor marketplace. Food truck operators will find you here.</p>
-      </div>
-
-      <div class="form-card">
-        <div class="edit-mode-notice" id="edit-notice">
-          ✎ Editing an existing listing. Save to update, or <button id="cancel-edit-btn" style="background:none;border:none;color:var(--fire);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline">cancel</button>.
-        </div>
-        <form id="service-form">
-          <input type="hidden" id="edit-listing-id">
-          <div class="profile-grid">
-            <div class="field-group full">
-              <label for="f-title">Service Title *</label>
-              <input type="text" id="f-title" placeholder="e.g. Commercial Kitchen Rental — Cape Coral" required>
-            </div>
-            <div class="field-group">
-              <label for="f-category">Service Category *</label>
-              <select id="f-category" required>
-                <option value="" disabled selected>Select category</option>
-                <option>Commissary Kitchen</option>
-                <option>Equipment Rental</option>
-                <option>Repair &amp; Maintenance</option>
-                <option>Permitting &amp; Licensing</option>
-                <option>Supplies &amp; Wholesale</option>
-                <option>Insurance</option>
-                <option>Branding &amp; Marketing</option>
-                <option>Accounting &amp; Legal</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <label for="f-city">City *</label>
-              <select id="f-city" required>
-                <option value="" disabled selected>Select city</option>
-                <option>Cape Coral</option>
-                <option>Fort Myers</option>
-                <option>Lehigh Acres</option>
-                <option>Bonita Springs</option>
-                <option>North Fort Myers</option>
-                <option>Estero</option>
-                <option>Sanibel</option>
-                <option>Fort Myers Beach</option>
-                <option>Naples</option>
-                <option>Immokalee</option>
-                <option>Marco Island</option>
-                <option>Golden Gate</option>
-                <option>Lely Resort</option>
-                <option>Ave Maria</option>
-                <option>Naples Manor</option>
-                <option>Naples Park</option>
-                <option>Sarasota</option>
-                <option>North Port</option>
-                <option>Punta Gorda</option>
-                <option>Port Charlotte</option>
-                <option>Englewood</option>
-                <option>LaBelle</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <label for="f-service-area">Service Area *</label>
-              <select id="f-service-area" required>
-                <option value="" disabled selected>Select service area</option>
-                <option>Single City</option>
-                <option>Multiple Cities</option>
-                <option>All of SWFL</option>
-              </select>
-            </div>
-            <div class="field-group full">
-              <label for="f-description">Description *</label>
-              <textarea id="f-description" rows="5" placeholder="Describe what you offer, pricing, availability, and any requirements. Be specific — trucks are looking for reliable partners." required></textarea>
-            </div>
-            <div class="field-group">
-              <label for="f-website">Website / Booking Link</label>
-              <input type="url" id="f-website" placeholder="https://…">
-            </div>
-            <div class="field-group">
-              <label for="f-phone">Phone</label>
-              <input type="tel" id="f-phone" placeholder="(239) 555-0100">
-            </div>
-            <div class="field-group">
-              <label for="f-email">Contact Email</label>
-              <input type="email" id="f-email" placeholder="you@yourbusiness.com">
-            </div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center">
-            <button type="submit" class="btn-primary" id="form-submit-btn">Post Listing →</button>
-            <span id="form-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)"></span>
-          </div>
-        </form>
       </div>
     </section>
 
@@ -743,7 +610,7 @@
 
     renderSidebarMeta()
     populateProfileForm()
-    await Promise.all([loadOverview(), loadMyListings(), loadMyAd()])
+    await Promise.all([loadOverview(), loadMyAd()])
   }
 
   // ─── SIDEBAR META ─────────────────────────────────────────
@@ -761,277 +628,75 @@
       document.getElementById('unverified-banner').style.display = 'flex'
     }
 
-    // Member since
     if (profile.created_at) {
       document.getElementById('ov-since').textContent = fmtDate(profile.created_at)
     }
 
-    // Active listing count
-    const { count: activeCount } = await supabase
-      .from('listings')
+    // SWFL truck count
+    const { count: swflCount } = await supabase
+      .from('profiles')
       .select('*', { count: 'exact', head: true })
-      .eq('poster_id', userId)
-      .eq('board', 'vendor')
-      .eq('status', 'active')
+      .eq('role', 'truck')
+      .eq('is_verified', true)
+    document.getElementById('ov-swfl-trucks').textContent = swflCount ?? '—'
 
-    document.getElementById('ov-active').textContent = activeCount ?? 0
-
-    // Update sidebar badge
-    if ((activeCount ?? 0) > 0) {
-      const badge = document.getElementById('listings-badge')
-      badge.textContent = activeCount
-      badge.style.display = 'inline-block'
-    }
-
-    // Recent listings for overview table + city count
-    const { data: recent } = await supabase
-      .from('listings')
-      .select('id, title, cuisine_type, city, status, created_at')
-      .eq('poster_id', userId)
-      .eq('board', 'vendor')
-      .order('created_at', { ascending: false })
-      .limit(5)
-
-    // Cities covered — distinct cities across all listings
-    const { data: allListings } = await supabase
-      .from('listings')
-      .select('city, metadata')
-      .eq('poster_id', userId)
-      .eq('board', 'vendor')
-
-    if (allListings) {
-      const citySet = new Set()
-      allListings.forEach(l => {
-        // If service_area is "All of SWFL" count as all 22 cities
-        const meta = l.metadata || {}
-        if (meta.service_area === 'All of SWFL') {
-          // Just mark with a special flag — show "All SWFL"
-          citySet.add('__all__')
-        } else if (l.city) {
-          citySet.add(l.city)
-        }
-      })
-      if (citySet.has('__all__')) {
-        document.getElementById('ov-cities').textContent = '21'
-        document.getElementById('ov-cities').style.fontSize = '20px'
-      } else {
-        document.getElementById('ov-cities').textContent = citySet.size
-      }
+    // Local truck count
+    if (profile.city) {
+      document.getElementById('ov-local-city').textContent = `In ${profile.city}`
+      const { count: localCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'truck')
+        .eq('is_verified', true)
+        .eq('city', profile.city)
+      document.getElementById('ov-local-trucks').textContent = localCount ?? '0'
     } else {
-      document.getElementById('ov-cities').textContent = '0'
+      document.getElementById('ov-local-trucks').textContent = '—'
+      document.getElementById('ov-local-city').textContent = 'Set city in profile'
     }
 
-    const tbody = document.getElementById('ov-recent-tbody')
+    // Ad status
+    const { data: myAd } = await supabase
+      .from('promotions')
+      .select('status')
+      .eq('advertiser_id', userId)
+      .limit(1)
+      .maybeSingle()
 
-    if (!recent || recent.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;font-size:13px">No listings yet. <button class="btn-primary" style="margin-left:8px;padding:6px 14px;font-size:12px" onclick="showSection('post-service')">Post your first →</button></td></tr>`
-      return
-    }
-
-    tbody.innerHTML = recent.map(l => `
-      <tr>
-        <td><div class="td-name">${esc(l.title)}</div></td>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${esc(l.cuisine_type || '—')}</td>
-        <td>${esc(l.city || '—')}</td>
-        <td><span class="pill pill-${l.status}">${l.status}</span></td>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
-      </tr>`).join('')
-  }
-
-  // ─── MY LISTINGS ──────────────────────────────────────────
-  async function loadMyListings() {
-    const { data } = await supabase
-      .from('listings')
-      .select('id, title, cuisine_type, city, status, created_at, metadata')
-      .eq('poster_id', userId)
-      .eq('board', 'vendor')
-      .order('created_at', { ascending: false })
-
-    const tbody = document.getElementById('listings-tbody')
-    const empty = document.getElementById('listings-empty')
-
-    if (!data || data.length === 0) {
-      tbody.innerHTML = ''
-      empty.style.display = 'block'
-      return
-    }
-
-    empty.style.display = 'none'
-
-    tbody.innerHTML = data.map(l => {
-      const meta = l.metadata || {}
-      return `
-        <tr>
-          <td>
-            <div class="td-name">${esc(l.title)}</div>
-            ${meta.service_area ? `<div class="td-sub">${esc(meta.service_area)}</div>` : ''}
-          </td>
-          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${esc(l.cuisine_type || '—')}</td>
-          <td>${esc(l.city || '—')}</td>
-          <td><span class="pill pill-${l.status}">${l.status}</span></td>
-          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
-          <td>
-            <div class="action-group">
-              <button class="btn-edit"   onclick="editListing('${l.id}')">Edit</button>
-              <button class="btn-delete" onclick="deleteListing('${l.id}')">Delete</button>
-            </div>
-          </td>
-        </tr>`
-    }).join('')
-  }
-
-  // ─── EDIT LISTING ─────────────────────────────────────────
-  window.editListing = async function(id) {
-    const { data, error } = await supabase
-      .from('listings')
-      .select('*')
-      .eq('id', id)
-      .single()
-
-    if (error || !data) {
-      showToast('Could not load listing.', true)
-      return
-    }
-
-    const meta = data.metadata || {}
-
-    document.getElementById('edit-listing-id').value = id
-    document.getElementById('f-title').value         = data.title            || ''
-    document.getElementById('f-description').value   = data.description      || ''
-    document.getElementById('f-city').value          = data.city             || ''
-    document.getElementById('f-website').value       = data.location         || ''
-    document.getElementById('f-phone').value         = data.start_time       || ''
-    document.getElementById('f-email').value         = meta.contact_email    || ''
-
-    // Service category stored in cuisine_type
-    const catSel = document.getElementById('f-category')
-    for (const opt of catSel.options) {
-      if (opt.value === data.cuisine_type) { catSel.value = data.cuisine_type; break }
-    }
-
-    // Service area
-    const areaSel = document.getElementById('f-service-area')
-    for (const opt of areaSel.options) {
-      if (opt.value === meta.service_area) { areaSel.value = meta.service_area; break }
-    }
-
-    document.getElementById('edit-notice').classList.add('show')
-    document.getElementById('form-heading').textContent   = 'Edit Listing'
-    document.getElementById('form-subhead').textContent   = 'Update your service listing details below.'
-    document.getElementById('form-submit-btn').textContent = 'Save Changes →'
-
-    showSection('post-service')
-  }
-
-  // ─── DELETE LISTING ───────────────────────────────────────
-  window.deleteListing = async function(id) {
-    if (!confirm('Delete this listing? This cannot be undone.')) return
-
-    const { error } = await supabase
-      .from('listings')
-      .delete()
-      .eq('id', id)
-      .eq('poster_id', userId)
-
-    if (error) {
-      showToast('Error deleting listing.', true)
-      return
-    }
-
-    showToast('Listing deleted.')
-    await Promise.all([loadOverview(), loadMyListings()])
-  }
-
-  // ─── START NEW LISTING ────────────────────────────────────
-  window.startNewListing = function() {
-    resetServiceForm()
-    showSection('post-service')
-  }
-
-  function resetServiceForm() {
-    document.getElementById('service-form').reset()
-    document.getElementById('edit-listing-id').value      = ''
-    document.getElementById('edit-notice').classList.remove('show')
-    document.getElementById('form-heading').textContent   = 'Post a Service'
-    document.getElementById('form-subhead').textContent   = 'List your service on the vendor marketplace. Food truck operators will find you here.'
-    document.getElementById('form-submit-btn').textContent = 'Post Listing →'
-    document.getElementById('form-status').textContent    = ''
-  }
-
-  document.getElementById('cancel-edit-btn').addEventListener('click', () => {
-    resetServiceForm()
-    showSection('my-listings')
-  })
-
-  // ─── SERVICE FORM SUBMIT ──────────────────────────────────
-  document.getElementById('service-form').addEventListener('submit', async (e) => {
-    e.preventDefault()
-    const statusEl = document.getElementById('form-status')
-    statusEl.textContent = 'Saving…'
-    statusEl.style.color = 'var(--text-muted)'
-
-    const editId      = document.getElementById('edit-listing-id').value.trim()
-    const title       = document.getElementById('f-title').value.trim()
-    const category    = document.getElementById('f-category').value
-    const description = document.getElementById('f-description').value.trim()
-    const city        = document.getElementById('f-city').value
-    const serviceArea = document.getElementById('f-service-area').value
-    const website     = document.getElementById('f-website').value.trim() || null
-    const phone       = document.getElementById('f-phone').value.trim()   || null
-    const email       = document.getElementById('f-email').value.trim()   || null
-
-    if (!title || !category || !description || !city || !serviceArea) {
-      statusEl.textContent = 'Please fill in all required fields.'
-      statusEl.style.color = '#ff8080'
-      return
-    }
-
-    const payload = {
-      poster_id:    userId,
-      board:        'vendor',
-      title,
-      description,
-      city,
-      cuisine_type: category,   // service category stored here
-      location:     website,    // website/booking link
-      start_time:   phone,      // phone stored here
-      status:       'active',
-      metadata: {
-        service_category: category,
-        service_area:     serviceArea,
-        contact_email:    email
-      }
-    }
-
-    let error
-
-    if (editId) {
-      // Update existing
-      const res = await supabase
-        .from('listings')
-        .update({ ...payload, updated_at: new Date().toISOString() })
-        .eq('id', editId)
-        .eq('poster_id', userId)
-      error = res.error
+    const adStatusEl = document.getElementById('ov-ad-status')
+    if (!myAd) {
+      adStatusEl.innerHTML = `<span style="color:var(--text-muted);font-size:13px">None — <button onclick="showSection('my-ad')" style="background:none;border:none;color:var(--fire);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;padding:0">Set up →</button></span>`
     } else {
-      // Insert new
-      const res = await supabase.from('listings').insert(payload)
-      error = res.error
+      const colors = { active: '#50c878', pending: '#f6ad55', paused: '#a0aec0', rejected: '#fc8181' }
+      adStatusEl.innerHTML = `<span style="color:${colors[myAd.status] || '#fff'};font-weight:700;font-size:16px">${myAd.status.toUpperCase()}</span>`
     }
 
-    if (error) {
-      statusEl.textContent = 'Error saving listing.'
-      statusEl.style.color = '#ff8080'
-      console.error(error)
-      return
-    }
+    // Profile completeness
+    const checks = [
+      { label: 'Business name', ok: !!profile.business_name },
+      { label: 'Phone number',  ok: !!profile.phone },
+      { label: 'Website',       ok: !!profile.website },
+      { label: 'About / bio',   ok: !!profile.bio },
+      { label: 'City',          ok: !!profile.city },
+    ]
+    const done = checks.filter(c => c.ok).length
+    const pct  = Math.round((done / checks.length) * 100)
 
-    statusEl.textContent = ''
-    resetServiceForm()
-    showToast(editId ? 'Listing updated.' : 'Listing posted — trucks will find you on the marketplace.')
-    await Promise.all([loadOverview(), loadMyListings()])
-    showSection('my-listings')
-  })
+    document.getElementById('completeness-list').innerHTML = `
+      <div style="margin-bottom:14px">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:6px">${done} of ${checks.length} fields complete (${pct}%)</div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:4px;height:6px;overflow:hidden">
+          <div style="background:var(--fire);width:${pct}%;height:100%;border-radius:4px"></div>
+        </div>
+      </div>
+      ${checks.map(c => `
+        <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px">
+          <span style="color:${c.ok ? '#50c878' : 'rgba(255,255,255,0.2)'};font-size:15px;flex-shrink:0;width:16px">${c.ok ? '✓' : '○'}</span>
+          <span style="color:${c.ok ? 'white' : 'var(--text-muted)'}">${c.label}</span>
+          ${!c.ok ? `<button onclick="showSection('profile')" style="margin-left:auto;background:none;border:none;color:var(--fire);font-family:'Sora',sans-serif;font-size:11px;font-weight:600;cursor:pointer;padding:0">Add →</button>` : ''}
+        </div>`).join('')}
+    `
+  }
 
   // ─── PROFILE FORM ─────────────────────────────────────────
   function populateProfileForm() {
