@@ -2133,4 +2133,148 @@ function fmtTime(t) {
 function showToast(msg, isError=false) {
   const t = document.getElementById('toast')
   t.textContent=msg; t.className='toast'+(isError?' error':''); t.classList.add('show')
-  setTimeout(()=>t.clas
+  setTimeout(()=>t.classList.remove('show'),3000)
+}
+
+// ─── UPCOMING BOOKINGS (Overview) ─────────────────────
+async function loadUpcomingBookings() {
+  const today = new Date().toISOString().slice(0,10)
+  const { data } = await supabase
+    .from('bookings')
+    .select('id, event_type, event_date, start_time, city, location, status')
+    .eq('truck_id', userId)
+    .in('status', ['accepted', 'pending'])
+    .gte('event_date', today)
+    .order('event_date', { ascending: true })
+    .limit(5)
+  const tbody = document.getElementById('upcoming-bookings-list')
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No upcoming bookings.</td></tr>'
+    return
+  }
+  tbody.innerHTML = data.map(b => {
+    const statusPill = b.status === 'accepted'
+      ? '<span class="pill pill-accepted">Confirmed</span>'
+      : '<span class="pill pill-pending">Pending</span>'
+    const timeStr = b.start_time
+      ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:3px">${fmtTime(b.start_time)}</div>`
+      : ''
+    return `<tr>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div class="td-name">${esc(b.event_type||'Event')}</div>
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</div>
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div style="font-size:13px">${esc(b.location || b.city || '—')}</div>
+        ${b.location && b.city ? `<div class="td-sub">${esc(b.city)}</div>` : ''}
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        ${statusPill}${timeStr}
+      </td>
+    </tr>`
+  }).join('')
+}
+
+// ─── BOOKING REQUESTS (Overview) ──────────────────────
+// Shows direct booking requests sent to THIS truck (pending bookings where truck_id = userId)
+async function loadMarketplaceRequests() {
+  const { data } = await supabase
+    .from('bookings')
+    .select('id, event_type, event_date, city, budget_range, requester:requester_id(business_name, contact_name)')
+    .eq('truck_id', userId)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(5)
+  const el = document.getElementById('marketplace-req-list')
+  if (!data || data.length === 0) {
+    el.innerHTML = `<div style="padding:16px 18px">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);margin-bottom:10px">No direct requests yet.</div>
+      <button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="window.location.href='marketplace.html?board=request'">Browse Open Marketplace</button>
+    </div>`
+    return
+  }
+  el.innerHTML = data.map(b => {
+    const requester = b.requester?.business_name || b.requester?.contact_name || 'Someone'
+    const parts = [b.event_date ? fmtDate(b.event_date) : null, b.city || null, b.budget_range || null].filter(Boolean)
+    const meta = parts.join(' · ')
+    return `<div class="req-card">
+      <div>
+        <div class="req-card-name">${esc(b.event_type || 'Booking Request')}</div>
+        <div class="req-card-meta">From: ${esc(requester)}${meta ? ' · ' + meta : ''}</div>
+      </div>
+      <button class="btn-bid" onclick="showSection('inbox')">Review</button>
+    </div>`
+  }).join('')
+}
+
+// ─── ACTIVE BIDS (Overview) ───────────────────────────
+async function loadActiveBids() {
+  const { data } = await supabase
+    .from('bids')
+    .select('id, status, created_at, listing:listing_id(title, event_date, city)')
+    .eq('truck_id', userId)
+    .order('created_at', { ascending: false })
+  const tbody = document.getElementById('active-bids-list')
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>'
+    return
+  }
+  tbody.innerHTML = data.map(b => {
+    const pillClass = b.status === 'accepted' ? 'pill-accepted' : b.status === 'declined' ? 'pill-declined' : 'pill-pending'
+    const pillLabel = b.status === 'accepted' ? 'Accepted' : b.status === 'declined' ? 'Declined' : 'Pending'
+    const parts = [b.listing?.event_date ? fmtDate(b.listing.event_date) : null, b.listing?.city || null].filter(Boolean)
+    return `<tr>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <div class="td-name">${esc(b.listing?.title || '—')}</div>
+        ${parts.length ? `<div class="td-sub">${parts.join(' · ')}</div>` : ''}
+      </td>
+      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <span class="pill ${pillClass}">${pillLabel}</span>
+      </td>
+    </tr>`
+  }).join('')
+}
+
+// ─── BID MODAL ────────────────────────────────────────
+let pendingBidListingId = null
+window.openBidModal = function(listingId, title, meta) {
+  pendingBidListingId = listingId
+  document.getElementById('bid-modal-title').textContent = title || 'Marketplace Request'
+  document.getElementById('bid-modal-meta').textContent = meta || ''
+  document.getElementById('bid-message').value = ''
+  document.getElementById('bid-modal-overlay').classList.add('open')
+}
+function closeBidModal() {
+  document.getElementById('bid-modal-overlay').classList.remove('open')
+  pendingBidListingId = null
+}
+document.getElementById('bid-cancel-btn').addEventListener('click', closeBidModal)
+document.getElementById('bid-submit-btn').addEventListener('click', async () => {
+  if (!pendingBidListingId) return
+  const btn = document.getElementById('bid-submit-btn')
+  const msg = document.getElementById('bid-message').value.trim()
+  btn.textContent = 'Submitting…'; btn.disabled = true
+  const { error } = await supabase.from('bids').insert({
+    listing_id: pendingBidListingId,
+    truck_id: userId,
+    message: msg || null
+  })
+  btn.textContent = 'Submit Bid'; btn.disabled = false
+  if (error) {
+    if (error.code === '23505') {
+      showToast('You already submitted a bid for this request', true)
+    } else {
+      showToast('Error submitting bid — try again', true)
+      console.error('[bid]', error)
+    }
+    return
+  }
+  showToast('Bid submitted')
+  closeBidModal()
+  await loadActiveBids()
+})
+
+init()
+</script>
