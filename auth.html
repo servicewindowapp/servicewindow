@@ -815,11 +815,29 @@
     if (session) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role, is_verified')
+        .select('role, is_verified, subscription_status')
         .eq('id', session.user.id)
         .single()
       if (profile?.is_verified) {
         redirectToDashboard(profile.role)
+      } else if (!profile) {
+        // Auth user exists but no profile (e.g. old hard-delete rejection) — sign out and let them re-register
+        await supabase.auth.signOut()
+      } else if (profile.subscription_status === 'rejected') {
+        // Application was rejected — show rejection message with resubmit option
+        const successDiv = document.getElementById('stepSuccess')
+        successDiv.innerHTML = `
+          <div class="success-state">
+            <span class="success-icon" style="font-size:40px">✕</span>
+            <h2 style="margin-top:16px">Application not approved.</h2>
+            <p>Your application was reviewed and not approved at this time. You can resubmit below — our team will review it again within 24 hours.</p>
+            <button class="btn-submit" style="width:auto;padding:14px 32px;margin-top:20px" onclick="resubmitApplication(this)">Resubmit Application</button>
+            <br>
+            <a href="index.html" style="display:inline-block;margin-top:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);text-decoration:none;">← Back to Home</a>
+          </div>
+        `
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'))
+        successDiv.classList.add('active')
       } else {
         // Logged in but pending — show the queue screen, don't redirect to dashboard
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'))
@@ -841,6 +859,27 @@
     }
 
     window.redirectToDashboard = redirectToDashboard
+
+    // ─── RESUBMIT (after rejection) ───
+    window.resubmitApplication = async function(btn) {
+      btn.disabled = true
+      btn.textContent = 'Resubmitting…'
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { window.location.reload(); return }
+      const { data: prof } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+      const newStatus = prof?.role === 'truck' ? 'pending' : 'active'
+      const { error } = await supabase.from('profiles').update({ subscription_status: newStatus }).eq('id', session.user.id)
+      if (error) { btn.disabled = false; btn.textContent = 'Resubmit Application'; return }
+      document.getElementById('stepSuccess').innerHTML = `
+        <div class="success-state">
+          <span class="success-icon">🎉</span>
+          <h2>You're in the queue.</h2>
+          <p>Your application has been resubmitted. We'll review it and send a confirmation within 24 hours.</p>
+          <p style="margin-top:12px;color:var(--text-muted);font-size:13px;font-family:'DM Mono',monospace;">Check your spam folder if you don't see it.</p>
+          <a href="index.html" class="btn-submit" style="text-decoration:none;display:inline-flex;width:auto;padding:14px 28px;margin-top:8px">← Back to Home</a>
+        </div>
+      `
+    }
 
     // ─── ROLE SELECTION ───
     let selectedRole = null
@@ -974,6 +1013,7 @@
         password,
         options: {
           data: {
+            full_name: `${firstName} ${lastName}`.trim(),
             business_name: businessName,
             role: selectedRole
           }

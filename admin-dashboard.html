@@ -823,15 +823,15 @@
   }
 
   window.rejectUser = async function (id) {
-    if (!confirm('Remove this account? This will delete their profile record.')) return
-    const { error } = await supabase.from('profiles').delete().eq('id', id)
-    if (error) { showToast('Error removing profile — use Supabase dashboard', true); return }
+    if (!confirm('Reject this application? The user will see a rejection message and can resubmit.')) return
+    const { error } = await supabase.from('profiles').update({ subscription_status: 'rejected', is_verified: false }).eq('id', id)
+    if (error) { showToast('Error rejecting account', true); return }
     document.getElementById(`prow-${id}`)?.remove()
     pendingCount = Math.max(0, pendingCount - 1)
     updatePendingBadge()
     document.getElementById('stat-pending').textContent = pendingCount
-    showToast('Profile removed')
-    allUsers = allUsers.filter(u => u.id !== id)
+    showToast('Application rejected — user can resubmit')
+    allUsers = allUsers.map(u => u.id === id ? { ...u, subscription_status: 'rejected', is_verified: false } : u)
     renderUsers()
   }
 

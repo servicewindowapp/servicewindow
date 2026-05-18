@@ -214,12 +214,20 @@ Never omit `--no-verify-jwt`.
 | `active` | Stripe subscription active |
 | `past_due` | Stripe payment failed |
 | `cancelled` / `canceled` | Subscription ended (both spellings accepted by constraint) |
+| `rejected` | Admin rejected application — user can resubmit (all roles) |
 
 DB constraint: `profiles_subscription_status_check`
 ```sql
-CHECK (subscription_status IN ('pending','trialing','active','past_due','cancelled','canceled'))
+CHECK (subscription_status IN ('pending','trialing','active','past_due','cancelled','canceled','rejected'))
 ```
 Non-truck roles (organizer, venue, property, service_provider) are set to `active` at signup — free forever.
+
+**Migration — add 'rejected' to constraint:**
+```sql
+ALTER TABLE profiles DROP CONSTRAINT profiles_subscription_status_check;
+ALTER TABLE profiles ADD CONSTRAINT profiles_subscription_status_check
+  CHECK (subscription_status IN ('pending','trialing','active','past_due','cancelled','canceled','rejected'));
+```
 
 30-day trial: `subscription_status = 'trialing'`, `trial_ends_at = now() + 30 days` (set by admin approval)
 
