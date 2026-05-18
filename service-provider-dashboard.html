@@ -538,6 +538,21 @@
         <form id="ad-form">
           <input type="hidden" id="ad-id">
           <div class="profile-grid">
+            <div class="field-group">
+              <label for="ad-category">Service Category *</label>
+              <select id="ad-category" required>
+                <option value="" disabled selected>Select category</option>
+                <option value="Commissary Kitchen">Commissary Kitchen</option>
+                <option value="Repair & Maintenance">Repair &amp; Maintenance</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Supplies & Wholesale">Supplies &amp; Wholesale</option>
+                <option value="Equipment Rental">Equipment Rental</option>
+                <option value="Permitting & Licensing">Permitting &amp; Licensing</option>
+                <option value="Branding & Marketing">Branding &amp; Marketing</option>
+                <option value="Accounting & Legal">Accounting &amp; Legal</option>
+              </select>
+            </div>
+            <div class="field-group"><!-- spacer --></div>
             <div class="field-group full">
               <label for="ad-headline">Headline *</label>
               <input type="text" id="ad-headline" placeholder="e.g. Commercial Kitchen Available — Cape Coral, $200/day" required maxlength="100">
@@ -804,7 +819,7 @@
   async function loadMyAd() {
     const { data } = await supabase
       .from('promotions')
-      .select('id, headline, body, cta_label, cta_url, contact_phone, contact_email, status, admin_notes')
+      .select('id, headline, body, cta_label, cta_url, contact_phone, contact_email, service_category, status, admin_notes')
       .eq('advertiser_id', userId)
       .order('created_at', { ascending: false })
       .limit(1)
@@ -834,6 +849,7 @@
 
     // Pre-fill form for editing
     document.getElementById('ad-id').value           = data.id
+    document.getElementById('ad-category').value     = data.service_category || ''
     document.getElementById('ad-headline').value     = data.headline || ''
     document.getElementById('ad-body').value         = data.body || ''
     document.getElementById('ad-phone').value        = data.contact_phone || ''
@@ -867,9 +883,10 @@
       ? 'https://' + rawCtaUrl : rawCtaUrl || null
 
     const payload = {
-      advertiser_id:  userId,
-      ad_type:        'service_provider',
-      headline:       document.getElementById('ad-headline').value.trim(),
+      advertiser_id:    userId,
+      ad_type:          'service_provider',
+      service_category: document.getElementById('ad-category').value || null,
+      headline:         document.getElementById('ad-headline').value.trim(),
       body:           document.getElementById('ad-body').value.trim() || null,
       contact_phone:  document.getElementById('ad-phone').value.trim() || null,
       contact_email:  document.getElementById('ad-email').value.trim() || null,

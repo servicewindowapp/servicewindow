@@ -554,12 +554,12 @@
       { key: 'accounting',  dbValue: 'Accounting & Legal',      el: 'listings-accounting' }
     ]
 
-    // ─── LOAD ALL VENDOR LISTINGS ─────────────────────────────
+    // ─── LOAD ALL VENDOR PROMOTIONS ───────────────────────────
     async function loadListings() {
-      const { data: listings, error } = await supabase
-        .from('listings')
-        .select('id, title, city, description, cuisine_type, location, start_time, metadata, status')
-        .eq('board', 'vendor')
+      const { data: promotions, error } = await supabase
+        .from('promotions')
+        .select('id, headline, body, service_category, contact_phone, contact_email, cta_url, cta_label, profiles(business_name, city)')
+        .eq('ad_type', 'service_provider')
         .eq('status', 'active')
         .order('created_at', { ascending: false })
 
@@ -568,10 +568,10 @@
       const byCategory = {}
       CATEGORIES.forEach(c => { byCategory[c.dbValue] = [] })
 
-      if (listings) {
-        listings.forEach(l => {
-          const cat = l.cuisine_type || l.metadata?.service_category || 'Other'
-          if (byCategory[cat]) byCategory[cat].push(l)
+      if (promotions) {
+        promotions.forEach(p => {
+          const cat = p.service_category || 'Other'
+          if (byCategory[cat]) byCategory[cat].push(p)
         })
       }
 
@@ -581,11 +581,11 @@
     }
 
     // ─── RENDER A CATEGORY ────────────────────────────────────
-    function renderCategory(elId, listings, catKey) {
+    function renderCategory(elId, promotions, catKey) {
       const el = document.getElementById(elId)
       if (!el) return
 
-      if (!listings.length) {
+      if (!promotions.length) {
         el.innerHTML = `
           <div class="empty-state">
             <p>No providers listed yet in this category.<br>
@@ -595,26 +595,23 @@
         return
       }
 
-      const cards = listings.map(l => {
-        const meta    = l.metadata || {}
-        const phone   = l.start_time || ''
-        const website = l.location   || ''
-        const email   = meta.contact_email || ''
-        const area    = meta.service_area  || ''
+      const cards = promotions.map(p => {
+        const prof    = p.profiles || {}
+        const city    = prof.city || ''
+        const name    = prof.business_name || p.headline
 
         const contacts = []
-        if (phone)   contacts.push(`<a href="tel:${phone.replace(/\D/g,'')}" class="vendor-contact-link">${phone}</a>`)
-        if (email)   contacts.push(`<a href="mailto:${email}" class="vendor-contact-link">${email}</a>`)
-        if (website) contacts.push(`<a href="${website}" target="_blank" rel="noopener" class="vendor-contact-link">Website</a>`)
+        if (p.contact_phone) contacts.push(`<a href="tel:${p.contact_phone.replace(/\D/g,'')}" class="vendor-contact-link">${p.contact_phone}</a>`)
+        if (p.contact_email) contacts.push(`<a href="mailto:${p.contact_email}" class="vendor-contact-link">${p.contact_email}</a>`)
+        if (p.cta_url)       contacts.push(`<a href="${esc(p.cta_url)}" target="_blank" rel="noopener" class="vendor-contact-link">${esc(p.cta_label || 'Website')}</a>`)
 
         return `
           <div class="vendor-card">
-            <div class="vendor-card-name">${esc(l.title)}</div>
+            <div class="vendor-card-name">${esc(name)}</div>
             <div class="vendor-card-meta">
-              <span class="vendor-tag city">${esc(l.city || '')}</span>
-              ${area && area !== 'Single City' ? `<span class="vendor-tag area">${esc(area)}</span>` : ''}
+              ${city ? `<span class="vendor-tag city">${esc(city)}</span>` : ''}
             </div>
-            <div class="vendor-card-desc">${esc(l.description || '')}</div>
+            <div class="vendor-card-desc">${esc(p.body || '')}</div>
             ${contacts.length ? `<div class="vendor-card-contacts">${contacts.join('')}</div>` : ''}
           </div>`
       }).join('')

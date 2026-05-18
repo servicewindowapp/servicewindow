@@ -143,6 +143,7 @@ promotions (
   id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   advertiser_id    uuid REFERENCES profiles(id) ON DELETE CASCADE,
   ad_type          text NOT NULL,  -- 'service_provider' | 'property'
+  service_category text,           -- 'Commissary Kitchen' | 'Repair & Maintenance' | 'Insurance' | 'Supplies & Wholesale' | 'Equipment Rental' | 'Permitting & Licensing' | 'Branding & Marketing' | 'Accounting & Legal'
   headline         text NOT NULL,
   body             text,
   contact_phone    text,
