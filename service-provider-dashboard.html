@@ -455,7 +455,7 @@
             </div>
             <div class="field-group">
               <label for="p-website">Website</label>
-              <input type="url" id="p-website" placeholder="https://…">
+              <input type="text" id="p-website" placeholder="https://…">
             </div>
             <div class="field-group">
               <label for="p-city">City</label>
@@ -558,7 +558,7 @@
             </div>
             <div class="field-group">
               <label for="ad-cta-url">Website / Booking URL</label>
-              <input type="url" id="ad-cta-url" placeholder="https://…">
+              <input type="text" id="ad-cta-url" placeholder="https://…">
             </div>
             <div class="field-group">
               <label for="ad-cta-label">Button Label</label>
@@ -725,10 +725,14 @@
     const years = document.getElementById('p-years').value.trim() || null
     const existingMeta = profile.metadata || {}
 
+    const rawWebsite = document.getElementById('p-website').value.trim()
+    const website = rawWebsite && !rawWebsite.match(/^https?:\/\//i)
+      ? 'https://' + rawWebsite : rawWebsite || null
+
     const updates = {
       business_name: document.getElementById('p-business').value.trim() || null,
       phone:         document.getElementById('p-phone').value.trim()    || null,
-      website:       document.getElementById('p-website').value.trim()  || null,
+      website,
       bio:           document.getElementById('p-bio').value.trim()      || null,
       city:          document.getElementById('p-city').value            || null,
       metadata:      { ...existingMeta, years_in_business: years },
@@ -858,6 +862,10 @@
     const statusEl = document.getElementById('ad-form-status')
     btn.disabled = true; btn.textContent = 'Saving…'
 
+    const rawCtaUrl = document.getElementById('ad-cta-url').value.trim()
+    const ctaUrl = rawCtaUrl && !rawCtaUrl.match(/^https?:\/\//i)
+      ? 'https://' + rawCtaUrl : rawCtaUrl || null
+
     const payload = {
       advertiser_id:  userId,
       ad_type:        'service_provider',
@@ -865,7 +873,7 @@
       body:           document.getElementById('ad-body').value.trim() || null,
       contact_phone:  document.getElementById('ad-phone').value.trim() || null,
       contact_email:  document.getElementById('ad-email').value.trim() || null,
-      cta_url:        document.getElementById('ad-cta-url').value.trim() || null,
+      cta_url:        ctaUrl,
       cta_label:      document.getElementById('ad-cta-label').value.trim() || 'Learn More',
       status:         'pending'
     }
