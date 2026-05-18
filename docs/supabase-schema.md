@@ -137,6 +137,27 @@ reviews (
 -- UNIQUE (reviewer_id, request_id) WHERE request_id IS NOT NULL
 ```
 
+### promotions (service provider & property ads)
+```sql
+promotions (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  advertiser_id    uuid REFERENCES profiles(id) ON DELETE CASCADE,
+  ad_type          text NOT NULL,  -- 'service_provider' | 'property'
+  headline         text NOT NULL,
+  body             text,
+  contact_phone    text,
+  contact_email    text,
+  cta_url          text,
+  cta_label        text DEFAULT 'Learn More',
+  status           text DEFAULT 'pending' CHECK (status IN ('pending','active','paused','rejected')),
+  admin_notes      text,
+  reviewed_at      timestamptz,
+  created_at       timestamptz DEFAULT now(),
+  updated_at       timestamptz DEFAULT now()
+)
+```
+NOTE: Table is named `promotions` (not `ads`) to avoid ad blocker interception of API requests containing `/ads?` in the URL.
+
 ### waitlist (pre-launch)
 ```sql
 waitlist (

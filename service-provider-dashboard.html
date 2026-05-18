@@ -1134,7 +1134,7 @@
 
   async function loadMyAd() {
     const { data } = await supabase
-      .from('ads')
+      .from('promotions')
       .select('id, headline, body, cta_label, cta_url, contact_phone, contact_email, status, admin_notes')
       .eq('advertiser_id', userId)
       .order('created_at', { ascending: false })
@@ -1208,9 +1208,9 @@
     const adId = document.getElementById('ad-id').value
     let error
     if (adId) {
-      ;({ error } = await supabase.from('ads').update(payload).eq('id', adId).eq('advertiser_id', userId))
+      ;({ error } = await supabase.from('promotions').update(payload).eq('id', adId).eq('advertiser_id', userId))
     } else {
-      ;({ error } = await supabase.from('ads').insert(payload))
+      ;({ error } = await supabase.from('promotions').insert(payload))
     }
 
     btn.disabled = false

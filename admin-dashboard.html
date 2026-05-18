@@ -720,7 +720,7 @@
         .eq('status', 'active'),
       supabase.from('claim_requests').select('*', { count: 'exact', head: true })
         .eq('status', 'pending'),
-      supabase.from('ads').select('*', { count: 'exact', head: true })
+      supabase.from('promotions').select('*', { count: 'exact', head: true })
         .eq('status', 'pending')
     ])
 
@@ -996,7 +996,7 @@
     const statusFilter = document.getElementById('ads-filter').value
 
     let query = supabase
-      .from('ads')
+      .from('promotions')
       .select('id, advertiser_id, ad_type, headline, body, contact_phone, contact_email, cta_label, cta_url, status, admin_notes, created_at, profiles(business_name, contact_name, email)')
       .order('created_at', { ascending: true })
 
@@ -1058,7 +1058,7 @@
 
   window.approveAd = async function(id) {
     const { error } = await supabase
-      .from('ads')
+      .from('promotions')
       .update({ status: 'active', reviewed_at: new Date().toISOString(), admin_notes: null })
       .eq('id', id)
     if (error) { showToast('Error approving ad', true); return }
@@ -1069,7 +1069,7 @@
 
   window.pauseAd = async function(id) {
     const { error } = await supabase
-      .from('ads')
+      .from('promotions')
       .update({ status: 'paused', reviewed_at: new Date().toISOString() })
       .eq('id', id)
     if (error) { showToast('Error pausing ad', true); return }
@@ -1082,7 +1082,7 @@
     const note = prompt('Rejection reason (shown to advertiser):')
     if (note === null) return // cancelled
     const { error } = await supabase
-      .from('ads')
+      .from('promotions')
       .update({ status: 'rejected', admin_notes: note || null, reviewed_at: new Date().toISOString() })
       .eq('id', id)
     if (error) { showToast('Error rejecting ad', true); return }
