@@ -2085,7 +2085,7 @@ document.getElementById('btn-signout').addEventListener('click', async ()=>{ awa
 // ─── VENDOR SPOTLIGHT (ADS) ───────────────────────────
 async function loadAds() {
   const { data, error } = await supabase
-    .from('ads')
+    .from('promotions')
     .select('id, ad_type, headline, body, cta_label, cta_url, contact_phone, contact_email, advertiser:advertiser_id(business_name)')
     .eq('status', 'active')
     .order('created_at', { ascending: false })
