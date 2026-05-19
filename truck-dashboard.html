@@ -2197,12 +2197,14 @@ document.getElementById('ext-submit-btn').addEventListener('click', async () => 
   if (!editingBookingId) {
     const conflicts = getSameDayConflicts(date)
     if (conflicts.length) {
-      await showConflictModal(date, conflicts, () => performExtSave())
+      await showConflictModal(date, conflicts, async () => {
+        try { await performExtSave() } catch(e) { console.error('performExtSave error:', e); showToast('Save failed — check console', true) }
+      })
       return
     }
   }
 
-  performExtSave()
+  try { await performExtSave() } catch(e) { console.error('performExtSave error:', e); showToast('Save failed — check console', true) }
 })
 
 async function performExtSave() {
