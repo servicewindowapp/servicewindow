@@ -2057,8 +2057,9 @@ document.getElementById('ext-submit-btn').addEventListener('click', async () => 
         method:'POST',
         headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+session?.access_token },
         body: JSON.stringify({
-          type: 'external_booking_confirmation',
-          to:   clientEmail,
+          type:            'external_booking_confirmation',
+          recipient_email: clientEmail,
+          recipient_name:  clientName||'there',
           data: {
             client_name:   clientName||'there',
             truck_name:    profile.business_name||'Your food truck',
@@ -2072,7 +2073,7 @@ document.getElementById('ext-submit-btn').addEventListener('click', async () => 
     } catch(_) { /* non-fatal */ }
   }
 
-  document.getElementById('ext-form').reset()
+  document.querySelectorAll('#ext-form input, #ext-form select, #ext-form textarea').forEach(el => el.value = '')
   btn.textContent='Log Booking'; btn.disabled=false
   closeExtModal()
   showToast('Booking logged')
