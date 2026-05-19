@@ -61,7 +61,7 @@
 
     /* MOBILE TOPBAR */
     .mobile-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: #07111a; border-bottom: 1px solid var(--dark-border); z-index: 100; align-items: center; padding: 0 16px; gap: 12px; }
-    @media (max-width: 767px) { .mobile-topbar { display: flex; } body { padding-top: 52px; } }
+    @media (max-width: 767px) { .mobile-topbar { display: flex; } body { padding-top: 52px; } .dashboard-shell { height: calc(100vh - 52px); } }
     .hamburger-btn { background: none; border: none; color: var(--text-secondary); font-size: 18px; cursor: pointer; padding: 6px; line-height: 1; }
     .topbar-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: white; flex: 1; }
     .notif-bell-btn { position: relative; background: none; border: none; color: var(--text-secondary); font-size: 18px; cursor: pointer; padding: 6px; line-height: 1; }
@@ -80,7 +80,7 @@
     .main-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
     .section { display: none; padding: 28px 32px; max-width: 1100px; }
     .section.active { display: block; }
-    @media (max-width: 767px) { .section { padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); } }
+    @media (max-width: 767px) { .section { padding: 20px 16px max(80px, calc(20px + env(safe-area-inset-bottom))); } }
 
     .section-header { margin-bottom: 24px; }
     .section-header h1 { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
@@ -218,7 +218,7 @@
     .cal-legend-dot.pending { background: var(--amber); }
     .cal-legend-dot.external { background: var(--blue); }
     .cal-legend-dot.shift { background: #a855f7; }
-    .cal-upcoming { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 10px; padding: 14px; }
+    .cal-upcoming { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 10px; padding: 14px; max-height: 420px; overflow-y: auto; }
     .cal-upcoming-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
     .cal-upcoming-item { padding: 8px 0; border-bottom: 1px solid var(--dark-border); }
     .cal-upcoming-item:last-child { border-bottom: none; }
@@ -233,6 +233,11 @@
     .day-detail-item:last-child { border-bottom: none; }
     .day-detail-name { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; }
     .day-detail-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+    .day-detail-actions { display: flex; gap: 6px; margin-top: 7px; }
+    .day-detail-action-btn { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 5px; border: 1px solid var(--dark-border); background: rgba(255,255,255,0.06); color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+    .day-detail-action-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+    .day-detail-action-btn.danger { border-color: rgba(239,68,68,0.3); color: #f87171; }
+    .day-detail-action-btn.danger:hover { background: rgba(239,68,68,0.15); }
 
     /* WEEK VIEW */
     .week-view { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; }
@@ -1202,6 +1207,7 @@ let profile      = null
 let allBookings  = []     // for calendar
 let reviewedTruckIds = new Set()
 let pendingReview    = { truckId: null }
+let editingBookingId = null   // null = new booking, id = editing existing external
 let reviewRating     = 0
 let activeConvId     = null
 let activeRecipId    = null
@@ -1520,6 +1526,10 @@ window.showDayDetail = function(dateStr) {
     <div class="day-detail-item">
       <div class="day-detail-name">${esc(e.event_name||'Event')}</div>
       <div class="day-detail-meta">${esc(e.city||'—')} · <span class="pill pill-${e.status}">${e.status}</span>${e.is_external?' · External':''}</div>
+      ${e.is_external ? `<div class="day-detail-actions">
+        <button class="day-detail-action-btn" onclick="openEditExtBooking('${e.id}')">Edit</button>
+        <button class="day-detail-action-btn danger" onclick="deleteExtBooking('${e.id}')">Delete</button>
+      </div>` : ''}
     </div>`).join('')
   detail.classList.add('show')
 }
@@ -1998,13 +2008,51 @@ window.submitReview = async function() {
   await loadAcceptedBookings()
 }
 
+// ─── EDIT / DELETE EXTERNAL BOOKING ────────────────────
+window.openEditExtBooking = async function(id) {
+  const { data, error } = await supabase.from('bookings').select('*').eq('id', id).single()
+  if (error || !data) { showToast('Could not load booking', true); return }
+  editingBookingId = id
+  document.querySelector('#ext-modal-overlay .ext-modal-eyebrow').textContent = 'Edit Booking'
+  document.querySelector('#ext-modal-overlay .ext-modal-title').textContent = 'Edit External Booking'
+  document.getElementById('ext-submit-btn').textContent = 'Save Changes'
+  document.getElementById('ext-event-type').value = data.event_name || 'Private Party'
+  document.getElementById('ext-date').value = data.event_date || ''
+  document.getElementById('ext-start-time').value = data.event_time_start || ''
+  document.getElementById('ext-end-time').value = data.event_time_end || ''
+  document.getElementById('ext-city').value = data.city || ''
+  document.getElementById('ext-location').value = data.location || ''
+  document.getElementById('ext-client-name').value = data.metadata?.client_name || ''
+  document.getElementById('ext-client-email').value = data.metadata?.client_email || ''
+  document.getElementById('ext-client-phone').value = data.metadata?.client_phone || ''
+  document.getElementById('ext-compensation').value = data.metadata?.compensation || ''
+  document.getElementById('ext-notes').value = data.notes || ''
+  document.getElementById('ext-modal-overlay').classList.add('open')
+}
+
+window.deleteExtBooking = async function(id) {
+  if (!confirm('Delete this external booking? This cannot be undone.')) return
+  const { error } = await supabase.from('bookings').delete().eq('id', id).eq('is_external', true).eq('truck_id', userId)
+  if (error) { showToast('Error deleting: ' + error.message, true); return }
+  showToast('Booking deleted')
+  document.getElementById('day-detail').classList.remove('show')
+  await Promise.all([loadAllBookings(), loadAcceptedBookings()])
+  await loadOverview()
+}
+
 // ─── EXTERNAL BOOKING MODAL ───────────────────────────
 function openExtModal() {
-  document.getElementById('ext-modal-overlay').classList.add('open')
+  editingBookingId = null
+  document.querySelector('#ext-modal-overlay .ext-modal-eyebrow').textContent = 'Log a Booking'
+  document.querySelector('#ext-modal-overlay .ext-modal-title').textContent = 'External Booking'
+  document.getElementById('ext-submit-btn').textContent = 'Log Booking'
   document.getElementById('ext-date').valueAsDate = new Date()
+  document.getElementById('ext-modal-overlay').classList.add('open')
 }
 function closeExtModal() {
+  editingBookingId = null
   document.getElementById('ext-modal-overlay').classList.remove('open')
+  document.querySelectorAll('#ext-form input, #ext-form select, #ext-form textarea').forEach(el => el.value = '')
 }
 
 document.getElementById('btn-log-external-cal').addEventListener('click', openExtModal)
@@ -2012,71 +2060,80 @@ document.getElementById('ext-cancel-btn').addEventListener('click', closeExtModa
 document.getElementById('ext-modal-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeExtModal() })
 
 document.getElementById('ext-submit-btn').addEventListener('click', async () => {
-  const date    = document.getElementById('ext-date').value
-  const city    = document.getElementById('ext-city').value.trim()
-  if (!date||!city) { showToast('Date and city are required',true); return }
+  const date = document.getElementById('ext-date').value
+  const city = document.getElementById('ext-city').value.trim()
+  if (!date||!city) { showToast('Date and city are required', true); return }
 
   const btn = document.getElementById('ext-submit-btn')
-  btn.textContent='Logging…'; btn.disabled=true
+  btn.textContent = editingBookingId ? 'Saving…' : 'Logging…'
+  btn.disabled = true
 
-  const evtType   = document.getElementById('ext-event-type').value
-  const startTime = document.getElementById('ext-start-time').value||null
-  const endTime   = document.getElementById('ext-end-time').value||null
-  const location  = document.getElementById('ext-location').value.trim()||null
+  const evtType     = document.getElementById('ext-event-type').value
+  const startTime   = document.getElementById('ext-start-time').value||null
+  const endTime     = document.getElementById('ext-end-time').value||null
+  const location    = document.getElementById('ext-location').value.trim()||null
   const clientName  = document.getElementById('ext-client-name').value.trim()||null
   const clientEmail = document.getElementById('ext-client-email').value.trim()||null
   const clientPhone = document.getElementById('ext-client-phone').value.trim()||null
   const compensation= document.getElementById('ext-compensation').value.trim()||null
   const notes       = document.getElementById('ext-notes').value.trim()||null
 
-  const { data: booking, error } = await supabase.from('bookings').insert({
-    truck_id:    userId,
-    requester_id:userId,   // self-logged
+  const payload = {
     event_name:       evtType,
     event_date:       date,
     event_time_start: startTime,
     event_time_end:   endTime,
-    city,
-    location,
-    notes,
-    status:      'accepted',
-    is_external: true,
-    metadata:    { client_name:clientName, client_email:clientEmail, client_phone:clientPhone, compensation }
-  }).select().single()
-
-  if (error) {
-    showToast('Error logging booking: '+error.message, true)
-    btn.textContent='Log Booking'; btn.disabled=false; return
+    city, location, notes,
+    metadata: { client_name:clientName, client_email:clientEmail, client_phone:clientPhone, compensation }
   }
 
-  // Send email confirmation via Edge Function (best-effort)
-  if (clientEmail) {
-    try {
-      const { data:{ session } } = await supabase.auth.getSession()
-      await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/send-notification', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+session?.access_token },
-        body: JSON.stringify({
-          type:            'external_booking_confirmation',
-          recipient_email: clientEmail,
-          recipient_name:  clientName||'there',
-          data: {
-            client_name:   clientName||'there',
-            truck_name:    profile.business_name||'Your food truck',
-            event_type:    evtType,
-            event_date:    new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),
-            city,
-            compensation
-          }
+  let dbError
+  if (editingBookingId) {
+    const { error } = await supabase.from('bookings')
+      .update(payload).eq('id', editingBookingId).eq('truck_id', userId)
+    dbError = error
+  } else {
+    const { error } = await supabase.from('bookings').insert({
+      ...payload,
+      truck_id: userId, requester_id: userId,
+      status: 'accepted', is_external: true
+    })
+    dbError = error
+
+    // Send client confirmation email on new bookings only
+    if (!dbError && clientEmail) {
+      try {
+        const { data:{ session } } = await supabase.auth.getSession()
+        await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/send-notification', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', Authorization:'Bearer '+session?.access_token },
+          body: JSON.stringify({
+            type:            'external_booking_confirmation',
+            recipient_email: clientEmail,
+            recipient_name:  clientName||'there',
+            data: {
+              client_name: clientName||'there',
+              truck_name:  profile.business_name||'Your food truck',
+              event_type:  evtType,
+              event_date:  new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),
+              city, compensation
+            }
+          })
         })
-      })
-    } catch(_) { /* non-fatal */ }
+      } catch(_) { /* non-fatal — email is best-effort */ }
+    }
   }
 
-  document.querySelectorAll('#ext-form input, #ext-form select, #ext-form textarea').forEach(el => el.value = '')
-  btn.textContent='Log Booking'; btn.disabled=false
+  if (dbError) {
+    showToast('Error: ' + dbError.message, true)
+    btn.textContent = editingBookingId ? 'Save Changes' : 'Log Booking'
+    btn.disabled = false
+    return
+  }
+
+  const wasEditing = !!editingBookingId
   closeExtModal()
-  showToast('Booking logged')
+  showToast(wasEditing ? 'Booking updated' : 'Booking logged')
   await Promise.all([loadAllBookings(), loadAcceptedBookings()])
   await loadOverview()
 })
@@ -2285,7 +2342,7 @@ document.getElementById('bid-submit-btn').addEventListener('click', async () => 
       showToast('You already submitted a bid for this request', true)
     } else {
       showToast('Error submitting bid — try again', true)
-      console.error('[bid]', error)
+        console.error('[bid]', error)
     }
     return
   }

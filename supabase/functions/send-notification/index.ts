@@ -294,6 +294,36 @@ function generateEmailHTML(
         `,
       };
 
+    case "external_booking_confirmation":
+      return {
+        subject: `Booking Confirmed: ${data.event_type || "Your Event"} on ${data.event_date || ""}`,
+        html: `
+          ${baseStyles}
+          <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Connecting Food Trucks with Events in SW Florida</p>
+            </div>
+            <div class="card">
+              <div class="header"><h1>Booking Confirmed</h1></div>
+              <h2>Hello ${data.client_name},</h2>
+              <p>${data.truck_name} has confirmed your booking. Here are the details:</p>
+              <div class="event-details">
+                <p><strong>Event:</strong> ${data.event_type || "—"}</p>
+                <p><strong>Date:</strong> ${data.event_date || "—"}</p>
+                <p><strong>Location:</strong> ${data.city || "—"}</p>
+                ${data.compensation ? `<p><strong>Compensation:</strong> ${data.compensation}</p>` : ""}
+              </div>
+              <p style="font-size:13px;color:#888;margin-top:16px">
+                Questions? Contact your food truck operator directly, or visit
+                <a href="https://servicewindow.app" style="color:#FF6B35">servicewindow.app</a>.
+              </p>
+              ${footer}
+            </div>
+          </div>
+        `,
+      };
+
     default:
       return {
         subject: "Notification from ServiceWindow",
@@ -353,7 +383,4 @@ serve(async (req) => {
     console.error("Error sending email:", error);
     return new Response(
       JSON.stringify({ error: "Failed to send email", message: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-});
+      { status: 500, headers: { ...cors
