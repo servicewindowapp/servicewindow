@@ -2032,11 +2032,12 @@ window.openEditExtBooking = async function(id) {
 
 window.deleteExtBooking = async function(id) {
   if (!confirm('Delete this external booking? This cannot be undone.')) return
-  const { error } = await supabase.from('bookings').delete().eq('id', id).eq('is_external', true).eq('truck_id', userId)
+  const { error, count } = await supabase.from('bookings').delete({ count: 'exact' }).eq('id', id).eq('is_external', true).eq('truck_id', userId)
   if (error) { showToast('Error deleting: ' + error.message, true); return }
+  if (count === 0) { showToast('Delete failed — permission denied or booking not found', true); return }
   showToast('Booking deleted')
   document.getElementById('day-detail').classList.remove('show')
-  await Promise.all([loadAllBookings(), loadAcceptedBookings()])
+  await Promise.all([loadAllBookings(), loadAcceptedBookings(), loadUpcomingBookings()])
   await loadOverview()
 }
 
