@@ -953,7 +953,7 @@
   async function loadBookings() {
     const { data } = await supabase
       .from('bookings')
-      .select(`id, truck_id, event_type, event_date, city, status, created_at,
+      .select(`id, truck_id, event_name, event_date, city, status, created_at,
                truck:truck_id(business_name, contact_name, is_verified)`)
       .eq('requester_id', userId)
       .order('created_at', { ascending: false })
@@ -977,7 +977,7 @@
           <div class="td-name">${truckName}</div>
           ${b.truck?.is_verified ? '<span class="badge-verified" style="margin-top:4px;display:inline-block">Verified</span>' : ''}
         </td>
-        <td>${esc(b.event_type || '—')}</td>
+        <td>${esc(b.event_name || '—')}</td>
         <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
         <td>${esc(b.city || '—')}</td>
         <td><span class="pill pill-${b.status}">${b.status}</span></td>
@@ -995,7 +995,7 @@
                 ? '<span style="color:#50c878;font-family:\'DM Mono\',monospace;font-size:11px">✓ Reviewed</span>'
                 : `<button class="btn-review" onclick="openReviewModal('${b.truck_id || ''}','${truckName}')">Leave a Review</button>`}</div>`
             : (b.status === 'declined' || b.status === 'cancelled')
-            ? `<button class="btn-emergency" onclick="postEmergencyReplacement('${esc(b.event_type||'')}','${b.event_date||''}','${esc(b.city||'')}')">Find Emergency Replacement</button>`
+            ? `<button class="btn-emergency" onclick="postEmergencyReplacement('${esc(b.event_name||'')}','${b.event_date||''}','${esc(b.city||'')}')">Find Emergency Replacement</button>`
             : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
         </td>
       </tr>`

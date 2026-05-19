@@ -1289,7 +1289,7 @@ async function init() {
 async function loadAllBookings() {
   const { data } = await supabase
     .from('bookings')
-    .select('id, event_type, event_date, start_time, city, status, is_external')
+    .select('id, event_name, event_date, event_time_start, city, status, is_external')
     .eq('truck_id', userId)
     .not('status', 'in', '("declined","cancelled")')
     .order('event_date', { ascending: true })
@@ -1432,7 +1432,7 @@ function buildCalCells(year, month, mode) {
     } else {
       const chips = evts.slice(0,3).map(e => {
         const cls = e.is_external?'external':e.status==='accepted'?'booked':e.status==='pending'?'pending':'shift'
-        return `<div class="cal-event-chip ${cls}">${esc(e.event_type||'Event')}</div>`
+        return `<div class="cal-event-chip ${cls}">${esc(e.event_name||'Event')}</div>`
       }).join('')
       const more = evts.length > 3 ? `<div class="cal-event-chip" style="color:var(--text-muted)">+${evts.length-3}</div>` : ''
       html += `<div class="cal-cell${isToday?' today':''}${!isCurrentMonth?' other-month':''}"
@@ -1500,7 +1500,7 @@ function renderWeekView() {
     const evts = byDate[ds] || []
     const chips = evts.map(e => {
       const cls = e.is_external?'external':e.status==='accepted'?'booked':e.status==='pending'?'pending':'shift'
-      return `<div class="cal-event-chip ${cls}">${esc(e.event_type||'Event')}</div>`
+      return `<div class="cal-event-chip ${cls}">${esc(e.event_name||'Event')}</div>`
     }).join('') || '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">—</span>'
     html += `<div class="week-row">
       <div class="week-row-label${isToday?' today-row':''}">${DAYS[d.getDay()]}<br>${d.getDate()}</div>
@@ -1517,7 +1517,7 @@ window.showDayDetail = function(dateStr) {
   document.getElementById('day-detail-title').textContent = new Date(dateStr+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
   document.getElementById('day-detail-items').innerHTML = evts.map(e => `
     <div class="day-detail-item">
-      <div class="day-detail-name">${esc(e.event_type||'Event')}</div>
+      <div class="day-detail-name">${esc(e.event_name||'Event')}</div>
       <div class="day-detail-meta">${esc(e.city||'—')} · <span class="pill pill-${e.status}">${e.status}</span>${e.is_external?' · External':''}</div>
     </div>`).join('')
   detail.classList.add('show')
@@ -1530,7 +1530,7 @@ function renderCalUpcoming() {
   if (!upcoming.length) { el.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No upcoming bookings.</div>'; return }
   el.innerHTML = upcoming.map(b => `
     <div class="cal-upcoming-item">
-      <div class="cal-upcoming-name">${esc(b.event_type||'Event')}</div>
+      <div class="cal-upcoming-name">${esc(b.event_name||'Event')}</div>
       <div class="cal-upcoming-meta">${fmtDate(b.event_date)} · ${esc(b.city||'—')}</div>
     </div>`).join('')
 }
@@ -1538,7 +1538,7 @@ function renderCalUpcoming() {
 // ─── BOOKING INBOX ────────────────────────────────────
 async function loadInbox() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_type, event_date, start_time, location, city, guest_count, budget_range, notes, status, requester:requester_id(business_name,contact_name,email)')
+    .select('id, event_name, event_date, event_time_start, location, city, guest_count, budget_range, notes, status, requester:requester_id(business_name,contact_name,email)')
     .eq('truck_id', userId).eq('status','pending').order('event_date',{ascending:true})
 
   const tbody = document.getElementById('inbox-tbody')
@@ -1548,7 +1548,7 @@ async function loadInbox() {
   tbody.innerHTML = data.map(b => `
     <tr id="brow-${b.id}">
       <td>
-        <div class="td-name">${esc(b.event_type||'Event Request')}</div>
+        <div class="td-name">${esc(b.event_name||'Event Request')}</div>
         <div class="td-sub">From: ${esc(b.requester?.business_name||b.requester?.contact_name||'—')}</div>
         ${b.notes?`<div class="td-sub" style="margin-top:4px;font-style:italic">${esc(b.notes.substring(0,80))}${b.notes.length>80?'…':''}</div>`:''}
       </td>
@@ -1579,7 +1579,7 @@ window.respondBooking = async function(id, status) {
 // ─── ACCEPTED BOOKINGS ────────────────────────────────
 async function loadAcceptedBookings() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_type, event_date, city, status, requester_id, requester:requester_id(business_name,contact_name)')
+    .select('id, event_name, event_date, city, status, requester_id, requester:requester_id(business_name,contact_name)')
     .eq('truck_id', userId).in('status',['accepted','completed']).order('event_date',{ascending:false})
 
   const tbody = document.getElementById('accepted-tbody')
@@ -1603,14 +1603,14 @@ async function loadAcceptedBookings() {
       action = `<div class="action-group">${msgBtn}<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Upcoming</span></div>`
     } else if (b.status==='completed') {
       const reviewBtn = canReview
-        ? `<button class="btn-review" onclick="openReviewModal('${b.requester_id}','${esc(b.event_type||'Event')}')">Leave Review</button>`
+        ? `<button class="btn-review" onclick="openReviewModal('${b.requester_id}','${esc(b.event_name||'Event')}')">Leave Review</button>`
         : `<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Reviewed</span>`
       action = `<div class="action-group">${msgBtn}${reviewBtn}</div>`
     } else {
       action = '—'
     }
     return `<tr id="arow-${b.id}">
-      <td><div class="td-name">${esc(b.event_type||'Event')}</div>
+      <td><div class="td-name">${esc(b.event_name||'Event')}</div>
         <div class="td-sub">From: ${requesterName}</div></td>
       <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
       <td>${esc(b.city||'—')}</td>
@@ -2031,10 +2031,10 @@ document.getElementById('ext-submit-btn').addEventListener('click', async () => 
   const { data: booking, error } = await supabase.from('bookings').insert({
     truck_id:    userId,
     requester_id:userId,   // self-logged
-    event_type:  evtType,
-    event_date:  date,
-    start_time:  startTime,
-    end_time:    endTime,
+    event_name:       evtType,
+    event_date:       date,
+    event_time_start: startTime,
+    event_time_end:   endTime,
     city,
     location,
     notes,
@@ -2157,7 +2157,7 @@ async function loadUpcomingBookings() {
   const today = new Date().toISOString().slice(0,10)
   const { data } = await supabase
     .from('bookings')
-    .select('id, event_type, event_date, start_time, city, location, status')
+    .select('id, event_name, event_date, event_time_start, city, location, status')
     .eq('truck_id', userId)
     .in('status', ['accepted', 'pending'])
     .gte('event_date', today)
@@ -2172,12 +2172,12 @@ async function loadUpcomingBookings() {
     const statusPill = b.status === 'accepted'
       ? '<span class="pill pill-accepted">Confirmed</span>'
       : '<span class="pill pill-pending">Pending</span>'
-    const timeStr = b.start_time
-      ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:3px">${fmtTime(b.start_time)}</div>`
+    const timeStr = b.event_time_start
+      ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:3px">${fmtTime(b.event_time_start)}</div>`
       : ''
     return `<tr>
       <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div class="td-name">${esc(b.event_type||'Event')}</div>
+        <div class="td-name">${esc(b.event_name||'Event')}</div>
       </td>
       <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
         <div style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</div>
@@ -2198,7 +2198,7 @@ async function loadUpcomingBookings() {
 async function loadMarketplaceRequests() {
   const { data } = await supabase
     .from('bookings')
-    .select('id, event_type, event_date, city, budget_range, requester:requester_id(business_name, contact_name)')
+    .select('id, event_name, event_date, city, budget_range, requester:requester_id(business_name, contact_name)')
     .eq('truck_id', userId)
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
@@ -2217,7 +2217,7 @@ async function loadMarketplaceRequests() {
     const meta = parts.join(' · ')
     return `<div class="req-card">
       <div>
-        <div class="req-card-name">${esc(b.event_type || 'Booking Request')}</div>
+        <div class="req-card-name">${esc(b.event_name || 'Booking Request')}</div>
         <div class="req-card-meta">From: ${esc(requester)}${meta ? ' · ' + meta : ''}</div>
       </div>
       <button class="btn-bid" onclick="showSection('inbox')">Review</button>
