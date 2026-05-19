@@ -390,6 +390,22 @@
     .ext-cancel-link { display: block; text-align: center; margin-top: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); cursor: pointer; background: none; border: none; width: 100%; }
     .ext-cancel-link:hover { color: var(--text-secondary); }
 
+    /* CONFLICT WARNING MODAL */
+    .conflict-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 9000; display: none; align-items: flex-end; justify-content: center; }
+    @media (min-width: 600px) { .conflict-modal-overlay { align-items: center; } }
+    .conflict-modal-overlay.open { display: flex; }
+    .conflict-modal { background: #0d1f2d; border: 1px solid rgba(255,179,71,0.4); border-radius: 20px 20px 0 0; padding: 24px 22px 32px; max-width: 480px; width: 100%; max-height: 85vh; overflow-y: auto; animation: slideUp 0.25s ease; }
+    @media (min-width: 600px) { .conflict-modal { border-radius: 16px; } }
+    .conflict-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #ffb347; margin-bottom: 6px; }
+    .conflict-title { font-family: 'Lora', serif; font-size: 18px; font-weight: 700; color: #ffb347; margin-bottom: 6px; }
+    .conflict-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+    .conflict-item { background: rgba(255,179,71,0.05); border: 1px solid rgba(255,179,71,0.2); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+    .conflict-item-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .conflict-item-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+    .conflict-item-meta.no-actions { margin-bottom: 0; }
+    .conflict-item-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .conflict-modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+
     /* ONBOARDING MODAL */
     .onboarding-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 9500; display: none; align-items: center; justify-content: center; padding: 16px; }
     .onboarding-overlay.open { display: flex; }
@@ -1180,6 +1196,20 @@
   </div>
 </div>
 
+<!-- CONFLICT WARNING MODAL -->
+<div class="conflict-modal-overlay" id="conflict-modal-overlay">
+  <div class="conflict-modal">
+    <div class="conflict-eyebrow">Date Conflict</div>
+    <div class="conflict-title">⚠ Booking Conflict</div>
+    <div class="conflict-sub" id="conflict-sub"></div>
+    <div id="conflict-list"></div>
+    <div class="conflict-modal-footer">
+      <button class="btn-primary" id="conflict-continue-btn" style="flex:1">Continue Anyway</button>
+      <button class="btn-outline" id="conflict-cancel-btn" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- BID MODAL -->
 <div class="bid-modal-overlay" id="bid-modal-overlay" onclick="if(event.target===this)closeBidModal()">
   <div class="ext-modal" onclick="event.stopPropagation()">
@@ -1208,6 +1238,7 @@ let allBookings  = []     // for calendar
 let reviewedTruckIds = new Set()
 let pendingReview    = { truckId: null }
 let editingBookingId = null   // null = new booking, id = editing existing external
+let conflictModalState = { dateStr: null, onContinue: null }
 let reviewRating     = 0
 let activeConvId     = null
 let activeRecipId    = null
@@ -1577,6 +1608,20 @@ async function loadInbox() {
 }
 
 window.respondBooking = async function(id, status) {
+  if (status === 'accepted') {
+    const booking = allBookings.find(b => b.id === id)
+    if (booking?.event_date) {
+      const conflicts = getSameDayConflicts(booking.event_date.slice(0,10), id)
+      if (conflicts.length) {
+        await showConflictModal(booking.event_date.slice(0,10), conflicts, () => doRespondBooking(id, status))
+        return
+      }
+    }
+  }
+  await doRespondBooking(id, status)
+}
+
+async function doRespondBooking(id, status) {
   const { error } = await supabase.from('bookings').update({ status }).eq('id', id)
   if (error) { showToast('Error updating booking', true); return }
   document.getElementById('brow-'+id)?.remove()
@@ -2030,6 +2075,89 @@ window.openEditExtBooking = async function(id) {
   document.getElementById('ext-modal-overlay').classList.add('open')
 }
 
+// ─── CONFLICT DETECTION ───────────────────────────────
+function getSameDayConflicts(dateStr, excludeId = null) {
+  return allBookings.filter(b =>
+    b.event_date?.slice(0,10) === dateStr &&
+    b.id !== excludeId &&
+    !['declined','cancelled'].includes(b.status)
+  )
+}
+
+async function showConflictModal(dateStr, conflicts, onContinue) {
+  conflictModalState = { dateStr, onContinue }
+
+  // Fetch requester names for pending (non-external) conflicts
+  const pendingIds = conflicts.filter(c => c.status === 'pending' && !c.is_external).map(c => c.id)
+  const requesters = {}
+  if (pendingIds.length) {
+    const { data } = await supabase.from('bookings')
+      .select('id, requester_id, requester:requester_id(business_name, contact_name)')
+      .in('id', pendingIds)
+    if (data) data.forEach(b => {
+      requesters[b.id] = {
+        id: b.requester_id,
+        name: b.requester?.business_name || b.requester?.contact_name || 'Requester'
+      }
+    })
+  }
+
+  document.getElementById('conflict-sub').textContent =
+    `You already have ${conflicts.length} booking${conflicts.length > 1 ? 's' : ''} on ` +
+    new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' }) + '.'
+
+  document.getElementById('conflict-list').innerHTML = conflicts.map(c => {
+    const req = requesters[c.id]
+    const isPending = c.status === 'pending' && !c.is_external && req
+    const statusLabel = c.is_external ? 'External' : (c.status.charAt(0).toUpperCase() + c.status.slice(1))
+    const statusColor = (c.status === 'accepted' || c.is_external) ? '#50c878' : '#ffb347'
+    const actionBtns = isPending ? `
+      <div class="conflict-item-actions">
+        <button class="btn-decline" style="font-size:11px;padding:5px 10px" onclick="handleConflictDecline('${c.id}','${esc(req.name)}')">Decline ${esc(req.name)}</button>
+        <button class="btn-outline" style="font-size:11px;padding:5px 10px" onclick="handleConflictMessage('${req.id}','${esc(req.name)}')">Message ${esc(req.name)}</button>
+      </div>` : ''
+    return `<div class="conflict-item" id="ci-${c.id}">
+      <div class="conflict-item-name">${esc(c.event_name || 'Event')}</div>
+      <div class="conflict-item-meta${isPending ? '' : ' no-actions'}">
+        <span style="color:${statusColor}">${statusLabel}</span>${c.event_time_start ? ' · ' + c.event_time_start.slice(0,5) : ''}${c.city ? ' · ' + esc(c.city) : ''}${req ? ' · From: ' + esc(req.name) : ''}
+      </div>
+      ${actionBtns}
+    </div>`
+  }).join('')
+
+  const contBtn = document.getElementById('conflict-continue-btn')
+  const cancelBtn = document.getElementById('conflict-cancel-btn')
+  contBtn.onclick = () => { closeConflictModal(); if (onContinue) onContinue() }
+  cancelBtn.style.display = onContinue ? 'block' : 'none'
+  cancelBtn.onclick = closeConflictModal
+
+  document.getElementById('conflict-modal-overlay').classList.add('open')
+}
+
+function closeConflictModal() {
+  document.getElementById('conflict-modal-overlay').classList.remove('open')
+}
+
+window.handleConflictDecline = async function(bookingId, requesterName) {
+  const { error } = await supabase.from('bookings').update({ status: 'declined' }).eq('id', bookingId)
+  if (error) { showToast('Error: ' + error.message, true); return }
+  showToast('Declined booking from ' + requesterName)
+  const badge = document.getElementById('inbox-badge')
+  const next = Math.max(0, (parseInt(badge.textContent,10)||0) - 1)
+  if (next===0) badge.style.display='none'; else badge.textContent=next
+  document.getElementById('brow-'+bookingId)?.remove()
+  await loadAllBookings()
+  // Refresh modal with remaining conflicts
+  const remaining = getSameDayConflicts(conflictModalState.dateStr)
+  if (!remaining.length) { closeConflictModal(); return }
+  await showConflictModal(conflictModalState.dateStr, remaining, conflictModalState.onContinue)
+}
+
+window.handleConflictMessage = function(recipId, recipName) {
+  closeConflictModal()
+  startConversation(recipId, recipName)
+}
+
 window.deleteExtBooking = async function(id) {
   if (!confirm('Delete this external booking? This cannot be undone.')) return
   const { error, count } = await supabase.from('bookings').delete({ count: 'exact' }).eq('id', id).eq('is_external', true).eq('truck_id', userId)
@@ -2065,7 +2193,22 @@ document.getElementById('ext-submit-btn').addEventListener('click', async () => 
   const city = document.getElementById('ext-city').value.trim()
   if (!date||!city) { showToast('Date and city are required', true); return }
 
-  const btn = document.getElementById('ext-submit-btn')
+  // Pre-save conflict check — new bookings only, not edits
+  if (!editingBookingId) {
+    const conflicts = getSameDayConflicts(date)
+    if (conflicts.length) {
+      await showConflictModal(date, conflicts, () => performExtSave())
+      return
+    }
+  }
+
+  performExtSave()
+})
+
+async function performExtSave() {
+  const date         = document.getElementById('ext-date').value
+  const city         = document.getElementById('ext-city').value.trim()
+  const btn          = document.getElementById('ext-submit-btn')
   btn.textContent = editingBookingId ? 'Saving…' : 'Logging…'
   btn.disabled = true
 
@@ -2137,7 +2280,7 @@ document.getElementById('ext-submit-btn').addEventListener('click', async () => 
   showToast(wasEditing ? 'Booking updated' : 'Booking logged')
   await Promise.all([loadAllBookings(), loadAcceptedBookings()])
   await loadOverview()
-})
+}
 
 // ─── MOBILE SIDEBAR ───────────────────────────────────
 const mobileHamburger = document.getElementById('mobileHamburger')
