@@ -1503,4 +1503,12 @@
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + session.access_token
         },
-     
+        body: JSON.stringify({ event_type: eventType, event_date: eventDate, city })
+      }).catch(console.error)
+    })
+  }
+
+  init()
+</script>
+</body>
+</html>
