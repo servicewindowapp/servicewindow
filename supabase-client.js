@@ -3,7 +3,7 @@
 // NOTE: Replace SUPABASE_ANON_KEY with your actual anon key from:
 // https://supabase.com/dashboard/project/krmfxedkxoyzkeqnijcd/settings/api
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.1/+esm'
 
 const SUPABASE_URL = 'https://krmfxedkxoyzkeqnijcd.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtybWZ4ZWRreG95emtlcW5pamNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjg1NDMsImV4cCI6MjA4OTk0NDU0M30._oSoUIyo5vhdYCtQtgZYfbRBHvf1bNisdSJ4yxiE3yo'
