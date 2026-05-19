@@ -383,4 +383,7 @@ serve(async (req) => {
     console.error("Error sending email:", error);
     return new Response(
       JSON.stringify({ error: "Failed to send email", message: error.message }),
-      { status: 500, headers: { ...cors
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});
