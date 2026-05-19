@@ -394,8 +394,12 @@
     .ext-cancel-link { display: block; text-align: center; margin-top: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); cursor: pointer; background: none; border: none; width: 100%; }
     .ext-cancel-link:hover { color: var(--text-secondary); }
 
-    /* JOBS TABLE — hide secondary columns on narrow screens */
-    @media (max-width: 540px) { .jobs-col-hide { display: none; } }
+    /* JOBS TABLE — hide secondary columns + reset min-width on narrow screens */
+    @media (max-width: 540px) {
+      .jobs-col-hide { display: none; }
+      #posted-jobs-wrap table { min-width: 0; }
+      #posted-jobs-wrap .action-group { flex-direction: column; gap: 4px; }
+    }
 
     /* CONFLICT WARNING MODAL */
     .conflict-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 9000; display: none; align-items: flex-end; justify-content: center; }
