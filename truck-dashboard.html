@@ -390,6 +390,9 @@
     .ext-cancel-link { display: block; text-align: center; margin-top: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); cursor: pointer; background: none; border: none; width: 100%; }
     .ext-cancel-link:hover { color: var(--text-secondary); }
 
+    /* JOBS TABLE — hide secondary columns on narrow screens */
+    @media (max-width: 540px) { .jobs-col-hide { display: none; } }
+
     /* CONFLICT WARNING MODAL */
     .conflict-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 9000; display: none; align-items: flex-end; justify-content: center; }
     @media (min-width: 600px) { .conflict-modal-overlay { align-items: center; } }
@@ -908,14 +911,22 @@
       </div>
       <div class="table-container" id="posted-jobs-wrap" style="margin-top:32px">
         <div class="table-toolbar"><span class="table-title">Your Posted Jobs</span></div>
-        <table>
-          <thead>
-            <tr><th>Position</th><th>Type</th><th>City</th><th>Posted</th><th>Action</th></tr>
-          </thead>
-          <tbody id="posted-jobs-tbody">
-            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">No jobs posted yet.</td></tr>
-          </tbody>
-        </table>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th class="jobs-col-hide">Type</th>
+                <th class="jobs-col-hide">City</th>
+                <th class="jobs-col-hide">Posted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="posted-jobs-tbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">No jobs posted yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1746,9 +1757,9 @@ async function loadPostedJobs() {
   }
   tbody.innerHTML = data.map(j=>`<tr>
     <td class="td-name">${esc(j.title||'Untitled')}</td>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fire)">${esc(j.cuisine_type||'—')}</td>
-    <td style="font-size:12px;color:var(--text-muted)">${esc(j.city||'—')}</td>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(j.created_at)}</td>
+    <td class="jobs-col-hide" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fire)">${esc(j.cuisine_type||'—')}</td>
+    <td class="jobs-col-hide" style="font-size:12px;color:var(--text-muted)">${esc(j.city||'—')}</td>
+    <td class="jobs-col-hide" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(j.created_at)}</td>
     <td>
       <div class="action-group">
         <button class="btn-accept" style="font-size:11px;padding:4px 10px" onclick="editJob('${j.id}')">Edit</button>
