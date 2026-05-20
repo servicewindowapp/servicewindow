@@ -436,7 +436,7 @@
       try {
         const { data: truck, error } = await supabase
           .from('profiles')
-          .select('id, business_name, city, cuisine_type, bio, service_radius, is_verified, is_fundraiser_friendly, is_veteran_owned, website, uber_eats_url, doordash_url, created_at')
+          .select('*')
           .eq('id', truckId)
           .eq('role', 'truck')
           .eq('is_verified', true)
