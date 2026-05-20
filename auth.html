@@ -407,6 +407,73 @@
 
     .verification-checklist li .vcheck { color: var(--fire); flex-shrink: 0; }
 
+    /* ─── TRUCK DOCS SECTION ─── */
+    .truck-docs-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,107,53,0.35);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+
+    .truck-docs-box h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .truck-docs-box > p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .docs-list {
+      list-style: none;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .docs-list li {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .doc-arrow { color: var(--fire); flex-shrink: 0; }
+
+    .btn-send-docs {
+      width: 100%;
+      background: transparent;
+      color: white;
+      border: 1px solid var(--fire);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 8px;
+    }
+
+    .btn-send-docs:hover { background: rgba(255,107,53,0.1); }
+
+    .docs-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
     /* ─── TRIAL NOTICE ─── */
     .trial-notice {
       background: rgba(34,197,94,0.08);
@@ -715,11 +782,27 @@
             <h3>Why we verify everyone</h3>
             <p>SWFL Facebook groups block 6+ scam posts per day. ServiceWindow's verified-only model means every truck, every venue, and every requester is a real business — not a scammer.</p>
             <ul class="verification-checklist">
-              <li><span class="vcheck">✓</span> Food trucks: business name, city, cuisine — our team confirms you're operational</li>
+              <li><span class="vcheck">✓</span> Food trucks: submit your license, permit, registration, and insurance — our team reviews before you go live</li>
               <li><span class="vcheck">✓</span> Venues & HOAs: organization name and contact — takes 24 hours or less</li>
               <li><span class="vcheck">✓</span> You'll get an email when your account is approved</li>
               <li><span class="vcheck">✓</span> Trucks get full 30-day trial access immediately on approval</li>
             </ul>
+          </div>
+
+          <!-- TRUCK DOCS (truck role only — shown/hidden via JS) -->
+          <div id="truckDocsSection" style="display:none">
+            <div class="truck-docs-box">
+              <h3>Email your verification documents</h3>
+              <p>Your account won't go live until we receive and review these. Send them now — we'll have you approved within 24 hours.</p>
+              <ul class="docs-list">
+                <li><span class="doc-arrow">→</span> Business or Operating License</li>
+                <li><span class="doc-arrow">→</span> Food Handler Permit</li>
+                <li><span class="doc-arrow">→</span> Vehicle Registration</li>
+                <li><span class="doc-arrow">→</span> Liability Insurance (Certificate of Insurance)</li>
+              </ul>
+              <button type="button" class="btn-send-docs" onclick="openDocEmail()">Email Your Documents →</button>
+              <p class="docs-note">Opens your email app pre-addressed — attach your files and send.</p>
+            </div>
           </div>
 
           <div class="form-group">
@@ -969,6 +1052,7 @@
       }
 
       errEl.classList.remove('show')
+      document.getElementById('truckDocsSection').style.display = selectedRole === 'truck' ? 'block' : 'none'
       document.getElementById('step2').classList.remove('active')
       document.getElementById('step3').classList.add('active')
     }
@@ -976,6 +1060,20 @@
     window.backToStep2 = function() {
       document.getElementById('step3').classList.remove('active')
       document.getElementById('step2').classList.add('active')
+    }
+
+    window.openDocEmail = function() {
+      const name = document.getElementById('businessName').value.trim() || 'My Truck'
+      const subject = encodeURIComponent(`Verification Documents — ${name}`)
+      const body = encodeURIComponent(
+        `Hi ServiceWindow team,\n\nPlease find my verification documents attached for ${name}:\n\n` +
+        `• Business or Operating License\n` +
+        `• Food Handler Permit\n` +
+        `• Vehicle Registration\n` +
+        `• Liability Insurance (Certificate of Insurance)\n\n` +
+        `Let me know if you need anything else.\n\nThanks`
+      )
+      window.open(`mailto:hello@servicewindow.app?subject=${subject}&body=${body}`)
     }
 
     // ─── FINAL SUBMIT: auth account + profile created atomically ───
@@ -1060,7 +1158,32 @@
         return
       }
 
-      // Show success
+      // Show success — inject truck-specific docs reminder if applicable
+      if (selectedRole === 'truck') {
+        const name = document.getElementById('businessName').value.trim() || 'Your Truck'
+        const subject = encodeURIComponent(`Verification Documents — ${name}`)
+        const body = encodeURIComponent(
+          `Hi ServiceWindow team,\n\nPlease find my verification documents attached for ${name}:\n\n` +
+          `• Business or Operating License\n` +
+          `• Food Handler Permit\n` +
+          `• Vehicle Registration\n` +
+          `• Liability Insurance (Certificate of Insurance)\n\n` +
+          `Let me know if you need anything else.\n\nThanks`
+        )
+        document.getElementById('stepSuccess').innerHTML = `
+          <div class="success-state">
+            <span class="success-icon">🎉</span>
+            <h2>You're in the queue.</h2>
+            <p>Your account has been submitted. We'll review it and send a confirmation to your email within 24 hours.</p>
+            <p style="margin-top:12px;color:var(--text-muted);font-size:13px;font-family:'DM Mono',monospace;">Check your spam folder if you don't see it.</p>
+            <div style="margin-top:24px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);border-radius:12px;padding:18px 20px;text-align:left">
+              <p style="font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:white;margin-bottom:8px;">One more step — send your documents</p>
+              <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5;">We need your Business License, Food Handler Permit, Vehicle Registration, and Certificate of Insurance before your account can go live.</p>
+              <button onclick="window.open('mailto:hello@servicewindow.app?subject=${subject}&body=${body}')" style="background:transparent;color:white;border:1px solid var(--fire);border-radius:8px;padding:11px 18px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;width:100%">Email Your Documents →</button>
+            </div>
+            <a href="index.html" class="btn-submit" style="text-decoration:none;display:inline-flex;width:auto;padding:14px 28px;margin-top:16px">← Back to Home</a>
+          </div>`
+      }
       document.getElementById('step3').classList.remove('active')
       document.getElementById('stepSuccess').classList.add('active')
     }
