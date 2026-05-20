@@ -675,12 +675,12 @@
           window.location.href = body.url
         } else {
           console.error('[checkout]', body.error)
-          alert('Unable to start checkout — please try again or email support@servicewindow.app')
+          alert('Unable to start checkout — please try again or email servicewindowapp@gmail.com')
           if (btn) { btn.textContent = orig; btn.disabled = false }
         }
       } catch (e) {
         console.error('[checkout]', e)
-        alert('Unable to start checkout — please try again or email support@servicewindow.app')
+        alert('Unable to start checkout — please try again or email servicewindowapp@gmail.com')
         if (btn) { btn.textContent = orig; btn.disabled = false }
       }
     }

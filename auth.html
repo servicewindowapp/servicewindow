@@ -1093,7 +1093,7 @@
 
     window.openDocMail = function(method) {
       const name = document.getElementById('businessName').value.trim() || 'My Truck'
-      const to = 'hello@servicewindow.app'
+      const to = 'servicewindowapp@gmail.com'
       const subject = encodeURIComponent(`Verification Documents — ${name}`)
       const body = encodeURIComponent(
         `Hi ServiceWindow team,\n\nPlease find my verification documents attached for ${name}:\n\n` +
@@ -1113,7 +1113,7 @@
     }
 
     window.copyDocEmail = function(btn) {
-      navigator.clipboard.writeText('hello@servicewindow.app').then(() => {
+      navigator.clipboard.writeText('servicewindowapp@gmail.com').then(() => {
         btn.textContent = 'Copied!'
         setTimeout(() => { btn.textContent = 'copy our address' }, 2000)
       })
