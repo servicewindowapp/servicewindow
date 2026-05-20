@@ -100,8 +100,29 @@
       width: 80px; height: 80px; flex-shrink: 0;
       background: rgba(255,107,53,0.12); border: 1px solid rgba(255,107,53,0.2);
       border-radius: 16px; display: flex; align-items: center; justify-content: center;
-      font-size: 36px;
+      font-size: 36px; overflow: hidden;
     }
+    .truck-avatar-lg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* Photo gallery */
+    .photo-gallery { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0 0; padding-top: 20px; border-top: 1px solid var(--dark-border); }
+    .gallery-thumb {
+      width: 88px; height: 88px; border-radius: 8px; overflow: hidden;
+      background: rgba(255,255,255,0.05); flex-shrink: 0; cursor: pointer;
+    }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.15s; }
+    .gallery-thumb img:hover { opacity: 0.85; }
+    /* Lightbox */
+    #photo-lightbox {
+      display: none; position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
+    }
+    #photo-lightbox.open { display: flex; }
+    #photo-lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+    #lightbox-close {
+      position: absolute; top: 20px; right: 24px; background: none; border: none;
+      color: white; font-size: 28px; cursor: pointer; line-height: 1; opacity: 0.7;
+    }
+    #lightbox-close:hover { opacity: 1; }
     .hero-text { flex: 1; min-width: 200px; }
     .truck-name-h1 {
       font-family: 'Sora', sans-serif; font-size: clamp(1.6rem, 4vw, 2.2rem);
@@ -482,13 +503,21 @@
         }
       }
       if (truck.website) ld.sameAs = [truck.website]
+      // Use first photo as JSON-LD image if available
+      const photos = Array.isArray(truck.photos) ? truck.photos.filter(Boolean) : []
+      if (photos.length) ld.image = photos[0]
       const ldScript = document.createElement('script')
       ldScript.type = 'application/ld+json'
       ldScript.textContent = JSON.stringify(ld)
       document.head.appendChild(ldScript)
 
       // ── DOM: Avatar ──
-      document.getElementById('p-avatar').textContent = emoji
+      const avatarEl = document.getElementById('p-avatar')
+      if (photos.length) {
+        avatarEl.innerHTML = `<img src="${escHtml(photos[0])}" alt="${escHtml(name)}">`
+      } else {
+        avatarEl.textContent = emoji
+      }
 
       // ── DOM: Name ──
       document.getElementById('p-name').textContent = name
@@ -506,6 +535,30 @@
       if (truck.is_fundraiser_friendly) badgeHtml.push('<span class="badge badge-fundraiser">Fundraiser Friendly</span>')
       if (truck.is_veteran_owned)       badgeHtml.push('<span class="badge badge-veteran">Veteran Owned</span>')
       badgesEl.innerHTML = badgeHtml.join('')
+
+      // ── DOM: Photo gallery (photos 2+ shown as thumbnails below hero) ──
+      if (photos.length > 1) {
+        const heroInner = document.querySelector('.hero-inner')
+        const gallery = document.createElement('div')
+        gallery.className = 'photo-gallery'
+        photos.slice(1).forEach((url, i) => {
+          const thumb = document.createElement('div')
+          thumb.className = 'gallery-thumb'
+          thumb.innerHTML = `<img src="${escHtml(url)}" alt="Photo ${i+2}" loading="lazy">`
+          thumb.addEventListener('click', () => {
+            document.getElementById('lightbox-img').src = url
+            document.getElementById('photo-lightbox').classList.add('open')
+          })
+          gallery.appendChild(thumb)
+        })
+        // Also make main avatar click open lightbox
+        avatarEl.style.cursor = 'pointer'
+        avatarEl.addEventListener('click', () => {
+          document.getElementById('lightbox-img').src = photos[0]
+          document.getElementById('photo-lightbox').classList.add('open')
+        })
+        heroInner.after(gallery)
+      }
 
       // ── DOM: Bio ──
       document.getElementById('p-bio').textContent = bio
@@ -566,19 +619,17 @@
         const sub = document.getElementById('cta-sub')
 
         if (session) {
-          const { data: profile } = await supabase
+          const { data: prof } = await supabase
             .from('profiles')
             .select('role')
             .eq('id', session.user.id)
             .single()
 
-          if (profile?.role === 'truck') {
-            // Truck viewing another truck's profile
+          if (prof?.role === 'truck') {
             btn.href = 'marketplace.html?board=request'
             btn.textContent = 'Browse Booking Requests'
             sub.textContent = 'Browse open requests from event planners and HOAs looking for trucks.'
           } else {
-            // Demand-side user — route to their dashboard
             const dashMap = {
               organizer: 'planner-dashboard.html',
               venue: 'venue-dashboard.html',
@@ -587,21 +638,33 @@
               job_seeker: 'jobs-dashboard.html',
               admin: 'admin-dashboard.html'
             }
-            btn.href = dashMap[profile?.role] || 'planner-dashboard.html'
-            btn.textContent = 'Post a Booking Request'
-            sub.textContent = 'Post your event details and get responses from verified trucks like this one.'
+            if (dashMap[prof?.role]) {
+              btn.href = dashMap[prof.role]
+              btn.textContent = 'Go to My Dashboard'
+              sub.textContent = 'Ready to book? Head to your dashboard to post an event or send a request.'
+            }
           }
-          // Update nav CTA
-          const navCta = document.getElementById('nav-cta')
-          if (navCta) { navCta.textContent = 'My Dashboard'; navCta.href = dashMap?.[profile?.role] || 'planner-dashboard.html' }
         }
-        // If not logged in, defaults (auth.html CTA) remain
       } catch (e) {
-        console.error('[cta init]', e)
+        // non-fatal -- CTA falls back to default auth.html link
       }
     }
 
     loadProfile()
+  </script>
+
+  <!-- Lightbox -->
+  <div id="photo-lightbox">
+    <button id="lightbox-close" aria-label="Close">&times;</button>
+    <img id="lightbox-img" src="" alt="Truck photo">
+  </div>
+  <script>
+    document.getElementById('lightbox-close').addEventListener('click', () => {
+      document.getElementById('photo-lightbox').classList.remove('open')
+    })
+    document.getElementById('photo-lightbox').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) e.currentTarget.classList.remove('open')
+    })
   </script>
 
 </body>

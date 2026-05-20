@@ -442,6 +442,37 @@
     /* PROFILE COMPLETION BANNER */
     .banner-profile { background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.25); color: rgba(255,107,53,0.9); cursor: pointer; transition: background 0.15s; }
     .banner-profile:hover { background: rgba(255,107,53,0.16); }
+
+    /* PHOTO UPLOAD */
+    .photo-section-label { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+    .photo-slots { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    .photo-slot {
+      width: 96px; height: 96px; border-radius: 10px; overflow: hidden; position: relative; flex-shrink: 0;
+      background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.15s;
+    }
+    .photo-slot:hover { border-color: rgba(255,107,53,0.5); }
+    .photo-slot.has-photo { border-style: solid; border-color: rgba(255,255,255,0.15); cursor: default; }
+    .photo-slot.main-photo { border-color: var(--fire); }
+    .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-slot-add { display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; }
+    .photo-slot-add svg { opacity: 0.4; }
+    .photo-slot-add span { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+    .photo-delete-btn {
+      position: absolute; top: 4px; right: 4px; width: 20px; height: 20px;
+      background: rgba(0,0,0,0.7); border: none; border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.15s; padding: 0;
+    }
+    .photo-slot.has-photo:hover .photo-delete-btn { opacity: 1; }
+    .photo-delete-btn svg { display: block; }
+    .main-badge {
+      position: absolute; bottom: 4px; left: 4px;
+      font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.05em;
+      background: var(--fire); color: white; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;
+      pointer-events: none;
+    }
+    .photo-uploading { opacity: 0.5; pointer-events: none; }
+    .photo-hint { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -1004,6 +1035,15 @@
           </div>
         </form>
       </div>
+
+      <!-- PHOTOS -->
+      <div class="shift-form-card" style="margin-top:16px">
+        <div class="photo-section-label">Truck Photos</div>
+        <div class="photo-slots" id="photo-slots"></div>
+        <p class="photo-hint">First photo is your main profile image. Max 5 photos · JPEG, PNG, or WebP · 5 MB each.</p>
+        <input type="file" id="photo-file-input" accept="image/jpeg,image/png,image/webp" style="display:none">
+        <span id="photo-upload-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);display:block;margin-top:8px"></span>
+      </div>
     </section>
 
     <!-- MY REVIEWS -->
@@ -1305,6 +1345,7 @@ async function init() {
 
     renderSidebarMeta()
     populateProfileForm()
+    initPhotos()
 
     // First-run onboarding: fire if profile has no business_name yet
     if (!profile.business_name) {
@@ -2045,6 +2086,115 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
   showToast('Profile updated')
 })
 
+// ─── PHOTOS ──────────────────────────────────────────
+const UPLOAD_FN = 'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/upload-photo'
+const MAX_PHOTOS = 5
+let truckPhotos = []   // array of URL strings, mirrors profile.photos
+
+function renderPhotoSlots() {
+  const container = document.getElementById('photo-slots')
+  if (!container) return
+  container.innerHTML = ''
+
+  // Filled slots
+  truckPhotos.forEach((url, i) => {
+    const slot = document.createElement('div')
+    slot.className = 'photo-slot has-photo' + (i === 0 ? ' main-photo' : '')
+    slot.innerHTML = `
+      <img src="${escHtml(url)}" alt="Truck photo ${i+1}">
+      <button class="photo-delete-btn" data-idx="${i}" title="Remove photo" aria-label="Remove photo">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M2 2l6 6M8 2l-6 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      ${i === 0 ? '<span class="main-badge">Main</span>' : ''}
+    `
+    slot.querySelector('.photo-delete-btn').addEventListener('click', (e) => {
+      e.stopPropagation()
+      removePhoto(i)
+    })
+    container.appendChild(slot)
+  })
+
+  // Add slot (if under limit)
+  if (truckPhotos.length < MAX_PHOTOS) {
+    const addSlot = document.createElement('div')
+    addSlot.className = 'photo-slot'
+    addSlot.innerHTML = `
+      <div class="photo-slot-add">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 5v14M5 12h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Add photo</span>
+      </div>
+    `
+    addSlot.addEventListener('click', () => {
+      document.getElementById('photo-file-input').click()
+    })
+    container.appendChild(addSlot)
+  }
+}
+
+async function savePhotosToProfile(photos) {
+  const { error } = await supabase.from('profiles').update({ photos, updated_at: new Date().toISOString() }).eq('id', userId)
+  if (error) throw new Error(error.message)
+  profile.photos = photos
+}
+
+async function removePhoto(idx) {
+  const updated = [...truckPhotos]
+  updated.splice(idx, 1)
+  try {
+    await savePhotosToProfile(updated)
+    truckPhotos = updated
+    renderPhotoSlots()
+  } catch (err) {
+    showToast('Failed to remove photo: ' + err.message)
+  }
+}
+
+document.getElementById('photo-file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+  e.target.value = ''  // allow re-selecting same file
+
+  const statusEl = document.getElementById('photo-upload-status')
+  statusEl.textContent = 'Uploading…'; statusEl.style.color = 'var(--text-muted)'
+
+  // Mark slots as uploading
+  const container = document.getElementById('photo-slots')
+  container.classList.add('photo-uploading')
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch(UPLOAD_FN, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + session.access_token },
+      body: fd
+    })
+    const json = await res.json()
+    if (!res.ok || json.error) throw new Error(json.error || 'Upload failed')
+
+    const updated = [...truckPhotos, json.url]
+    await savePhotosToProfile(updated)
+    truckPhotos = updated
+    renderPhotoSlots()
+    statusEl.textContent = 'Photo saved!'; statusEl.style.color = '#50c878'
+    setTimeout(() => { statusEl.textContent = '' }, 2500)
+  } catch (err) {
+    statusEl.textContent = 'Error: ' + err.message; statusEl.style.color = '#ff8080'
+  } finally {
+    container.classList.remove('photo-uploading')
+  }
+})
+
+function initPhotos() {
+  truckPhotos = Array.isArray(profile.photos) ? [...profile.photos] : []
+  renderPhotoSlots()
+}
+
 // ─── REVIEWS (FIXED SCHEMA) ───────────────────────────
 async function loadReviewedTruckIds() {
   // Trucks reviewing requesters — tracked by requester_id in reviewer_id field
@@ -2426,146 +2576,133 @@ function showToast(msg, isError=false) {
   setTimeout(()=>t.classList.remove('show'),3000)
 }
 
-// ─── UPCOMING BOOKINGS (Overview) ─────────────────────
+// âââ UPCOMING BOOKINGS (Overview) ââââââââ
 async function loadUpcomingBookings() {
   const today = new Date().toISOString().slice(0,10)
-  const { data } = await supabase
-    .from('bookings')
-    .select('id, event_name, event_date, event_time_start, city, location, status')
+  const { data } = await supabase.from('bookings')
+    .select('id, event_name, event_date, city, status')
     .eq('truck_id', userId)
-    .in('status', ['accepted', 'pending'])
+    .in('status', ['pending','accepted'])
     .gte('event_date', today)
     .order('event_date', { ascending: true })
-    .limit(5)
+    .limit(8)
+
   const tbody = document.getElementById('upcoming-bookings-list')
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No upcoming bookings.</td></tr>'
+  if (!tbody) return
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">No upcoming bookings.</td></tr>'
     return
   }
-  tbody.innerHTML = data.map(b => {
-    const statusPill = b.status === 'accepted'
-      ? '<span class="pill pill-accepted">Confirmed</span>'
-      : '<span class="pill pill-pending">Pending</span>'
-    const timeStr = b.event_time_start
-      ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:3px">${fmtTime(b.event_time_start)}</div>`
-      : ''
-    return `<tr>
-      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div class="td-name">${esc(b.event_name||'Event')}</div>
-      </td>
-      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</div>
-      </td>
-      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div style="font-size:13px">${esc(b.location || b.city || '—')}</div>
-        ${b.location && b.city ? `<div class="td-sub">${esc(b.city)}</div>` : ''}
-      </td>
-      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        ${statusPill}${timeStr}
-      </td>
-    </tr>`
-  }).join('')
+  tbody.innerHTML = data.map(b => `
+    <tr>
+      <td style="padding:10px 18px"><div class="td-name">${esc(b.event_name||'Event Request')}</div></td>
+      <td style="padding:10px 18px;font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
+      <td style="padding:10px 18px">${esc(b.city||'â')}</td>
+      <td style="padding:10px 18px"><span class="pill pill-${b.status}">${b.status}</span></td>
+    </tr>`).join('')
 }
 
-// ─── BOOKING REQUESTS (Overview) ──────────────────────
-// Shows direct booking requests sent to THIS truck (pending bookings where truck_id = userId)
+// âââ MARKETPLACE REQUESTS (Overview) ââââââââ
 async function loadMarketplaceRequests() {
-  const { data } = await supabase
-    .from('bookings')
-    .select('id, event_name, event_date, city, budget_range, requester:requester_id(business_name, contact_name)')
-    .eq('truck_id', userId)
-    .eq('status', 'pending')
+  const { data } = await supabase.from('bookings')
+    .select('id, event_name, event_date, city, requester:requester_id(business_name,contact_name)')
+    .eq('truck_id', userId).eq('status','pending')
     .order('created_at', { ascending: false })
     .limit(5)
+
   const el = document.getElementById('marketplace-req-list')
-  if (!data || data.length === 0) {
-    el.innerHTML = `<div style="padding:16px 18px">
-      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);margin-bottom:10px">No direct requests yet.</div>
-      <button class="btn-outline" style="font-size:12px;padding:7px 14px" onclick="window.location.href='marketplace.html?board=request'">Browse Open Marketplace</button>
-    </div>`
+  if (!el) return
+  if (!data || !data.length) {
+    el.innerHTML = '<div style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No new requests.</div>'
     return
   }
   el.innerHTML = data.map(b => {
-    const requester = b.requester?.business_name || b.requester?.contact_name || 'Someone'
-    const parts = [b.event_date ? fmtDate(b.event_date) : null, b.city || null, b.budget_range || null].filter(Boolean)
-    const meta = parts.join(' · ')
-    return `<div class="req-card">
+    const name = esc(b.requester?.business_name||b.requester?.contact_name||'â')
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--dark-border);gap:12px">
       <div>
-        <div class="req-card-name">${esc(b.event_name || 'Booking Request')}</div>
-        <div class="req-card-meta">From: ${esc(requester)}${meta ? ' · ' + meta : ''}</div>
+        <div style="font-family:'Sora',sans-serif;font-size:12px;font-weight:600">${esc(b.event_name||'Event Request')}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${name} Â· ${fmtDate(b.event_date)}</div>
       </div>
-      <button class="btn-bid" onclick="showSection('inbox')">Review</button>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button class="btn-accept" style="font-size:11px;padding:4px 10px" onclick="respondBooking('${b.id}','accepted')">Accept</button>
+        <button class="btn-decline" style="font-size:11px;padding:4px 10px" onclick="respondBooking('${b.id}','declined')">Decline</button>
+      </div>
     </div>`
   }).join('')
 }
 
-// ─── ACTIVE BIDS (Overview) ───────────────────────────
+// âââ ACTIVE BIDS (Overview) ââââââââââââââââââââââ
 async function loadActiveBids() {
-  const { data } = await supabase
-    .from('bids')
-    .select('id, status, created_at, listing:listing_id(title, event_date, city)')
-    .eq('truck_id', userId)
-    .order('created_at', { ascending: false })
   const tbody = document.getElementById('active-bids-list')
-  if (!data || data.length === 0) {
+  if (!tbody) return
+  try {
+    const { data, error } = await supabase.from('bids')
+      .select('id, status, listing:listing_id(title, event_date)')
+      .eq('truck_id', userId)
+      .not('status', 'in', '("declined","cancelled")')
+      .order('created_at', { ascending: false })
+      .limit(8)
+
+    if (error || !data || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="2" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>'
+      return
+    }
+    tbody.innerHTML = data.map(bid => `
+      <tr>
+        <td style="padding:10px 18px">
+          <div class="td-name">${esc(bid.listing?.title||'Listing')}</div>
+          <div class="td-sub">${fmtDate(bid.listing?.event_date)}</div>
+        </td>
+        <td style="padding:10px 18px"><span class="pill pill-${bid.status}">${bid.status}</span></td>
+      </tr>`).join('')
+  } catch(e) {
     tbody.innerHTML = '<tr><td colspan="2" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>'
-    return
   }
-  tbody.innerHTML = data.map(b => {
-    const pillClass = b.status === 'accepted' ? 'pill-accepted' : b.status === 'declined' ? 'pill-declined' : 'pill-pending'
-    const pillLabel = b.status === 'accepted' ? 'Accepted' : b.status === 'declined' ? 'Declined' : 'Pending'
-    const parts = [b.listing?.event_date ? fmtDate(b.listing.event_date) : null, b.listing?.city || null].filter(Boolean)
-    return `<tr>
-      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div class="td-name">${esc(b.listing?.title || '—')}</div>
-        ${parts.length ? `<div class="td-sub">${parts.join(' · ')}</div>` : ''}
-      </td>
-      <td style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <span class="pill ${pillClass}">${pillLabel}</span>
-      </td>
-    </tr>`
-  }).join('')
 }
 
-// ─── BID MODAL ────────────────────────────────────────
-let pendingBidListingId = null
+// âââ BID MODAL ââââââââââââââââââââââââââ
+let activeBidListingId = null
+
 window.openBidModal = function(listingId, title, meta) {
-  pendingBidListingId = listingId
-  document.getElementById('bid-modal-title').textContent = title || 'Marketplace Request'
-  document.getElementById('bid-modal-meta').textContent = meta || ''
+  activeBidListingId = listingId
+  document.getElementById('bid-modal-title').textContent = title || 'Submit Bid'
+  document.getElementById('bid-modal-meta').textContent  = meta  || ''
   document.getElementById('bid-message').value = ''
   document.getElementById('bid-modal-overlay').classList.add('open')
+  document.getElementById('bid-message').focus()
 }
-function closeBidModal() {
+
+window.closeBidModal = function() {
   document.getElementById('bid-modal-overlay').classList.remove('open')
-  pendingBidListingId = null
+  activeBidListingId = null
 }
+
 document.getElementById('bid-cancel-btn').addEventListener('click', closeBidModal)
+
 document.getElementById('bid-submit-btn').addEventListener('click', async () => {
-  if (!pendingBidListingId) return
+  if (!activeBidListingId) return
+  const message = document.getElementById('bid-message').value.trim()
+  if (!message) { showToast('Please add a message', true); return }
   const btn = document.getElementById('bid-submit-btn')
-  const msg = document.getElementById('bid-message').value.trim()
-  btn.textContent = 'Submitting…'; btn.disabled = true
-  const { error } = await supabase.from('bids').insert({
-    listing_id: pendingBidListingId,
-    truck_id: userId,
-    message: msg || null
-  })
-  btn.textContent = 'Submit Bid'; btn.disabled = false
-  if (error) {
-    if (error.code === '23505') {
-      showToast('You already submitted a bid for this request', true)
-    } else {
-      showToast('Error submitting bid — try again', true)
-        console.error('[bid]', error)
-    }
-    return
+  btn.textContent = 'Submittingâ¦'; btn.disabled = true
+  try {
+    const { error } = await supabase.from('bids').insert({
+      listing_id: activeBidListingId,
+      truck_id:   userId,
+      message,
+      status:     'pending'
+    })
+    if (error) throw error
+    closeBidModal()
+    showToast('Bid submitted!')
+    await loadActiveBids()
+  } catch(e) {
+    showToast('Error: ' + e.message, true)
+  } finally {
+    btn.textContent = 'Submit Bid'; btn.disabled = false
   }
-  showToast('Bid submitted')
-  closeBidModal()
 })
 
-init()
 </script>
 </body>
 </html>
