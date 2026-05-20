@@ -1804,7 +1804,7 @@ window.cancelEditJob = function() {
 
 window.removeJob = async function(id) {
   if (!confirm('Remove this job posting? It will no longer be visible to job seekers.')) return
-  const { error } = await supabase.from('listings').update({status:'filled'}).eq('id',id).eq('poster_id',userId)
+  const { error } = await supabase.from('listings').update({status:'cancelled'}).eq('id',id).eq('poster_id',userId)
   if (!error) { showToast('Job removed'); loadPostedJobs() } else showToast('Error removing job',true)
 }
 
