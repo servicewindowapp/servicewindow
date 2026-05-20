@@ -1451,7 +1451,7 @@
       const radius = truck.service_radius ? `Serves up to ${truck.service_radius} mi` : 'SWFL area'
 
       return `
-        <div class="truck-card">
+        <div class="truck-card" onclick="if(!event.target.closest('a,button'))window.location='truck-profile.html?id=${truck.id}'">
           <div class="truck-card-header">
             <div class="truck-avatar">${emoji}</div>
             <div class="truck-card-name-block">

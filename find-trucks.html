@@ -921,7 +921,7 @@
       const requestHref = userSession ? 'planner-dashboard.html' : 'auth.html'
 
       return `
-        <div class="truck-card">
+        <div class="truck-card" onclick="if(!event.target.closest('a,button'))window.location='truck-profile.html?id=${t.id}'">
           <div class="truck-card-body">
             <div class="truck-card-header">
               <div class="truck-name">${name}</div>
@@ -934,8 +934,9 @@
             ${bio ? `<p class="truck-bio">${bio}</p>` : ''}
             ${badges ? `<div class="truck-badges">${badges}</div>` : ''}
           </div>
-          <div class="truck-card-footer">
-            <a href="${requestHref}" class="btn-request">Request This Truck →</a>
+          <div class="truck-card-footer" style="display:flex;gap:8px">
+            <a href="truck-profile.html?id=${t.id}" class="btn-request" style="flex:1;background:transparent;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.8)">View Profile</a>
+            <a href="${requestHref}" class="btn-request" style="flex:1">Request →</a>
           </div>
         </div>
       `
