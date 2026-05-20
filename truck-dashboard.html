@@ -2411,7 +2411,8 @@ function esc(s) {
 }
 function fmtDate(d) {
   if (!d) return '—'
-  return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+  const date = d.includes('T') ? new Date(d) : new Date(d+'T12:00:00')
+  return date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
 }
 function fmtTime(t) {
   if (!t) return ''
