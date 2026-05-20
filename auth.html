@@ -450,28 +450,52 @@
 
     .doc-arrow { color: var(--fire); flex-shrink: 0; }
 
-    .btn-send-docs {
-      width: 100%;
+    .doc-send-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .doc-send-options {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-doc-option {
+      flex: 1;
       background: transparent;
       color: white;
       border: 1px solid var(--fire);
-      border-radius: 10px;
-      padding: 13px 16px;
+      border-radius: 8px;
+      padding: 10px 6px;
       font-family: 'Sora', sans-serif;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
-      margin-bottom: 8px;
+      white-space: nowrap;
     }
 
-    .btn-send-docs:hover { background: rgba(255,107,53,0.1); }
+    .btn-doc-option:hover { background: rgba(255,107,53,0.12); }
 
-    .docs-note {
+    .docs-copy-line {
       font-family: 'DM Mono', monospace;
       font-size: 11px;
       color: var(--text-muted);
       text-align: center;
+    }
+
+    .docs-copy-btn {
+      background: none;
+      border: none;
+      color: var(--fire);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
     }
 
     /* ─── TRIAL NOTICE ─── */
@@ -800,8 +824,13 @@
                 <li><span class="doc-arrow">→</span> Vehicle Registration</li>
                 <li><span class="doc-arrow">→</span> Liability Insurance (Certificate of Insurance)</li>
               </ul>
-              <button type="button" class="btn-send-docs" onclick="openDocEmail()">Email Your Documents →</button>
-              <p class="docs-note">Opens your email app pre-addressed — attach your files and send.</p>
+              <p class="doc-send-label">Choose how to send:</p>
+              <div class="doc-send-options">
+                <button type="button" class="btn-doc-option" onclick="openDocMail('app')">Email App</button>
+                <button type="button" class="btn-doc-option" onclick="openDocMail('gmail')">Gmail</button>
+                <button type="button" class="btn-doc-option" onclick="openDocMail('outlook')">Outlook.com</button>
+              </div>
+              <p class="docs-copy-line">Or <button type="button" class="docs-copy-btn" onclick="copyDocEmail(this)">copy our address</button> and paste into your email.</p>
             </div>
           </div>
 
@@ -1062,8 +1091,9 @@
       document.getElementById('step2').classList.add('active')
     }
 
-    window.openDocEmail = function() {
+    window.openDocMail = function(method) {
       const name = document.getElementById('businessName').value.trim() || 'My Truck'
+      const to = 'hello@servicewindow.app'
       const subject = encodeURIComponent(`Verification Documents — ${name}`)
       const body = encodeURIComponent(
         `Hi ServiceWindow team,\n\nPlease find my verification documents attached for ${name}:\n\n` +
@@ -1073,7 +1103,20 @@
         `• Liability Insurance (Certificate of Insurance)\n\n` +
         `Let me know if you need anything else.\n\nThanks`
       )
-      window.location.href = `mailto:hello@servicewindow.app?subject=${subject}&body=${body}`
+      if (method === 'app') {
+        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`
+      } else if (method === 'gmail') {
+        window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(to)}&su=${subject}&body=${body}`, '_blank')
+      } else if (method === 'outlook') {
+        window.open(`https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(to)}&subject=${subject}&body=${body}`, '_blank')
+      }
+    }
+
+    window.copyDocEmail = function(btn) {
+      navigator.clipboard.writeText('hello@servicewindow.app').then(() => {
+        btn.textContent = 'Copied!'
+        setTimeout(() => { btn.textContent = 'copy our address' }, 2000)
+      })
     }
 
     // ─── FINAL SUBMIT: auth account + profile created atomically ───
@@ -1179,7 +1222,11 @@
             <div style="margin-top:24px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);border-radius:12px;padding:18px 20px;text-align:left">
               <p style="font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:white;margin-bottom:8px;">One more step — send your documents</p>
               <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5;">We need your Business License, Food Handler Permit, Vehicle Registration, and Certificate of Insurance before your account can go live.</p>
-              <button onclick="window.location.href='mailto:hello@servicewindow.app?subject=${subject}&body=${body}'" style="background:transparent;color:white;border:1px solid var(--fire);border-radius:8px;padding:11px 18px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;width:100%">Email Your Documents →</button>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <button onclick="openDocMail('app')" style="flex:1;background:transparent;color:white;border:1px solid var(--fire);border-radius:8px;padding:10px 4px;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Email App</button>
+                <button onclick="openDocMail('gmail')" style="flex:1;background:transparent;color:white;border:1px solid var(--fire);border-radius:8px;padding:10px 4px;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Gmail</button>
+                <button onclick="openDocMail('outlook')" style="flex:1;background:transparent;color:white;border:1px solid var(--fire);border-radius:8px;padding:10px 4px;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Outlook.com</button>
+              </div>
             </div>
             <a href="index.html" class="btn-submit" style="text-decoration:none;display:inline-flex;width:auto;padding:14px 28px;margin-top:16px">← Back to Home</a>
           </div>`
