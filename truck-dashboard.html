@@ -2576,7 +2576,7 @@ function showToast(msg, isError=false) {
   setTimeout(()=>t.classList.remove('show'),3000)
 }
 
-// âââ UPCOMING BOOKINGS (Overview) ââââââââ
+// ─── UPCOMING BOOKINGS (Overview) ────────────────────────────────────────────
 async function loadUpcomingBookings() {
   const today = new Date().toISOString().slice(0,10)
   const { data } = await supabase.from('bookings')
@@ -2590,19 +2590,19 @@ async function loadUpcomingBookings() {
   const tbody = document.getElementById('upcoming-bookings-list')
   if (!tbody) return
   if (!data || !data.length) {
-    tbody.innerHTML = '<tr><td colspan="4" style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">No upcoming bookings.</td></tr>'
+    tbody.innerHTML = `<tr><td colspan="4" style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">No upcoming bookings.</td></tr>`
     return
   }
   tbody.innerHTML = data.map(b => `
     <tr>
       <td style="padding:10px 18px"><div class="td-name">${esc(b.event_name||'Event Request')}</div></td>
       <td style="padding:10px 18px;font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
-      <td style="padding:10px 18px">${esc(b.city||'â')}</td>
+      <td style="padding:10px 18px">${esc(b.city||'—')}</td>
       <td style="padding:10px 18px"><span class="pill pill-${b.status}">${b.status}</span></td>
     </tr>`).join('')
 }
 
-// âââ MARKETPLACE REQUESTS (Overview) ââââââââ
+// ─── MARKETPLACE REQUESTS (Overview) ──────────────────────────────────────────
 async function loadMarketplaceRequests() {
   const { data } = await supabase.from('bookings')
     .select('id, event_name, event_date, city, requester:requester_id(business_name,contact_name)')
@@ -2613,15 +2613,15 @@ async function loadMarketplaceRequests() {
   const el = document.getElementById('marketplace-req-list')
   if (!el) return
   if (!data || !data.length) {
-    el.innerHTML = '<div style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No new requests.</div>'
+    el.innerHTML = `<div style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">No new requests.</div>`
     return
   }
   el.innerHTML = data.map(b => {
-    const name = esc(b.requester?.business_name||b.requester?.contact_name||'â')
+    const name = esc(b.requester?.business_name||b.requester?.contact_name||'—')
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--dark-border);gap:12px">
       <div>
         <div style="font-family:'Sora',sans-serif;font-size:12px;font-weight:600">${esc(b.event_name||'Event Request')}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${name} Â· ${fmtDate(b.event_date)}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${name} · ${fmtDate(b.event_date)}</div>
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0">
         <button class="btn-accept" style="font-size:11px;padding:4px 10px" onclick="respondBooking('${b.id}','accepted')">Accept</button>
@@ -2631,7 +2631,7 @@ async function loadMarketplaceRequests() {
   }).join('')
 }
 
-// âââ ACTIVE BIDS (Overview) ââââââââââââââââââââââ
+// ─── ACTIVE BIDS (Overview) ───────────────────────────────────────────────────
 async function loadActiveBids() {
   const tbody = document.getElementById('active-bids-list')
   if (!tbody) return
@@ -2644,7 +2644,7 @@ async function loadActiveBids() {
       .limit(8)
 
     if (error || !data || !data.length) {
-      tbody.innerHTML = '<tr><td colspan="2" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>'
+      tbody.innerHTML = `<tr><td colspan="2" style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>`
       return
     }
     tbody.innerHTML = data.map(bid => `
@@ -2656,11 +2656,12 @@ async function loadActiveBids() {
         <td style="padding:10px 18px"><span class="pill pill-${bid.status}">${bid.status}</span></td>
       </tr>`).join('')
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="2" style="padding:16px 18px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>'
+    const tbody = document.getElementById('active-bids-list')
+    if (tbody) tbody.innerHTML = `<tr><td colspan="2" style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">No active bids.</td></tr>`
   }
 }
 
-// âââ BID MODAL ââââââââââââââââââââââââââ
+// ─── BID MODAL ────────────────────────────────────────────────────────────────
 let activeBidListingId = null
 
 window.openBidModal = function(listingId, title, meta) {
@@ -2684,7 +2685,7 @@ document.getElementById('bid-submit-btn').addEventListener('click', async () => 
   const message = document.getElementById('bid-message').value.trim()
   if (!message) { showToast('Please add a message', true); return }
   const btn = document.getElementById('bid-submit-btn')
-  btn.textContent = 'Submittingâ¦'; btn.disabled = true
+  btn.textContent = 'Submitting…'; btn.disabled = true
   try {
     const { error } = await supabase.from('bids').insert({
       listing_id: activeBidListingId,
