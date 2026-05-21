@@ -618,7 +618,7 @@
       <li><a href="auth.html?mode=login">Log In</a></li>
       <li><a href="auth.html" class="nav-cta">Get Started Free</a></li>
     </ul>
-    <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <button class="hamburger" id="hamburger" aria-label="Open menu" onclick="document.getElementById('mobileMenu').classList.toggle('open')">
       <span></span><span></span><span></span>
     </button>
   </nav>
@@ -998,4 +998,204 @@
       cityVal = ''
       document.getElementById('searchInput').value = ''
       document.getElementById('cuisineFilter').value = ''
-      document.getElementById('cityFilter').value = 
+      document.getElementById('cityFilter').value = ''
+      render()
+    }
+
+    // ─── EVENTS ───
+    document.getElementById('searchInput').addEventListener('input', e => {
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => {
+        searchVal = e.target.value.trim()
+        render()
+      }, 300)
+    })
+
+    document.getElementById('cuisineFilter').addEventListener('change', e => {
+      cuisineVal = e.target.value
+      render()
+    })
+
+    document.getElementById('cityFilter').addEventListener('change', e => {
+      cityVal = e.target.value
+      render()
+    })
+
+    // ─── URL PARAMS ───
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('cuisine')) {
+      const sel = document.getElementById('cuisineFilter')
+      for (const opt of sel.options) {
+        if (opt.value.toLowerCase() === params.get('cuisine').toLowerCase()) {
+          sel.value = opt.value
+          cuisineVal = opt.value
+          break
+        }
+      }
+    }
+    if (params.get('city')) {
+      const sel = document.getElementById('cityFilter')
+      for (const opt of sel.options) {
+        if (opt.value.toLowerCase() === params.get('city').toLowerCase()) {
+          sel.value = opt.value
+          cityVal = opt.value
+          break
+        }
+      }
+    }
+
+    // ─── HAMBURGER ───
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('open')
+    })
+    document.addEventListener('click', e => {
+      const hb = document.getElementById('hamburger')
+      const mm = document.getElementById('mobileMenu')
+      if (!hb.contains(e.target) && !mm.contains(e.target)) mm.classList.remove('open')
+    })
+
+    // ─── UTILS ───
+    function escHtml(str) {
+      if (!str) return ''
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+    }
+
+    // ─── INIT ───
+    ;(async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      userSession = session
+      loadTrucks()
+      loadSubmissions()
+    })()
+
+    // ─── COMMUNITY LISTINGS (truck_submissions) ───
+    async function loadSubmissions() {
+      const { data, error } = await supabase
+        .from('truck_submissions')
+        .select('id, business_name, cuisine_type, cities_served, contact_phone, facebook_url, description')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+
+      if (error || !data || data.length === 0) return
+
+      const section = document.getElementById('communitySection')
+      const grid = document.getElementById('communityGrid')
+      section.style.display = 'block'
+
+      const countEl = document.getElementById('communityCount')
+      countEl.textContent = `${data.length} self-listed truck${data.length !== 1 ? 's' : ''} — not yet verified`
+
+      data.forEach(t => {
+        const name = escHtml(t.business_name || 'Unnamed Truck')
+        const cuisine = escHtml(t.cuisine_type || '')
+        const cities = Array.isArray(t.cities_served) ? t.cities_served.slice(0, 3).map(escHtml).join(', ') : ''
+        const phone = escHtml(t.contact_phone || '')
+        const fb = t.facebook_url ? `<a href="${escHtml(t.facebook_url)}" target="_blank" rel="noopener" class="sub-link">Facebook →</a>` : ''
+        const bio = escHtml(t.description || '')
+
+        const card = document.createElement('div')
+        card.className = 'truck-card sub-card'
+        card.innerHTML = `
+          <div class="truck-card-body">
+            <div class="truck-card-header">
+              <div class="truck-name">${name}</div>
+              <span class="badge-unverified">Unverified</span>
+            </div>
+            <div class="truck-meta">
+              ${cuisine ? `<span class="meta-pill cuisine">${cuisine}</span>` : ''}
+              ${cities ? `<span class="meta-pill">📍 ${cities}</span>` : ''}
+            </div>
+            ${bio ? `<p class="truck-bio">${bio}</p>` : ''}
+            ${phone ? `<p class="sub-contact">📞 ${phone}</p>` : ''}
+            ${fb}
+          </div>
+          <div class="truck-card-footer">
+            <a href="auth.html?role=truck" class="btn-request" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15)">Claim This Listing →</a>
+          </div>
+        `
+        grid.appendChild(card)
+      })
+    }
+  </script>
+
+  <style>
+    /* ─── COMMUNITY LISTINGS SECTION ─── */
+    #communitySection {
+      display: none;
+      margin-top: 48px;
+    }
+
+    .community-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 40px;
+    }
+
+    .community-header h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    #communityCount {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .community-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .badge-unverified {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      background: rgba(255,200,0,0.1);
+      color: rgba(255,210,60,0.9);
+      border: 1px solid rgba(255,210,60,0.2);
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sub-card { opacity: 0.85; }
+    .sub-card:hover { opacity: 1; }
+
+    .sub-contact {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .sub-link {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--fire);
+      text-decoration: none;
+      margin-top: 8px;
+    }
+
+    .sub-link:hover { text-decoration: underline; }
+  </style>
+
+</body>
+</html>
