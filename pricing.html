@@ -94,7 +94,7 @@
       padding: 0 20px; height: 64px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo { height: 40px; width: auto;  }
+    .nav-logo { height: 40px; width: auto; max-width: 200px; }
     .nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
     .nav-links a {
       font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500;
@@ -110,7 +110,7 @@
     .nav-cta:hover { background: #e55a2b !important; }
     .hamburger {
       display: none; flex-direction: column; gap: 5px;
-      background: none; border: none; cursor: pointer; padding: 4px;
+      background: none; border: none; cursor: pointer; padding: 10px 8px; min-height: 44px; min-width: 44px;
     }
     .hamburger span { display: block; width: 24px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; }
     .mobile-menu {
@@ -777,9 +777,4 @@
       if (!isOpen) {
         answer.classList.add('open');
         btn.classList.add('open');
-      }
-    }
-  </script>
-
-</body>
-</html>
+ 

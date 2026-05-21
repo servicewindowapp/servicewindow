@@ -55,13 +55,13 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Lora', Georgia, serif; background: var(--navy); color: var(--text-primary); min-height: 100vh; }
     nav { position: sticky; top: 0; z-index: 100; background: var(--navy); border-bottom: 1px solid var(--dark-border); padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { height: 40px; width: auto; }
+    .nav-logo { height: 40px; width: auto; max-width: 200px; }
     .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
     .nav-links a { font-family: 'DM Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s; }
     .nav-links a:hover { color: #ffffff; }
     .nav-cta { background: var(--fire) !important; color: white !important; padding: 8px 18px; border-radius: 8px; font-weight: 600; transition: background 0.2s !important; }
     .nav-cta:hover { background: #e55a2b !important; }
-    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 10px 8px; min-height: 44px; min-width: 44px; }
     .hamburger span { display: block; width: 22px; height: 2px; background: white; border-radius: 2px; }
     .mobile-menu { display: none; flex-direction: column; background: #0d1f2d; border-bottom: 1px solid var(--dark-border); padding: 16px 24px; gap: 4px; }
     .mobile-menu.open { display: flex; }

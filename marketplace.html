@@ -85,7 +85,7 @@
       gap: 16px;
     }
 
-    .nav-logo { height: 40px; width: auto; }
+    .nav-logo { height: 40px; width: auto; max-width: 200px; }
 
     .nav-links {
       display: flex;
@@ -124,7 +124,9 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 4px;
+      padding: 10px 8px;
+      min-height: 44px;
+      min-width: 44px;
       flex-shrink: 0;
     }
 
@@ -1872,94 +1874,4 @@
         ${truck.service_radius ? `<div style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px">Service radius: ${truck.service_radius} miles</div>` : ''}
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a href="${requestHref}" style="background:#FF6B35;color:white;border:none;border-radius:7px;padding:10px 20px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block">Book This Truck</a>
-          <button onclick="window.closeTruckModal()" style="background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:7px;padding:10px 20px;font-family:'Sora',sans-serif;font-size:13px;cursor:pointer">Close</button>
-        </div>`
-
-      overlay.style.display = 'flex'
-    }
-
-    window.closeTruckModal = function() {
-      document.getElementById('truck-modal-overlay').style.display = 'none'
-    }
-
-    document.getElementById('truck-modal-overlay').addEventListener('click', e => {
-      if (e.target === document.getElementById('truck-modal-overlay')) window.closeTruckModal()
-    })
-
-    // ─── CLAIM MODAL ───
-    window.openClaimModal = function(listingId, title) {
-      document.getElementById('claim-listing-id').value = listingId
-      document.getElementById('claim-listing-title').value = title
-      document.getElementById('claim-name').value = ''
-      document.getElementById('claim-email').value = ''
-      document.getElementById('claim-phone').value = ''
-      document.getElementById('claim-message').value = ''
-      document.getElementById('claim-error-msg').style.display = 'none'
-      document.getElementById('claim-modal-form-wrap').style.display = ''
-      document.getElementById('claim-modal-success').style.display = 'none'
-      document.getElementById('claim-submit-btn').disabled = false
-      document.getElementById('claim-modal-overlay').style.display = 'flex'
-    }
-
-    window.closeClaimModal = function() {
-      document.getElementById('claim-modal-overlay').style.display = 'none'
-    }
-
-    window.submitClaimRequest = async function() {
-      const listingId = document.getElementById('claim-listing-id').value
-      const listingTitle = document.getElementById('claim-listing-title').value
-      const name = document.getElementById('claim-name').value.trim()
-      const email = document.getElementById('claim-email').value.trim()
-      const phone = document.getElementById('claim-phone').value.trim()
-      const message = document.getElementById('claim-message').value.trim()
-      const errEl = document.getElementById('claim-error-msg')
-      const btn = document.getElementById('claim-submit-btn')
-
-      errEl.style.display = 'none'
-
-      if (!name || !email) {
-        errEl.textContent = 'Name and email are required.'
-        errEl.style.display = 'block'
-        return
-      }
-
-      // Basic email format check
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errEl.textContent = 'Please enter a valid email address.'
-        errEl.style.display = 'block'
-        return
-      }
-
-      btn.disabled = true
-      btn.textContent = 'Submitting…'
-
-      const { error } = await supabase
-        .from('claim_requests')
-        .insert({
-          listing_id: listingId,
-          listing_title: listingTitle,
-          claimant_name: name,
-          claimant_email: email,
-          claimant_phone: phone || null,
-          message: message || null
-        })
-
-      if (error) {
-        btn.disabled = false
-        btn.textContent = 'Submit claim'
-        errEl.textContent = 'Something went wrong. Please try again.'
-        errEl.style.display = 'block'
-        return
-      }
-
-      document.getElementById('claim-modal-form-wrap').style.display = 'none'
-      document.getElementById('claim-modal-success').style.display = 'block'
-    }
-
-    document.getElementById('claim-modal-overlay').addEventListener('click', e => {
-      if (e.target === document.getElementById('claim-modal-overlay')) window.closeClaimModal()
-    })
-  </script>
-
-</body>
-</html>
+          <button onclick="window.closeTruckModal()" style="backgro
