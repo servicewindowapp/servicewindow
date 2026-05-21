@@ -136,7 +136,7 @@ test('[nav] Hamburger visible and opens mobile menu', async ({ page, isMobile })
 
   // Use evaluate().click() — Playwright's click() dispatches touch events on hasTouch
   // devices, which may not fire the button's 'click' event listener on all emulators.
-  await page.evaluate(() => { document.getElementById('hamburger').click(); });
+  await page.evaluate(() => document.getElementById('hamburger').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
   await expect(menu, 'Mobile menu did not open after tap').toHaveClass(/open/, { timeout: 3000 });
 
   // Menu links are visible
@@ -146,7 +146,7 @@ test('[nav] Hamburger visible and opens mobile menu', async ({ page, isMobile })
   await expect(links.first(), 'First menu link not visible').toBeVisible();
 
   // Second click closes it
-  await page.evaluate(() => { document.getElementById('hamburger').click(); });
+  await page.evaluate(() => document.getElementById('hamburger').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
   await expect(menu, 'Mobile menu did not close on second tap').not.toHaveClass(/open/, { timeout: 3000 });
 });
 
@@ -158,7 +158,7 @@ test('[nav] Hamburger visible and opens on marketplace', async ({ page, isMobile
   const hamburger = page.locator('#hamburger');
   await expect(hamburger, 'Hamburger not visible on marketplace').toBeVisible({ timeout: 5000 });
 
-  await page.evaluate(() => { document.getElementById('hamburger').click(); });
+  await page.evaluate(() => document.getElementById('hamburger').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
   const menu = page.locator('#mobileMenu');
   await expect(menu, 'Mobile menu did not open on marketplace').toHaveClass(/open/, { timeout: 3000 });
 });
@@ -171,7 +171,7 @@ test('[nav] Hamburger visible and opens on find-trucks', async ({ page, isMobile
   const hamburger = page.locator('#hamburger');
   await expect(hamburger, 'Hamburger not visible on find-trucks').toBeVisible({ timeout: 5000 });
 
-  await page.evaluate(() => { document.getElementById('hamburger').click(); });
+  await page.evaluate(() => document.getElementById('hamburger').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
   const menu = page.locator('#mobileMenu');
   await expect(menu, 'Mobile menu did not open on find-trucks').toHaveClass(/open/, { timeout: 3000 });
 });

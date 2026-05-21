@@ -28,7 +28,7 @@ const PUBLIC_PAGES = [
   { path: '/property.html',    label: 'Property' },
   { path: '/privacy.html',     label: 'Privacy policy' },
   { path: '/terms.html',       label: 'Terms of service' },
-  { path: '/truck-profile.html', label: 'Truck profile (no id)' },
+  // truck-profile.html intentionally redirects to marketplace when no ?id= — excluded (see mobile-audit)
   { path: '/vendor-services.html', label: 'Vendor services directory' },
   { path: '/punta-gorda-food-trucks.html', label: 'Punta Gorda food trucks (SEO)' },
 ];
