@@ -82,7 +82,7 @@
     .section { display: none; padding: 28px 32px; max-width: 1100px; }
     .section.active { display: block; }
     @media (max-width: 767px) {
-      .section { padding: 20px 16px max(80px, calc(20px + env(safe-area-inset-bottom))); }
+      .section { padding: 20px 16px max(80px, calc(20px + env(safe-area-inset-bottom))); overflow-x: hidden; }
       .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       table { min-width: 540px; }
     }
@@ -188,8 +188,8 @@
     .cal-toggle-btn.active { background: var(--fire); color: white; }
     .cal-layout { display: flex; gap: 16px; }
     @media (max-width: 900px) { .cal-layout { flex-direction: column; } }
-    .cal-main { flex: 1; }
-    .cal-grid-wrap { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; }
+    .cal-main { flex: 1; min-width: 0; overflow: hidden; }
+    .cal-grid-wrap { background: rgba(255,255,255,0.04); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; width: 100%; }
     .cal-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--dark-border); }
     .cal-month-label { font-family: 'Lora', serif; font-size: 16px; font-weight: 700; }
     .cal-nav { display: flex; gap: 6px; align-items: center; }
@@ -199,14 +199,14 @@
     .cal-today-btn:hover { border-color: var(--fire); color: var(--fire); }
     .cal-days-hd { display: grid; grid-template-columns: repeat(7,1fr); padding: 8px 10px 0; }
     .cal-day-lbl { text-align: center; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; color: var(--text-muted); padding: 4px 0; }
-    .cal-cells { display: grid; grid-template-columns: repeat(7,1fr); padding: 4px 10px 12px; gap: 2px; }
+    .cal-cells { display: grid; grid-template-columns: repeat(7,1fr); padding: 4px 10px 12px; gap: 2px; width: 100%; }
     .cal-cell { min-height: 72px; padding: 4px; border-radius: 8px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; }
     .cal-cell:hover { background: rgba(255,255,255,0.05); }
     .cal-cell.today { background: rgba(255,107,53,0.08); }
     .cal-cell.other-month { opacity: 0.3; }
     .cal-date-num { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-secondary); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
     .cal-cell.today .cal-date-num { background: var(--fire); color: white; }
-    .cal-event-chip { font-size: 10px; font-weight: 600; padding: 2px 5px; border-radius: 3px; line-height: 1.3; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'DM Mono', monospace; }
+    .cal-event-chip { font-size: 10px; font-weight: 600; padding: 2px 5px; border-radius: 3px; line-height: 1.3; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'DM Mono', monospace; max-width: 100%; display: block; }
     .cal-event-chip.booked { background: rgba(34,197,94,0.15); color: var(--green); }
     .cal-event-chip.pending { background: rgba(245,158,11,0.15); color: var(--amber); }
     .cal-event-chip.external { background: rgba(59,130,246,0.15); color: var(--blue); }
@@ -2709,4 +2709,3 @@ init()
 </script>
 </body>
 </html>
-    
