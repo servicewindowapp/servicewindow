@@ -86,6 +86,16 @@
       .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       table { min-width: 540px; }
     }
+    /* Mobile card layout — Requests & Bids tables */
+    @media (max-width: 767px) {
+      #section-inbox .table-container table { min-width: 0; display: block; }
+      #section-inbox .table-container thead { display: none; }
+      #section-inbox .table-container tbody { display: block; padding: 8px; }
+      #section-inbox .table-container tr { display: block; border: 1px solid var(--dark-border); border-radius: 8px; margin-bottom: 8px; padding: 10px 12px; background: rgba(255,255,255,0.02); }
+      #section-inbox .table-container td { display: flex; align-items: flex-start; gap: 10px; padding: 4px 0; border: none !important; font-size: 12px; min-width: 0; overflow: hidden; }
+      #section-inbox .table-container td[data-label]:not([data-label=""])::before { content: attr(data-label); font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); min-width: 62px; max-width: 62px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; padding-top: 2px; }
+      #section-inbox .table-container .action-group { flex-wrap: wrap; }
+    }
 
     .section-header { margin-bottom: 24px; }
     .section-header h1 { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
@@ -1650,16 +1660,16 @@ async function loadInbox() {
   empty.style.display = 'none'
   tbody.innerHTML = data.map(b => `
     <tr id="brow-${b.id}">
-      <td>
+      <td data-label="Event">
         <div class="td-name">${esc(b.event_name||'Event Request')}</div>
         <div class="td-sub">From: ${esc(b.requester?.business_name||b.requester?.contact_name||'—')}</div>
         ${b.notes?`<div class="td-sub" style="margin-top:4px;font-style:italic">${esc(b.notes.substring(0,80))}${b.notes.length>80?'…':''}</div>`:''}
       </td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
-      <td>${esc(b.city||b.location||'—')}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${b.guest_count?b.guest_count+' guests':'—'}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${esc(b.budget_range||'—')}</td>
-      <td>
+      <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
+      <td data-label="Location">${esc(b.city||b.location||'—')}</td>
+      <td data-label="Guests" style="font-family:'DM Mono',monospace;font-size:12px">${b.guest_count?b.guest_count+' guests':'—'}</td>
+      <td data-label="Budget" style="font-family:'DM Mono',monospace;font-size:12px">${esc(b.budget_range||'—')}</td>
+      <td data-label="">
         <div class="action-group">
           <button class="btn-accept" onclick="respondBooking('${b.id}','accepted')">Accept</button>
           <button class="btn-decline" onclick="respondBooking('${b.id}','declined')">Decline</button>
@@ -1727,12 +1737,12 @@ async function loadAcceptedBookings() {
       action = '—'
     }
     return `<tr id="arow-${b.id}">
-      <td><div class="td-name">${esc(b.event_name||'Event')}</div>
+      <td data-label="Event"><div class="td-name">${esc(b.event_name||'Event')}</div>
         <div class="td-sub">From: ${requesterName}</div></td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
-      <td>${esc(b.city||'—')}</td>
-      <td><span class="pill pill-${b.status}">${b.status}</span></td>
-      <td>${action}</td>
+      <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
+      <td data-label="City">${esc(b.city||'—')}</td>
+      <td data-label="Status"><span class="pill pill-${b.status}">${b.status}</span></td>
+      <td data-label="">${action}</td>
     </tr>`
   }).join('')
 }
