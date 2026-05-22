@@ -368,6 +368,17 @@
     .toast.error { background: #3a1e1e; }
 
     /* REVIEW MODAL */
+    .stat-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+    .stat-stars { color: #f59e0b; font-size: 12px; letter-spacing: 1px; }
+    .stat-revenue { color: var(--green) !important; }
+    .completion-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .completion-field label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px; }
+    .completion-field .private-tag { color: var(--fire); font-size: 9px; margin-left: 4px; }
+    .completion-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--dark-border); border-radius: 8px; padding: 8px 12px; color: white; font-family: 'DM Mono', monospace; font-size: 13px; }
+    .completion-input:focus { outline: none; border-color: rgba(255,255,255,0.3); }
+    .completion-dollar { position: relative; }
+    .completion-dollar-sign { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 13px; pointer-events: none; }
+    .completion-dollar .completion-input { padding-left: 22px; }
     .review-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 8000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .review-modal { background: #0d1f2d; border: 1px solid var(--dark-border); border-radius: 16px; padding: 28px; max-width: 420px; width: 100%; }
     .review-modal h3 { font-family: 'Lora', serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
@@ -1189,6 +1200,39 @@
   </div>
 </div>
 
+<!-- COMPLETION MODAL -->
+<div class="review-modal-overlay" id="completion-modal-overlay" style="display:none" onclick="if(event.target===this)skipCompletion()">
+  <div class="review-modal" onclick="event.stopPropagation()" style="max-width:460px">
+    <h3>Booking Complete</h3>
+    <p class="review-modal-sub" id="completion-modal-sub">How did it go?</p>
+    <div class="star-row" id="completion-star-row">
+      <button type="button" class="star-btn" data-cval="1">★</button>
+      <button type="button" class="star-btn" data-cval="2">★</button>
+      <button type="button" class="star-btn" data-cval="3">★</button>
+      <button type="button" class="star-btn" data-cval="4">★</button>
+      <button type="button" class="star-btn" data-cval="5">★</button>
+    </div>
+    <textarea class="review-textarea" id="completion-review-text" placeholder="Optional — note about this event or organizer…" style="margin-top:12px"></textarea>
+    <div class="completion-field-row">
+      <div class="completion-field">
+        <label>Customers Served</label>
+        <input type="number" id="completion-customers" min="0" class="completion-input" placeholder="e.g. 85">
+      </div>
+      <div class="completion-field">
+        <label>Revenue Earned<span class="private-tag">Private</span></label>
+        <div class="completion-dollar">
+          <span class="completion-dollar-sign">$</span>
+          <input type="number" id="completion-revenue" min="0" step="1" class="completion-input" placeholder="0">
+        </div>
+      </div>
+    </div>
+    <div class="review-modal-actions" style="margin-top:20px">
+      <button class="btn-primary" onclick="submitCompletion()">Save</button>
+      <button class="btn-outline" onclick="skipCompletion()">Skip</button>
+    </div>
+  </div>
+</div>
+
 <!-- EXTERNAL BOOKING MODAL -->
 <div class="ext-modal-overlay" id="ext-modal-overlay">
   <div class="ext-modal">
@@ -1304,7 +1348,8 @@ import { supabase } from './supabase-client.js'
 let userId       = null
 let profile      = null
 let allBookings  = []     // for calendar
-let reviewedTruckIds = new Set()
+let reviewedTruckIds = new Set()   // booking ids this truck has reviewed
+let reviewedBookingsMap = new Map() // bookingId → {rating}
 let pendingReview    = { truckId: null }
 let editingBookingId = null   // null = new booking, id = editing existing external
 let conflictModalState = { dateStr: null, onContinue: null }
@@ -1708,7 +1753,7 @@ async function doRespondBooking(id, status) {
 // ─── ACCEPTED BOOKINGS ────────────────────────────────
 async function loadAcceptedBookings() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, city, status, is_external, requester_id, requester:requester_id(business_name,contact_name)')
+    .select('id, event_name, event_date, city, status, is_external, customer_count, requester_id, requester:requester_id(business_name,contact_name), truck_financials:booking_truck_financials(revenue_cents)')
     .eq('truck_id', userId).in('status',['accepted','completed']).order('event_date',{ascending:false})
 
   const tbody = document.getElementById('accepted-tbody')
@@ -1720,27 +1765,33 @@ async function loadAcceptedBookings() {
   tbody.innerHTML = data.map(b => {
     const isPast = b.event_date && b.event_date < todayStr
     const canComplete = b.status==='accepted' && isPast
-    const canReview   = b.status==='completed' && !reviewedTruckIds.has(b.requester_id)
+    const canReview   = b.status==='completed' && !b.is_external && !reviewedTruckIds.has(b.id)
     const requesterName = esc(b.requester?.business_name||b.requester?.contact_name||'—')
     const msgBtn = b.requester_id && !b.is_external
       ? `<button class="btn-msg" onclick="startConversation('${b.requester_id}','${requesterName}')">Message</button>`
       : ''
     let action
     if (canComplete) {
-      action = `<div class="action-group">${msgBtn}<button class="btn-complete" onclick="markComplete('${b.id}')">Mark Complete</button></div>`
+      action = `<div class="action-group">${msgBtn}<button class="btn-complete" onclick="markComplete('${b.id}','${b.requester_id||''}','${requesterName.replace(/'/g,"\\'")}','${(b.event_name||'Event').replace(/'/g,"\\'")}')">Mark Complete</button></div>`
     } else if (b.status==='accepted') {
       action = `<div class="action-group">${msgBtn}<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Upcoming</span></div>`
     } else if (b.status==='completed') {
       const reviewBtn = canReview
-        ? `<button class="btn-review" onclick="openReviewModal('${b.requester_id}','${esc(b.event_name||'Event')}')">Leave Review</button>`
+        ? `<button class="btn-review" onclick="openReviewModal('${b.requester_id}','${esc(b.event_name||'Event')}','${b.id}')">Leave Review</button>`
         : `<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Reviewed</span>`
       action = `<div class="action-group">${msgBtn}${reviewBtn}</div>`
     } else {
       action = '—'
     }
+    const rv = reviewedBookingsMap.get(b.id)
+    const starsHtml = rv ? '<span class="stat-stars">' + '★'.repeat(rv.rating) + '<span style="opacity:.3">' + '★'.repeat(5-rv.rating) + '</span></span>' : ''
+    const countHtml = b.customer_count ? `<span class="td-sub">${b.customer_count} guests</span>` : ''
+    const revCents  = b.truck_financials?.[0]?.revenue_cents
+    const revHtml   = revCents ? `<span class="td-sub stat-revenue">$${(revCents/100).toLocaleString()}</span>` : ''
+    const statsRow  = (starsHtml||countHtml||revHtml) ? `<div class="stat-row">${[starsHtml,countHtml,revHtml].filter(Boolean).join(' · ')}</div>` : ''
     return `<tr id="arow-${b.id}">
       <td data-label="Event"><div class="td-name">${esc(b.event_name||'Event')}</div>
-        <div class="td-sub">From: ${requesterName}</div></td>
+        <div class="td-sub">From: ${requesterName}</div>${statsRow}</td>
       <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
       <td data-label="City">${esc(b.city||'—')}</td>
       <td data-label="Status"><span class="pill pill-${b.status}">${b.status}</span></td>
@@ -1749,16 +1800,15 @@ async function loadAcceptedBookings() {
   }).join('')
 }
 
-window.markComplete = async function(id) {
+window.markComplete = async function(id, requesterId, requesterName, eventName) {
   const { error } = await supabase.from('bookings').update({ status:'completed' }).eq('id', id)
   if (error) { showToast('Error updating booking', true); return }
-  showToast('Booking marked complete')
-  document.querySelector(`#arow-${id} .btn-complete`)?.replaceWith(Object.assign(document.createElement('span'),{
-    textContent:'Completed', style:'color:var(--text-muted);font-size:11px;font-family:\'DM Mono\',monospace'
-  }))
   document.querySelector(`#arow-${id} .pill`)?.setAttribute('class','pill pill-completed')
   document.querySelector(`#arow-${id} .pill`)?.replaceChildren(document.createTextNode('completed'))
+  document.querySelector(`#arow-${id} .btn-complete`)?.closest('.action-group')
+    ?.querySelectorAll('.btn-complete').forEach(b => b.remove())
   await loadAllBookings()
+  openCompletionModal(id, requesterId, requesterName, eventName)
 }
 
 // ─── LISTINGS ─────────────────────────────────────────
@@ -2218,13 +2268,16 @@ function initPhotos() {
   renderPhotoSlots()
 }
 
-// ─── REVIEWS (FIXED SCHEMA) ───────────────────────────
+// ─── REVIEWS ──────────────────────────────────────────
 async function loadReviewedTruckIds() {
-  // Trucks reviewing requesters — tracked by requester_id in reviewer_id field
-  // Requesters reviewing trucks — truck_id = userId
-  // Here we track which requester profiles this truck has already reviewed
-  const { data } = await supabase.from('reviews').select('reviewer_id').eq('reviewer_id', userId)
-  if (data) reviewedTruckIds = new Set(data.map(r => r.reviewer_id))
+  const { data } = await supabase.from('reviews')
+    .select('request_id, rating')
+    .eq('reviewer_id', userId)
+    .not('reviewed_requester_id', 'is', null)
+  if (data) {
+    reviewedTruckIds    = new Set(data.map(r => r.request_id))
+    reviewedBookingsMap = new Map(data.map(r => [r.request_id, { rating: r.rating }]))
+  }
 }
 
 async function loadReviews() {
@@ -2260,8 +2313,78 @@ async function loadReviews() {
 }
 
 // Review modal — truck reviews requesters (reviewer_id=userId, truck_id=requester profile)
-window.openReviewModal = function(targetId, eventName) {
-  pendingReview = { truckId: targetId }
+// ─── COMPLETION MODAL ─────────────────────────────────
+let completionState = null
+let completionRating = 0
+
+function openCompletionModal(bookingId, requesterId, requesterName, eventName) {
+  completionState = { bookingId, requesterId }
+  completionRating = 0
+  document.getElementById('completion-modal-sub').textContent = eventName || 'How did it go?'
+  document.querySelectorAll('#completion-star-row .star-btn').forEach(b => b.classList.remove('lit'))
+  document.getElementById('completion-review-text').value = ''
+  document.getElementById('completion-customers').value = ''
+  document.getElementById('completion-revenue').value = ''
+  document.getElementById('completion-modal-overlay').style.display = 'flex'
+}
+
+document.querySelectorAll('#completion-star-row .star-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    completionRating = parseInt(btn.dataset.cval)
+    document.querySelectorAll('#completion-star-row .star-btn').forEach(b =>
+      b.classList.toggle('lit', parseInt(b.dataset.cval) <= completionRating))
+  })
+})
+
+window.submitCompletion = async function() {
+  if (!completionState) return
+  const { bookingId, requesterId } = completionState
+  const note       = document.getElementById('completion-review-text').value.trim()
+  const countRaw   = document.getElementById('completion-customers').value
+  const revenueRaw = document.getElementById('completion-revenue').value
+  const customerCount = countRaw   !== '' ? parseInt(countRaw)             : null
+  const revenueCents  = revenueRaw !== '' ? Math.round(parseFloat(revenueRaw) * 100) : null
+
+  // Submit review if a rating was selected
+  if (completionRating > 0 && requesterId) {
+    const { error } = await supabase.from('reviews').insert({
+      reviewer_id:           userId,
+      reviewed_requester_id: requesterId,
+      request_id:            bookingId,
+      rating:                completionRating,
+      body:                  note || null
+    })
+    if (error && !error.message?.includes('duplicate')) {
+      showToast('Error saving review', true); return
+    }
+    reviewedTruckIds.add(bookingId)
+    reviewedBookingsMap.set(bookingId, { rating: completionRating })
+  }
+
+  // Save customer count
+  if (customerCount !== null) {
+    await supabase.from('bookings').update({ customer_count: customerCount }).eq('id', bookingId)
+  }
+
+  // Save truck revenue (private)
+  if (revenueCents !== null && revenueCents >= 0) {
+    await supabase.from('booking_truck_financials').upsert({ booking_id: bookingId, revenue_cents: revenueCents })
+  }
+
+  document.getElementById('completion-modal-overlay').style.display = 'none'
+  completionState = null
+  showToast('Booking saved')
+  await loadAcceptedBookings()
+}
+
+window.skipCompletion = function() {
+  document.getElementById('completion-modal-overlay').style.display = 'none'
+  completionState = null
+  loadAcceptedBookings()
+}
+
+window.openReviewModal = function(targetId, eventName, bookingId) {
+  pendingReview = { truckId: targetId, bookingId: bookingId }
   reviewRating = 0
   document.getElementById('review-modal-sub').textContent = 'Rate your experience: ' + eventName
   document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('lit'))
@@ -2282,13 +2405,15 @@ window.submitReview = async function() {
   if (!reviewRating) { showToast('Select a star rating first',true); return }
   const body = document.getElementById('review-text').value.trim()
   const { error } = await supabase.from('reviews').insert({
-    reviewer_id: userId,
-    truck_id:    pendingReview.truckId,
-    rating:      reviewRating,
-    body:        body||null
+    reviewer_id:           userId,
+    reviewed_requester_id: pendingReview.truckId,
+    request_id:            pendingReview.bookingId,
+    rating:                reviewRating,
+    body:                  body||null
   })
   if (error) { showToast('Error submitting review',true); return }
-  reviewedTruckIds.add(pendingReview.truckId)
+  reviewedTruckIds.add(pendingReview.bookingId)
+  reviewedBookingsMap.set(pendingReview.bookingId, { rating: reviewRating })
   document.getElementById('review-modal-overlay').style.display='none'
   showToast('Review submitted')
   await loadAcceptedBookings()
