@@ -1808,7 +1808,7 @@ window.markComplete = async function(id, requesterId, requesterName, eventName) 
   document.querySelector(`#arow-${id} .btn-complete`)?.closest('.action-group')
     ?.querySelectorAll('.btn-complete').forEach(b => b.remove())
   await loadAllBookings()
-  openCompletionModal(id, requesterId, requesterName, eventName)
+  openCompletionModal(id, requesterId, requesterName, eventName, requesterId === userId)
 }
 
 // ─── LISTINGS ─────────────────────────────────────────
@@ -2317,14 +2317,17 @@ async function loadReviews() {
 let completionState = null
 let completionRating = 0
 
-function openCompletionModal(bookingId, requesterId, requesterName, eventName) {
-  completionState = { bookingId, requesterId }
+function openCompletionModal(bookingId, requesterId, requesterName, eventName, isExternal) {
+  completionState = { bookingId, requesterId, isExternal: !!isExternal }
   completionRating = 0
   document.getElementById('completion-modal-sub').textContent = eventName || 'How did it go?'
   document.querySelectorAll('#completion-star-row .star-btn').forEach(b => b.classList.remove('lit'))
   document.getElementById('completion-review-text').value = ''
   document.getElementById('completion-customers').value = ''
   document.getElementById('completion-revenue').value = ''
+  const hideReview = !!isExternal
+  document.getElementById('completion-star-row').style.display    = hideReview ? 'none' : ''
+  document.getElementById('completion-review-text').style.display = hideReview ? 'none' : ''
   document.getElementById('completion-modal-overlay').style.display = 'flex'
 }
 
@@ -2345,8 +2348,8 @@ window.submitCompletion = async function() {
   const customerCount = countRaw   !== '' ? parseInt(countRaw)             : null
   const revenueCents  = revenueRaw !== '' ? Math.round(parseFloat(revenueRaw) * 100) : null
 
-  // Submit review if a rating was selected
-  if (completionRating > 0 && requesterId) {
+  // Submit review only for platform bookings (not external) with a rating selected
+  if (completionRating > 0 && requesterId && !completionState.isExternal) {
     const { error } = await supabase.from('reviews').insert({
       reviewer_id:           userId,
       reviewed_requester_id: requesterId,
@@ -2354,7 +2357,7 @@ window.submitCompletion = async function() {
       rating:                completionRating,
       body:                  note || null
     })
-    if (error && !error.message?.includes('duplicate')) {
+    if (error && error.code !== '23505') {
       showToast('Error saving review', true); return
     }
     reviewedTruckIds.add(bookingId)
@@ -2387,7 +2390,7 @@ window.openReviewModal = function(targetId, eventName, bookingId) {
   pendingReview = { truckId: targetId, bookingId: bookingId }
   reviewRating = 0
   document.getElementById('review-modal-sub').textContent = 'Rate your experience: ' + eventName
-  document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('lit'))
+  document.querySelectorAll('.star-btn[data-val]').forEach(b=>b.classList.remove('lit'))
   document.getElementById('review-text').value = ''
   document.getElementById('review-modal-overlay').style.display = 'flex'
 }
@@ -2398,7 +2401,7 @@ window.closeReviewModal = function(e) {
 document.querySelectorAll('.star-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     reviewRating = parseInt(btn.dataset.val)
-    document.querySelectorAll('.star-btn').forEach(b=>b.classList.toggle('lit',parseInt(b.dataset.val)<=reviewRating))
+    document.querySelectorAll('.star-btn[data-val]').forEach(b=>b.classList.toggle('lit',parseInt(b.dataset.val)<=reviewRating))
   })
 })
 window.submitReview = async function() {
