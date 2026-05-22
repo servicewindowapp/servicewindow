@@ -197,10 +197,10 @@
     .cal-nav-btn:hover { border-color: var(--fire); color: var(--fire); }
     .cal-today-btn { background: none; border: 1px solid var(--dark-border); color: var(--text-muted); border-radius: 6px; padding: 0 10px; height: 32px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 11px; }
     .cal-today-btn:hover { border-color: var(--fire); color: var(--fire); }
-    .cal-days-hd { display: grid; grid-template-columns: repeat(7,1fr); padding: 8px 10px 0; }
+    .cal-days-hd { display: grid; grid-template-columns: repeat(7,1fr); padding: 8px 10px 0; width: 100%; }
     .cal-day-lbl { text-align: center; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; color: var(--text-muted); padding: 4px 0; }
     .cal-cells { display: grid; grid-template-columns: repeat(7,1fr); padding: 4px 10px 12px; gap: 2px; width: 100%; }
-    .cal-cell { min-height: 72px; padding: 4px; border-radius: 8px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; }
+    .cal-cell { min-height: 72px; padding: 4px; border-radius: 8px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
     .cal-cell:hover { background: rgba(255,255,255,0.05); }
     .cal-cell.today { background: rgba(255,107,53,0.08); }
     .cal-cell.other-month { opacity: 0.3; }
@@ -250,7 +250,7 @@
     .week-row:last-child { border-bottom: none; }
     .week-row-label { padding: 14px 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); border-right: 1px solid var(--dark-border); display: flex; flex-direction: column; justify-content: flex-start; }
     .week-row-label.today-row { color: var(--fire); font-weight: 700; }
-    .week-row-events { padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+    .week-row-events { padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; overflow: hidden; min-width: 0; }
 
     /* TABLE STYLES */
     .table-container { background: rgba(255,255,255,0.03); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
