@@ -1328,6 +1328,8 @@ function showSection(id) {
   document.querySelectorAll('.nav-item').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.section === id)
   })
+  // Keep hash in sync without triggering hashchange (avoids infinite loop)
+  if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id)
   closeSidebar()
 }
 window.addEventListener('hashchange', () => showSection(getHash()))
@@ -1706,7 +1708,7 @@ async function doRespondBooking(id, status) {
 // ─── ACCEPTED BOOKINGS ────────────────────────────────
 async function loadAcceptedBookings() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, city, status, requester_id, requester:requester_id(business_name,contact_name)')
+    .select('id, event_name, event_date, city, status, is_external, requester_id, requester:requester_id(business_name,contact_name)')
     .eq('truck_id', userId).in('status',['accepted','completed']).order('event_date',{ascending:false})
 
   const tbody = document.getElementById('accepted-tbody')
@@ -1720,7 +1722,7 @@ async function loadAcceptedBookings() {
     const canComplete = b.status==='accepted' && isPast
     const canReview   = b.status==='completed' && !reviewedTruckIds.has(b.requester_id)
     const requesterName = esc(b.requester?.business_name||b.requester?.contact_name||'—')
-    const msgBtn = b.requester_id
+    const msgBtn = b.requester_id && !b.is_external
       ? `<button class="btn-msg" onclick="startConversation('${b.requester_id}','${requesterName}')">Message</button>`
       : ''
     let action
@@ -2028,7 +2030,17 @@ document.getElementById('btn-mark-all-read')?.addEventListener('click', async ()
   showToast('All messages marked as read')
 })
 
-function convIdFor(a, b) { return [a, b].sort().join('_') }
+function convIdFor(a, b) {
+  // Deterministic UUID v4-formatted from two participant UUIDs (XOR, order-independent)
+  const [lo, hi] = [a, b].sort()
+  const s1 = lo.replace(/-/g, ''), s2 = hi.replace(/-/g, '')
+  const h = []
+  for (let i = 0; i < 32; i++) h.push((parseInt(s1[i], 16) ^ parseInt(s2[i], 16)).toString(16))
+  h[12] = '4'                                      // version 4
+  h[16] = '89ab'[parseInt(h[16], 16) % 4]          // variant bits
+  const r = h.join('')
+  return `${r.slice(0,8)}-${r.slice(8,12)}-${r.slice(12,16)}-${r.slice(16,20)}-${r.slice(20)}`
+}
 
 window.startConversation = function(recipId, recipName) {
   const convId = convIdFor(userId, recipId)
