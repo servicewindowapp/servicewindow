@@ -1333,7 +1333,7 @@
       guest_count_max:    parseInt(document.getElementById('r-guests-max').value) || null,
       trucks_needed:      parseInt(document.getElementById('r-trucks').value) || 1,
       budget_range:       document.getElementById('r-budget').value || null,
-      cuisine_preference: document.getElementById('r-cuisine').value.trim() || null,
+      cuisine_type_needed: document.getElementById('r-cuisine').value.trim() || null,
       is_urgent:          document.getElementById('r-urgent').checked,
       notes:              document.getElementById('r-notes').value.trim() || null
     }
@@ -1362,7 +1362,7 @@
         guest_count_max:    payload.guest_count_max,
         trucks_needed:      1,
         budget_range:       payload.budget_range,
-        cuisine_preference: document.getElementById('r-cuisine-2').value.trim() || null,
+        cuisine_type_needed: document.getElementById('r-cuisine-2').value.trim() || null,
         is_urgent:          payload.is_urgent,
         notes:              document.getElementById('r-notes-2').value.trim() || null,
         parent_request_id:  parent.id
