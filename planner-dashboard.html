@@ -191,6 +191,42 @@
       cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
     .btn-cancel-listing:hover { border-color: rgba(255,100,100,0.5); color: #ff6464; }
+    .btn-view-bids {
+      background: rgba(255,107,53,0.1); color: var(--fire);
+      border: 1px solid rgba(255,107,53,0.3); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-view-bids:hover { background: rgba(255,107,53,0.2); }
+    .bid-panel {
+      background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 18px; display: none;
+    }
+    .bid-panel.open { display: block; }
+    .bid-panel-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .bid-item {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; display: flex;
+      align-items: flex-start; gap: 12px;
+    }
+    .bid-item:last-child { margin-bottom: 0; }
+    .bid-item-info { flex: 1; min-width: 0; }
+    .bid-truck-name { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+    .bid-message { font-family: 'Lora', serif; font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+    .bid-item-actions { display: flex; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+    .btn-accept-bid {
+      background: rgba(80,200,120,0.15); color: #50c878;
+      border: 1px solid rgba(80,200,120,0.3); border-radius: 6px; padding: 5px 14px;
+      font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-accept-bid:hover { background: rgba(80,200,120,0.28); }
+    .btn-decline-bid {
+      background: transparent; color: rgba(255,100,100,0.7);
+      border: 1px solid rgba(255,100,100,0.25); border-radius: 6px; padding: 5px 12px;
+      font-family: 'Sora', sans-serif; font-size: 11px; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-decline-bid:hover { border-color: rgba(255,100,100,0.5); color: #ff6464; }
     .btn-emergency {
       background: rgba(255,180,50,0.12); color: #fbbf24;
       border: 1px solid rgba(255,180,50,0.25); border-radius: 6px; padding: 5px 12px;
@@ -391,7 +427,7 @@
     .messages-layout { display: flex; height: calc(100vh - 52px); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; }
     @media (max-width: 767px) { .messages-layout { height: calc(100vh - 104px); } }
     .msg-thread-list { width: 260px; flex-shrink: 0; border-right: 1px solid var(--dark-border); display: flex; flex-direction: column; background: rgba(255,255,255,0.02); }
-    @media (max-width: 600px) { .msg-thread-list { width: 100%; border-right: none; } .msg-thread-list.hidden-mobile { display: none; } .msg-main-panel.hidden-mobile { display: none; } }
+    @media (max-width: 600px) { .messages-layout { overflow-x: hidden; } .msg-thread-list { width: 100%; border-right: none; } .msg-thread-list.hidden-mobile { display: none; } .msg-main-panel { width: 100%; max-width: 100%; } .msg-main-panel.hidden-mobile { display: none; } }
     .msg-list-head { padding: 14px; border-bottom: 1px solid var(--dark-border); display: flex; align-items: center; justify-content: space-between; }
     .msg-list-head-title { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; }
     .msg-thread { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s; }
@@ -908,7 +944,7 @@
   async function loadRequests() {
     const { data } = await supabase
       .from('listings')
-      .select('id, title, event_date, city, guest_count_min, guest_count_max, trucks_needed, status, created_at, parent_request_id')
+      .select('id, title, event_date, city, guest_count_min, guest_count_max, trucks_needed, status, created_at, parent_request_id, bids(id, message, status, truck_id, profiles(business_name, contact_name))')
       .eq('poster_id', userId)
       .in('board', ['request'])
       .order('created_at', { ascending: false })
@@ -925,6 +961,35 @@
       const guests = l.guest_count_min || l.guest_count_max
         ? [(l.guest_count_min || ''), (l.guest_count_max || '')].filter(Boolean).join('–')
         : '—'
+      const activeBids = (l.bids || []).filter(b => b.status === 'pending')
+      const bidBtn = l.status === 'active' && activeBids.length
+        ? `<button class="btn-view-bids" onclick="toggleBidPanel('${l.id}')">Bids (${activeBids.length})</button>`
+        : ''
+      const cancelBtn = l.status === 'active'
+        ? `<button class="btn-cancel-listing" onclick="cancelRequest('${l.id}')">Cancel</button>`
+        : '<span style="color:var(--text-muted);font-size:11px">—</span>'
+      const bidPanelHtml = activeBids.length ? `
+        <tr id="bid-panel-${l.id}">
+          <td colspan="7" style="padding:0">
+            <div class="bid-panel" id="bid-panel-inner-${l.id}">
+              <div class="bid-panel-title">Incoming Bids</div>
+              ${activeBids.map(b => {
+                const truckName = esc(b.profiles?.business_name || b.profiles?.contact_name || 'Truck Operator')
+                return `
+                <div class="bid-item">
+                  <div class="bid-item-info">
+                    <div class="bid-truck-name">${truckName}</div>
+                    <div class="bid-message">${esc(b.message || '(no message)')}</div>
+                  </div>
+                  <div class="bid-item-actions">
+                    <button class="btn-accept-bid" onclick="acceptBid('${b.id}','${l.id}','${b.truck_id}','${esc(l.title)}','${l.event_date||''}','${esc(l.city||'')}')">Accept</button>
+                    <button class="btn-decline-bid" onclick="declineBid('${b.id}','${l.id}')">Decline</button>
+                  </div>
+                </div>`
+              }).join('')}
+            </div>
+          </td>
+        </tr>` : ''
       return `
       <tr>
         <td><div class="td-name">${esc(l.title)}${l.parent_request_id ? ' <span class="pill pill-linked" style="margin-left:4px;font-size:9px;vertical-align:middle">Linked</span>' : ''}</div></td>
@@ -933,13 +998,49 @@
         <td style="font-family:'DM Mono',monospace;font-size:12px">${guests}</td>
         <td style="font-family:'DM Mono',monospace;font-size:12px">${l.trucks_needed || 1}</td>
         <td><span class="pill pill-${l.status}">${l.status}</span></td>
-        <td>
-          ${l.status === 'active'
-            ? `<button class="btn-cancel-listing" onclick="cancelRequest('${l.id}')">Cancel</button>`
-            : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
-        </td>
-      </tr>`
+        <td><div style="display:flex;gap:6px;flex-wrap:wrap">${bidBtn}${cancelBtn}</div></td>
+      </tr>
+      ${bidPanelHtml}`
     }).join('')
+  }
+
+  window.toggleBidPanel = function(listingId) {
+    const panel = document.getElementById('bid-panel-inner-' + listingId)
+    if (panel) panel.classList.toggle('open')
+  }
+
+  window.acceptBid = async function(bidId, listingId, truckId, eventName, eventDate, city) {
+    if (!confirm('Accept this bid? A booking will be created and other bids declined.')) return
+    try {
+      // Create booking
+      const { error: bErr } = await supabase.from('bookings').insert({
+        truck_id:     truckId,
+        requester_id: userId,
+        event_type:   eventName,
+        event_date:   eventDate || null,
+        city,
+        status:       'accepted'
+      })
+      if (bErr) throw bErr
+      // Accept this bid
+      await supabase.from('bids').update({ status: 'accepted' }).eq('id', bidId)
+      // Decline remaining pending bids on the same listing
+      await supabase.from('bids').update({ status: 'declined' }).eq('listing_id', listingId).eq('status', 'pending').neq('id', bidId)
+      // Mark listing filled
+      await supabase.from('listings').update({ status: 'filled' }).eq('id', listingId)
+      showToast('Bid accepted — booking created!')
+      await Promise.all([loadRequests(), loadOverview(), loadBookings()])
+    } catch(e) {
+      showToast('Error: ' + e.message, true)
+      console.error('[acceptBid]', e)
+    }
+  }
+
+  window.declineBid = async function(bidId, listingId) {
+    const { error } = await supabase.from('bids').update({ status: 'declined' }).eq('id', bidId)
+    if (error) { showToast('Error declining bid', true); return }
+    showToast('Bid declined')
+    await loadRequests()
   }
 
   window.cancelRequest = async function (id) {
