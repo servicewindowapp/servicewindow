@@ -1284,6 +1284,7 @@
     let cityVal = ''
     const truckMap = new Map()
     let userSession = null
+    let userRole = null
     let cuisineVal = ''
     let sortVal = 'newest'
     let debounceTimer = null
@@ -1421,7 +1422,7 @@
       const boards = board === 'parking' ? ['parking', 'vendor_spot', 'storage'] : [board]
       let query = supabase
         .from('listings')
-        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at, profiles(business_name)')
+        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at')
         .in('board', boards)
         .eq('status', 'active')
 
@@ -1515,9 +1516,17 @@
       const postedBy = isMarketResearch ? 'ServiceWindow' : (listing.profiles?.business_name || 'Verified member')
       const dateStr = listing.event_date ? formatDate(listing.event_date) : ''
 
-      const footerAction = isMarketResearch
-        ? `<button class="btn-claim" onclick="window.openClaimModal('${escHtml(listing.id)}', '${escHtml((listing.title || '').replace(/'/g, "\\'"))}')">Claim this listing</button>`
-        : `<a href="auth.html?mode=login" class="btn-request" style="font-size:12px;padding:8px 14px">Respond</a>`
+      let footerAction
+      if (isMarketResearch) {
+        footerAction = `<button class="btn-claim" onclick="window.openClaimModal('${escHtml(listing.id)}', '${escHtml((listing.title || '').replace(/'/g, "\\'"))}')">Claim this listing</button>`
+      } else if (userRole === 'truck') {
+        const metaStr = escHtml([listing.city, listing.event_date ? formatDate(listing.event_date) : ''].filter(Boolean).join(' · '))
+        footerAction = `<a href="truck-dashboard.html?bid=${escHtml(listing.id)}&bid_title=${encodeURIComponent(listing.title||'')}&bid_meta=${encodeURIComponent(metaStr)}" class="btn-request" style="font-size:12px;padding:8px 14px">Submit Bid</a>`
+      } else if (!userSession) {
+        footerAction = `<a href="auth.html?mode=login" class="btn-request" style="font-size:12px;padding:8px 14px">Respond</a>`
+      } else {
+        footerAction = ''
+      }
 
       return `
         <div class="listing-card${isMarketResearch ? ' listing-card-unverified' : ''}">
@@ -1815,6 +1824,10 @@
     ;(async () => {
       const { data: { session } } = await supabase.auth.getSession()
       userSession = session
+      if (session?.user?.id) {
+        const { data: prof } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
+        userRole = prof?.role || null
+      }
       updateCuisineFilter(currentBoard)
       updateBanner(currentBoard)
       updateFloatCta(currentBoard)

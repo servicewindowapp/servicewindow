@@ -2855,7 +2855,19 @@ document.getElementById('bid-submit-btn').addEventListener('click', async () => 
   }
 })
 
-init()
+async function handleBidParam() {
+  const params = new URLSearchParams(location.search)
+  const bidId = params.get('bid')
+  if (!bidId) return
+  const title = params.get('bid_title') || 'Booking Request'
+  const meta  = params.get('bid_meta')  || ''
+  // Clean URL without reload
+  history.replaceState(null, '', location.pathname + location.hash)
+  showSection('requests')
+  window.openBidModal(bidId, title, meta)
+}
+
+init().then(handleBidParam)
 </script>
 </body>
 </html>
