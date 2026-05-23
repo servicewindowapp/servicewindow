@@ -1421,7 +1421,7 @@
       const boards = board === 'parking' ? ['parking', 'vendor_spot', 'storage'] : [board]
       let query = supabase
         .from('listings')
-        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at, source, claimed, profiles(business_name)')
+        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at, profiles(business_name)')
         .in('board', boards)
         .eq('status', 'active')
 
