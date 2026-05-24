@@ -483,8 +483,27 @@
       .form-grid { grid-template-columns: 1fr; }
       .card-grid { grid-template-columns: 1fr 1fr; }
       .main-content { -webkit-overflow-scrolling: touch; }
-      .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
-      table { min-width: 480px; }
+      .table-container { border-radius: 10px; }
+      /* Card layout for all dashboard tables on mobile */
+      table thead { display: none; }
+      table, table tbody, table tr, table td { display: block; width: 100%; }
+      table tr {
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding: 12px 16px; position: relative;
+      }
+      table tr:last-child { border-bottom: none; }
+      table td {
+        padding: 2px 0; border: none; font-size: 12px;
+        display: flex; align-items: baseline; gap: 6px;
+      }
+      table td::before {
+        content: attr(data-label);
+        font-family: 'DM Mono', monospace; font-size: 10px;
+        color: var(--text-muted); text-transform: uppercase;
+        letter-spacing: 0.05em; white-space: nowrap; min-width: 72px; flex-shrink: 0;
+      }
+      table td:not([data-label])::before { display: none; }
+      table td:not([data-label]) { padding: 0; }
     }
   </style>
   <meta property="og:image" content="https://servicewindow.app/og-image.png">
@@ -993,11 +1012,11 @@
       return `
       <tr>
         <td><div class="td-name">${esc(l.title)}${l.parent_request_id ? ' <span class="pill pill-linked" style="margin-left:4px;font-size:9px;vertical-align:middle">Linked</span>' : ''}</div></td>
-        <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(l.event_date)}</td>
-        <td>${esc(l.city || '—')}</td>
-        <td style="font-family:'DM Mono',monospace;font-size:12px">${guests}</td>
-        <td style="font-family:'DM Mono',monospace;font-size:12px">${l.trucks_needed || 1}</td>
-        <td><span class="pill pill-${l.status}">${l.status}</span></td>
+        <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(l.event_date)}</td>
+        <td data-label="City">${esc(l.city || '—')}</td>
+        <td data-label="Guests" style="font-family:'DM Mono',monospace;font-size:12px">${guests}</td>
+        <td data-label="Trucks" style="font-family:'DM Mono',monospace;font-size:12px">${l.trucks_needed || 1}</td>
+        <td data-label="Status"><span class="pill pill-${l.status}">${l.status}</span></td>
         <td><div style="display:flex;gap:6px;flex-wrap:wrap">${bidBtn}${cancelBtn}</div></td>
       </tr>
       ${bidPanelHtml}`
@@ -1080,11 +1099,11 @@
           <div class="td-name">${truckName}</div>
           ${b.truck?.is_verified ? '<span class="badge-verified" style="margin-top:4px;display:inline-block">Verified</span>' : ''}
         </td>
-        <td>${esc(b.event_name || '—')}</td>
-        <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
-        <td>${esc(b.city || '—')}</td>
-        <td><span class="pill pill-${b.status}">${b.status}</span></td>
-        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(b.created_at)}</td>
+        <td data-label="Event">${esc(b.event_name || '—')}</td>
+        <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
+        <td data-label="City">${esc(b.city || '—')}</td>
+        <td data-label="Status"><span class="pill pill-${b.status}">${b.status}</span></td>
+        <td data-label="Created" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(b.created_at)}</td>
         <td>
           ${b.status === 'pending'
             ? `<div class="action-group">
