@@ -1016,7 +1016,7 @@
       const { error: bErr } = await supabase.from('bookings').insert({
         truck_id:     truckId,
         requester_id: userId,
-        event_type:   eventName,
+        event_name:   eventName,
         event_date:   eventDate || null,
         city,
         status:       'accepted'
