@@ -1753,7 +1753,7 @@ async function doRespondBooking(id, status) {
 // ─── ACCEPTED BOOKINGS ────────────────────────────────
 async function loadAcceptedBookings() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, city, status, is_external, customer_count, requester_id, requester:requester_id(business_name,contact_name), truck_financials:booking_truck_financials(revenue_cents)')
+    .select('id, event_name, event_date, start_time, end_time, city, status, is_external, customer_count, requester_id, requester:requester_id(business_name,contact_name), truck_financials:booking_truck_financials(revenue_cents)')
     .eq('truck_id', userId).in('status',['accepted','completed']).order('event_date',{ascending:false})
 
   const tbody = document.getElementById('accepted-tbody')
@@ -1792,7 +1792,7 @@ async function loadAcceptedBookings() {
     return `<tr id="arow-${b.id}">
       <td data-label="Event"><div class="td-name">${esc(b.event_name||'Event')}</div>
         <div class="td-sub">From: ${requesterName}</div>${statsRow}</td>
-      <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
+      <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}${b.start_time ? ' · ' + fmtTime(b.start_time) : ''}${b.end_time ? '–' + fmtTime(b.end_time) : ''}</td>
       <td data-label="City">${esc(b.city||'—')}</td>
       <td data-label="Status"><span class="pill pill-${b.status}">${b.status}</span></td>
       <td data-label="">${action}</td>
@@ -1951,7 +1951,7 @@ async function initMessages() {
   // Fetch messages without embedded joins to avoid ambiguous FK errors
   const { data, error } = await supabase
     .from('messages')
-    .select('id, conversation_id, sender_id, recipient_id, body, is_read, created_at')
+    .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at')
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
     .order('created_at', {ascending:false})
 
@@ -1988,7 +1988,7 @@ async function initMessages() {
   threadsEl.innerHTML = Object.values(threads).map(t => {
     const name = t.other?.business_name || t.other?.contact_name || 'Unknown'
     const initials = name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()
-    const preview = (t.latest.body||'').substring(0,60)
+    const preview = (t.latest.content||'').substring(0,60)
     const timeStr = new Date(t.latest.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})
     return `<div class="msg-thread" data-conv="${t.convId}" data-recip="${t.other?.id||''}" data-name="${esc(name)}" onclick="openThread('${t.convId}','${t.other?.id||''}','${esc(name)}')">
       <div class="msg-avatar">${initials}</div>
@@ -2007,6 +2007,11 @@ async function initMessages() {
 window.openThread = async function(convId, recipId, name) {
   activeConvId = convId; activeRecipId = recipId
   document.querySelectorAll('.msg-thread').forEach(t => t.classList.toggle('active', t.dataset.conv===convId))
+  // Mobile: switch to main panel
+  if (window.innerWidth <= 600) {
+    document.getElementById('msg-thread-list').classList.add('hidden-mobile')
+    document.getElementById('msg-main-panel').classList.remove('hidden-mobile')
+  }
 
   const nameEl = document.getElementById('msg-panel-name')
   const headEl = document.getElementById('msg-panel-head')
@@ -2024,7 +2029,7 @@ window.openThread = async function(convId, recipId, name) {
 
   // Load conversation messages
   const { data } = await supabase.from('messages')
-    .select('id, sender_id, body, created_at')
+    .select('id, sender_id, content, created_at')
     .eq('conversation_id', convId)
     .order('created_at', {ascending:true})
 
@@ -2033,7 +2038,7 @@ window.openThread = async function(convId, recipId, name) {
     const isMe = m.sender_id === userId
     const t = new Date(m.created_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})
     return `<div style="display:flex;flex-direction:column;align-self:${isMe?'flex-end':'flex-start'}">
-      <div class="msg-bubble ${isMe?'me':'them'}">${esc(m.body)}</div>
+      <div class="msg-bubble ${isMe?'me':'them'}">${esc(m.content)}</div>
       <div class="msg-bubble-time" style="text-align:${isMe?'right':'left'}">${t}</div>
     </div>`
   }).join('')
@@ -2058,7 +2063,7 @@ async function sendMessage() {
     conversation_id: activeConvId,
     sender_id:    userId,
     recipient_id: activeRecipId,
-    body: content,
+    content,
     is_read: false
   })
   if (error) { showToast('Could not send message', true); return }
@@ -2105,6 +2110,11 @@ document.getElementById('msg-panel-back').addEventListener('click', () => {
   document.getElementById('msg-select-prompt').style.display='flex'
   document.getElementById('msg-bubbles').innerHTML=''
   document.querySelectorAll('.msg-thread').forEach(t=>t.classList.remove('active'))
+  // Mobile: switch back to thread list
+  if (window.innerWidth <= 600) {
+    document.getElementById('msg-thread-list').classList.remove('hidden-mobile')
+    document.getElementById('msg-main-panel').classList.add('hidden-mobile')
+  }
 })
 
 // Notification bell → messages
