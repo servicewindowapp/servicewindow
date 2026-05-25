@@ -88,6 +88,7 @@
   <style>
     :root {
       --fire: #FF6B35;
+      --fire-btn: #CC4000;
       --navy: #0D1B2A;
       --smoke: #F5F0EB;
       --charcoal: #2C3E50;
@@ -154,7 +155,7 @@
     .nav-links a:hover { color: var(--white); }
 
     .nav-cta {
-      background: var(--fire);
+      background: var(--fire-btn);
       color: var(--white) !important;
       padding: 9px 20px;
       border-radius: 8px;
@@ -163,7 +164,7 @@
       white-space: nowrap;
     }
 
-    .nav-cta:hover { background: #e55a2b !important; }
+    .nav-cta:hover { background: #AA3500 !important; }
 
     .hamburger {
       display: none;
@@ -215,7 +216,7 @@
     .mobile-menu a:last-child { border-bottom: none; }
 
     .mobile-menu .mobile-cta {
-      background: var(--fire);
+      background: var(--fire-btn);
       color: white !important;
       padding: 14px 20px;
       border-radius: 8px;
@@ -312,7 +313,7 @@
     }
 
     .btn-primary {
-      background: var(--fire);
+      background: var(--fire-btn);
       color: white;
       border: none;
       border-radius: 10px;
@@ -328,7 +329,7 @@
       white-space: nowrap;
     }
 
-    .btn-primary:hover { background: #e55a2b; transform: translateY(-1px); }
+    .btn-primary:hover { background: #AA3500; transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(0); }
 
     .btn-secondary {
@@ -466,7 +467,7 @@
     }
 
     .problem-card.good .problem-card-label {
-      background: rgba(255,107,53,0.1);
+      background: transparent;
       color: var(--fire);
     }
 
@@ -614,7 +615,7 @@
     }
 
     .how-tab.active {
-      background: var(--fire);
+      background: var(--fire-btn);
       color: white;
     }
 
@@ -716,7 +717,7 @@
     }
 
     .board-badge.free { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
-    .board-badge.trucks { background: rgba(255,107,53,0.1); color: var(--fire); border: 1px solid rgba(255,107,53,0.2); }
+    .board-badge.trucks { background: transparent; color: var(--fire); border: 1px solid rgba(255,107,53,0.3); }
 
     /* ─── PRICING ─── */
     .pricing-section {
@@ -812,8 +813,8 @@
       transition: all 0.2s;
     }
 
-    .pricing-btn.primary { background: var(--fire); color: white; }
-    .pricing-btn.primary:hover { background: #e55a2b; }
+    .pricing-btn.primary { background: var(--fire-btn); color: white; }
+    .pricing-btn.primary:hover { background: #AA3500; }
     .pricing-btn.outline { background: transparent; color: white; border: 1px solid var(--dark-border); }
     .pricing-btn.outline:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.04); }
 
@@ -912,7 +913,7 @@
     .waitlist-form input:focus { border-color: var(--fire); }
 
     .waitlist-form button {
-      background: var(--fire);
+      background: var(--fire-btn);
       color: white;
       border: none;
       border-radius: 10px;
@@ -926,7 +927,7 @@
       min-height: 52px;
     }
 
-    .waitlist-form button:hover { background: #e55a2b; }
+    .waitlist-form button:hover { background: #AA3500; }
 
     .or-divider {
       font-family: 'DM Mono', monospace;
