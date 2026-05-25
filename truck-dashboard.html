@@ -2838,4 +2838,53 @@ window.openBidModal = function(listingId, title, meta) {
   document.getElementById('bid-modal-meta').textContent  = meta  || ''
   document.getElementById('bid-message').value = ''
   document.getElementById('bid-modal-overlay').classList.add('open')
-  document.getElementById('bid-mess
+  document.getElementById('bid-message').focus()
+}
+
+window.closeBidModal = function() {
+  document.getElementById('bid-modal-overlay').classList.remove('open')
+  activeBidListingId = null
+}
+
+document.getElementById('bid-cancel-btn').addEventListener('click', closeBidModal)
+
+document.getElementById('bid-submit-btn').addEventListener('click', async () => {
+  if (!activeBidListingId) return
+  const message = document.getElementById('bid-message').value.trim()
+  if (!message) { showToast('Please add a message', true); return }
+  const btn = document.getElementById('bid-submit-btn')
+  btn.textContent = 'Submitting…'; btn.disabled = true
+  try {
+    const { error } = await supabase.from('bids').insert({
+      listing_id: activeBidListingId,
+      truck_id:   userId,
+      message,
+      status:     'pending'
+    })
+    if (error) throw error
+    closeBidModal()
+    showToast('Bid submitted!')
+    await loadActiveBids()
+  } catch(e) {
+    showToast('Error: ' + e.message, true)
+  } finally {
+    btn.textContent = 'Submit Bid'; btn.disabled = false
+  }
+})
+
+async function handleBidParam() {
+  const params = new URLSearchParams(location.search)
+  const bidId = params.get('bid')
+  if (!bidId) return
+  const title = params.get('bid_title') || 'Booking Request'
+  const meta  = params.get('bid_meta')  || ''
+  // Clean URL without reload
+  history.replaceState(null, '', location.pathname + location.hash)
+  showSection('requests')
+  window.openBidModal(bidId, title, meta)
+}
+
+init().then(handleBidParam)
+</script>
+</body>
+</html>
