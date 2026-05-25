@@ -36,7 +36,8 @@
   <title>API — ServiceWindow MCP | SWFL Food Truck Marketplace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
   <style>
     :root {
       --fire: #FF6B35;
@@ -385,6 +386,8 @@
     </ul>
   </nav>
 
+  <main>
+
   <!-- HERO -->
   <section class="hero">
     <div class="hero-inner">
@@ -608,6 +611,8 @@ curl -X POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp \
   </div>
 
   <!-- FOOTER -->
+  </main>
+
   <footer>
     <p>
       ServiceWindow MCP API · <a href="https://servicewindow.app">servicewindow.app</a> ·

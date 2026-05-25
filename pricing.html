@@ -59,7 +59,9 @@
   <title>Pricing — ServiceWindow SWFL Food Truck Marketplace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
   <style>
     :root {
       --fire: #FF6B35;
@@ -94,7 +96,7 @@
       padding: 0 20px; height: 64px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo { height: 40px; width: auto; max-width: 200px; }
+    .nav-logo { height: 40px; width: auto;  }
     .nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
     .nav-links a {
       font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500;
@@ -110,7 +112,7 @@
     .nav-cta:hover { background: #e55a2b !important; }
     .hamburger {
       display: none; flex-direction: column; gap: 5px;
-      background: none; border: none; cursor: pointer; padding: 10px 8px; min-height: 44px; min-width: 44px;
+      background: none; border: none; cursor: pointer; padding: 4px;
     }
     .hamburger span { display: block; width: 24px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; }
     .mobile-menu {
@@ -390,6 +392,8 @@
     <a href="auth.html" class="mobile-cta">Get Started Free</a>
   </div>
 
+  <main>
+
   <div class="page">
 
     <!-- HERO -->
@@ -609,7 +613,9 @@
     </section>
 
     <!-- FOOTER -->
-    <footer>
+      </main>
+
+  <footer>
       <div class="footer-inner">
         <div class="footer-top">
           <div class="footer-brand">
@@ -777,4 +783,9 @@
       if (!isOpen) {
         answer.classList.add('open');
         btn.classList.add('open');
- 
+      }
+    }
+  </script>
+
+</body>
+</html>

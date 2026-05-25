@@ -44,7 +44,9 @@
   <title>Browse Trucks &amp; Marketplace — ServiceWindow SWFL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
   <style>
     :root {
       --fire: #FF6B35;
@@ -1049,6 +1051,8 @@
     <a href="auth.html" class="mobile-cta">Get Started Free</a>
   </div>
 
+  <main>
+
   <!-- ─── PAGE HEADER ─── -->
   <div class="page-header">
     <div class="page-header-top">
@@ -1951,4 +1955,33 @@
 
       const { error } = await supabase
         .from('claim_requests')
-        
+        .insert({
+          listing_id: listingId,
+          listing_title: listingTitle,
+          claimant_name: name,
+          claimant_email: email,
+          claimant_phone: phone || null,
+          message: message || null
+        })
+
+      if (error) {
+        btn.disabled = false
+        btn.textContent = 'Submit claim'
+        errEl.textContent = 'Something went wrong. Please try again.'
+        errEl.style.display = 'block'
+        return
+      }
+
+      document.getElementById('claim-modal-form-wrap').style.display = 'none'
+      document.getElementById('claim-modal-success').style.display = 'block'
+    }
+
+    document.getElementById('claim-modal-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('claim-modal-overlay')) window.closeClaimModal()
+    })
+  </script>
+
+  </main>
+
+</body>
+</html>

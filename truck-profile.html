@@ -17,7 +17,9 @@
   <link id="canonical-link" rel="canonical" href="https://servicewindow.app/truck-profile.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
   <style>
     :root {
       --fire: #FF6B35;
@@ -41,13 +43,13 @@
       padding: 0 24px; height: 64px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo { height: 40px; width: auto; max-width: 200px; }
+    .nav-logo { height: 40px; width: auto; }
     .nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
     .nav-links a { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
     .nav-links a:hover { color: var(--text-primary); }
     .nav-cta { background: var(--fire) !important; color: white !important; padding: 9px 20px; border-radius: 8px; font-weight: 600 !important; white-space: nowrap; }
     .nav-cta:hover { background: #e55a2b !important; }
-    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 10px 8px; min-height: 44px; min-width: 44px; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
     .hamburger span { display: block; width: 24px; height: 2px; background: white; border-radius: 2px; }
     .mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; background: var(--navy); border-bottom: 1px solid var(--dark-border); padding: 20px; flex-direction: column; gap: 16px; z-index: 99; }
     .mobile-menu.open { display: flex; }
@@ -221,7 +223,7 @@
     .footer-inner { max-width: 1000px; margin: 0 auto; }
     .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; margin-bottom: 40px; }
     .footer-brand p { font-size: 13px; color: var(--text-muted); margin-top: 10px; max-width: 260px; line-height: 1.5; }
-    .footer-links-group h4 { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: white; margin-bottom: 14px; }
+    .footer-links-group h3 { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: white; margin-bottom: 14px; }
     .footer-links-group a { display: block; font-size: 13px; color: var(--text-muted); text-decoration: none; margin-bottom: 8px; transition: color 0.2s; }
     .footer-links-group a:hover { color: white; }
     .footer-bottom { border-top: 1px solid var(--dark-border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
@@ -260,6 +262,8 @@
     <a href="auth.html?mode=login">Log In</a>
     <a href="auth.html" class="mobile-cta">Get Started Free</a>
   </div>
+
+  <main>
 
   <div class="page">
 
@@ -335,7 +339,9 @@
     </div><!-- /profile-content -->
 
     <!-- FOOTER -->
-    <footer>
+      </main>
+
+  <footer>
       <div class="footer-inner">
         <div class="footer-top">
           <div class="footer-brand">
@@ -343,7 +349,7 @@
             <p>The verified food truck marketplace for Southwest Florida. Where events find their truck.</p>
           </div>
           <div class="footer-links-group">
-            <h4>Platform</h4>
+            <h3>Platform</h3>
             <a href="marketplace.html">Browse Trucks</a>
             <a href="venues.html">Venues</a>
             <a href="property.html">Parking &amp; Storage</a>
@@ -351,13 +357,13 @@
             <a href="jobs.html">Jobs Board</a>
           </div>
           <div class="footer-links-group">
-            <h4>Operators</h4>
+            <h3>Operators</h3>
             <a href="auth.html?role=truck">List Your Truck</a>
             <a href="pricing.html">Pricing</a>
             <a href="auth.html?mode=login">Log In</a>
           </div>
           <div class="footer-links-group">
-            <h4>Company</h4>
+            <h3>Company</h3>
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
             <a href="privacy.html">Privacy Policy</a>
@@ -669,4 +675,3 @@
 
 </body>
 </html>
-                                                                                                                                                                  
