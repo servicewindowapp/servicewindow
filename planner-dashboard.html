@@ -517,7 +517,7 @@
     <span></span><span></span><span></span>
   </button>
   <span class="mobile-topbar-title">Planner Dashboard</span>
-  <img src="logo.png" alt="ServiceWindow" class="mobile-topbar-logo">
+  <img src="logo.webp" alt="ServiceWindow" class="mobile-topbar-logo">
 </div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -528,7 +528,7 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <img src="logo.png" alt="ServiceWindow">
+      <img src="logo.webp" alt="ServiceWindow">
     </div>
     <nav class="sidebar-nav">
       <button class="nav-item active" data-section="overview">
@@ -1485,151 +1485,4 @@
         cuisine_type_needed: document.getElementById('r-cuisine-2').value.trim() || null,
         is_urgent:          payload.is_urgent,
         notes:              document.getElementById('r-notes-2').value.trim() || null,
-        parent_request_id:  parent.id
-      }
-      const { error: err2 } = await supabase.from('listings').insert(slot2)
-      if (err2) console.error('[post request slot 2]', err2)
-    }
-
-    showToast('Request posted to the marketplace')
-    statusEl.textContent = ''
-    e.target.reset()
-    document.getElementById('r-trucks').value = '1'
-    document.getElementById('second-slot-wrap').style.display = 'none'
-    await Promise.all([loadRequests(), loadOverview()])
-    showSection('requests')
-  })
-
-  // ─── SECOND TRUCK SLOT TOGGLE (OI-050) ───────────────────
-  window.toggleSecondSlot = function(checked) {
-    document.getElementById('second-slot-wrap').style.display = checked ? 'block' : 'none'
-  }
-
-  // ─── BOOKING TEMPLATES (OI-048) ──────────────────────────
-  let templatesCache = []
-
-  async function loadTemplates() {
-    const listEl  = document.getElementById('templates-list')
-    const emptyEl = document.getElementById('templates-empty')
-    listEl.innerHTML = ''
-
-    const { data, error } = await supabase
-      .from('booking_templates')
-      .select('id, name, event_type, city, guest_count_min, guest_count_max, trucks_needed, budget_range, cuisine_preference, notes, location')
-      .eq('requester_id', userId)
-      .order('created_at', { ascending: false })
-
-    if (error) { console.error('[loadTemplates]', error); return }
-    templatesCache = data || []
-
-    if (!templatesCache.length) { emptyEl.style.display = 'block'; return }
-    emptyEl.style.display = 'none'
-
-    listEl.innerHTML = templatesCache.map(t => {
-      const meta = [
-        t.event_type,
-        t.city,
-        t.guest_count_min || t.guest_count_max
-          ? [(t.guest_count_min||''), (t.guest_count_max||'')].filter(Boolean).join('–') + ' guests'
-          : null,
-        t.budget_range,
-        t.cuisine_preference
-      ].filter(Boolean).join(' · ')
-      return `
-      <div class="tpl-card" id="tpl-${t.id}">
-        <div class="tpl-info">
-          <div class="tpl-name">${esc(t.name)}</div>
-          <div class="tpl-meta">${esc(meta || '—')}</div>
-        </div>
-        <div class="tpl-actions">
-          <button class="btn-outline" style="padding:5px 14px;font-size:12px" onclick="useTemplate('${t.id}')">Use Template</button>
-          <button class="btn-cancel-listing" onclick="deleteTemplate('${t.id}')">Delete</button>
-        </div>
-      </div>`
-    }).join('')
-  }
-
-  window.useTemplate = function(id) {
-    const t = templatesCache.find(x => x.id === id)
-    if (!t) return
-    const g = (el, val) => { const el2 = document.getElementById(el); if (el2 && val != null) el2.value = val }
-    g('r-type',        t.event_type        || '')
-    g('r-city',        t.city              || '')
-    g('r-location',    t.location          || '')
-    g('r-guests-min',  t.guest_count_min   || '')
-    g('r-guests-max',  t.guest_count_max   || '')
-    g('r-trucks',      t.trucks_needed     || 1)
-    g('r-budget',      t.budget_range      || '')
-    g('r-cuisine',     t.cuisine_preference|| '')
-    g('r-notes',       t.notes             || '')
-    showSection('post')
-    showToast('Template loaded — fill in date and title to post')
-  }
-
-  window.deleteTemplate = async function(id) {
-    if (!confirm('Delete this template?')) return
-    const { error } = await supabase.from('booking_templates').delete().eq('id', id)
-    if (error) { showToast('Error deleting template', true); return }
-    showToast('Template deleted')
-    document.getElementById('tpl-' + id)?.remove()
-    templatesCache = templatesCache.filter(t => t.id !== id)
-    if (!templatesCache.length) document.getElementById('templates-empty').style.display = 'block'
-  }
-
-  window.saveAsTemplate = async function() {
-    const title = document.getElementById('r-title').value.trim()
-    const name  = title || prompt('Template name:')
-    if (!name) return
-    const { error } = await supabase.from('booking_templates').insert({
-      requester_id:       userId,
-      name,
-      event_type:         document.getElementById('r-type').value         || null,
-      location:           document.getElementById('r-location').value.trim() || null,
-      city:               document.getElementById('r-city').value.trim()  || null,
-      guest_count_min:    parseInt(document.getElementById('r-guests-min').value) || null,
-      guest_count_max:    parseInt(document.getElementById('r-guests-max').value) || null,
-      trucks_needed:      parseInt(document.getElementById('r-trucks').value)     || 1,
-      budget_range:       document.getElementById('r-budget').value        || null,
-      cuisine_preference: document.getElementById('r-cuisine').value.trim()|| null,
-      notes:              document.getElementById('r-notes').value.trim()  || null
-    })
-    if (error) { showToast('Error saving template', true); console.error(error); return }
-    showToast('Template saved')
-  }
-
-  // ─── EMERGENCY REPLACEMENT (OI-049) ──────────────────────
-  window.postEmergencyReplacement = async function(eventType, eventDate, city) {
-    if (!confirm('Post an urgent replacement request to the marketplace for this event?')) return
-    const title = `🚨 Emergency Coverage Needed${eventType ? ' — ' + eventType : ''}${city ? ' in ' + city : ''}`
-    const { error } = await supabase.from('listings').insert({
-      poster_id:  userId,
-      board:      'request',
-      status:     'active',
-      title,
-      event_type: eventType || null,
-      event_date: eventDate || null,
-      city:       city      || null,
-      is_urgent:  true,
-      trucks_needed: 1
-    })
-    if (error) { showToast('Error posting replacement request', true); console.error(error); return }
-    showToast('Urgent replacement request posted')
-
-    // Notify standby trucks — fire-and-forget, don't block the UI
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) return
-      fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/notify-standby-trucks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + session.access_token
-        },
-        body: JSON.stringify({ event_type: eventType, event_date: eventDate, city })
-      }).catch(console.error)
-    })
-  }
-
-  init()
-</script>
-</body>
-</html>
+        parent_request_id:  parent
