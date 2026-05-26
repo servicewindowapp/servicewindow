@@ -940,7 +940,7 @@
       const items = []
       if (phone) items.push(`<div class="contact-item"><span class="contact-icon">&#9990;</span> <a href="tel:${esc(phone)}">${esc(phone)}</a></div>`)
       if (email) items.push(`<div class="contact-item"><span class="contact-icon">&#9993;</span> <a href="mailto:${esc(email)}">${esc(email)}</a></div>`)
-      if (website) items.push(`<div class="contact-item"><span class="contact-icon">&#9741;</span> <a href="${esc(website)}" target="_blank" rel="noopener">${esc(website.replace(/^https?:\/\//, ''))}</a></div>`)
+      if (website) items.push(`<div class="contact-item"><span class="contact-icon">&#9741;</span> <a href="${esc(sanitizeUrl(website))}" target="_blank" rel="noopener">${esc(website.replace(/^https?:\/\//, ''))}</a></div>`)
 
       if (items.length > 0) {
         contactHtml = `<div class="contact-row">${items.join('')}</div>`
@@ -1076,7 +1076,12 @@
 
   // ─── HELPERS ──────────────────────────────────────────────────────────────
   function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+  }
+  function sanitizeUrl(url) {
+    if (!url) return '#'
+    const u = String(url).trim()
+    return /^(https?:|mailto:|tel:)/i.test(u) ? u : '#'
   }
 
   function timeAgo(ts) {

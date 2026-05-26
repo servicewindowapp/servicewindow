@@ -1067,6 +1067,12 @@
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+    }
+    function sanitizeUrl(url) {
+      if (!url) return '#'
+      const u = String(url).trim()
+      return /^(https?:|mailto:|tel:)/i.test(u) ? u : '#'
     }
 
     // ─── INIT ───
@@ -1099,7 +1105,7 @@
         const cuisine = escHtml(t.cuisine_type || '')
         const cities = Array.isArray(t.cities_served) ? t.cities_served.slice(0, 3).map(escHtml).join(', ') : ''
         const phone = escHtml(t.contact_phone || '')
-        const fb = t.facebook_url ? `<a href="${escHtml(t.facebook_url)}" target="_blank" rel="noopener" class="sub-link">Facebook →</a>` : ''
+        const fb = t.facebook_url ? `<a href="${escHtml(sanitizeUrl(t.facebook_url))}" target="_blank" rel="noopener" class="sub-link">Facebook →</a>` : ''
         const bio = escHtml(t.description || '')
 
         const card = document.createElement('div')

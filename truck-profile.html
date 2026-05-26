@@ -418,7 +418,12 @@
 
     function escHtml(str) {
       if (!str) return ''
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+    }
+    function sanitizeUrl(url) {
+      if (!url) return '#'
+      const u = String(url).trim()
+      return /^(https?:|mailto:|tel:)/i.test(u) ? u : '#'
     }
 
     function formatDate(iso) {
@@ -582,13 +587,13 @@
       }
       if (truck.website) {
         const display = truck.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
-        details.push({ icon: '🌐', label: 'Website', value: `<a href="${escHtml(truck.website)}" target="_blank" rel="noopener">${escHtml(display)}</a>` })
+        details.push({ icon: '🌐', label: 'Website', value: `<a href="${escHtml(sanitizeUrl(truck.website))}" target="_blank" rel="noopener">${escHtml(display)}</a>` })
       }
       if (truck.uber_eats_url) {
-        details.push({ icon: '🛵', label: 'Uber Eats', value: `<a href="${escHtml(truck.uber_eats_url)}" target="_blank" rel="noopener">Order online →</a>` })
+        details.push({ icon: '🛵', label: 'Uber Eats', value: `<a href="${escHtml(sanitizeUrl(truck.uber_eats_url))}" target="_blank" rel="noopener">Order online →</a>` })
       }
       if (truck.doordash_url) {
-        details.push({ icon: '🛵', label: 'DoorDash', value: `<a href="${escHtml(truck.doordash_url)}" target="_blank" rel="noopener">Order online →</a>` })
+        details.push({ icon: '🛵', label: 'DoorDash', value: `<a href="${escHtml(sanitizeUrl(truck.doordash_url))}" target="_blank" rel="noopener">Order online →</a>` })
       }
 
       const detailsList = document.getElementById('p-details-list')

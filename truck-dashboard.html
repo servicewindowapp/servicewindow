@@ -1379,6 +1379,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script type="module">
 import { supabase } from './supabase-client.js'
 
@@ -2076,7 +2077,7 @@ window.openThread = async function(convId, recipId, name) {
     const isMe = m.sender_id === userId
     const t = new Date(m.created_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})
     return `<div style="display:flex;flex-direction:column;align-self:${isMe?'flex-end':'flex-start'}">
-      <div class="msg-bubble ${isMe?'me':'them'}">${esc(m.content)}</div>
+      <div class="msg-bubble ${isMe?'me':'them'}">${DOMPurify.sanitize(esc(m.content))}</div>
       <div class="msg-bubble-time" style="text-align:${isMe?'right':'left'}">${t}</div>
     </div>`
   }).join('')
@@ -2743,7 +2744,7 @@ async function loadAds() {
       ad.contact_email ? `<span class="ad-contact">✉ ${esc(ad.contact_email)}</span>` : ''
     ].filter(Boolean).join('')
     const cta = ad.cta_url
-      ? `<a class="ad-cta" href="${esc(ad.cta_url)}" target="_blank" rel="noopener">${esc(ad.cta_label||'Learn More')} →</a>`
+      ? `<a class="ad-cta" href="${esc(sanitizeUrl(ad.cta_url))}" target="_blank" rel="noopener">${esc(ad.cta_label||'Learn More')} →</a>`
       : ''
     return `<div class="ad-card">
       <div class="ad-card-top">${typeBadge}<div class="ad-headline">${esc(ad.headline)}</div></div>
@@ -2756,7 +2757,12 @@ async function loadAds() {
 // ─── UTILITIES ────────────────────────────────────────
 function esc(s) {
   if (s==null) return ''
-  return s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  return s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+}
+function sanitizeUrl(url) {
+  if (!url) return '#'
+  const u = String(url).trim()
+  return /^(https?:|mailto:|tel:)/i.test(u) ? u : '#'
 }
 function fmtDate(d) {
   if (!d) return '—'

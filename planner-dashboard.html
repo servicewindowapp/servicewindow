@@ -928,6 +928,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script type="module">
   import { supabase } from './supabase-client.js'
 
@@ -1394,7 +1395,7 @@
       const isMe = m.sender_id === userId
       const t = new Date(m.created_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})
       return `<div style="display:flex;flex-direction:column;align-self:${isMe?'flex-end':'flex-start'}">
-        <div class="msg-bubble ${isMe?'me':'them'}">${esc(m.content)}</div>
+        <div class="msg-bubble ${isMe?'me':'them'}">${DOMPurify.sanitize(esc(m.content))}</div>
         <div class="msg-bubble-time" style="text-align:${isMe?'right':'left'}">${t}</div>
       </div>`
     }).join('')

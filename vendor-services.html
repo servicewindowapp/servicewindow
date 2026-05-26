@@ -607,9 +607,9 @@
         const name    = prof.business_name || p.headline
 
         const contacts = []
-        if (p.contact_phone) contacts.push(`<a href="tel:${p.contact_phone.replace(/\D/g,'')}" class="vendor-contact-link">${p.contact_phone}</a>`)
-        if (p.contact_email) contacts.push(`<a href="mailto:${p.contact_email}" class="vendor-contact-link">${p.contact_email}</a>`)
-        if (p.cta_url)       contacts.push(`<a href="${esc(p.cta_url)}" target="_blank" rel="noopener" class="vendor-contact-link">${esc(p.cta_label || 'Website')}</a>`)
+        if (p.contact_phone) contacts.push(`<a href="tel:${esc(p.contact_phone.replace(/\D/g,''))}" class="vendor-contact-link">${esc(p.contact_phone)}</a>`)
+        if (p.contact_email) contacts.push(`<a href="mailto:${esc(p.contact_email)}" class="vendor-contact-link">${esc(p.contact_email)}</a>`)
+        if (p.cta_url)       contacts.push(`<a href="${esc(sanitizeUrl(p.cta_url))}" target="_blank" rel="noopener" class="vendor-contact-link">${esc(p.cta_label || 'Website')}</a>`)
 
         return `
           <div class="vendor-card">
@@ -626,7 +626,12 @@
     }
 
     function esc(str) {
-      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+    }
+    function sanitizeUrl(url) {
+      if (!url) return '#'
+      const u = String(url).trim()
+      return /^(https?:|mailto:|tel:)/i.test(u) ? u : '#'
     }
 
     loadListings()
