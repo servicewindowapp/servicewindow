@@ -28,7 +28,7 @@
       "name": "ServiceWindow MCP Server",
       "applicationCategory": "API",
       "description": "Model Context Protocol server for the ServiceWindow SWFL food truck marketplace",
-      "url": "https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp",
+      "url": "https://api.servicewindow.app/functions/v1/mcp",
       "operatingSystem": "Any"
     }
   }
@@ -396,7 +396,7 @@
       <p>Connect your AI agent to the Southwest Florida food truck marketplace. Search verified trucks, browse events, and query listings — structured data, no scraping required.</p>
       <div class="endpoint-block">
         <span class="method-badge">POST</span>
-        <span class="endpoint-url" id="endpointUrl">https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp</span>
+        <span class="endpoint-url" id="endpointUrl">https://api.servicewindow.app/functions/v1/mcp</span>
         <button class="copy-btn" onclick="copyEndpoint()">Copy URL</button>
       </div>
     </div>
@@ -545,17 +545,17 @@
 
     <div class="code-label">Step 1 — Handshake</div>
     <div class="code-block"><pre><span class="comment"># Verify the server is live</span>
-curl -X POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp \
+curl -X POST https://api.servicewindow.app/functions/v1/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'</pre></div>
 
     <div class="code-label">Step 2 — List tools</div>
-    <div class="code-block"><pre>curl -X POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp \
+    <div class="code-block"><pre>curl -X POST https://api.servicewindow.app/functions/v1/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'</pre></div>
 
     <div class="code-label">Step 3 — Search trucks</div>
-    <div class="code-block"><pre>curl -X POST https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/mcp \
+    <div class="code-block"><pre>curl -X POST https://api.servicewindow.app/functions/v1/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc":"2.0","id":3,

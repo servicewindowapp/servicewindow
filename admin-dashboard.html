@@ -282,9 +282,38 @@
     .action-group { display: flex; gap: 8px; align-items: center; }
 
     /* EMPTY */
-    .empty-state { padding: 48px 20px; text-align: center; }
-    .empty-icon { font-size: 32px; margin-bottom: 12px; }
-    .empty-state p { color: var(--text-muted); font-size: 14px; }
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 12px;
+    }
+    .empty-state-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 20px;
+      color: var(--fire);
+      opacity: 0.6;
+    }
+    .empty-state-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+    }
+    .empty-state-body {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin: 0 0 8px 0;
+      max-width: 320px;
+    }
 
     /* TOAST */
     .toast {
@@ -502,8 +531,9 @@
           <tbody id="pending-tbody"></tbody>
         </table>
         <div class="empty-state" id="pending-empty" style="display:none">
-          <div class="empty-icon">✓</div>
-          <p>No pending verifications — all caught up.</p>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <h3 class="empty-state-title">No pending verifications</h3>
+          <p class="empty-state-body">No records found. Data will populate as the platform grows.</p>
         </div>
       </div>
     </section>
@@ -546,7 +576,9 @@
           <tbody id="users-tbody"></tbody>
         </table>
         <div class="empty-state" id="users-empty" style="display:none">
-          <p>No users match your search.</p>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+          <h3 class="empty-state-title">No records found</h3>
+          <p class="empty-state-body">No users match your current filter. Data will populate as the platform grows.</p>
         </div>
       </div>
     </section>
@@ -574,7 +606,9 @@
           <tbody id="waitlist-tbody"></tbody>
         </table>
         <div class="empty-state" id="waitlist-empty" style="display:none">
-          <p>No waitlist signups yet.</p>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg></div>
+          <h3 class="empty-state-title">No records found</h3>
+          <p class="empty-state-body">No waitlist signups yet. Data will populate as the platform grows.</p>
         </div>
       </div>
     </section>
@@ -605,8 +639,9 @@
           <tbody id="claims-tbody"></tbody>
         </table>
         <div class="empty-state" id="claims-empty" style="display:none">
-          <div class="empty-icon">✓</div>
-          <p>No pending claim requests.</p>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <h3 class="empty-state-title">No pending claims</h3>
+          <p class="empty-state-body">No records found. Data will populate as the platform grows.</p>
         </div>
       </div>
     </section>
@@ -647,8 +682,9 @@
           <tbody id="ads-tbody"></tbody>
         </table>
         <div class="empty-state" id="ads-empty" style="display:none">
-          <div class="empty-icon">✓</div>
-          <p>No ads in this status.</p>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <h3 class="empty-state-title">No records found</h3>
+          <p class="empty-state-body">No ads match this filter. Data will populate as the platform grows.</p>
         </div>
       </div>
     </section>

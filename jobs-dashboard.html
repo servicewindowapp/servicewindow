@@ -248,17 +248,37 @@
 
     /* ─── EMPTY STATE ─── */
     .empty-state {
-      text-align: center; padding: 72px 20px; color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 12px;
     }
-    .empty-state p { font-size: 15px; margin-bottom: 20px; max-width: 440px; margin-inline: auto; }
-    .empty-cta-link {
-      display: inline-block;
-      background: var(--fire); color: white;
-      border-radius: 8px; padding: 10px 22px;
-      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
-      text-decoration: none; transition: background 0.15s;
+    .empty-state-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 20px;
+      color: var(--fire);
+      opacity: 0.6;
     }
-    .empty-cta-link:hover { background: #e55a2b; }
+    .empty-state-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+    }
+    .empty-state-body {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin: 0 0 24px 0;
+      max-width: 320px;
+    }
 
     /* ─── TOAST ─── */
     .toast {
@@ -550,8 +570,10 @@
   <div class="jobs-grid-wrap">
     <div class="jobs-grid" id="pub-jobs-grid"></div>
     <div class="empty-state" id="pub-empty" style="display:none">
-      <p>No job listings yet. Check back soon — verified trucks will be posting as they join the platform.</p>
-      <a href="auth.html?role=truck" class="empty-cta-link">Are you a food truck operator? Post a job &rarr;</a>
+      <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+      <h3 class="empty-state-title">No job listings yet</h3>
+      <p class="empty-state-body">Verified trucks are joining the platform. Check back soon, or post your own if you operate a truck.</p>
+      <a href="auth.html?role=truck" class="btn-primary" style="font-size:14px;padding:12px 24px">Post a Job</a>
     </div>
   </div>
 
@@ -642,8 +664,10 @@
 
       <div class="auth-jobs-grid" id="auth-jobs-grid"></div>
       <div class="empty-state" id="auth-empty" style="display:none">
-        <p>No job listings yet. Check back soon — verified trucks will be posting as they join the platform.</p>
-        <a href="auth.html?role=truck" class="empty-cta-link">Are you a food truck operator? Post a job &rarr;</a>
+        <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+        <h3 class="empty-state-title">No job listings posted</h3>
+        <p class="empty-state-body">Post a job opening to reach workers with food service experience across SWFL.</p>
+        <a href="auth.html?role=truck" class="btn-primary" style="font-size:14px;padding:12px 24px">Post a Job</a>
       </div>
     </section>
 

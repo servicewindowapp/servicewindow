@@ -315,9 +315,38 @@
     .checkbox-row label { font-family: 'Sora', sans-serif; font-size: 13px; cursor: pointer; }
 
     /* EMPTY STATE */
-    .empty-state { text-align: center; padding: 48px 24px; }
-    .empty-icon { font-size: 32px; margin-bottom: 12px; }
-    .empty-state p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 12px;
+    }
+    .empty-state-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 20px;
+      color: var(--fire);
+      opacity: 0.6;
+    }
+    .empty-state-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+    }
+    .empty-state-body {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin: 0 0 24px 0;
+      max-width: 320px;
+    }
 
     /* TWO-PANEL MESSAGES */
     .messages-layout { display: flex; height: calc(100vh - 52px); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; }
@@ -774,9 +803,10 @@
           <tbody id="inbox-tbody"></tbody>
         </table>
         <div class="empty-state" id="inbox-empty" style="display:none">
-          <div class="empty-icon">📬</div>
-          <p>No pending booking requests.</p>
-          <button class="btn-outline" onclick="window.location.href='marketplace.html?board=request'">Browse Open Requests</button>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <h3 class="empty-state-title">No bookings yet</h3>
+          <p class="empty-state-body">Your confirmed events will appear here. Start by completing your profile so planners can find you.</p>
+          <a href="#" onclick="showSection('profile');return false;" class="btn-primary" style="font-size:14px;padding:12px 24px">Complete Profile</a>
         </div>
       </div>
 
@@ -798,8 +828,9 @@
           <tbody id="accepted-tbody"></tbody>
         </table>
         <div class="empty-state" id="accepted-empty" style="display:none">
-          <div class="empty-icon">📅</div>
-          <p>No accepted bookings yet.</p>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <h3 class="empty-state-title">No accepted bookings yet</h3>
+          <p class="empty-state-body">Accepted and completed events will appear here once planners book you.</p>
         </div>
       </div>
     </section>
@@ -853,9 +884,10 @@
           <tbody id="listings-tbody"></tbody>
         </table>
         <div class="empty-state" id="listings-empty" style="display:none">
-          <div class="empty-icon">📋</div>
-          <p>No listings yet.</p>
-          <button class="btn-primary" onclick="location.hash='shift'">⚡ Post Emergency Coverage</button>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+          <h3 class="empty-state-title">No active listings</h3>
+          <p class="empty-state-body">Post your available dates on the Shift Marketplace to get booked faster.</p>
+          <a href="#" onclick="showSection('shift');return false;" class="btn-primary" style="font-size:14px;padding:12px 24px">Post Availability</a>
         </div>
       </div>
     </section>
@@ -983,10 +1015,13 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody id="posted-jobs-tbody">
-            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">No jobs posted yet.</td></tr>
-          </tbody>
+          <tbody id="posted-jobs-tbody"></tbody>
         </table>
+        <div class="empty-state" id="jobs-empty" style="display:none">
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+          <h3 class="empty-state-title">No job listings posted</h3>
+          <p class="empty-state-body">Post a job opening to reach workers with food service experience across SWFL.</p>
+        </div>
       </div>
     </section>
 
@@ -1087,8 +1122,9 @@
       </div>
       <div id="reviews-list"></div>
       <div class="empty-state" id="reviews-empty" style="display:none">
-        <div class="empty-icon">⭐</div>
-        <p>No reviews yet. Reviews appear here after organizers rate a completed booking.</p>
+        <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div>
+        <h3 class="empty-state-title">No reviews yet</h3>
+        <p class="empty-state-body">Reviews appear here after organizers rate a completed booking.</p>
       </div>
     </section>
 
@@ -1514,7 +1550,7 @@ document.getElementById('btn-billing')?.addEventListener('click', async () => {
   btn.textContent = 'Opening…'; btn.disabled = true
   try {
     const { data: { session } } = await supabase.auth.getSession()
-    const res = await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/create-portal-session',
+    const res = await fetch('https://api.servicewindow.app/functions/v1/create-portal-session',
       { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session?.access_token } })
     const { url, error: fnErr } = await res.json()
     if (url) {
@@ -1863,6 +1899,7 @@ async function loadPostedJobs() {
     .eq('poster_id',userId).eq('board','jobs').eq('status','active')
     .order('created_at',{ascending:false})
   const tbody = document.getElementById('posted-jobs-tbody')
+  const jobsEmpty = document.getElementById('jobs-empty')
   if (!data||!data.length) {
     tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">No jobs posted yet.</td></tr>'; return
   }
@@ -2171,7 +2208,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
 })
 
 // ─── PHOTOS ──────────────────────────────────────────
-const UPLOAD_FN = 'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/upload-photo'
+const UPLOAD_FN = 'https://api.servicewindow.app/functions/v1/upload-photo'
 const MAX_PHOTOS = 5
 let truckPhotos = []   // array of URL strings, mirrors profile.photos
 
@@ -2630,7 +2667,7 @@ async function performExtSave() {
     if (!dbError && clientEmail) {
       try {
         const { data:{ session } } = await supabase.auth.getSession()
-        await fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/send-notification', {
+        await fetch('https://api.servicewindow.app/functions/v1/send-notification', {
           method: 'POST',
           headers: { 'Content-Type':'application/json', Authorization:'Bearer '+session?.access_token },
           body: JSON.stringify({

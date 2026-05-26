@@ -247,8 +247,38 @@
     }
 
     /* EMPTY */
-    .empty-state { padding: 48px 20px; text-align: center; }
-    .empty-state p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 12px;
+    }
+    .empty-state-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 20px;
+      color: var(--fire);
+      opacity: 0.6;
+    }
+    .empty-state-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+    }
+    .empty-state-body {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin: 0 0 24px 0;
+      max-width: 320px;
+    }
 
     /* TOAST */
     .toast {
@@ -460,10 +490,11 @@
           <tbody id="inbox-tbody"></tbody>
         </table>
         <div class="empty-state" id="inbox-empty" style="display:none">
-          <p>No pending applications. Post a slot to start receiving truck applications.</p>
-          <button class="btn-primary" onclick="showSection('slots')">Post a Slot →</button>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <h3 class="empty-state-title">No upcoming bookings</h3>
+          <p class="empty-state-body">Confirmed food truck partnerships will appear here.</p>
         </div>
-      </div>
+        </div>
     </section>
 
     <!-- ─── POST A SLOT ─── -->
@@ -581,10 +612,12 @@
           <tbody id="slots-tbody"></tbody>
         </table>
         <div class="empty-state" id="slots-empty" style="display:none">
-          <p>No slots posted yet.</p>
-          <button class="btn-primary" onclick="showSection('slots')">Post Your First Slot →</button>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5m8 0H9"/></svg></div>
+          <h3 class="empty-state-title">No listings posted</h3>
+          <p class="empty-state-body">Post your venue to the Venue Partnership board to connect with food trucks looking for regular spots.</p>
+          <a href="#" onclick="showSection('slots');return false;" class="btn-primary" style="font-size:14px;padding:12px 24px">Post Venue</a>
         </div>
-      </div>
+        </div>
     </section>
 
     <!-- ─── VENUE PROFILE ─── -->
