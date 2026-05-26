@@ -1399,10 +1399,8 @@
     // ─── FETCH TRUCKS ───
     async function fetchTrucks() {
       let query = supabase
-        .from('profiles')
+        .from('public_truck_profiles')
         .select('id, business_name, city, cuisine_type, bio, service_radius, is_verified, is_fundraiser_friendly, is_veteran_owned, created_at')
-        .eq('role', 'truck')
-        .eq('is_verified', true)
 
       if (cityVal) query = query.eq('city', cityVal)
       if (cuisineVal) query = query.ilike('cuisine_type', `%${cuisineVal}%`)
@@ -1446,7 +1444,7 @@
     async function fetchCounts() {
       const counts = {}
 
-      const truckRes = await supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'truck').eq('is_verified', true)
+      const truckRes = await supabase.from('public_truck_profiles').select('id', { count: 'exact', head: true })
       counts.trucks = truckRes.count || 0
 
       for (const board of ['request', 'event', 'shift', 'venue', 'vendor']) {
