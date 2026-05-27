@@ -5,6 +5,36 @@
 
 ---
 
+## Migration Template
+
+Every new table migration must follow this pattern. **The GRANT block is mandatory** — Supabase no longer auto-exposes public-schema tables to PostgREST (enforced Oct 30, 2026; use this now).
+
+```sql
+-- ─── TABLE ─────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.<table_name> (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  -- ... columns ...
+  created_at timestamptz DEFAULT now()
+);
+
+-- ─── RLS ────────────────────────────────────────────────────────────────────
+ALTER TABLE public.<table_name> ENABLE ROW LEVEL SECURITY;
+
+-- ... policies ...
+
+-- ─── INDEXES ────────────────────────────────────────────────────────────────
+CREATE INDEX IF NOT EXISTS idx_<table_name>_<col> ON public.<table_name> (<col>);
+
+-- ─── GRANT (required — PostgREST will not see table without this) ────────────
+-- Use both roles for user-facing tables; authenticated-only for admin-internal tables.
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.<table_name> TO anon, authenticated;
+```
+
+Supabase changelog: https://github.com/orgs/supabase/discussions/45329
+Security Advisor (verify existing tables before Oct 2026): https://supabase.com/dashboard/project/krmfxedkxoyzkeqnijcd/advisors/security
+
+---
+
 ## Core Tables
 
 ### profiles

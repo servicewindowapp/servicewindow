@@ -176,6 +176,26 @@ Produce complete, ready-to-use work. Finish the task — don't plan it.
 
 ---
 
+## Supabase Migration Rules
+
+**GRANT required on every new table** (enforced Oct 30, 2026; best practice now).
+Supabase no longer auto-exposes new `public` schema tables to PostgREST. Without the GRANT, supabase-js queries return nothing — silently. RLS controls row access; this GRANT controls whether PostgREST can reach the table at all.
+
+Every `CREATE TABLE` migration must end with:
+```sql
+-- ─── GRANT (required — Supabase no longer auto-grants PostgREST access) ───────
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.<table_name> TO anon, authenticated;
+```
+
+If a table should never be readable by anon (e.g., internal admin tables), grant authenticated only:
+```sql
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.<table_name> TO authenticated;
+```
+
+**Existing tables** are safe until Oct 30, 2026 (auto-grant still applies to tables created before that date). Run the Security Advisor in the Supabase dashboard before October 2026 to verify: https://supabase.com/dashboard/project/krmfxedkxoyzkeqnijcd/advisors/security
+
+---
+
 ## Change Request Format (UI changes)
 - **FILE:** which file
 - **SECTION:** which named section
