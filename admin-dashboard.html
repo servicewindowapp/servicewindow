@@ -248,6 +248,16 @@
       font-family: 'DM Mono', monospace; font-size: 10px;
     }
 
+    /* DOCUMENT STATUS DOTS */
+    .doc-status-dot { font-size: 14px; line-height: 1; }
+    .doc-pending  { color: rgba(255,255,255,0.25); }
+    .doc-submitted { color: #FF6B35; }
+    .doc-approved  { color: #22c55e; }
+    .doc-rejected  { color: #ef4444; }
+    .doc-expired   { color: #ef4444; }
+    .doc-modal-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 7px 10px; color: white; font-family: 'Sora', sans-serif; font-size: 12px; box-sizing: border-box; }
+    .doc-modal-label { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 4px; }
+
     /* ACTION BUTTONS */
     .btn-approve {
       background: var(--fire); color: white; border: none;
@@ -451,6 +461,10 @@
       <button class="nav-item" data-section="ads">
         <span class="nav-icon">📣</span> Ad Queue
         <span class="nav-badge" id="ads-badge" style="display:none">0</span>
+      </button>
+      <button class="nav-item" data-section="documents">
+        <span class="nav-icon">📋</span> Documents
+        <span class="nav-badge" id="docs-badge" style="display:none">0</span>
       </button>
     </nav>
     <div class="sidebar-footer">
@@ -689,7 +703,64 @@
       </div>
     </section>
 
+    <!-- TRUCK DOCUMENTS -->
+    <section class="section" id="section-documents">
+      <div class="section-header">
+        <h1>Truck Documents</h1>
+        <p>Track compliance documentation for verified food truck operators. Five required documents per truck.</p>
+      </div>
+      <div class="table-container">
+        <div class="table-toolbar">
+          <span class="table-title" id="docs-count">Trucks</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select id="docs-filter" style="background:rgba(255,255,255,0.06);border:1px solid var(--dark-border);border-radius:6px;padding:6px 12px;color:white;font-family:'Sora',sans-serif;font-size:12px;cursor:pointer">
+              <option value="">All Trucks</option>
+              <option value="incomplete">Incomplete</option>
+              <option value="expiring">Expiring (30d)</option>
+              <option value="complete">All Clear</option>
+            </select>
+            <button class="btn-signout" style="width:auto;padding:6px 14px" onclick="loadDocuments()">Refresh</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Truck</th>
+              <th>City</th>
+              <th title="DBPR MFDV License">DBPR</th>
+              <th title="County Health Permit">Health</th>
+              <th title="Food Manager Cert (ServSafe)">ServSafe</th>
+              <th title="Certificate of Insurance">COI</th>
+              <th title="Commissary Agreement">Commiss.</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="docs-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="docs-empty" style="display:none">
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+          <h3 class="empty-state-title">No records found</h3>
+          <p class="empty-state-body">No trucks match this filter. Documents will appear as trucks are verified.</p>
+        </div>
+      </div>
+    </section>
+
   </main>
+</div>
+
+<!-- DOCUMENT MANAGEMENT MODAL -->
+<div id="doc-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#0d1f2d;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px;width:min(660px,95vw);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 id="doc-modal-title" style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin:0;color:white">Documents</h2>
+      <button onclick="closeDocModal()" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:24px;cursor:pointer;padding:0 4px;line-height:1">&times;</button>
+    </div>
+    <div id="doc-modal-body"></div>
+    <div style="display:flex;gap:12px;margin-top:24px;justify-content:flex-end">
+      <button onclick="closeDocModal()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px;padding:8px 18px;font-family:'Sora',sans-serif;font-size:13px;cursor:pointer">Cancel</button>
+      <button onclick="saveDocModal()" style="background:var(--fire);border:none;color:white;border-radius:8px;padding:8px 18px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer">Save Changes</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -732,7 +803,7 @@
     document.getElementById('loading-screen').style.display = 'none'
     document.getElementById('dashboard').style.display = 'flex'
 
-    await Promise.all([loadStats(), loadPending(), loadAllUsers(), loadWaitlist(), loadClaims(), loadAds()])
+    await Promise.all([loadStats(), loadPending(), loadAllUsers(), loadWaitlist(), loadClaims(), loadAds(), loadDocuments()])
   }
 
   // ─── STATS ──────────────────────────────────────────────
@@ -1131,6 +1202,184 @@
   }
 
   document.getElementById('ads-filter').addEventListener('change', loadAds)
+  document.getElementById('docs-filter').addEventListener('change', loadDocuments)
+
+  // ─── TRUCK DOCUMENTS ────────────────────────────────────
+  const DOC_TYPES = ['dbpr_mfdv_license','county_health_permit','food_manager_cert','certificate_of_insurance','commissary_agreement']
+  const DOC_LABELS = {
+    dbpr_mfdv_license:          'DBPR MFDV License',
+    county_health_permit:       'County Health Permit',
+    food_manager_cert:          'Food Manager Cert (ServSafe)',
+    certificate_of_insurance:   'Certificate of Insurance',
+    commissary_agreement:       'Commissary Agreement'
+  }
+  let docModalTruckId = null
+  let docModalExisting = {}  // dt -> existing row { id, ... }
+
+  async function loadDocuments() {
+    const { data: trucks, error } = await supabase
+      .from('profiles')
+      .select('id, business_name, city')
+      .eq('role', 'truck')
+      .eq('is_verified', true)
+      .order('business_name', { ascending: true })
+
+    if (error || !trucks || trucks.length === 0) {
+      document.getElementById('docs-tbody').innerHTML = ''
+      document.getElementById('docs-empty').style.display = 'block'
+      document.getElementById('docs-count').textContent = '0 Trucks'
+      document.getElementById('docs-badge').style.display = 'none'
+      return
+    }
+
+    const truckIds = trucks.map(t => t.id)
+    const { data: docs } = await supabase
+      .from('truck_documents')
+      .select('truck_id, document_type, status, expiry_date, renewal_flagged')
+      .in('truck_id', truckIds)
+
+    const docMap = {}
+    for (const d of (docs || [])) {
+      if (!docMap[d.truck_id]) docMap[d.truck_id] = {}
+      docMap[d.truck_id][d.document_type] = d
+    }
+
+    const filterVal = document.getElementById('docs-filter').value
+    const today = new Date()
+    const in30 = new Date(today); in30.setDate(in30.getDate() + 30)
+
+    let list = trucks
+    if (filterVal === 'incomplete') {
+      list = trucks.filter(t => DOC_TYPES.some(dt => {
+        const d = (docMap[t.id] || {})[dt]
+        return !d || ['pending','rejected','expired'].includes(d.status)
+      }))
+    } else if (filterVal === 'expiring') {
+      list = trucks.filter(t => DOC_TYPES.some(dt => {
+        const d = (docMap[t.id] || {})[dt]
+        return d?.expiry_date && d.status === 'approved' && new Date(d.expiry_date) <= in30
+      }))
+    } else if (filterVal === 'complete') {
+      list = trucks.filter(t => DOC_TYPES.every(dt => (docMap[t.id] || {})[dt]?.status === 'approved'))
+    }
+
+    const incompleteCount = trucks.filter(t => DOC_TYPES.some(dt => {
+      const d = (docMap[t.id] || {})[dt]
+      return !d || ['pending','rejected','expired'].includes(d.status)
+    })).length
+    const badge = document.getElementById('docs-badge')
+    if (incompleteCount > 0) { badge.textContent = incompleteCount; badge.style.display = 'inline-block' }
+    else { badge.style.display = 'none' }
+
+    document.getElementById('docs-count').textContent = list.length + ' Truck' + (list.length !== 1 ? 's' : '')
+    document.getElementById('docs-empty').style.display = list.length === 0 ? 'block' : 'none'
+
+    document.getElementById('docs-tbody').innerHTML = list.map(truck => {
+      const td = docMap[truck.id] || {}
+      const dotCells = DOC_TYPES.map(dt => {
+        const d = td[dt]
+        const s = d?.status || 'pending'
+        const exp = d?.expiry_date ? ' · Exp ' + fmtDate(d.expiry_date) : ''
+        const flag = d?.renewal_flagged ? ' · ⚑' : ''
+        return '<td style="text-align:center"><span class="doc-status-dot doc-' + s + '" title="' + esc(s.charAt(0).toUpperCase()+s.slice(1)+exp+flag) + '">●</span></td>'
+      }).join('')
+      return '<tr>' +
+        '<td><strong>' + esc(truck.business_name || '—') + '</strong></td>' +
+        '<td>' + esc(truck.city || '—') + '</td>' +
+        dotCells +
+        '<td><button class="btn-approve" style="padding:4px 12px;font-size:11px;border-radius:6px" onclick="openDocModal('' + truck.id + '',' + JSON.stringify(truck.business_name || 'Truck') + ')">Manage</button></td>' +
+        '</tr>'
+    }).join('')
+  }
+
+  window.openDocModal = async function(truckId, truckName) {
+    docModalTruckId = truckId
+    docModalExisting = {}
+    document.getElementById('doc-modal-title').textContent = truckName + ' — Documents'
+    document.getElementById('doc-modal-body').innerHTML = '<div style="text-align:center;padding:24px;color:rgba(255,255,255,0.4);font-family:\'DM Mono\',monospace;font-size:12px">Loading…</div>'
+    document.getElementById('doc-modal-overlay').style.display = 'flex'
+
+    const { data: docs } = await supabase
+      .from('truck_documents')
+      .select('*')
+      .eq('truck_id', truckId)
+
+    for (const d of (docs || [])) docModalExisting[d.document_type] = d
+
+    document.getElementById('doc-modal-body').innerHTML = DOC_TYPES.map(dt => {
+      const d = docModalExisting[dt] || {}
+      const sel = val => (d.status || 'pending') === val ? ' selected' : ''
+      return '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px">' +
+        '<div style="font-family:\'Sora\',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px">' + esc(DOC_LABELS[dt]) + '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
+          '<div>' +
+            '<label class="doc-modal-label">Status</label>' +
+            '<select id="doc-status-' + dt + '" class="doc-modal-input">' +
+              '<option value="pending"' + sel('pending') + '>Pending (not submitted)</option>' +
+              '<option value="submitted"' + sel('submitted') + '>Submitted — Under Review</option>' +
+              '<option value="approved"' + sel('approved') + '>Approved</option>' +
+              '<option value="rejected"' + sel('rejected') + '>Rejected</option>' +
+              '<option value="expired"' + sel('expired') + '>Expired</option>' +
+            '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label class="doc-modal-label">Expiry Date</label>' +
+            '<input type="date" id="doc-expiry-' + dt + '" value="' + esc(d.expiry_date || '') + '" class="doc-modal-input">' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-top:10px">' +
+          '<input type="checkbox" id="doc-renew-' + dt + '"' + (d.renewal_flagged ? ' checked' : '') + ' style="width:14px;height:14px;cursor:pointer;accent-color:var(--fire)">' +
+          '<label for="doc-renew-' + dt + '" style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.6);cursor:pointer">Flag for renewal</label>' +
+        '</div>' +
+        '<div style="margin-top:10px">' +
+          '<label class="doc-modal-label">Admin Notes</label>' +
+          '<input type="text" id="doc-notes-' + dt + '" value="' + esc(d.admin_notes || '') + '" placeholder="Optional — shown to truck operator" class="doc-modal-input">' +
+        '</div>' +
+      '</div>'
+    }).join('')
+  }
+
+  window.closeDocModal = function() {
+    document.getElementById('doc-modal-overlay').style.display = 'none'
+    docModalTruckId = null
+    docModalExisting = {}
+  }
+
+  window.saveDocModal = async function() {
+    if (!docModalTruckId) return
+    const { data: { session } } = await supabase.auth.getSession()
+    const adminId = session?.user?.id
+    const now = new Date().toISOString()
+
+    const ops = []
+    for (const dt of DOC_TYPES) {
+      const existing = docModalExisting[dt]
+      const row = {
+        truck_id:        docModalTruckId,
+        document_type:   dt,
+        status:          document.getElementById('doc-status-' + dt).value,
+        expiry_date:     document.getElementById('doc-expiry-' + dt).value || null,
+        renewal_flagged: document.getElementById('doc-renew-' + dt).checked,
+        admin_notes:     document.getElementById('doc-notes-' + dt).value.trim() || null,
+        reviewed_by:     adminId,
+        reviewed_at:     now,
+        updated_at:      now
+      }
+      if (existing?.id) {
+        ops.push(supabase.from('truck_documents').update(row).eq('id', existing.id))
+      } else {
+        ops.push(supabase.from('truck_documents').insert({ ...row, created_at: now }))
+      }
+    }
+
+    const results = await Promise.all(ops)
+    const errs = results.filter(r => r.error)
+    if (errs.length) { showToast('Error saving documents', true); return }
+
+    showToast('Documents saved')
+    closeDocModal()
+    await loadDocuments()
+  }
 
   // ─── NAV ─────────────────────────────────────────────────
   document.querySelectorAll('.nav-item').forEach(btn => {

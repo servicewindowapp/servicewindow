@@ -494,6 +494,21 @@
     /* PROFILE COMPLETION BANNER */
     .banner-profile { background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.25); color: rgba(255,107,53,0.9); cursor: pointer; transition: background 0.15s; }
     .banner-profile:hover { background: rgba(255,107,53,0.16); }
+    .banner-docs { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: #fbbf24; cursor: pointer; transition: background 0.15s; }
+    .banner-docs:hover { background: rgba(245,158,11,0.16); }
+    /* Doc status */
+    .doc-status-dot { font-size: 14px; line-height: 1; }
+    .doc-pending   { color: rgba(255,255,255,0.25); }
+    .doc-submitted { color: #FF6B35; }
+    .doc-approved  { color: #22c55e; }
+    .doc-rejected  { color: #ef4444; }
+    .doc-expired   { color: #ef4444; }
+    .doc-status-badge { display: inline-block; border-radius: 20px; padding: 2px 9px; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; }
+    .doc-badge-pending   { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
+    .doc-badge-submitted { background: rgba(255,107,53,0.15); color: #FF6B35; }
+    .doc-badge-approved  { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .doc-badge-rejected  { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .doc-badge-expired   { background: rgba(239,68,68,0.15); color: #ef4444; }
 
     /* PHOTO UPLOAD */
     .photo-section-label { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
@@ -583,6 +598,10 @@
       <button class="nav-item" data-section="reviews">
         <span class="nav-icon">★</span> My Reviews
       </button>
+      <button class="nav-item" data-section="documents">
+        <span class="nav-icon">📋</span> Documents
+        <span class="nav-badge" id="docs-alert-badge" style="display:none">!</span>
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-name" id="sidebar-name">—</div>
@@ -610,6 +629,11 @@
       <div id="profile-completion-banner" class="banner banner-profile" style="display:none" onclick="showSection('profile')">
         <span>✏️</span>
         <span>Your profile isn't complete — organizers can't find you on the marketplace. <strong>Complete it now →</strong></span>
+      </div>
+
+      <div id="docs-alert-banner" class="banner banner-docs" style="display:none" onclick="showSection('documents')">
+        <span>📋</span>
+        <span id="docs-alert-text">Compliance documents need attention — View Documents →</span>
       </div>
 
       <!-- SUBSCRIPTION -->
@@ -1128,6 +1152,29 @@
       </div>
     </section>
 
+    <!-- COMPLIANCE DOCUMENTS -->
+    <section class="section" id="section-documents">
+      <div class="section-header">
+        <h1>Compliance Documents</h1>
+        <p>Five required documents for verified food truck operators. Email <a href="mailto:servicewindowapp@gmail.com" style="color:var(--fire)">servicewindowapp@gmail.com</a> to submit or update any document.</p>
+      </div>
+      <div class="table-container" style="margin-bottom:24px">
+        <div id="truck-docs-list">
+          <div style="padding:16px 18px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)">Loading…</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--dark-border);border-radius:12px;padding:20px">
+        <div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px">Document Checklist</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;font-family:'DM Mono',monospace">
+          <div><strong style="color:rgba(255,255,255,0.8)">DBPR MFDV License</strong> — Florida Dept. of Business &amp; Professional Regulation mobile food dispensing vehicle license</div>
+          <div><strong style="color:rgba(255,255,255,0.8)">County Health Permit</strong> — Active food service permit for Lee, Collier, or your operating county</div>
+          <div><strong style="color:rgba(255,255,255,0.8)">Food Manager Cert</strong> — ServSafe or equivalent certified food protection manager certification</div>
+          <div><strong style="color:rgba(255,255,255,0.8)">Certificate of Insurance</strong> — General liability COI naming your business</div>
+          <div><strong style="color:rgba(255,255,255,0.8)">Commissary Agreement</strong> — Signed agreement with a licensed commissary kitchen</div>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -1463,7 +1510,8 @@ async function init() {
       loadReviewedTruckIds(),
       loadReviews(),
       initMessages(),
-      loadAds()
+      loadAds(),
+      loadTruckDocuments()
     ])
 
     // Route to section from hash
@@ -2764,6 +2812,73 @@ function sanitizeUrl(url) {
   const u = String(url).trim()
   return /^(https?:|mailto:|tel:)/i.test(u) ? u : '#'
 }
+// ─── TRUCK DOCUMENTS ──────────────────────────────────
+async function loadTruckDocuments() {
+  const DOC_TYPES = ['dbpr_mfdv_license','county_health_permit','food_manager_cert','certificate_of_insurance','commissary_agreement']
+  const DOC_META = {
+    dbpr_mfdv_license:        { label: 'DBPR MFDV License',            desc: 'Florida Dept. of Business & Professional Regulation mobile food dispensing vehicle license' },
+    county_health_permit:     { label: 'County Health Permit',         desc: 'Active food service permit for your operating county' },
+    food_manager_cert:        { label: 'Food Manager Cert (ServSafe)', desc: 'Certified food protection manager certification' },
+    certificate_of_insurance: { label: 'Certificate of Insurance',     desc: 'General liability COI naming your business' },
+    commissary_agreement:     { label: 'Commissary Agreement',         desc: 'Signed agreement with a licensed commissary kitchen' }
+  }
+  const STATUS_LABELS = { pending:'Not Submitted', submitted:'Under Review', approved:'Approved', rejected:'Rejected', expired:'Expired' }
+
+  const { data: docs } = await supabase
+    .from('truck_documents')
+    .select('*')
+    .eq('truck_id', userId)
+
+  const docMap = {}
+  for (const d of (docs || [])) docMap[d.document_type] = d
+
+  // Banner + nav badge
+  const needsAttention = DOC_TYPES.filter(dt => {
+    const d = docMap[dt]
+    return !d || ['pending','rejected','expired'].includes(d.status)
+  }).length
+  const alertBanner = document.getElementById('docs-alert-banner')
+  const alertBadge  = document.getElementById('docs-alert-badge')
+  if (needsAttention > 0) {
+    document.getElementById('docs-alert-text').textContent =
+      needsAttention + ' compliance document' + (needsAttention > 1 ? 's' : '') +
+      ' need' + (needsAttention === 1 ? 's' : '') + ' attention — View Documents →'
+    alertBanner.style.display = 'flex'
+    alertBadge.style.display = 'inline-block'
+  } else {
+    alertBanner.style.display = 'none'
+    alertBadge.style.display = 'none'
+  }
+
+  // Render document rows
+  document.getElementById('truck-docs-list').innerHTML = DOC_TYPES.map(dt => {
+    const d = docMap[dt] || {}
+    const s = d.status || 'pending'
+    const m = DOC_META[dt]
+    const expiry = d.expiry_date
+      ? '<span style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4)">Expires ' + fmtDate(d.expiry_date) + '</span>'
+      : ''
+    const renewal = d.renewal_flagged
+      ? '<span style="font-family:'DM Mono',monospace;font-size:11px;color:#f59e0b"> · Renewal required</span>'
+      : ''
+    const notes = d.admin_notes
+      ? '<div style="margin-top:5px;font-size:12px;color:rgba(255,255,255,0.45);font-style:italic">' + esc(d.admin_notes) + '</div>'
+      : ''
+    return '<div style="display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">' +
+      '<span class="doc-status-dot doc-' + s + '" style="font-size:16px;margin-top:2px;flex-shrink:0">●</span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;margin-bottom:2px">' + esc(m.label) + '</div>' +
+        '<div style="font-size:12px;color:rgba(255,255,255,0.38);margin-bottom:5px">' + esc(m.desc) + '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+          '<span class="doc-status-badge doc-badge-' + s + '">' + STATUS_LABELS[s] + '</span>' +
+          expiry + renewal +
+        '</div>' +
+        notes +
+      '</div>' +
+    '</div>'
+  }).join('')
+}
+
 function fmtDate(d) {
   if (!d) return '—'
   const date = d.includes('T') ? new Date(d) : new Date(d+'T12:00:00')
