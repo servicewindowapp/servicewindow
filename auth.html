@@ -1105,6 +1105,16 @@
     // ─── REDIRECT IF LOGGED IN ───
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
+      // Validate the JWT is still live on the server — getSession() reads local cache
+      // and can return a stale token for a user deleted from Supabase Auth.
+      const { data: { user: liveUser }, error: userErr } = await supabase.auth.getUser()
+      if (userErr || !liveUser) {
+        // Deleted or expired auth account — clear the stale session and show signup fresh
+        await supabase.auth.signOut()
+        window.location.reload()
+        return
+      }
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('role, is_verified, subscription_status')
@@ -1113,8 +1123,10 @@
       if (profile?.is_verified) {
         redirectToDashboard(profile.role)
       } else if (!profile) {
-        // Auth user exists but no profile (e.g. old hard-delete rejection) — sign out and let them re-register
+        // Auth user exists but no profile row — sign out and reload so they can re-register
         await supabase.auth.signOut()
+        window.location.reload()
+        return
       } else if (profile.subscription_status === 'rejected') {
         // Application was rejected — show rejection message with resubmit option
         const successDiv = document.getElementById('stepSuccess')
