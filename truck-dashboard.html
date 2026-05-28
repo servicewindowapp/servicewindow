@@ -1462,6 +1462,7 @@ function showSection(id) {
   if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id)
   closeSidebar()
 }
+window.showSection = showSection
 window.addEventListener('hashchange', () => showSection(getHash()))
 
 // ─── INIT ─────────────────────────────────────────────
@@ -1531,7 +1532,7 @@ async function init() {
 async function loadAllBookings() {
   const { data } = await supabase
     .from('bookings')
-    .select('id, event_name, event_date, event_time_start, city, status, is_external')
+    .select('id, event_name, event_date, start_time, city, status, is_external')
     .eq('truck_id', userId)
     .not('status', 'in', '("declined","cancelled")')
     .order('event_date', { ascending: true })
@@ -1784,7 +1785,7 @@ function renderCalUpcoming() {
 // ─── BOOKING INBOX ────────────────────────────────────
 async function loadInbox() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, event_time_start, location, city, guest_count, budget_range, notes, status, requester:requester_id(business_name,contact_name,email)')
+    .select('id, event_name, event_date, start_time, location, city, guest_count, budget_range, notes, status, requester:requester_id(business_name,contact_name,email)')
     .eq('truck_id', userId).eq('status','pending').order('event_date',{ascending:true})
 
   const tbody = document.getElementById('inbox-tbody')
@@ -1839,7 +1840,7 @@ async function doRespondBooking(id, status) {
 // ─── ACCEPTED BOOKINGS ────────────────────────────────
 async function loadAcceptedBookings() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, start_time, end_time, city, status, is_external, customer_count, requester_id, requester:requester_id(business_name,contact_name), truck_financials:booking_truck_financials(revenue_cents)')
+    .select('id, event_name, event_date, start_time, end_time, city, status, is_external, requester_id, requester:requester_id(business_name,contact_name)')
     .eq('truck_id', userId).in('status',['accepted','completed']).order('event_date',{ascending:false})
 
   const tbody = document.getElementById('accepted-tbody')
