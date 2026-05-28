@@ -258,9 +258,8 @@ Never omit `--no-verify-jwt`.
 ---
 
 ## Stripe Pricing
-- Food Truck Operator: $39.99/mo (single plan, no tiers)
-- Service Provider: $19.99/mo (30-day free trial included)
-- NOTE: New Stripe products must be created for these prices. Existing Edge Functions have old price IDs that need updating.
+- Food Truck Operator: $39.99/mo (single plan, no tiers, 30-day free trial)
+- All other roles: Free forever (organizer, venue, property, service_provider, job_seeker)
 
 ### subscription_status lifecycle (trucks)
 | Value | When set |
@@ -310,6 +309,26 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS capacity text;
 ```sql
 -- 2026-05-28: School Board Approved badge (OI-071)
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_school_board_approved boolean NOT NULL DEFAULT false;
+```
+
+```sql
+-- 2026-05-28: bookings start/end time migration (OI-083)
+-- start_time and end_time columns added to bookings (replacing event_time_start / event_time_end)
+-- All code updated to use start_time / end_time.
+```
+
+```sql
+-- 2026-05-28: booking_requester_financials table (OI-073)
+CREATE TABLE IF NOT EXISTS public.booking_requester_financials (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_id uuid NOT NULL REFERENCES public.bookings(id) ON DELETE CASCADE,
+  spend_cents integer NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (booking_id)
+);
+ALTER TABLE public.booking_requester_financials ENABLE ROW LEVEL SECURITY;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.booking_requester_financials TO authenticated;
 ```
 
 ```sql
