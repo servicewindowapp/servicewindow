@@ -996,7 +996,7 @@
   async function loadRequests() {
     const { data } = await supabase
       .from('listings')
-      .select('id, title, event_date, city, guest_count_min, guest_count_max, trucks_needed, status, created_at, parent_request_id, bids(id, message, status, truck_id, profiles(business_name, contact_name))')
+      .select('id, title, event_date, start_time, end_time, city, guest_count_min, guest_count_max, trucks_needed, status, created_at, parent_request_id, bids(id, message, status, truck_id, profiles(business_name, contact_name))')
       .eq('poster_id', userId)
       .in('board', ['request'])
       .order('created_at', { ascending: false })
@@ -1034,7 +1034,7 @@
                     <div class="bid-message">${esc(b.message || '(no message)')}</div>
                   </div>
                   <div class="bid-item-actions">
-                    <button class="btn-accept-bid" onclick="acceptBid('${b.id}','${l.id}','${b.truck_id}','${esc(l.title)}','${l.event_date||''}','${esc(l.city||'')}')">Accept</button>
+                    <button class="btn-accept-bid" onclick="acceptBid('${b.id}','${l.id}','${b.truck_id}','${esc(l.title)}','${l.event_date||''}','${esc(l.city||'')}','${l.start_time||''}','${l.end_time||''}')">Accept</button>
                     <button class="btn-decline-bid" onclick="declineBid('${b.id}','${l.id}')">Decline</button>
                   </div>
                 </div>`
@@ -1061,7 +1061,7 @@
     if (panel) panel.classList.toggle('open')
   }
 
-  window.acceptBid = async function(bidId, listingId, truckId, eventName, eventDate, city) {
+  window.acceptBid = async function(bidId, listingId, truckId, eventName, eventDate, city, startTime, endTime) {
     if (!confirm('Accept this bid? A booking will be created and other bids declined.')) return
     try {
       // Create booking
@@ -1070,6 +1070,8 @@
         requester_id: userId,
         event_name:   eventName,
         event_date:   eventDate || null,
+        start_time:   startTime || null,
+        end_time:     endTime || null,
         city,
         status:       'accepted'
       })

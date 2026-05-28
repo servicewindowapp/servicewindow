@@ -392,6 +392,11 @@
       color: white;
       border: 1px solid rgba(255,255,255,0.25);
     }
+    .badge-small.badge-school-board {
+      background: rgba(74,144,217,0.12);
+      color: #4A90D9;
+      border: 1px solid rgba(74,144,217,0.3);
+    }
 
     /* ─── CARD FOOTER ─── */
     .truck-card-footer {
@@ -583,13 +588,13 @@
     .footer-bottom p {
       font-family: 'DM Mono', monospace;
       font-size: 12px;
-      color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.6);
     }
 
     .footer-cities {
       font-family: 'DM Mono', monospace;
       font-size: 12px;
-      color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6);
     }
 
     /* ─── RESPONSIVE ─── */
@@ -648,7 +653,7 @@
         <input type="search" id="searchInput" placeholder="Search trucks or cuisine…" autocomplete="off">
       </div>
 
-      <select id="cuisineFilter">
+      <select id="cuisineFilter" aria-label="Filter by cuisine">
         <option value="">All Cuisines</option>
         <option>American / Burgers</option>
         <option>BBQ</option>
@@ -667,7 +672,7 @@
         <option>Other</option>
       </select>
 
-      <select id="cityFilter">
+      <select id="cityFilter" aria-label="Filter by city">
         <option value="">All Cities</option>
         <option>Cape Coral</option>
         <option>Fort Myers</option>
@@ -874,7 +879,7 @@
     async function loadTrucks() {
       const { data, error } = await supabase
         .from('public_truck_profiles')
-        .select('id, business_name, cuisine_type, city, bio, is_fundraiser_friendly, is_veteran_owned, website')
+        .select('id, business_name, cuisine_type, city, bio, is_fundraiser_friendly, is_veteran_owned, is_school_board_approved, website')
         .order('created_at', { ascending: false })
 
       // Remove skeletons
@@ -954,7 +959,8 @@
 
       const badges = [
         t.is_fundraiser_friendly ? `<span class="badge-small badge-fundraiser">Fundraiser Friendly</span>` : '',
-        t.is_veteran_owned ? `<span class="badge-small badge-veteran">Veteran Owned</span>` : ''
+        t.is_veteran_owned ? `<span class="badge-small badge-veteran">Veteran Owned</span>` : '',
+        t.is_school_board_approved ? `<span class="badge-small badge-school-board">School Board Approved</span>` : ''
       ].filter(Boolean).join('')
 
       const requestHref = userSession ? 'planner-dashboard.html' : 'auth.html'

@@ -523,6 +523,11 @@
       color: rgba(255,255,255,0.7);
       border: 1px solid var(--dark-border);
     }
+    .badge-school-board {
+      background: rgba(74,144,217,0.12);
+      color: #4A90D9;
+      border: 1px solid rgba(74,144,217,0.3);
+    }
 
     .badge-example {
       background: rgba(99,102,241,0.12);
@@ -1067,7 +1072,7 @@
           </svg>
           <input type="search" class="search-input" id="searchInput" placeholder="Search trucks, cuisine, or city…" autocomplete="off">
         </div>
-        <select class="filter-select" id="cityFilter">
+        <select class="filter-select" id="cityFilter" aria-label="Filter by city">
           <option value="">All Cities</option>
           <option>Cape Coral</option>
           <option>Fort Myers</option>
@@ -1092,7 +1097,7 @@
           <option>Englewood</option>
           <option>LaBelle</option>
         </select>
-        <select class="filter-select" id="cuisineFilter">
+        <select class="filter-select" id="cuisineFilter" aria-label="Filter by cuisine">
           <option value="">All Cuisines</option>
           <option>American / Burgers</option>
           <option>BBQ</option>
@@ -1189,7 +1194,7 @@
 
     <div class="results-meta">
       <span class="results-count" id="resultsCount">Loading…</span>
-      <select class="sort-select" id="sortSelect">
+      <select class="sort-select" id="sortSelect" aria-label="Sort trucks">
         <option value="newest">Newest first</option>
         <option value="alpha">A–Z</option>
         <option value="city">By city</option>
@@ -1400,7 +1405,7 @@
     async function fetchTrucks() {
       let query = supabase
         .from('public_truck_profiles')
-        .select('id, business_name, city, cuisine_type, bio, service_radius, is_verified, is_fundraiser_friendly, is_veteran_owned, created_at')
+        .select('id, business_name, city, cuisine_type, bio, service_radius, is_verified, is_fundraiser_friendly, is_veteran_owned, is_school_board_approved, created_at')
 
       if (cityVal) query = query.eq('city', cityVal)
       if (cuisineVal) query = query.ilike('cuisine_type', `%${cuisineVal}%`)
@@ -1470,6 +1475,7 @@
       if (truck.is_verified) badges.push(`<span class="badge badge-verified">Verified</span>`)
       if (truck.is_fundraiser_friendly) badges.push(`<span class="badge badge-fundraiser">Fundraiser Friendly</span>`)
       if (truck.is_veteran_owned) badges.push(`<span class="badge badge-veteran">Veteran Owned</span>`)
+      if (truck.is_school_board_approved) badges.push(`<span class="badge badge-school-board">School Board Approved</span>`)
 
       const bio = truck.bio || 'Verified food truck operator serving Southwest Florida.'
       const radius = truck.service_radius ? `Serves up to ${truck.service_radius} mi` : 'SWFL area'
@@ -1874,6 +1880,7 @@
       if (truck.is_verified)          badges.push('<span style="background:rgba(80,200,120,0.15);color:#50c878;border:1px solid rgba(80,200,120,0.3);border-radius:4px;font-size:11px;font-family:\'DM Mono\',monospace;padding:2px 8px">✓ Verified</span>')
       if (truck.is_fundraiser_friendly) badges.push('<span style="background:rgba(255,107,53,0.12);color:#FF6B35;border:1px solid rgba(255,107,53,0.25);border-radius:4px;font-size:11px;font-family:\'DM Mono\',monospace;padding:2px 8px">Fundraiser Friendly</span>')
       if (truck.is_veteran_owned)      badges.push('<span style="background:rgba(100,149,237,0.15);color:#6495ed;border:1px solid rgba(100,149,237,0.3);border-radius:4px;font-size:11px;font-family:\'DM Mono\',monospace;padding:2px 8px">Veteran Owned</span>')
+      if (truck.is_school_board_approved) badges.push('<span style="background:rgba(74,144,217,0.12);color:#4A90D9;border:1px solid rgba(74,144,217,0.3);border-radius:4px;font-size:11px;font-family:\'DM Mono\',monospace;padding:2px 8px">School Board Approved</span>')
 
       const requestHref = userSession ? 'planner-dashboard.html' : 'auth.html'
 

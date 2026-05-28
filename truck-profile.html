@@ -143,6 +143,7 @@
     .badge-verified { background: rgba(80,200,120,0.15); color: #50c878; border: 1px solid rgba(80,200,120,0.3); }
     .badge-fundraiser { background: rgba(255,107,53,0.12); color: var(--fire); border: 1px solid rgba(255,107,53,0.25); }
     .badge-veteran { background: rgba(100,149,237,0.15); color: #6495ed; border: 1px solid rgba(100,149,237,0.3); }
+    .badge-school-board { background: rgba(74,144,217,0.12); color: #4A90D9; border: 1px solid rgba(74,144,217,0.3); }
 
     /* ─── PROFILE BODY ─── */
     .profile-body {
@@ -543,6 +544,7 @@
       if (truck.is_verified)           badgeHtml.push('<span class="badge badge-verified">✓ Verified</span>')
       if (truck.is_fundraiser_friendly) badgeHtml.push('<span class="badge badge-fundraiser">Fundraiser Friendly</span>')
       if (truck.is_veteran_owned)       badgeHtml.push('<span class="badge badge-veteran">Veteran Owned</span>')
+      if (truck.is_school_board_approved) badgeHtml.push('<span class="badge badge-school-board">School Board Approved</span>')
       badgesEl.innerHTML = badgeHtml.join('')
 
       // ── DOM: Photo gallery (photos 2+ shown as thumbnails below hero) ──

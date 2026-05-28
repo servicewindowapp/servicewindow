@@ -1255,6 +1255,24 @@
         return
       }
 
+      // Notify admin of new signup — best-effort, non-blocking
+      try {
+        supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'admin_new_signup',
+            recipient_email: 'servicewindowapp@gmail.com',
+            recipient_name: 'Admin',
+            data: {
+              business_name: resolvedName,
+              email,
+              phone,
+              city,
+              role: selectedRole
+            }
+          }
+        })
+      } catch (_) { /* non-fatal */ }
+
       // Show success — inject truck-specific docs reminder if applicable
       if (selectedRole === 'truck') {
         const name = document.getElementById('businessName').value.trim() || 'Your Truck'

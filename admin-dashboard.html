@@ -949,7 +949,7 @@
   async function loadAllUsers() {
     const { data } = await supabase
       .from('profiles')
-      .select('id, business_name, contact_name, role, email, city, is_verified, subscription_plan, subscription_status, created_at')
+      .select('id, business_name, contact_name, role, email, city, is_verified, subscription_plan, subscription_status, is_school_board_approved, created_at')
       .order('created_at', { ascending: false })
     allUsers = data || []
     renderUsers()
@@ -996,6 +996,7 @@
             ? `<button class="btn-sm-approve" onclick="approveUser('${u.id}', '${u.role}')">Approve</button>`
             : u.role !== 'admin'
               ? `<button class="btn-suspend" onclick="suspendUser('${u.id}')">Suspend</button>`
+                + (u.role === 'truck' ? ` <button class="btn-sm-approve" style="background:${u.is_school_board_approved ? 'rgba(74,144,217,0.25)' : 'transparent'};color:#4A90D9;border-color:#4A90D9" onclick="toggleSchoolBoard('${u.id}', ${u.is_school_board_approved})">SBA ${u.is_school_board_approved ? '\u2713' : '+'}</button>` : '')
               : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
         </td>
       </tr>`).join('')
@@ -1010,6 +1011,18 @@
     renderUsers()
     showToast('Account suspended')
     await loadStats()
+  }
+
+  window.toggleSchoolBoard = async function (id, current) {
+    const newVal = !current
+    const label = newVal ? 'grant' : 'remove'
+    if (!confirm(`${label.charAt(0).toUpperCase() + label.slice(1)} School Board Approved status for this truck?`)) return
+    const { error } = await supabase
+      .from('profiles').update({ is_school_board_approved: newVal }).eq('id', id)
+    if (error) { showToast('Error updating School Board status', true); return }
+    allUsers = allUsers.map(u => u.id === id ? { ...u, is_school_board_approved: newVal } : u)
+    renderUsers()
+    showToast(newVal ? 'School Board Approved granted' : 'School Board Approved removed')
   }
 
   // ─── WAITLIST ────────────────────────────────────────────

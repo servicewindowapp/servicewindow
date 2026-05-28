@@ -78,7 +78,7 @@ bookings (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   truck_id uuid REFERENCES profiles(id),
   requester_id uuid REFERENCES profiles(id),
-  event_type text,
+  event_name text,  -- NOTE: column is event_name in production, NOT event_type
   event_date date,
   start_time time,
   end_time time,
@@ -299,6 +299,17 @@ When adding columns: `ALTER TABLE profiles ADD COLUMN IF NOT EXISTS column_name 
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS venue_type text;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS address text;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS capacity text;
+```
+
+```sql
+-- 2026-05-27: truck_documents table (OI-070)
+-- Created via Supabase SQL Editor (see Session 50)
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON public.truck_documents TO anon, authenticated;
+```
+
+```sql
+-- 2026-05-28: School Board Approved badge (OI-071)
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_school_board_approved boolean NOT NULL DEFAULT false;
 ```
 
 ```sql

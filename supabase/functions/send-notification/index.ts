@@ -324,6 +324,71 @@ function generateEmailHTML(
         `,
       };
 
+    case "admin_new_signup": {
+      const roleLabel: Record<string, string> = {
+        truck: "Food Truck (Free Trial)",
+        venue: "Venue",
+        organizer: "Event Planner",
+        property: "Property/Storage",
+        service_provider: "Service Provider",
+        job_seeker: "Job Seeker",
+      };
+      const label = roleLabel[data.role] || data.role;
+      return {
+        subject: `New Signup: ${data.business_name} — ${label}`,
+        html: `
+          ${baseStyles}
+          <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Admin Notification</p>
+            </div>
+            <div class="card">
+              <div class="header"><h1>New Signup</h1></div>
+              <div class="event-details">
+                <p><strong>Name / Business:</strong> ${data.business_name}</p>
+                <p><strong>Role:</strong> ${label}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Phone:</strong> ${data.phone || "—"}</p>
+                <p><strong>City:</strong> ${data.city || "—"}</p>
+              </div>
+              <a href="https://servicewindow.app/admin-dashboard.html" class="button">Review in Admin</a>
+              ${footer}
+            </div>
+          </div>
+        `,
+      };
+    }
+
+    case "admin_new_paid_sub": {
+      const stripeUrl = data.stripe_customer_id
+        ? `https://dashboard.stripe.com/customers/${data.stripe_customer_id}`
+        : "https://dashboard.stripe.com/customers";
+      return {
+        subject: `New Paid Subscriber: ${data.business_name}`,
+        html: `
+          ${baseStyles}
+          <div class="container">
+            <div class="branded-header">
+              <h1>ServiceWindow</h1>
+              <p class="tagline">Admin Notification</p>
+            </div>
+            <div class="card">
+              <div class="header"><h1>New Paid Subscriber</h1></div>
+              <div class="event-details">
+                <p><strong>Business:</strong> ${data.business_name}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Stripe Customer:</strong> ${data.stripe_customer_id || "—"}</p>
+                <p><strong>Plan:</strong> $39.99/mo</p>
+              </div>
+              <a href="${stripeUrl}" class="button">View in Stripe</a>
+              ${footer}
+            </div>
+          </div>
+        `,
+      };
+    }
+
     default:
       return {
         subject: "Notification from ServiceWindow",
