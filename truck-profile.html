@@ -447,9 +447,10 @@
 
       try {
         const { data: truck, error } = await supabase
-          .from('public_truck_profiles')
+          .from('profiles')
           .select('*')
           .eq('id', truckId)
+          .eq('role', 'truck')
           .single()
 
         if (error || !truck) {

@@ -878,8 +878,9 @@
     // ─── LOAD ───
     async function loadTrucks() {
       const { data, error } = await supabase
-        .from('public_truck_profiles')
+        .from('profiles')
         .select('id, business_name, cuisine_type, city, bio, is_fundraiser_friendly, is_veteran_owned, is_school_board_approved, website')
+        .eq('role', 'truck').eq('is_verified', true)
         .order('created_at', { ascending: false })
 
       // Remove skeletons
