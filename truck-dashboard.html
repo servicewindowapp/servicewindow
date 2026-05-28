@@ -1532,7 +1532,7 @@ async function init() {
 async function loadAllBookings() {
   const { data } = await supabase
     .from('bookings')
-    .select('id, event_name, event_date, start_time, city, status, is_external')
+    .select('id, event_name, event_date, event_time_start, city, status, is_external')
     .eq('truck_id', userId)
     .not('status', 'in', '("declined","cancelled")')
     .order('event_date', { ascending: true })
@@ -1785,7 +1785,7 @@ function renderCalUpcoming() {
 // ─── BOOKING INBOX ────────────────────────────────────
 async function loadInbox() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, start_time, location, city, guest_count, budget_range, notes, status, requester:requester_id(business_name,contact_name,email)')
+    .select('id, event_name, event_date, event_time_start, location, city, guest_count, budget_range, notes, status, requester:requester_id(business_name,contact_name,email)')
     .eq('truck_id', userId).eq('status','pending').order('event_date',{ascending:true})
 
   const tbody = document.getElementById('inbox-tbody')
@@ -1840,7 +1840,7 @@ async function doRespondBooking(id, status) {
 // ─── ACCEPTED BOOKINGS ────────────────────────────────
 async function loadAcceptedBookings() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, start_time, end_time, city, status, is_external, requester_id, requester:requester_id(business_name,contact_name)')
+    .select('id, event_name, event_date, event_time_start, city, status, is_external, requester_id, requester:requester_id(business_name,contact_name)')
     .eq('truck_id', userId).in('status',['accepted','completed']).order('event_date',{ascending:false})
 
   const tbody = document.getElementById('accepted-tbody')
@@ -1879,7 +1879,7 @@ async function loadAcceptedBookings() {
     return `<tr id="arow-${b.id}">
       <td data-label="Event"><div class="td-name">${esc(b.event_name||'Event')}</div>
         <div class="td-sub">From: ${requesterName}</div>${statsRow}</td>
-      <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}${b.start_time ? ' · ' + fmtTime(b.start_time) : ''}${b.end_time ? '–' + fmtTime(b.end_time) : ''}</td>
+      <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}${b.event_time_start ? ' · ' + fmtTime(b.event_time_start) : ''}</td>
       <td data-label="City">${esc(b.city||'—')}</td>
       <td data-label="Status"><span class="pill pill-${b.status}">${b.status}</span></td>
       <td data-label="">${action}</td>
@@ -2039,7 +2039,7 @@ async function initMessages() {
   // Fetch messages without embedded joins to avoid ambiguous FK errors
   const { data, error } = await supabase
     .from('messages')
-    .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at')
+    .select('id, conversation_id, sender_id, recipient_id, body, is_read, created_at')
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
     .order('created_at', {ascending:false})
 
@@ -2076,7 +2076,7 @@ async function initMessages() {
   threadsEl.innerHTML = Object.values(threads).map(t => {
     const name = t.other?.business_name || t.other?.contact_name || 'Unknown'
     const initials = name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()
-    const preview = (t.latest.content||'').substring(0,60)
+    const preview = (t.latest.body||'').substring(0,60)
     const timeStr = new Date(t.latest.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})
     return `<div class="msg-thread" data-conv="${t.convId}" data-recip="${t.other?.id||''}" data-name="${esc(name)}" onclick="openThread('${t.convId}','${t.other?.id||''}','${esc(name)}')">
       <div class="msg-avatar">${initials}</div>
@@ -2117,7 +2117,7 @@ window.openThread = async function(convId, recipId, name) {
 
   // Load conversation messages
   const { data } = await supabase.from('messages')
-    .select('id, sender_id, content, created_at')
+    .select('id, sender_id, body, created_at')
     .eq('conversation_id', convId)
     .order('created_at', {ascending:true})
 
@@ -2126,7 +2126,7 @@ window.openThread = async function(convId, recipId, name) {
     const isMe = m.sender_id === userId
     const t = new Date(m.created_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})
     return `<div style="display:flex;flex-direction:column;align-self:${isMe?'flex-end':'flex-start'}">
-      <div class="msg-bubble ${isMe?'me':'them'}">${DOMPurify.sanitize(esc(m.content))}</div>
+      <div class="msg-bubble ${isMe?'me':'them'}">${DOMPurify.sanitize(esc(m.body))}</div>
       <div class="msg-bubble-time" style="text-align:${isMe?'right':'left'}">${t}</div>
     </div>`
   }).join('')
@@ -2151,7 +2151,7 @@ async function sendMessage() {
     conversation_id: activeConvId,
     sender_id:    userId,
     recipient_id: activeRecipId,
-    content,
+    body: content,
     is_read: false
   })
   if (error) { showToast('Could not send message', true); return }

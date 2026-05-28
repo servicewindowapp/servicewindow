@@ -143,7 +143,7 @@ messages (
   conversation_id uuid NOT NULL,
   sender_id uuid REFERENCES profiles(id),
   recipient_id uuid REFERENCES profiles(id),
-  content text NOT NULL,
+  body text NOT NULL,          -- NOTE: column is 'body' in production, NOT 'content'
   is_read boolean DEFAULT false,
   created_at timestamptz DEFAULT now()
 )
