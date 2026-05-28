@@ -2856,10 +2856,10 @@ async function loadTruckDocuments() {
     const s = d.status || 'pending'
     const m = DOC_META[dt]
     const expiry = d.expiry_date
-      ? '<span style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4)">Expires ' + fmtDate(d.expiry_date) + '</span>'
+      ? '<span style="font-family:DM Mono,monospace;font-size:11px;color:rgba(255,255,255,0.4)">Expires ' + fmtDate(d.expiry_date) + '</span>'
       : ''
     const renewal = d.renewal_flagged
-      ? '<span style="font-family:'DM Mono',monospace;font-size:11px;color:#f59e0b"> · Renewal required</span>'
+      ? '<span style="font-family:DM Mono,monospace;font-size:11px;color:#f59e0b"> · Renewal required</span>'
       : ''
     const notes = d.admin_notes
       ? '<div style="margin-top:5px;font-size:12px;color:rgba(255,255,255,0.45);font-style:italic">' + esc(d.admin_notes) + '</div>'
