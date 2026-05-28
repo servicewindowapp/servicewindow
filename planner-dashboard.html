@@ -926,6 +926,30 @@
   </div>
 </div>
 
+<!-- COMPLETION MODAL -->
+<div class="review-modal-overlay" id="completion-modal-overlay" style="display:none" onclick="if(event.target===this)closeCompletionModal()">
+  <div class="review-modal" onclick="event.stopPropagation()" style="max-width:460px">
+    <h3>Booking Complete</h3>
+    <p class="review-modal-sub" id="completion-modal-sub">How did the event go?</p>
+    <div class="star-row" id="completion-star-row">
+      <button type="button" class="star-btn" data-cval="1">★</button>
+      <button type="button" class="star-btn" data-cval="2">★</button>
+      <button type="button" class="star-btn" data-cval="3">★</button>
+      <button type="button" class="star-btn" data-cval="4">★</button>
+      <button type="button" class="star-btn" data-cval="5">★</button>
+    </div>
+    <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin:-8px 0 12px;text-transform:uppercase;letter-spacing:.5px">Rate this truck (optional)</p>
+    <textarea class="review-textarea" id="completion-review-text" placeholder="Optional — on-time? Great food? Easy to work with?"></textarea>
+    <label style="display:block;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What did you spend? ($)</label>
+    <input type="number" id="completion-spend" min="0" step="0.01" placeholder="e.g. 750.00"
+      style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--dark-border);border-radius:8px;color:white;font-family:'DM Mono',monospace;font-size:13px;margin-bottom:20px;box-sizing:border-box">
+    <div class="review-modal-actions">
+      <button class="btn-primary" onclick="submitCompletion()">Mark Complete</button>
+      <button class="btn-outline" onclick="closeCompletionModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
@@ -1146,7 +1170,7 @@
                  <button class="btn-decline" onclick="respondBooking('${b.id}','declined')">Decline</button>
                </div>`
             : b.status === 'accepted'
-            ? `<div class="action-group">${msgBtn}<button class="btn-complete" onclick="markComplete('${b.id}')">Mark Complete</button></div>`
+            ? `<div class="action-group">${msgBtn}<button class="btn-complete" onclick="openCompletionModal('${b.id}','${b.truck_id||''}','${truckName}')">Mark Complete</button></div>`
             : b.status === 'completed'
             ? `<div class="action-group">${msgBtn}${reviewedTruckIds.has(b.truck_id)
                 ? '<span style="color:#50c878;font-family:\'DM Mono\',monospace;font-size:11px">✓ Reviewed</span>'
@@ -1181,12 +1205,68 @@
     if (data) data.forEach(r => reviewedTruckIds.add(r.truck_id))
   }
 
-  window.markComplete = async function(id) {
-    if (!confirm('Mark this booking as completed?')) return
-    const { error } = await supabase
-      .from('bookings').update({ status: 'completed' }).eq('id', id)
-    if (error) { showToast('Error updating booking', true); return }
-    showToast('Booking marked as completed')
+  // ─── COMPLETION MODAL ──────────────────────────────────
+  let completionState  = null
+  let completionRating = 0
+
+  window.openCompletionModal = function(bookingId, truckId, truckName) {
+    completionState  = { bookingId, truckId }
+    completionRating = 0
+    document.getElementById('completion-modal-sub').textContent =
+      truckName && truckName !== '—' ? `How did the event go with ${truckName}?` : 'How did the event go?'
+    document.getElementById('completion-review-text').value = ''
+    document.getElementById('completion-spend').value = ''
+    document.querySelectorAll('#completion-star-row .star-btn').forEach(b => b.classList.remove('lit'))
+    document.getElementById('completion-modal-overlay').style.display = 'flex'
+  }
+
+  window.closeCompletionModal = function() {
+    document.getElementById('completion-modal-overlay').style.display = 'none'
+  }
+
+  document.querySelectorAll('#completion-star-row .star-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      completionRating = parseInt(btn.dataset.cval)
+      document.querySelectorAll('#completion-star-row .star-btn').forEach(b =>
+        b.classList.toggle('lit', parseInt(b.dataset.cval) <= completionRating))
+    })
+  })
+
+  window.submitCompletion = async function() {
+    if (!completionState) return
+    const { bookingId, truckId } = completionState
+    const note      = document.getElementById('completion-review-text').value.trim()
+    const spendRaw  = document.getElementById('completion-spend').value
+    const spendCents = spendRaw !== '' ? Math.round(parseFloat(spendRaw) * 100) : null
+
+    // Mark booking complete
+    const { error: bErr } = await supabase
+      .from('bookings').update({ status: 'completed' }).eq('id', bookingId)
+    if (bErr) { showToast('Error updating booking', true); return }
+
+    // Save review if rated
+    if (completionRating > 0 && truckId) {
+      const { error: rErr } = await supabase.from('reviews').insert({
+        reviewer_id: userId,
+        truck_id:    truckId,
+        rating:      completionRating,
+        content:     note || null
+      })
+      if (!rErr) {
+        reviewedTruckIds.add(truckId)
+      } else if (rErr.code !== '23505') {
+        console.warn('[submitCompletion] review insert:', rErr)
+      }
+    }
+
+    // Save spend amount
+    if (spendCents !== null && spendCents >= 0) {
+      await supabase.from('booking_requester_financials')
+        .upsert({ booking_id: bookingId, spend_cents: spendCents }, { onConflict: 'booking_id' })
+    }
+
+    document.getElementById('completion-modal-overlay').style.display = 'none'
+    showToast('Booking marked as complete')
     await Promise.all([loadBookings(), loadOverview()])
   }
 
