@@ -2897,6 +2897,92 @@ function showToast(msg, isError=false) {
   setTimeout(()=>t.classList.remove('show'),3000)
 }
 
+// ─── ONBOARDING MODAL ────────────────────────────────────────────────────────
+let obStep = 1
+const OB_STEPS = [
+  { title: 'Your Truck',       sub: 'The basics that help organizers find and book you.' },
+  { title: 'Contact & Reach',  sub: 'How organizers can reach you and how far you travel.' },
+  { title: 'Tell Your Story',  sub: 'A little personality goes a long way.' }
+]
+
+function showOnboarding() {
+  obStep = 1
+  obRender()
+  document.getElementById('onboarding-overlay').classList.add('open')
+}
+
+function obRender() {
+  document.querySelectorAll('.onboarding-step').forEach((el, i) => {
+    el.classList.toggle('active', i + 1 === obStep)
+  })
+  ;[1,2,3].forEach(i => {
+    const dot = document.getElementById('ob-dot-' + i)
+    dot.className = 'onboarding-dot' + (i < obStep ? ' done' : i === obStep ? ' active' : '')
+  })
+  document.getElementById('ob-step-num').textContent = obStep
+  document.getElementById('ob-title').textContent = OB_STEPS[obStep - 1].title
+  document.getElementById('ob-sub').textContent   = OB_STEPS[obStep - 1].sub
+  document.getElementById('ob-btn-back').style.display = obStep > 1 ? '' : 'none'
+  document.getElementById('ob-btn-next').textContent   = obStep === 3 ? 'Finish' : 'Next \u2192'
+}
+
+function obNextStep() {
+  if (obStep === 1) {
+    const biz = document.getElementById('ob-business').value.trim()
+    if (!biz) { showToast('Business name is required', true); return }
+  }
+  if (obStep < 3) {
+    obStep++
+    obRender()
+  } else {
+    saveOnboarding()
+  }
+}
+
+function obPrevStep() {
+  if (obStep > 1) { obStep--; obRender() }
+}
+
+function skipOnboarding() {
+  document.getElementById('onboarding-overlay').classList.remove('open')
+}
+
+async function saveOnboarding() {
+  const btn = document.getElementById('ob-btn-next')
+  btn.textContent = 'Saving\u2026'
+  btn.disabled = true
+
+  const updates = {
+    business_name:        document.getElementById('ob-business').value.trim() || null,
+    cuisine_type:         document.getElementById('ob-cuisine').value.trim()   || null,
+    city:                 document.getElementById('ob-city').value.trim()      || null,
+    contact_name:         document.getElementById('ob-contact').value.trim()   || null,
+    phone:                document.getElementById('ob-phone').value.trim()     || null,
+    service_radius_miles: parseInt(document.getElementById('ob-radius').value) || null,
+    bio:                  document.getElementById('ob-bio').value.trim()       || null,
+    is_fundraiser_friendly: document.getElementById('ob-fundraiser').checked,
+    is_veteran_owned:       document.getElementById('ob-veteran').checked
+  }
+  Object.keys(updates).forEach(k => { if (updates[k] === null) delete updates[k] })
+
+  const { error } = await supabase.from('profiles').update(updates).eq('id', userId)
+  btn.disabled = false
+  if (error) {
+    console.error('[saveOnboarding]', error)
+    showToast('Save failed \u2014 try again', true)
+    btn.textContent = 'Finish'
+    return
+  }
+
+  Object.assign(profile, updates)
+  renderSidebarMeta()
+  populateProfileForm()
+
+  document.getElementById('onboarding-overlay').classList.remove('open')
+  showToast('Profile saved \u2014 welcome to ServiceWindow!')
+  checkProfileCompletion()
+}
+
 // ─── UPCOMING BOOKINGS (Overview) ────────────────────────────────────────────
 async function loadUpcomingBookings() {
   const today = new Date().toISOString().slice(0,10)
