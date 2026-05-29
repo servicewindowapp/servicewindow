@@ -660,6 +660,25 @@
       line-height: 1.55;
     }
 
+    /* ─── FAQ ─── */
+    .faq-section { background: var(--dark-section); }
+    .faq-grid { max-width: 760px; margin: 48px auto 0; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 14px; overflow: hidden; }
+    .faq-question {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 20px 24px; text-align: left;
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; color: var(--white);
+    }
+    .faq-question:hover { background: rgba(255,255,255,0.04); }
+    .faq-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--dark-border); display: flex; align-items: center; justify-content: center; color: var(--fire); font-size: 16px; transition: transform 0.25s; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.25s; padding: 0 24px; }
+    .faq-item.open .faq-answer { max-height: 300px; padding: 0 24px 20px; }
+    .faq-answer p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+    .faq-answer a { color: var(--fire); text-decoration: none; }
+    .faq-answer a:hover { text-decoration: underline; }
+
     /* ─── MARKETPLACE BOARDS ─── */
     .boards-section {
       background: var(--dark-section);
@@ -1579,6 +1598,98 @@
     </div>
   </section>
 
+  <!-- ─── FAQ ─── -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions.</h2>
+      <p class="section-sub">Everything you need to know before signing up.</p>
+      <div class="faq-grid">
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            What is ServiceWindow?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>ServiceWindow is a verified two-sided food truck marketplace for Southwest Florida. Event planners, HOA communities, venues, and private hosts use it to find and book food trucks. Truck operators use it to receive booking requests, manage their schedule, and grow their business — all in one place.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            What cities does ServiceWindow cover?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>We cover 22 cities across Lee, Collier, Sarasota, Charlotte, and Hendry counties — including Fort Myers, Cape Coral, Naples, Bonita Springs, Sarasota, Port Charlotte, and more. <a href="find-trucks.html">Browse available trucks</a> in your area.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            Is ServiceWindow free for event planners?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>Yes — event planners, HOA managers, venue coordinators, and private hosts are always free. No subscription, no credit card, no catch. Create an account, post your request, and start receiving responses from verified trucks.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            How much does it cost for food truck operators?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>Truck operators pay $39.99/month after a 30-day free trial — no credit card required to start. The trial gives you full access: verified listing, booking requests, messaging, and AI discoverability. <a href="pricing.html">See full pricing.</a></p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            What does "verified" mean?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>Every truck on ServiceWindow goes through a manual verification step before appearing in the marketplace. We confirm the business is real and operating in SWFL. This protects planners from fake listings and scams — the same problem that plagues Facebook groups.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            Does ServiceWindow handle payments between planners and trucks?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>Not yet. ServiceWindow handles the connection, booking coordination, and messaging. Payment is arranged directly between the planner and the truck operator. We process only platform subscription payments for truck operators via Stripe.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            Can I list my truck if I'm based outside SWFL?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>ServiceWindow is currently SWFL-only. If your truck operates in Lee, Collier, Sarasota, Charlotte, or Hendry counties, you qualify. We're expanding to additional markets after the SWFL launch.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+            How is this different from just posting in a Facebook group?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" role="region">
+            <p>Facebook groups have no verification, no structure, and no accountability. Requests get buried. Trucks get scammed. Planners get ghosted. ServiceWindow gives both sides a dedicated platform — structured requests, verified profiles, direct messaging, booking history, and calendar management. Built for this, not repurposed for it.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ─── WAITLIST / CTA ─── -->
   <section class="cta-section">
     <div class="container">
@@ -1694,6 +1805,23 @@
         btn.disabled = false;
       }
     });
+
+
+    // ─── FAQ ACCORDION ───
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+      });
+      // Open clicked if it was closed
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    }
 
     // ─── NAV SCROLL EFFECT ───
     // Nav stays dark — no white-on-scroll. This is intentional per design system.
