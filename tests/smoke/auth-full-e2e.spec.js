@@ -98,6 +98,13 @@ async function approveUser(userId) {
 }
 
 async function deleteUser(userId) {
+  // Delete profile row first — profiles FK has no ON DELETE CASCADE,
+  // so deleting auth.users alone leaves an orphaned profile row.
+  await apiRequest(
+    SUPABASE_URL + '/rest/v1/profiles?id=eq.' + userId,
+    { method: 'DELETE', headers: { ...svcHeaders(), 'Content-Type': 'application/json' } }
+  );
+  // Then delete the auth user
   await apiRequest(
     SUPABASE_URL + '/auth/v1/admin/users/' + userId,
     { method: 'DELETE', headers: svcHeaders() }
