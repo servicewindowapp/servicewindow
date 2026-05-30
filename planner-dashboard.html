@@ -245,6 +245,13 @@
     .tpl-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; margin-bottom: 3px; }
     .tpl-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tpl-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .recur-badge { display:inline-flex; align-items:center; gap:4px; font-family:'DM Mono',monospace; font-size:10px; color:#63b3ed; background:rgba(99,179,237,0.1); border:1px solid rgba(99,179,237,0.2); border-radius:4px; padding:2px 7px; margin-top:5px; }
+    .recur-next { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); margin-top:3px; }
+    .recur-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9000; display:flex; align-items:center; justify-content:center; padding:16px; }
+    .recur-modal { background:#0d1f2d; border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:100%; max-width:420px; padding:28px; }
+    .recur-modal h3 { font-family:'Sora',sans-serif; font-size:17px; font-weight:700; margin-bottom:6px; }
+    .recur-modal-sub { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+    .recur-preview { font-family:'DM Mono',monospace; font-size:12px; color:#63b3ed; margin-bottom:18px; min-height:18px; }
     .pill-linked { background: rgba(99,179,237,0.12); color: #63b3ed; border: 1px solid rgba(99,179,237,0.2); }
     .btn-accept {
       background: rgba(80,200,120,0.15); color: #50c878;
@@ -1631,7 +1638,7 @@
 
     const { data, error } = await supabase
       .from('booking_templates')
-      .select('id, name, event_type, city, guest_count_min, guest_count_max, trucks_needed, budget_range, cuisine_preference, notes, location')
+      .select('id, name, event_type, city, guest_count_min, guest_count_max, trucks_needed, budget_range, cuisine_preference, notes, location, recurrence_pattern, recurrence_day_of_week, recurrence_week_of_month')
       .eq('requester_id', userId)
       .order('created_at', { ascending: false })
 
@@ -1678,8 +1685,12 @@
     g('r-budget',      t.budget_range      || '')
     g('r-cuisine',     t.cuisine_preference|| '')
     g('r-notes',       t.notes             || '')
+    if (t.recurrence_pattern && t.recurrence_day_of_week != null) {
+      const next = nextOccurrence(t.recurrence_pattern, t.recurrence_day_of_week, t.recurrence_week_of_month)
+      if (next) document.getElementById('r-date').value = next.toISOString().split('T')[0]
+    }
     showSection('post')
-    showToast('Template loaded — fill in date and title to post')
+    showToast('Template loaded — review date and title, then post')
   }
 
   window.deleteTemplate = async function(id) {
@@ -1711,6 +1722,100 @@
     })
     if (error) { showToast('Error saving template', true); console.error(error); return }
     showToast('Template saved')
+  }
+
+
+  // ─── RECURRENCE HELPERS ───────────────────────────────────────────
+  const DOW_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+  const WOM_NAMES = ['','1st','2nd','3rd','4th']
+
+  function nextOccurrence(pattern, dow, wom) {
+    const today = new Date(); today.setHours(0,0,0,0)
+    if (pattern === 'weekly' || pattern === 'biweekly') {
+      const d = new Date(today)
+      let diff = ((dow - d.getDay()) + 7) % 7 || 7
+      d.setDate(d.getDate() + diff)
+      return d
+    }
+    if (pattern === 'monthly') {
+      for (let m = 0; m < 3; m++) {
+        const month = new Date(today.getFullYear(), today.getMonth() + m, 1)
+        let count = 0
+        let day = new Date(month)
+        while (day.getMonth() === month.getMonth()) {
+          if (day.getDay() === dow) {
+            count++
+            if (count === wom) {
+              if (day > today) return day
+              break
+            }
+          }
+          day.setDate(day.getDate() + 1)
+        }
+      }
+    }
+    return null
+  }
+
+  function recurLabel(pattern, dow, wom) {
+    if (!pattern || dow == null) return null
+    if (pattern === 'weekly')   return 'Every ' + DOW_NAMES[dow]
+    if (pattern === 'biweekly') return 'Every other ' + DOW_NAMES[dow]
+    if (pattern === 'monthly')  return WOM_NAMES[wom] + ' ' + DOW_NAMES[dow] + ' of the month'
+    return null
+  }
+
+  function renderRecurFields() {
+    const p = document.getElementById('recur-pattern').value
+    document.getElementById('recur-day-row').style.display = p ? '' : 'none'
+    document.getElementById('recur-wom-row').style.display = p === 'monthly' ? '' : 'none'
+    updateRecurPreview()
+  }
+
+  function updateRecurPreview() {
+    const p   = document.getElementById('recur-pattern').value
+    const dow = parseInt(document.getElementById('recur-dow').value)
+    const wom = parseInt(document.getElementById('recur-wom').value)
+    const el  = document.getElementById('recur-preview')
+    if (!p) { el.textContent = ''; return }
+    const label = recurLabel(p, dow, wom)
+    const next  = nextOccurrence(p, dow, wom)
+    const nextStr = next ? next.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) : ''
+    el.textContent = label + (nextStr ? ' · Next: ' + nextStr : '')
+  }
+
+  window.openRecurModal = function(id) {
+    const t = templatesCache.find(x => x.id === id)
+    if (!t) return
+    document.getElementById('recur-tpl-id').value = id
+    document.getElementById('recur-modal-tpl-name').textContent = t.name
+    document.getElementById('recur-pattern').value = t.recurrence_pattern || ''
+    document.getElementById('recur-dow').value     = t.recurrence_day_of_week  ?? 6
+    document.getElementById('recur-wom').value     = t.recurrence_week_of_month ?? 2
+    renderRecurFields()
+    document.getElementById('recur-modal').style.display = 'flex'
+  }
+
+  window.closeRecurModal = function() {
+    document.getElementById('recur-modal').style.display = 'none'
+  }
+
+  window.saveRecurrence = async function() {
+    const id      = document.getElementById('recur-tpl-id').value
+    const pattern = document.getElementById('recur-pattern').value || null
+    const dow     = pattern ? parseInt(document.getElementById('recur-dow').value) : null
+    const wom     = pattern === 'monthly' ? parseInt(document.getElementById('recur-wom').value) : null
+    const { error } = await supabase.from('booking_templates').update({
+      recurrence_pattern:      pattern,
+      recurrence_day_of_week:  dow,
+      recurrence_week_of_month: wom
+    }).eq('id', id)
+    if (error) { showToast('Error saving schedule', true); console.error(error); return }
+    const t = templatesCache.find(x => x.id === id)
+    if (t) { t.recurrence_pattern = pattern; t.recurrence_day_of_week = dow; t.recurrence_week_of_month = wom }
+    closeRecurModal()
+    loadTemplates()
+    showToast('Schedule saved')
   }
 
   // ─── EMERGENCY REPLACEMENT (OI-049) ──────────────────────
