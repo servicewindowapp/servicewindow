@@ -929,6 +929,23 @@
     updatePendingBadge()
     document.getElementById('stat-pending').textContent = pendingCount
     showToast('Account approved — now visible on marketplace')
+    // Email user — best-effort, non-blocking
+    try {
+      const user = allUsers.find(u => u.id === id)
+      if (user?.email) {
+        supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'verification_approved',
+            recipient_email: user.email,
+            recipient_name: user.business_name || user.contact_name || 'there',
+            data: {
+              user_name: user.business_name || user.contact_name || 'there',
+              role: effectiveRole
+            }
+          }
+        })
+      }
+    } catch (_) { /* non-fatal */ }
     allUsers = allUsers.map(u => u.id === id ? { ...u, ...updates } : u)
     renderUsers()
   }

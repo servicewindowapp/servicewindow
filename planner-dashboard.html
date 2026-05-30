@@ -1398,7 +1398,7 @@
   function convIdFor(a, b) { return [a, b].sort().join('_') }
 
   function esc(s) { if (s==null) return ''; return s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
-  function fmtDate(d) { if (!d) return '—'; return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) }
+  function fmtDate(d) { if (!d) return '—'; const day = String(d).slice(0,10); return new Date(day+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) }
   function showToast(msg, isError=false) {
     const t = document.getElementById('toast')
     t.textContent=msg; t.className='toast'+(isError?' error':''); t.classList.add('show')

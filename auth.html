@@ -1285,6 +1285,21 @@
         })
       } catch (_) { /* non-fatal */ }
 
+      // Notify new user — welcome email, best-effort, non-blocking
+      try {
+        supabase.functions.invoke('send-notification', {
+          body: {
+            type: 'welcome_email',
+            recipient_email: email,
+            recipient_name: resolvedName,
+            data: {
+              user_name: resolvedName,
+              user_role: selectedRole
+            }
+          }
+        })
+      } catch (_) { /* non-fatal */ }
+
       // Show success — inject truck-specific docs reminder if applicable
       if (selectedRole === 'truck') {
         const name = document.getElementById('businessName').value.trim() || 'Your Truck'
