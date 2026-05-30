@@ -1318,7 +1318,7 @@
         '<td><strong>' + esc(truck.business_name || '—') + '</strong></td>' +
         '<td>' + esc(truck.city || '—') + '</td>' +
         dotCells +
-        `<td><button class="btn-approve" style="padding:4px 12px;font-size:11px;border-radius:6px" onclick="openDocModal('${truck.id}', ${JSON.stringify(truck.business_name || 'Truck')})">Manage</button></td>` +
+        `<td><button class="btn-approve" style="padding:4px 12px;font-size:11px;border-radius:6px" onclick="openDocModal('${truck.id}', '${(truck.business_name || 'Truck').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">Manage</button></td>` +
         '</tr>'
     }).join('')
   }
