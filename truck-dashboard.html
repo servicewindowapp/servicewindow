@@ -591,7 +591,7 @@
       </button>
       <div class="nav-divider"></div>
       <button class="nav-item" data-section="listings">
-        <span class="nav-icon">◈</span> My Listings
+        <span class="nav-icon">⚡</span> Emergency Coverage
       </button>
       <button class="nav-item" data-section="jobs">
         <span class="nav-icon">👤</span> Hiring
@@ -889,16 +889,16 @@
       </div>
     </section>
 
-    <!-- MY LISTINGS -->
+    <!-- EMERGENCY COVERAGE LISTINGS -->
     <section class="section" id="section-listings">
       <div class="section-header">
-        <h1>My Listings</h1>
-        <p>Shifts and events you've posted on the marketplace.</p>
+        <h1>Emergency Coverage</h1>
+        <p>Double-booked or can't make it? Post your booking here — verified trucks in your area see it flagged as urgent and can step in.</p>
       </div>
       <div class="table-container">
         <div class="table-toolbar">
-          <span class="table-title">Posted Shifts &amp; Events</span>
-          <button class="btn-primary" style="padding:7px 16px;font-size:12px" onclick="location.hash='shift'">⚡ Post Coverage</button>
+          <span class="table-title">Active Coverage Posts</span>
+          <button class="btn-primary" style="padding:7px 16px;font-size:12px" onclick="showSection('shift')">⚡ Post Coverage</button>
         </div>
         <table>
           <thead>
@@ -910,9 +910,8 @@
         </table>
         <div class="empty-state" id="listings-empty" style="display:none">
           <div class="empty-state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
-          <h3 class="empty-state-title">No active listings</h3>
-          <p class="empty-state-body">Post your available dates on the Shift Marketplace to get booked faster.</p>
-          <a href="#" onclick="showSection('shift');return false;" class="btn-primary" style="font-size:14px;padding:12px 24px">Post Availability</a>
+          <h3 class="empty-state-title">No active emergency coverage requests</h3>
+          <p class="empty-state-body">If you have an accepted booking you can no longer fulfill — double booked, can't make it, truck issue — post it here. Verified trucks in your area will see it and can claim the slot.</p>
         </div>
       </div>
     </section>
