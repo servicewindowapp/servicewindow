@@ -1409,7 +1409,7 @@
     async function fetchTrucks() {
       let query = supabase
         .from('profiles')
-        .select('id, business_name, city, cuisine_type, bio, service_radius, is_verified, is_fundraiser_friendly, is_veteran_owned, is_school_board_approved, created_at')
+        .select('id, business_name, city, cuisine_type, bio, service_radius, is_verified, is_fundraiser_friendly, is_veteran_owned, is_school_board_approved, created_at, photos')
         .eq('role', 'truck').eq('is_verified', true)
 
       if (cityVal) query = query.eq('city', cityVal)
@@ -1478,6 +1478,7 @@
     function renderTruckCard(truck) {
       truckMap.set(truck.id, truck)
       const emoji = getCuisineEmoji(truck.cuisine_type)
+      const mainPhoto = Array.isArray(truck.photos) && truck.photos[0] ? truck.photos[0] : null
       const badges = []
       if (truck.is_verified) badges.push(`<span class="badge badge-verified">Verified</span>`)
       if (truck.is_fundraiser_friendly) badges.push(`<span class="badge badge-fundraiser">Fundraiser Friendly</span>`)
@@ -1490,7 +1491,7 @@
       return `
         <div class="truck-card" onclick="if(!event.target.closest('a,button'))window.location='truck-profile.html?id=${truck.id}'">
           <div class="truck-card-header">
-            <div class="truck-avatar">${emoji}</div>
+            <div class="truck-avatar">${mainPhoto ? `<img src="${mainPhoto}" alt="${escHtml(truck.business_name || '')}" style="width:100%;height:100%;object-fit:cover;border-radius:11px;">` : emoji}</div>
             <div class="truck-card-name-block">
               <div class="truck-name">${escHtml(truck.business_name || 'Unnamed Truck')}</div>
               <div class="truck-meta">

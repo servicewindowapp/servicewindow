@@ -881,7 +881,7 @@
     async function loadTrucks() {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, business_name, cuisine_type, city, bio, is_fundraiser_friendly, is_veteran_owned, is_school_board_approved, website')
+        .select('id, business_name, cuisine_type, city, bio, is_fundraiser_friendly, is_veteran_owned, is_school_board_approved, website, photos')
         .eq('role', 'truck').eq('is_verified', true)
         .order('created_at', { ascending: false })
 
@@ -968,8 +968,10 @@
 
       const requestHref = userSession ? 'planner-dashboard.html' : 'auth.html'
 
+      const mainPhoto = Array.isArray(t.photos) && t.photos[0] ? t.photos[0] : null
       return `
         <div class="truck-card" onclick="if(!event.target.closest('a,button'))window.location='truck-profile.html?id=${t.id}'">
+          ${mainPhoto ? `<div style="width:100%;height:140px;border-radius:10px;overflow:hidden;margin-bottom:12px;"><img src="${mainPhoto}" alt="${name}" style="width:100%;height:100%;object-fit:cover;"></div>` : ''}
           <div class="truck-card-body">
             <div class="truck-card-header">
               <div class="truck-name">${name}</div>
