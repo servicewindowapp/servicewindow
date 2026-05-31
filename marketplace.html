@@ -819,6 +819,9 @@
       border: 1px solid rgba(255,107,53,0.25);
       white-space: nowrap;
     }
+    .listing-card-urgent {
+      border-left: 3px solid var(--fire) !important;
+    }
 
     .listing-desc {
       font-size: 13px;
@@ -1444,7 +1447,9 @@
       query = query.limit(24)
 
       const { data, error } = await query
-      return error ? [] : (data || [])
+      if (error) return []
+      // Sort urgent listings to top (preserves existing sort order within each group)
+      return (data || []).sort((a, b) => (b.is_urgent ? 1 : 0) - (a.is_urgent ? 1 : 0))
     }
 
     // ─── FETCH ALL COUNTS ───
@@ -1539,7 +1544,7 @@
       }
 
       return `
-        <div class="listing-card${isMarketResearch ? ' listing-card-unverified' : ''}">
+        <div class="listing-card${isMarketResearch ? ' listing-card-unverified' : ''}${listing.is_urgent ? ' listing-card-urgent' : ''}">
           <div class="listing-card-top">
             <div class="listing-type-icon">${icon}</div>
             <div class="listing-card-title">${escHtml(listing.title || 'Untitled listing')}</div>
@@ -1711,7 +1716,7 @@
         trucks:  { label: 'Post a Request',  auth: 'auth.html',                   dash: 'planner-dashboard.html' },
         request: { label: 'Post a Request',  auth: 'auth.html',                   dash: 'planner-dashboard.html' },
         event:   { label: 'Add an Event',    auth: 'auth.html',                   dash: 'planner-dashboard.html' },
-        shift:   { label: 'Post Your Dates', auth: 'auth.html?role=truck',        dash: 'truck-dashboard.html' },
+        shift:   { label: 'Post Emergency Coverage', auth: 'auth.html?role=truck',        dash: 'truck-dashboard.html' },
         venue:   { label: 'List Your Venue', auth: 'auth.html',                   dash: 'venue-dashboard.html' },
         parking: { label: 'List a Space',    auth: 'auth.html',                   dash: 'property-dashboard.html' },
         vendor:  { label: 'Get Listed',      auth: 'auth.html?role=service_provider', dash: 'service-provider-dashboard.html' }

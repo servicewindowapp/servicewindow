@@ -1950,6 +1950,19 @@ document.getElementById('shift-form').addEventListener('submit', async (e) => {
   if (error) { statusEl.textContent='Error: '+error.message; statusEl.style.color='#ff8080'; return }
   statusEl.textContent=''; document.getElementById('shift-form').reset()
   showToast('Emergency coverage posted')
+  // Notify standby trucks — best-effort, don't block on result
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session?.access_token) {
+    fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/notify-standby-trucks', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer '+session.access_token,
+        'Content-Type': 'application/json',
+        'x-client-info': 'servicewindow-web'
+      },
+      body: JSON.stringify({ title, event_type: eventType, event_date: date||null, city })
+    }).catch(() => {}) // silent — posting succeeded regardless
+  }
   await loadListings(); location.hash='listings'
 })
 
