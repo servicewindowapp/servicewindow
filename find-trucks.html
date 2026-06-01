@@ -1096,7 +1096,7 @@
     async function loadSubmissions() {
       const { data, error } = await supabase
         .from('truck_submissions')
-        .select('id, business_name, cuisine_type, cities_served, contact_phone, facebook_url, description')
+        .select('id, business_name, cuisine_type, cities_served, contact_phone, facebook_url, description, claimed_truck_id')
         .eq('status', 'pending')
         .order('created_at', { ascending: false })
 
@@ -1116,6 +1116,15 @@
         const phone = escHtml(t.contact_phone || '')
         const fb = t.facebook_url ? `<a href="${escHtml(sanitizeUrl(t.facebook_url))}" target="_blank" rel="noopener" class="sub-link">Facebook →</a>` : ''
         const bio = escHtml(t.description || '')
+        const isClaimed = !!t.claimed_truck_id
+
+        const badge = isClaimed
+          ? `<span class="badge-verified">✓ Verified</span>`
+          : `<span class="badge-unverified">Unverified</span>`
+
+        const footer = isClaimed
+          ? `<a href="truck-profile.html?id=${escHtml(t.claimed_truck_id)}" class="btn-request">View Profile →</a>`
+          : `<a href="auth.html?role=truck" class="btn-request" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15)">Claim This Listing →</a>`
 
         const card = document.createElement('div')
         card.className = 'truck-card sub-card'
@@ -1123,18 +1132,18 @@
           <div class="truck-card-body">
             <div class="truck-card-header">
               <div class="truck-name">${name}</div>
-              <span class="badge-unverified">Unverified</span>
+              ${badge}
             </div>
             <div class="truck-meta">
               ${cuisine ? `<span class="meta-pill cuisine">${cuisine}</span>` : ''}
               ${cities ? `<span class="meta-pill">📍 ${cities}</span>` : ''}
             </div>
             ${bio ? `<p class="truck-bio">${bio}</p>` : ''}
-            ${phone ? `<p class="sub-contact">📞 ${phone}</p>` : ''}
-            ${fb}
+            ${!isClaimed && phone ? `<p class="sub-contact">📞 ${phone}</p>` : ''}
+            ${!isClaimed ? fb : ''}
           </div>
           <div class="truck-card-footer">
-            <a href="auth.html?role=truck" class="btn-request" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15)">Claim This Listing →</a>
+            ${footer}
           </div>
         `
         grid.appendChild(card)
