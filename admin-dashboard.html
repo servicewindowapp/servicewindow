@@ -798,6 +798,56 @@
   </div>
 </div>
 
+<!-- VENDOR SUBMISSION EDIT MODAL -->
+<div id="vsub-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#0d1f2d;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px;width:min(560px,95vw);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin:0;color:white">Edit Vendor Submission</h2>
+      <button onclick="closeVsubEdit()" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:24px;cursor:pointer;padding:0 4px;line-height:1">&times;</button>
+    </div>
+    <input type="hidden" id="vsub-edit-id">
+    <input type="hidden" id="vsub-edit-promo-id">
+    <div style="display:grid;gap:14px">
+      <div>
+        <label style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px">Business Name</label>
+        <input id="vsub-edit-name" type="text" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:white;font-family:'Sora',sans-serif;font-size:13px;box-sizing:border-box">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px">Category</label>
+          <input id="vsub-edit-category" type="text" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:white;font-family:'Sora',sans-serif;font-size:13px;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px">City</label>
+          <input id="vsub-edit-city" type="text" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:white;font-family:'Sora',sans-serif;font-size:13px;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px">Email</label>
+          <input id="vsub-edit-email" type="email" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:white;font-family:'DM Mono',monospace;font-size:12px;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px">Phone</label>
+          <input id="vsub-edit-phone" type="text" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:white;font-family:'DM Mono',monospace;font-size:12px;box-sizing:border-box">
+        </div>
+      </div>
+      <div>
+        <label style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px">Website URL</label>
+        <input id="vsub-edit-website" type="url" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:white;font-family:'DM Mono',monospace;font-size:12px;box-sizing:border-box">
+      </div>
+      <div>
+        <label style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px">Description</label>
+        <textarea id="vsub-edit-description" rows="4" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:white;font-family:'Sora',sans-serif;font-size:13px;box-sizing:border-box;resize:vertical"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:24px;justify-content:flex-end">
+      <button onclick="closeVsubEdit()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px;padding:8px 18px;font-family:'Sora',sans-serif;font-size:13px;cursor:pointer">Cancel</button>
+      <button onclick="saveVsubEdit()" style="background:var(--fire);border:none;color:white;border-radius:8px;padding:8px 18px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -1488,11 +1538,16 @@
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5)">${fmtDate(r.created_at)}</td>
       <td><span class="pill pill-${r.status}">${r.status}</span></td>
       <td>
-        ${r.status === 'pending' ? `
         <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${r.status === 'pending' ? `
           <button class="btn-approve" onclick="approveVsub('${r.id}')">Approve</button>
           <button class="btn-reject" onclick="rejectVsub('${r.id}')">Reject</button>
-        </div>` : '—'}
+          ` : ''}
+          ${r.status === 'approved' ? `
+          <button class="btn-approve" onclick="editVsub('${r.id}')">Edit</button>
+          ` : ''}
+          <button class="btn-reject" onclick="deleteVsub('${r.id}', '${r.status}')">Delete</button>
+        </div>
       </td>
     </tr>`).join('')
   }
@@ -1545,6 +1600,85 @@
     const next = Math.max(0, (parseInt(badge.textContent, 10) || 0) - 1)
     badge.textContent = next; badge.style.display = next > 0 ? 'inline-block' : 'none'
     showToast('Submission rejected')
+  }
+
+  window.deleteVsub = async function(id, status) {
+    const msg = status === 'approved'
+      ? 'Delete this submission AND remove the live vendor listing?'
+      : 'Delete this submission?'
+    if (!confirm(msg)) return
+
+    if (status === 'approved') {
+      const { error: promoErr } = await supabase
+        .from('promotions')
+        .delete()
+        .ilike('admin_notes', '%' + id + '%')
+      if (promoErr) { showToast('Error removing live listing: ' + promoErr.message, true); return }
+    }
+
+    const { error } = await supabase.from('vendor_quick_submissions').delete().eq('id', id)
+    if (error) { showToast('Error deleting submission: ' + error.message, true); return }
+
+    document.getElementById('vsub-' + id)?.remove()
+    showToast('Submission deleted' + (status === 'approved' ? ' and live listing removed' : ''))
+    loadVendorSubs()
+  }
+
+  window.editVsub = async function(id) {
+    const { data: sub, error: subErr } = await supabase
+      .from('vendor_quick_submissions').select('*').eq('id', id).single()
+    if (subErr || !sub) { showToast('Error fetching submission', true); return }
+
+    const { data: promos } = await supabase
+      .from('promotions').select('*').ilike('admin_notes', '%' + id + '%').limit(1)
+    const promo = promos?.[0] || null
+
+    document.getElementById('vsub-edit-id').value        = id
+    document.getElementById('vsub-edit-promo-id').value  = promo?.id || ''
+    document.getElementById('vsub-edit-name').value      = sub.business_name || ''
+    document.getElementById('vsub-edit-category').value  = sub.category || ''
+    document.getElementById('vsub-edit-city').value      = sub.city || ''
+    document.getElementById('vsub-edit-email').value     = sub.email || ''
+    document.getElementById('vsub-edit-phone').value     = sub.phone || ''
+    document.getElementById('vsub-edit-website').value   = sub.website || ''
+    document.getElementById('vsub-edit-description').value = sub.description || ''
+    document.getElementById('vsub-edit-modal').style.display = 'flex'
+  }
+
+  window.saveVsubEdit = async function() {
+    const id       = document.getElementById('vsub-edit-id').value
+    const promoId  = document.getElementById('vsub-edit-promo-id').value
+    const name     = document.getElementById('vsub-edit-name').value.trim()
+    const category = document.getElementById('vsub-edit-category').value.trim()
+    const city     = document.getElementById('vsub-edit-city').value.trim()
+    const email    = document.getElementById('vsub-edit-email').value.trim()
+    const phone    = document.getElementById('vsub-edit-phone').value.trim()
+    const website  = document.getElementById('vsub-edit-website').value.trim()
+    const desc     = document.getElementById('vsub-edit-description').value.trim()
+
+    const { error: subErr } = await supabase.from('vendor_quick_submissions').update({
+      business_name: name, category, city, email,
+      phone: phone || null, website: website || null, description: desc
+    }).eq('id', id)
+    if (subErr) { showToast('Error updating submission: ' + subErr.message, true); return }
+
+    if (promoId) {
+      const body = [desc, city ? 'Location: ' + city : null].filter(Boolean).join('\n\n')
+      const { error: promoErr } = await supabase.from('promotions').update({
+        headline: name, body, service_category: category,
+        contact_email: email, contact_phone: phone || null,
+        cta_url: website || null, cta_label: website ? 'Website' : null
+      }).eq('id', promoId)
+      if (promoErr) { showToast('Error updating live listing: ' + promoErr.message, true); return }
+    }
+
+    document.getElementById('vsub-edit-modal').style.display = 'none'
+    showToast('Saved' + (promoId ? ' — live listing updated' : ''))
+    loadVendorSubs()
+  }
+
+  window.closeVsubEdit = function() {
+    document.getElementById('vsub-edit-modal').style.display = 'none'
   }
 
   // ─── NAV ─────────────────────────────────────────────────
