@@ -780,11 +780,7 @@
               <div class="week-view" id="week-rows"></div>
             </div>
           </div>
-          <!-- DAY DETAIL -->
-          <div class="day-detail" id="day-detail">
-            <div class="day-detail-title" id="day-detail-title">—</div>
-            <div id="day-detail-items"></div>
-          </div>
+
         </div>
         <div class="cal-sidebar">
           <div class="cal-legend">
@@ -1809,35 +1805,40 @@ function renderWeekView() {
 }
 
 window.showDayDetail = function(dateStr) {
-  const evts = allBookings.filter(b => b.event_date?.slice(0,10) === dateStr)
-  const detail = document.getElementById('day-detail')
-  if (!evts.length) { detail.classList.remove('show'); return }
-  document.getElementById('day-detail-title').textContent = new Date(dateStr+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
-  document.getElementById('day-detail-items').innerHTML = evts.map(e => `
-    <div class="day-detail-item">
-      <div class="day-detail-name">${esc(e.event_name||'Event')}</div>
-      <div class="day-detail-meta">${esc(e.city||'—')} · <span class="pill pill-${e.status}">${e.status}</span>${e.is_external?' · External':''}</div>
-      ${e.is_external ? `<div class="day-detail-actions">
-        <button class="day-detail-action-btn" onclick="openEditExtBooking('${e.id}')">Edit</button>
-        <button class="day-detail-action-btn danger" onclick="deleteExtBooking('${e.id}')">Delete</button>
-      </div>` : ''}
-    </div>`).join('')
-  detail.classList.add('show')
+  // Highlight the matching card(s) in the upcoming list instead of a separate box
+  document.querySelectorAll('.cal-upcoming-card').forEach(el => {
+    el.style.outline = el.dataset.date === dateStr ? '2px solid var(--fire)' : 'none'
+  })
+  const first = document.querySelector(`.cal-upcoming-card[data-date="${dateStr}"]`)
+  if (first) first.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
 }
 
 function renderCalUpcoming() {
   const today = new Date().toISOString().slice(0,10)
-  const upcoming = allBookings.filter(b => b.event_date >= today && b.status === 'accepted').slice(0,5)
+  const upcoming = allBookings.filter(b => b.event_date >= today && b.status === 'accepted').slice(0,8)
   const el = document.getElementById('cal-upcoming-list')
   if (!upcoming.length) { el.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No upcoming bookings.</div>'; return }
-  el.innerHTML = upcoming.map(b => `
-    <div class="cal-upcoming-item" style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
-      <div style="min-width:0">
-        <div class="cal-upcoming-name">${esc(b.event_name||'Event')}</div>
-        <div class="cal-upcoming-meta">${fmtDate(b.event_date)} · ${esc(b.city||'—')}</div>
+  el.innerHTML = upcoming.map(b => {
+    const from = b.is_external ? 'External' : esc(b.requester?.business_name||b.requester?.contact_name||'Platform')
+    const editDel = b.is_external ? `
+      <button onclick="openEditExtBooking('${b.id}')" style="font-family:'Sora',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid var(--dark-border);background:rgba(255,255,255,0.06);color:var(--text-secondary);cursor:pointer">Edit</button>
+      <button onclick="deleteExtBooking('${b.id}')" style="font-family:'Sora',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid rgba(239,68,68,0.3);background:transparent;color:#f87171;cursor:pointer">Delete</button>` : ''
+    const msgBtn = b.requester_id && !b.is_external
+      ? `<button onclick="startConversation('${b.requester_id}','${esc(b.requester?.business_name||b.requester?.contact_name||'').replace(/'/g,"\'")}')" style="font-family:'Sora',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid var(--dark-border);background:rgba(255,255,255,0.06);color:var(--text-secondary);cursor:pointer">Message</button>` : ''
+    return `<div class="cal-upcoming-card" data-date="${b.event_date?.slice(0,10)||''}" style="border:1px solid var(--dark-border);border-radius:10px;padding:12px 14px;margin-bottom:10px;transition:outline 0.15s">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;min-width:0">${esc(b.event_name||'Event')}</div>
+        <span class="pill pill-${b.status}" style="flex-shrink:0">${b.status}</span>
       </div>
-      <button onclick="openEcovModal('${b.id}')" title="Post emergency coverage" style="flex-shrink:0;background:rgba(201,74,26,0.15);border:1px solid rgba(201,74,26,0.4);color:#e8724a;border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:'DM Mono',monospace;white-space:nowrap">⚡</button>
-    </div>`).join('')
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:2px">${fmtDate(b.event_date)}${b.start_time?' · '+fmtTime(b.start_time):''}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:8px">${esc(b.city||'—')} · From: ${from}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        ${msgBtn}
+        <button onclick="openEcovModal('${b.id}')" style="font-family:'Sora',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid rgba(201,74,26,0.4);background:rgba(201,74,26,0.15);color:#e8724a;cursor:pointer">⚡ Coverage</button>
+        ${editDel}
+      </div>
+    </div>`
+  }).join('')
 }
 
 // ─── BOOKING INBOX ────────────────────────────────────
@@ -2797,7 +2798,6 @@ window.deleteExtBooking = async function(id) {
   if (error) { showToast('Error deleting: ' + error.message, true); return }
   if (count === 0) { showToast('Delete failed — permission denied or booking not found', true); return }
   showToast('Booking deleted')
-  document.getElementById('day-detail').classList.remove('show')
   await Promise.all([loadAllBookings(), loadAcceptedBookings(), loadUpcomingBookings()])
   await loadOverview()
 }
