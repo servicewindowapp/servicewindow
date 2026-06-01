@@ -1408,7 +1408,7 @@
   async function initMessages() {
     const { data, error } = await supabase
       .from('messages')
-      .select('id, conversation_id, sender_id, recipient_id, body, is_read, created_at')
+      .select('id, conversation_id, sender_id, recipient_id, content, is_read, created_at')
       .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
       .order('created_at', {ascending:false})
 
@@ -1476,7 +1476,7 @@
     if (udot) udot.remove()
 
     const { data } = await supabase.from('messages')
-      .select('id, sender_id, body, created_at')
+      .select('id, sender_id, content, created_at')
       .eq('conversation_id', convId)
       .order('created_at', {ascending:true})
 
@@ -1485,7 +1485,7 @@
       const isMe = m.sender_id === userId
       const t = new Date(m.created_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})
       return `<div style="display:flex;flex-direction:column;align-self:${isMe?'flex-end':'flex-start'}">
-        <div class="msg-bubble ${isMe?'me':'them'}">${DOMPurify.sanitize(esc(m.body))}</div>
+        <div class="msg-bubble ${isMe?'me':'them'}">${DOMPurify.sanitize(esc(m.content))}</div>
         <div class="msg-bubble-time" style="text-align:${isMe?'right':'left'}">${t}</div>
       </div>`
     }).join('')
@@ -1518,7 +1518,7 @@
       conversation_id: activeConvId,
       sender_id:    userId,
       recipient_id: activeRecipId,
-      body: content,
+      content: content,
       is_read: false
     })
     if (error) { showToast('Could not send message', true); return }
