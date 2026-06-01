@@ -1959,7 +1959,13 @@
     // ─── NAV SCROLL EFFECT ───
     // Nav stays dark — no white-on-scroll. This is intentional per design system.
 
-    // ─── FEATURED TRUCKS CAROUSEL ───
+    // ─── FEATURED TRUCKS CAROUSEL — see module script below ───
+
+  </script>
+
+  <script type="module">
+    import { supabase } from './supabase-client.js';
+
     (async function initCarousel() {
       const CUISINE_EMOJI = {
         'bbq': '\uD83D\uDD25', 'tacos': '\uD83C\uDF2E', 'mexican': '\uD83C\uDF2E',
@@ -2043,7 +2049,6 @@
         track.addEventListener('touchmove',  e => { wrap.scrollLeft = scrollStart - (e.touches[0].pageX - startX); }, { passive: true });
       } catch (e) { /* silent — carousel non-critical */ }
     })();
-
   </script>
 </body>
 </html>
