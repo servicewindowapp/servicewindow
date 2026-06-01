@@ -1498,15 +1498,40 @@
   }
 
   window.approveVsub = async function(id) {
+    // Fetch full submission row first
+    const { data: sub, error: fetchErr } = await supabase
+      .from('vendor_quick_submissions').select('*').eq('id', id).single()
+    if (fetchErr || !sub) { showToast('Error fetching submission', true); return }
+
+    // Build body — append city since there is no linked profile
+    const body = [sub.description, sub.city ? 'Location: ' + sub.city : null].filter(Boolean).join('\n\n')
+
+    // Insert into promotions so it appears on vendor-services.html immediately
+    const { error: promoErr } = await supabase.from('promotions').insert({
+      ad_type:          'service_provider',
+      headline:         sub.business_name,
+      body,
+      service_category: sub.category,
+      contact_email:    sub.email,
+      contact_phone:    sub.phone || null,
+      cta_url:          sub.website || null,
+      cta_label:        sub.website ? 'Website' : null,
+      status:           'active',
+      admin_notes:      'Auto-created from vendor quick submission ' + id,
+    })
+    if (promoErr) { showToast('Error creating listing: ' + promoErr.message, true); return }
+
+    // Mark submission approved
     const { error } = await supabase.from('vendor_quick_submissions').update({ status: 'approved' }).eq('id', id)
-    if (error) { showToast('Error approving submission', true); return }
+    if (error) { showToast('Error updating submission status', true); return }
+
     document.querySelector(`#vsub-${id} .pill`)?.setAttribute('class', 'pill pill-approved')
     document.querySelector(`#vsub-${id} .pill`)?.replaceChildren(document.createTextNode('approved'))
     document.querySelector(`#vsub-${id} td:last-child`)?.replaceChildren(document.createTextNode('—'))
     const badge = document.getElementById('vsubs-badge')
     const next = Math.max(0, (parseInt(badge.textContent, 10) || 0) - 1)
     badge.textContent = next; badge.style.display = next > 0 ? 'inline-block' : 'none'
-    showToast('Submission approved — add listing to vendor directory manually')
+    showToast('Approved — listing is now live on vendor-services.html')
   }
 
   window.rejectVsub = async function(id) {
