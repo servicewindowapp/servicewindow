@@ -467,6 +467,10 @@
         <span class="nav-icon">📋</span> Documents
         <span class="nav-badge" id="docs-badge" style="display:none">0</span>
       </button>
+      <button class="nav-item" data-section="vendor-subs">
+        <span class="nav-icon">🏪</span> Vendor Submissions
+        <span class="nav-badge" id="vsubs-badge" style="display:none">0</span>
+      </button>
     </nav>
     <div class="sidebar-footer">
       <div class="admin-name" id="admin-name">Admin</div>
@@ -746,6 +750,36 @@
       </div>
     </section>
 
+    <section class="section" id="section-vendor-subs">
+      <div class="section-header">
+        <h1>Vendor Submissions</h1>
+        <p>Quick-submit service provider listings from vendor-services.html. Review, add notes, approve or reject.</p>
+      </div>
+      <div class="table-container">
+        <div class="table-toolbar">
+          <span class="table-title" id="vsubs-count">Pending Submissions</span>
+          <button class="btn-signout" style="width:auto;padding:6px 14px" onclick="loadVendorSubs()">Refresh</button>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Business</th>
+            <th>Category</th>
+            <th>City</th>
+            <th>Contact</th>
+            <th>Submitted</th>
+            <th>Status</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="vsubs-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="vsubs-empty" style="display:none">
+          <div class="empty-state-icon">🏪</div>
+          <p class="empty-state-title">No pending vendor submissions</p>
+          <p class="empty-state-body">Quick-submit entries from the vendor directory page will appear here.</p>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -804,7 +838,7 @@
     document.getElementById('loading-screen').style.display = 'none'
     document.getElementById('dashboard').style.display = 'flex'
 
-    await Promise.all([loadStats(), loadPending(), loadAllUsers(), loadWaitlist(), loadClaims(), loadAds(), loadDocuments()])
+    await Promise.all([loadStats(), loadPending(), loadAllUsers(), loadWaitlist(), loadClaims(), loadAds(), loadDocuments(), loadVendorSubs()])
   }
 
   // ─── STATS ──────────────────────────────────────────────
@@ -1413,6 +1447,79 @@
     showToast('Documents saved')
     closeDocModal()
     await loadDocuments()
+  }
+
+
+  // ─── VENDOR QUICK SUBMISSIONS ──────────────────────────
+  window.loadVendorSubs = async function() {
+    const { data, error } = await supabase
+      .from('vendor_quick_submissions')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    const tbody  = document.getElementById('vsubs-tbody')
+    const empty  = document.getElementById('vsubs-empty')
+    const countEl = document.getElementById('vsubs-count')
+    const badge  = document.getElementById('vsubs-badge')
+
+    if (!data || !data.length) {
+      tbody.innerHTML = ''
+      empty.style.display = 'block'
+      countEl.textContent = 'Vendor Submissions'
+      badge.style.display = 'none'
+      return
+    }
+
+    const pending = data.filter(r => r.status === 'pending').length
+    badge.textContent = pending
+    badge.style.display = pending > 0 ? 'inline-block' : 'none'
+    countEl.textContent = `Vendor Submissions (${data.length})`
+    empty.style.display = 'none'
+
+    tbody.innerHTML = data.map(r => `<tr id="vsub-${r.id}">
+      <td>
+        <div style="font-weight:700;font-family:'Sora',sans-serif;font-size:13px">${esc(r.business_name)}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px">${esc(r.email)}${r.phone ? ' · ' + esc(r.phone) : ''}${r.website ? ' · <a href="' + esc(r.website) + '" target="_blank" style="color:var(--fire);text-decoration:none">site ↗</a>' : ''}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;max-width:320px">${esc((r.description||'').substring(0,120))}${(r.description||'').length>120?'…':''}</div>
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${esc(r.category)}</td>
+      <td>${esc(r.city)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${esc(r.contact_name)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5)">${fmtDate(r.created_at)}</td>
+      <td><span class="pill pill-${r.status}">${r.status}</span></td>
+      <td>
+        ${r.status === 'pending' ? `
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-approve" onclick="approveVsub('${r.id}')">Approve</button>
+          <button class="btn-reject" onclick="rejectVsub('${r.id}')">Reject</button>
+        </div>` : '—'}
+      </td>
+    </tr>`).join('')
+  }
+
+  window.approveVsub = async function(id) {
+    const { error } = await supabase.from('vendor_quick_submissions').update({ status: 'approved' }).eq('id', id)
+    if (error) { showToast('Error approving submission', true); return }
+    document.querySelector(`#vsub-${id} .pill`)?.setAttribute('class', 'pill pill-approved')
+    document.querySelector(`#vsub-${id} .pill`)?.replaceChildren(document.createTextNode('approved'))
+    document.querySelector(`#vsub-${id} td:last-child`)?.replaceChildren(document.createTextNode('—'))
+    const badge = document.getElementById('vsubs-badge')
+    const next = Math.max(0, (parseInt(badge.textContent, 10) || 0) - 1)
+    badge.textContent = next; badge.style.display = next > 0 ? 'inline-block' : 'none'
+    showToast('Submission approved — add listing to vendor directory manually')
+  }
+
+  window.rejectVsub = async function(id) {
+    if (!confirm('Reject this vendor submission?')) return
+    const { error } = await supabase.from('vendor_quick_submissions').update({ status: 'rejected' }).eq('id', id)
+    if (error) { showToast('Error rejecting submission', true); return }
+    document.querySelector(`#vsub-${id} .pill`)?.setAttribute('class', 'pill pill-rejected')
+    document.querySelector(`#vsub-${id} .pill`)?.replaceChildren(document.createTextNode('rejected'))
+    document.querySelector(`#vsub-${id} td:last-child`)?.replaceChildren(document.createTextNode('—'))
+    const badge = document.getElementById('vsubs-badge')
+    const next = Math.max(0, (parseInt(badge.textContent, 10) || 0) - 1)
+    badge.textContent = next; badge.style.display = next > 0 ? 'inline-block' : 'none'
+    showToast('Submission rejected')
   }
 
   // ─── NAV ─────────────────────────────────────────────────
