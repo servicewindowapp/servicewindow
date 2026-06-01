@@ -635,16 +635,6 @@
     }
 
     loadListings()
-  </script>
-
-  <script>
-    // ─── HAMBURGER ────────────────────────────────────────────
-    const hamburger = document.getElementById('hamburger')
-    const mobileMenu = document.getElementById('mobileMenu')
-    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
-    document.addEventListener('click', e => {
-      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) mobileMenu.classList.remove('open')
-    })
 
     // ─── FORM SUBMIT ──────────────────────────────────────────
     const form = document.getElementById('vendor-submit-form')
@@ -675,6 +665,16 @@
         form.style.display = 'none'
         successEl.classList.add('show')
       }
+    })
+  </script>
+
+  <script>
+    // ─── HAMBURGER ────────────────────────────────────────────
+    const hamburger = document.getElementById('hamburger')
+    const mobileMenu = document.getElementById('mobileMenu')
+    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
+    document.addEventListener('click', e => {
+      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) mobileMenu.classList.remove('open')
     })
   </script>
 
