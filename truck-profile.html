@@ -329,6 +329,12 @@
             <div id="p-details-list"></div>
           </div>
 
+          <!-- Documents on File -->
+          <div id="p-docs-section" style="display:none">
+            <div class="profile-section-label">Documents on File</div>
+            <div id="p-docs-list"></div>
+          </div>
+
         </div>
 
         <!-- Right: CTA card -->
@@ -469,8 +475,9 @@
 
         renderProfile(truck)
 
-        // Fetch aggregate stats (non-blocking)
+        // Fetch aggregate stats + public documents (non-blocking)
         loadTruckStats(truck.id)
+        loadTruckDocumentsPublic(truck.id)
 
       } catch (e) {
         console.error('[truck-profile]', e)
@@ -665,6 +672,45 @@
         }
       } catch (e) {
         console.warn('[loadTruckStats]', e)
+      }
+    }
+
+    async function loadTruckDocumentsPublic(truckId) {
+      try {
+        const { data: docs } = await supabase
+          .from('truck_documents')
+          .select('document_type, file_url, file_name')
+          .eq('truck_id', truckId)
+          .eq('status', 'approved')
+          .not('file_url', 'is', null)
+
+        if (!docs || docs.length === 0) return
+
+        const DOC_LABELS = {
+          dbpr_mfdv_license:        'DBPR MFDV License',
+          county_health_permit:     'County Health Permit',
+          food_manager_cert:        'Food Manager Cert',
+          certificate_of_insurance: 'Certificate of Insurance',
+          commissary_agreement:     'Commissary Agreement',
+        }
+
+        const listEl = document.getElementById('p-docs-list')
+        listEl.innerHTML = docs.map(d => {
+          const label = DOC_LABELS[d.document_type] || d.document_type
+          const fname = d.file_name ? escHtml(d.file_name) : label
+          const url   = escHtml(d.file_url)
+          return `<div class="detail-row">
+            <div class="detail-icon">📄</div>
+            <div>
+              <div class="detail-label">${escHtml(label)}</div>
+              <div class="detail-value"><a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--fire)">Download ${fname} →</a></div>
+            </div>
+          </div>`
+        }).join('')
+
+        document.getElementById('p-docs-section').style.display = ''
+      } catch (e) {
+        console.warn('[loadTruckDocumentsPublic]', e)
       }
     }
 

@@ -1173,6 +1173,9 @@
           <div><strong style="color:rgba(255,255,255,0.8)">Commissary Agreement</strong> — Signed agreement with a licensed commissary kitchen</div>
         </div>
       </div>
+      <!-- Hidden file input for document uploads -->
+      <input type="file" id="doc-file-input" accept="application/pdf,image/jpeg,image/png,image/webp" style="display:none">
+      <span id="doc-upload-status" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);display:block;margin-top:12px"></span>
     </section>
 
   </main>
@@ -2900,9 +2903,59 @@ async function loadTruckDocuments() {
         '</div>' +
         notes +
       '</div>' +
+      '<div style="flex-shrink:0;padding-top:2px">' +
+        '<button data-doc-upload="' + dt + '" style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--fire);background:none;border:1px solid rgba(255,107,53,0.35);border-radius:6px;padding:5px 10px;cursor:pointer;transition:border-color 0.2s">' +
+          (d.file_url ? 'Replace' : 'Upload') +
+        '</button>' +
+      '</div>' +
     '</div>'
   }).join('')
 }
+
+// ─── DOCUMENT UPLOAD ──────────────────────────────────
+const DOC_UPLOAD_FN = 'https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/upload-document'
+let _pendingDocType = null
+
+document.getElementById('truck-docs-list').addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-doc-upload]')
+  if (!btn) return
+  _pendingDocType = btn.dataset.docUpload
+  const inp = document.getElementById('doc-file-input')
+  inp.value = ''
+  inp.click()
+})
+
+document.getElementById('doc-file-input').addEventListener('change', async function() {
+  const file = this.files[0]
+  if (!file || !_pendingDocType) return
+  const statusEl = document.getElementById('doc-upload-status')
+  statusEl.textContent = 'Uploading…'
+  statusEl.style.color = 'var(--text-muted)'
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('Not logged in')
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('doc_type', _pendingDocType)
+    const res = await fetch(DOC_UPLOAD_FN, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + session.access_token },
+      body: fd
+    })
+    const json = await res.json()
+    if (!res.ok || json.error) throw new Error(json.error || 'Upload failed')
+    statusEl.textContent = 'Uploaded — pending admin review.'
+    statusEl.style.color = '#50c878'
+    showToast('Document uploaded — under review.')
+    await loadTruckDocuments()
+  } catch (err) {
+    statusEl.textContent = 'Upload failed: ' + err.message
+    statusEl.style.color = '#ef4444'
+    showToast('Upload failed: ' + err.message, true)
+  }
+  _pendingDocType = null
+})
+
 
 function fmtDate(d) {
   if (!d) return '—'
