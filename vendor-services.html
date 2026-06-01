@@ -114,9 +114,9 @@
 
     /* ─── VENDOR CARDS ─── */
     .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-    .vendor-card { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 14px; padding: 22px 24px; transition: border-color 0.2s; }
-    .vendor-card:hover { border-color: rgba(255,107,53,0.35); }
-    .vendor-card-name { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+    .vendor-card { background: #0d1f2d; border: 1px solid rgba(255,107,53,0.4); border-radius: 14px; padding: 22px 24px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 2px 12px rgba(255,107,53,0.08); }
+    .vendor-card:hover { border-color: rgba(255,107,53,0.75); box-shadow: 0 4px 20px rgba(255,107,53,0.15); }
+    .vendor-card-name { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--fire); margin-bottom: 6px; }
     .vendor-card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
     .vendor-tag { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; }
     .vendor-tag.city { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
