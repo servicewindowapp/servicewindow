@@ -1427,6 +1427,58 @@
   </div>
 </div>
 
+
+<!-- ─── EMERGENCY COVERAGE QUICK-POST MODAL ──────────────── -->
+<div class="ext-modal-overlay" id="ecov-modal-overlay" onclick="if(event.target===this)closeEcovModal()">
+  <div class="ext-modal">
+    <div class="ext-modal-eyebrow">⚡ Emergency Coverage</div>
+    <div class="ext-modal-title" id="ecov-modal-title">Post Urgent Replacement</div>
+    <div class="ext-modal-sub">Pre-filled from your booking. Add a reason — this goes directly to standby trucks.</div>
+    <form class="ext-form" id="ecov-form">
+      <div class="ext-form-row">
+        <div class="ext-form-group">
+          <label class="ext-form-label">Event</label>
+          <input type="text" id="ecov-event-name" class="ext-form-input" readonly style="opacity:0.6">
+        </div>
+        <div class="ext-form-group">
+          <label class="ext-form-label">Date</label>
+          <input type="text" id="ecov-event-date" class="ext-form-input" readonly style="opacity:0.6">
+        </div>
+      </div>
+      <div class="ext-form-row">
+        <div class="ext-form-group">
+          <label class="ext-form-label">City</label>
+          <input type="text" id="ecov-city" class="ext-form-input" readonly style="opacity:0.6">
+        </div>
+        <div class="ext-form-group">
+          <label class="ext-form-label">Guests</label>
+          <input type="text" id="ecov-guests" class="ext-form-input" readonly style="opacity:0.6">
+        </div>
+      </div>
+      <div class="ext-form-group">
+        <label class="ext-form-label">Reason for Urgent Replacement <span style="color:var(--fire)">*</span></label>
+        <textarea id="ecov-reason" class="ext-form-textarea" placeholder="e.g. Truck broke down, family emergency, equipment failure…" style="min-height:90px"></textarea>
+      </div>
+      <div id="ecov-contact-block" style="display:none">
+        <div class="ext-section-divider">Contact Info (visible to standby trucks)</div>
+        <div class="ext-form-row" style="margin-top:10px">
+          <div class="ext-form-group">
+            <label class="ext-form-label">Phone</label>
+            <input type="tel" id="ecov-phone" class="ext-form-input" placeholder="239-555-0100">
+          </div>
+          <div class="ext-form-group">
+            <label class="ext-form-label">Email</label>
+            <input type="email" id="ecov-email" class="ext-form-input" placeholder="you@example.com">
+          </div>
+        </div>
+      </div>
+      <div id="ecov-status" style="font-family:'DM Mono',monospace;font-size:11px;color:#ff8080;min-height:16px"></div>
+      <button type="submit" class="ext-submit-btn" style="background:#c94a1a">⚡ Post Emergency Coverage</button>
+      <button type="button" class="ext-cancel-link" onclick="closeEcovModal()">Cancel</button>
+    </form>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
@@ -1875,7 +1927,8 @@ async function loadAcceptedBookings() {
     if (canComplete) {
       action = `<div class="action-group">${msgBtn}<button class="btn-complete" onclick="markComplete('${b.id}','${b.requester_id||''}','${requesterName.replace(/'/g,"\\'")}','${(b.event_name||'Event').replace(/'/g,"\\'")}')">Mark Complete</button></div>`
     } else if (b.status==='accepted') {
-      action = `<div class="action-group">${msgBtn}<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Upcoming</span></div>`
+      const ecovBtn = `<button class="btn-msg" style="background:rgba(201,74,26,0.15);border-color:rgba(201,74,26,0.4);color:#e8724a" onclick="openEcovModal('${b.id}')">⚡ Need Coverage</button>`
+      action = `<div class="action-group">${msgBtn}${ecovBtn}<span style="color:var(--text-muted);font-size:11px;font-family:'DM Mono',monospace">Upcoming</span></div>`
     } else if (b.status==='completed') {
       const reviewBtn = canReview
         ? `<button class="btn-review" onclick="openReviewModal('${b.requester_id}','${esc(b.event_name||'Event')}','${b.id}')">Leave Review</button>`
@@ -1930,6 +1983,89 @@ async function loadListings() {
     <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
   </tr>`).join('')
 }
+
+
+// ─── EMERGENCY COVERAGE QUICK-POST ───────────────────
+let ecovBookingId = null
+
+window.openEcovModal = function(bookingId) {
+  const b = allBookings.find(x => x.id === bookingId)
+  if (!b) return
+  ecovBookingId = bookingId
+  document.getElementById('ecov-event-name').value = b.event_name || 'Event'
+  document.getElementById('ecov-event-date').value = b.event_date ? fmtDate(b.event_date) : '—'
+  document.getElementById('ecov-city').value = b.city || b.location || '—'
+  document.getElementById('ecov-guests').value = b.guest_count ? b.guest_count + ' guests' : '—'
+  document.getElementById('ecov-reason').value = ''
+  document.getElementById('ecov-phone').value = ''
+  document.getElementById('ecov-email').value = ''
+  document.getElementById('ecov-status').textContent = ''
+  // Show contact block only for external bookings
+  document.getElementById('ecov-contact-block').style.display = b.is_external ? 'block' : 'none'
+  document.getElementById('ecov-modal-overlay').classList.add('open')
+  setTimeout(() => document.getElementById('ecov-reason').focus(), 100)
+}
+
+window.closeEcovModal = function() {
+  document.getElementById('ecov-modal-overlay').classList.remove('open')
+  ecovBookingId = null
+}
+
+document.getElementById('ecov-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const statusEl = document.getElementById('ecov-status')
+  const reason = document.getElementById('ecov-reason').value.trim()
+  if (!reason) { statusEl.textContent = 'Reason is required.'; return }
+  statusEl.textContent = 'Posting…'; statusEl.style.color = 'var(--text-muted)'
+
+  const b = allBookings.find(x => x.id === ecovBookingId)
+  if (!b) { statusEl.textContent = 'Booking not found.'; statusEl.style.color = '#ff8080'; return }
+
+  const phone = document.getElementById('ecov-phone').value.trim()
+  const email = document.getElementById('ecov-email').value.trim()
+
+  let desc = '⚡ Urgent replacement needed: ' + reason
+  if (b.is_external && (phone || email)) {
+    desc += '\n\nContact: ' + [phone, email].filter(Boolean).join(' · ')
+  }
+
+  const city = b.city || b.location || ''
+  const title = '⚡ Coverage Needed: ' + esc(b.event_name || 'Event') + ' — ' + city
+
+  const { error } = await supabase.from('listings').insert({
+    poster_id: userId,
+    board: 'shift',
+    title,
+    description: desc,
+    city,
+    event_date: b.event_date || null,
+    start_time: b.start_time || null,
+    guest_count_min: b.guest_count || null,
+    is_urgent: true,
+    status: 'active'
+  })
+
+  if (error) { statusEl.textContent = 'Error: ' + error.message; statusEl.style.color = '#ff8080'; return }
+
+  closeEcovModal()
+  showToast('Emergency coverage posted')
+
+  // Notify standby trucks
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session?.access_token) {
+    fetch('https://krmfxedkxoyzkeqnijcd.supabase.co/functions/v1/notify-standby-trucks', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + session.access_token,
+        'Content-Type': 'application/json',
+        'x-client-info': 'servicewindow-web'
+      },
+      body: JSON.stringify({ title, event_type: b.event_name || 'Event', event_date: b.event_date || null, city })
+    }).catch(() => {})
+  }
+
+  await loadListings()
+})
 
 // ─── EMERGENCY COVERAGE ───────────────────────────────
 document.getElementById('shift-form').addEventListener('submit', async (e) => {
