@@ -114,17 +114,17 @@
 
     /* ─── VENDOR CARDS ─── */
     .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-    .vendor-card { background: #0d1f2d; border: 1px solid rgba(255,107,53,0.4); border-radius: 14px; padding: 22px 24px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 2px 12px rgba(255,107,53,0.08); }
-    .vendor-card:hover { border-color: rgba(255,107,53,0.75); box-shadow: 0 4px 20px rgba(255,107,53,0.15); }
-    .vendor-card-name { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--fire); margin-bottom: 6px; }
+    .vendor-card { background: #FF6B35; border: 1px solid rgba(0,0,0,0.15); border-radius: 14px; padding: 22px 24px; transition: filter 0.2s; }
+    .vendor-card:hover { filter: brightness(1.08); }
+    .vendor-card-name { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: #0D1B2A; margin-bottom: 6px; }
     .vendor-card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
     .vendor-tag { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 4px; }
-    .vendor-tag.city { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--dark-border); }
-    .vendor-tag.area { background: rgba(255,107,53,0.08); color: var(--fire); border: 1px solid rgba(255,107,53,0.2); }
-    .vendor-card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .vendor-tag.city { background: rgba(0,0,0,0.15); color: #0D1B2A; border: 1px solid rgba(0,0,0,0.2); }
+    .vendor-tag.area { background: rgba(0,0,0,0.15); color: #0D1B2A; border: 1px solid rgba(0,0,0,0.2); }
+    .vendor-card-desc { font-size: 13px; color: #1a2a1a; line-height: 1.55; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .vendor-card-contacts { display: flex; flex-wrap: wrap; gap: 8px; }
-    .vendor-contact-link { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--fire); text-decoration: none; border: 1px solid rgba(255,107,53,0.25); border-radius: 6px; padding: 4px 10px; transition: all 0.2s; }
-    .vendor-contact-link:hover { background: rgba(255,107,53,0.1); border-color: var(--fire); }
+    .vendor-contact-link { font-family: 'DM Mono', monospace; font-size: 11px; color: #0D1B2A; text-decoration: none; border: 1px solid rgba(0,0,0,0.3); border-radius: 6px; padding: 4px 10px; transition: all 0.2s; background: rgba(0,0,0,0.1); }
+    .vendor-contact-link:hover { background: rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.5); }
 
     /* ─── EMPTY STATE ─── */
     .empty-state { background: var(--dark-card); border: 1px dashed var(--dark-border); border-radius: 14px; padding: 32px 28px; text-align: center; }
