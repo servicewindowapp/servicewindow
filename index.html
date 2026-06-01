@@ -1193,6 +1193,115 @@
     }
 
     .form-success.show { display: block; }
+
+    /* ─── FEATURED TRUCKS CAROUSEL ─── */
+    .featured-section {
+      background: var(--navy);
+      border-top: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
+      padding: 80px 0;
+      display: none;
+    }
+    .featured-section.loaded { display: block; }
+
+    .carousel-track-wrap {
+      overflow: hidden;
+      margin-top: 40px;
+      position: relative;
+    }
+    .carousel-track-wrap::before,
+    .carousel-track-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 60px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .carousel-track-wrap::before { left: 0; background: linear-gradient(to right, var(--navy), transparent); }
+    .carousel-track-wrap::after  { right: 0; background: linear-gradient(to left, var(--navy), transparent); }
+
+    .carousel-track {
+      display: flex;
+      gap: 18px;
+      width: max-content;
+      cursor: grab;
+      user-select: none;
+      padding: 0 60px 4px;
+    }
+    .carousel-track.dragging { cursor: grabbing; }
+
+    .truck-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      width: 220px;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.2s;
+      display: block;
+    }
+    .truck-card:hover {
+      border-color: rgba(255,107,53,0.45);
+      transform: translateY(-3px);
+    }
+    .truck-card-photo {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: rgba(255,255,255,0.04);
+    }
+    .truck-card-emoji {
+      width: 100%;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 54px;
+      background: rgba(255,255,255,0.04);
+    }
+    .truck-card-body {
+      padding: 16px;
+    }
+    .truck-card-name {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--white);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .truck-card-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .truck-card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      background: rgba(255,107,53,0.12);
+      border: 1px solid rgba(255,107,53,0.25);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--fire);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
   </style>
 </head>
 <body>
@@ -1239,7 +1348,7 @@
         </div>
         <div class="trust-item">
           <div class="trust-icon"><svg viewBox="0 0 10 10"><path d="M2 5l2 2 4-4"/></svg></div>
-          21 SWFL cities
+          22 SWFL cities
         </div>
         <div class="trust-item">
           <div class="trust-icon"><svg viewBox="0 0 10 10"><path d="M2 5l2 2 4-4"/></svg></div>
@@ -1534,7 +1643,7 @@
       <p class="section-sub">Southwest Florida has one of the densest food truck cultures in the Southeast — and no purpose-built platform to serve it. Until now.</p>
       <div class="stats-row">
         <div class="stat-tile">
-          <span class="stat-number">21</span>
+          <span class="stat-number">22</span>
           <span class="stat-label">SWFL Cities</span>
         </div>
         <div class="stat-tile">
@@ -1550,6 +1659,21 @@
           <span class="stat-label">Scam Posts Blocked<br>Per Day in Groups</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ─── FEATURED TRUCKS CAROUSEL ─── -->
+  <section class="featured-section" id="featured-trucks">
+    <div class="container">
+      <div class="section-label">On the Platform</div>
+      <h2 class="section-title">Verified trucks, ready to book.</h2>
+      <p class="section-sub">Every operator below is verified and active on ServiceWindow.</p>
+    </div>
+    <div class="carousel-track-wrap">
+      <div class="carousel-track" id="carousel-track"></div>
+    </div>
+    <div class="container" style="text-align:center;margin-top:28px">
+      <a href="find-trucks.html" style="display:inline-block;padding:12px 28px;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--text-secondary);font-family:'DM Mono',monospace;font-size:13px;text-decoration:none;transition:border-color 0.2s,color 0.2s" onmouseover="this.style.borderColor='rgba(255,107,53,0.4)';this.style.color='var(--white)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.15)';this.style.color='var(--text-secondary)'">Browse all trucks →</a>
     </div>
   </section>
 
@@ -1834,6 +1958,73 @@
 
     // ─── NAV SCROLL EFFECT ───
     // Nav stays dark — no white-on-scroll. This is intentional per design system.
+
+    // ─── FEATURED TRUCKS CAROUSEL ───
+    (async function initCarousel() {
+      const CUISINE_EMOJI = {
+        'bbq': '\uD83D\uDD25', 'tacos': '\uD83C\uDF2E', 'mexican': '\uD83C\uDF2E',
+        'pizza': '\uD83C\uDF55', 'burgers': '\uD83C\uDF54', 'seafood': '\uD83E\uDD9E',
+        'dessert': '\uD83C\uDF66', 'ice cream': '\uD83C\uDF66', 'crepes': '\uD83E\uDD5E',
+        'jamaican': '\uD83E\uDD58', 'greek': '\uD83E\uDEB4', 'italian': '\uD83C\uDF5D',
+        'soda': '\uD83E\uDD64', 'drinks': '\uD83E\uDD64', 'asian': '\uD83C\uDF5C',
+        'wings': '\uD83C\uDF57', 'hot dogs': '\uD83C\uDF2D', 'sandwiches': '\uD83E\uDD6A',
+        'bowls': '\uD83E\uDD57', 'vegan': '\uD83E\uDD57',
+      };
+      function getEmoji(cuisine) {
+        if (!cuisine) return '\uD83D\uDE9A';
+        const c = cuisine.toLowerCase();
+        for (const [k, v] of Object.entries(CUISINE_EMOJI)) {
+          if (c.includes(k)) return v;
+        }
+        return '\uD83D\uDE9A';
+      }
+      try {
+        const { data: trucks, error } = await supabase
+          .from('profiles')
+          .select('id, business_name, city, cuisine_type, photos')
+          .eq('role', 'truck')
+          .eq('is_verified', true)
+          .in('subscription_status', ['active', 'trialing'])
+          .order('created_at', { ascending: true })
+          .limit(12);
+        if (error || !trucks || trucks.length === 0) return;
+        const track = document.getElementById('carousel-track');
+        trucks.forEach(truck => {
+          const name    = truck.business_name || 'Food Truck';
+          const city    = truck.city || 'Southwest Florida';
+          const cuisine = truck.cuisine_type || '';
+          const photo   = Array.isArray(truck.photos) && truck.photos[0] ? truck.photos[0] : null;
+          const emoji   = getEmoji(cuisine);
+          const url     = 'truck-profile.html?id=' + truck.id;
+          const metaStr = [cuisine, city].filter(Boolean).join(' \u00B7 ');
+          const card = document.createElement('a');
+          card.href = url;
+          card.className = 'truck-card';
+          card.innerHTML =
+            (photo ? '<img src="' + photo + '" alt="' + name + '" class="truck-card-photo" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">' : '') +
+            '<div class="truck-card-emoji" style="' + (photo ? 'display:none' : '') + '">' + emoji + '</div>' +
+            '<div class="truck-card-body">' +
+              '<div class="truck-card-name">' + name + '</div>' +
+              '<div class="truck-card-meta">' + metaStr + '</div>' +
+              '<span class="truck-card-badge">\u2713 Verified</span>' +
+            '</div>';
+          track.appendChild(card);
+        });
+        document.getElementById('featured-trucks').classList.add('loaded');
+        // Drag-to-scroll
+        let isDragging = false, startX = 0, scrollStart = 0;
+        const wrap = track.parentElement;
+        track.addEventListener('mousedown', e => {
+          isDragging = true; startX = e.pageX; scrollStart = wrap.scrollLeft;
+          track.classList.add('dragging');
+        });
+        document.addEventListener('mouseup', () => { isDragging = false; track.classList.remove('dragging'); });
+        document.addEventListener('mousemove', e => { if (isDragging) wrap.scrollLeft = scrollStart - (e.pageX - startX); });
+        track.addEventListener('touchstart', e => { startX = e.touches[0].pageX; scrollStart = wrap.scrollLeft; }, { passive: true });
+        track.addEventListener('touchmove',  e => { wrap.scrollLeft = scrollStart - (e.touches[0].pageX - startX); }, { passive: true });
+      } catch (e) { /* silent — carousel non-critical */ }
+    })();
+
   </script>
 </body>
 </html>
