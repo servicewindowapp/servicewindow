@@ -2000,14 +2000,33 @@
           const card = document.createElement('a');
           card.href = url;
           card.className = 'truck-card';
-          card.innerHTML =
-            (photo ? '<img src="' + photo + '" alt="' + name + '" class="truck-card-photo" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">' : '') +
-            '<div class="truck-card-emoji" style="' + (photo ? 'display:none' : '') + '">' + emoji + '</div>' +
-            '<div class="truck-card-body">' +
-              '<div class="truck-card-name">' + name + '</div>' +
-              '<div class="truck-card-meta">' + metaStr + '</div>' +
-              '<span class="truck-card-badge">\u2713 Verified</span>' +
-            '</div>';
+          // Build emoji div
+          const emojiDiv = document.createElement('div');
+          emojiDiv.className = 'truck-card-emoji';
+          emojiDiv.textContent = emoji;
+          emojiDiv.style.display = photo ? 'none' : '';
+          // Build photo img (if available)
+          if (photo) {
+            const img = document.createElement('img');
+            img.src = photo;
+            img.alt = name;
+            img.className = 'truck-card-photo';
+            img.loading = 'lazy';
+            img.onerror = function() {
+              this.style.display = 'none';
+              emojiDiv.style.display = 'flex';
+            };
+            card.appendChild(img);
+          }
+          card.appendChild(emojiDiv);
+          // Build body
+          const body = document.createElement('div');
+          body.className = 'truck-card-body';
+          body.innerHTML =
+            '<div class="truck-card-name">' + name + '</div>' +
+            '<div class="truck-card-meta">' + metaStr + '</div>' +
+            '<span class="truck-card-badge">\u2713 Verified</span>';
+          card.appendChild(body);
           track.appendChild(card);
         });
         document.getElementById('featured-trucks').classList.add('loaded');
