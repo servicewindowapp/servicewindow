@@ -1831,9 +1831,12 @@ function renderCalUpcoming() {
   const el = document.getElementById('cal-upcoming-list')
   if (!upcoming.length) { el.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--text-muted)">No upcoming bookings.</div>'; return }
   el.innerHTML = upcoming.map(b => `
-    <div class="cal-upcoming-item">
-      <div class="cal-upcoming-name">${esc(b.event_name||'Event')}</div>
-      <div class="cal-upcoming-meta">${fmtDate(b.event_date)} · ${esc(b.city||'—')}</div>
+    <div class="cal-upcoming-item" style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div style="min-width:0">
+        <div class="cal-upcoming-name">${esc(b.event_name||'Event')}</div>
+        <div class="cal-upcoming-meta">${fmtDate(b.event_date)} · ${esc(b.city||'—')}</div>
+      </div>
+      <button onclick="openEcovModal('${b.id}')" title="Post emergency coverage" style="flex-shrink:0;background:rgba(201,74,26,0.15);border:1px solid rgba(201,74,26,0.4);color:#e8724a;border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer;font-family:'DM Mono',monospace;white-space:nowrap">⚡</button>
     </div>`).join('')
 }
 
