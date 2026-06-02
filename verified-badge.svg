@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="68" viewBox="0 0 220 68">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0D1B2A"/>
+      <stop offset="100%" style="stop-color:#0d1f2d"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="220" height="68" rx="10" ry="10" fill="url(#bg)"/>
+  <!-- Border -->
+  <rect width="218" height="66" x="1" y="1" rx="9" ry="9" fill="none" stroke="#FF6B35" stroke-width="1.5" stroke-opacity="0.6"/>
+  <!-- Check circle -->
+  <circle cx="34" cy="34" r="14" fill="none" stroke="#FF6B35" stroke-width="2"/>
+  <polyline points="27,34 32,40 41,27" fill="none" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- ServiceWindow text -->
+  <text x="56" y="27" font-family="'Sora', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" letter-spacing="-0.2">ServiceWindow</text>
+  <!-- Verified Operator text -->
+  <text x="56" y="46" font-family="'DM Mono', 'Courier New', monospace" font-size="10.5" fill="#FF6B35" letter-spacing="0.4" font-weight="500">VERIFIED OPERATOR</text>
+  <!-- Separator line -->
+  <line x1="56" y1="32" x2="206" y2="32" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+</svg>

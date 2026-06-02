@@ -226,6 +226,45 @@
       text-align: center;
     }
 
+
+    /* ─── VERIFIED BADGE SECTION ─── */
+    .badge-share-section { display: none; }
+    .badge-share-section.show { display: block; }
+    .badge-preview-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .badge-preview-img { border-radius: 10px; display: block; }
+    .badge-actions { display: flex; flex-direction: column; gap: 8px; }
+    .badge-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid rgba(255,107,53,0.3);
+      background: rgba(255,107,53,0.08);
+      color: var(--fire);
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .badge-btn:hover { background: rgba(255,107,53,0.15); border-color: rgba(255,107,53,0.5); }
+    .badge-btn.copied { color: #50c878; border-color: rgba(80,200,120,0.3); background: rgba(80,200,120,0.08); }
+    .badge-embed-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
     /* ─── FOOTER ─── */
     footer { background: #07111a; border-top: 1px solid var(--dark-border); padding: 48px 24px 32px; }
     .footer-inner { max-width: 1000px; margin: 0 auto; }
@@ -255,6 +294,7 @@
     <a href="index.html"><img src="logo.webp" class="nav-logo" alt="ServiceWindow"></a>
     <ul class="nav-links">
       <li><a href="marketplace.html">Browse Trucks</a></li>
+      <li><a href="venues.html">Venues</a></li>
       <li><a href="pricing.html">Pricing</a></li>
       <li><a href="auth.html?mode=login" id="nav-login">Log In</a></li>
       <li><a href="auth.html" class="nav-cta" id="nav-cta">Get Started Free</a></li>
@@ -266,6 +306,7 @@
 
   <div class="mobile-menu" id="mobileMenu">
     <a href="marketplace.html">Browse Trucks</a>
+    <a href="venues.html">Venues</a>
     <a href="pricing.html">Pricing</a>
     <a href="auth.html?mode=login">Log In</a>
     <a href="auth.html" class="mobile-cta">Get Started Free</a>
@@ -335,6 +376,20 @@
             <div id="p-docs-list"></div>
           </div>
 
+          <!-- Verified Badge Share -->
+          <div id="p-badge-section" class="badge-share-section">
+            <div class="profile-section-label">Share Your Badge</div>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:0">Show the world you're verified on ServiceWindow.</p>
+            <div class="badge-preview-wrap">
+              <img src="verified-badge.svg" alt="Verified on ServiceWindow badge" class="badge-preview-img" width="220" height="68">
+              <div class="badge-actions">
+                <button class="badge-btn" id="btn-copy-embed" onclick="copyBadgeEmbed()">&#x2398; Copy Embed Code</button>
+                <a href="verified-badge.svg" download="servicewindow-verified-badge.svg" class="badge-btn">&#x2193; Download SVG</a>
+                <div class="badge-embed-note">Paste embed code on your website or link in bio.</div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Right: CTA card -->
@@ -366,6 +421,7 @@
           <div class="footer-links-group">
             <h3>Platform</h3>
             <a href="marketplace.html">Browse Trucks</a>
+    <a href="venues.html">Venues</a>
             <a href="venues.html">Venues</a>
             <a href="property.html">Parking &amp; Storage</a>
             <a href="vendor-services.html">Vendor Directory</a>
@@ -561,6 +617,10 @@
       const badgesEl = document.getElementById('p-badges')
       const badgeHtml = []
       if (truck.is_verified)           badgeHtml.push('<span class="badge badge-verified">✓ Verified</span>')
+      if (truck.is_verified) {
+        const badgeSec = document.getElementById('p-badge-section')
+        if (badgeSec) badgeSec.classList.add('show')
+      }
       if (truck.is_fundraiser_friendly) badgeHtml.push('<span class="badge badge-fundraiser">Fundraiser Friendly</span>')
       if (truck.is_veteran_owned)       badgeHtml.push('<span class="badge badge-veteran">Veteran Owned</span>')
       if (truck.is_school_board_approved) badgeHtml.push('<span class="badge badge-school-board">School Board Approved</span>')
@@ -761,6 +821,16 @@
     <img id="lightbox-img" src="" alt="Truck photo">
   </div>
   <script>
+    function copyBadgeEmbed() {
+      const id = new URLSearchParams(window.location.search).get('id') || ''
+      const code = '<a href="https://servicewindow.app/truck-profile.html?id=' + id + '" target="_blank" rel="noopener"><img src="https://servicewindow.app/verified-badge.svg" alt="Verified on ServiceWindow" width="220" height="68"></a>'
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('btn-copy-embed')
+        btn.textContent = '\u2713 Copied!'
+        btn.classList.add('copied')
+        setTimeout(() => { btn.innerHTML = '&#x2398; Copy Embed Code'; btn.classList.remove('copied') }, 2000)
+      }).catch(() => { prompt('Copy this embed code:', code) })
+    }
     document.getElementById('lightbox-close').addEventListener('click', () => {
       document.getElementById('photo-lightbox').classList.remove('open')
     })
