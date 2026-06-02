@@ -2548,7 +2548,7 @@ async function loadReviewedTruckIds() {
   const { data } = await supabase.from('reviews')
     .select('request_id, rating')
     .eq('reviewer_id', userId)
-    .not('reviewed_requester_id', 'is', null)
+    .not('request_id', 'is', null)
   if (data) {
     reviewedTruckIds    = new Set(data.map(r => r.request_id))
     reviewedBookingsMap = new Map(data.map(r => [r.request_id, { rating: r.rating }]))
@@ -2626,11 +2626,10 @@ window.submitCompletion = async function() {
   // Submit review only for platform bookings (not external) with a rating selected
   if (completionRating > 0 && requesterId && !completionState.isExternal) {
     const { error } = await supabase.from('reviews').insert({
-      reviewer_id:           userId,
-      reviewed_requester_id: requesterId,
-      request_id:            bookingId,
-      rating:                completionRating,
-      body:                  note || null
+      reviewer_id: userId,
+      request_id:  bookingId,
+      rating:      completionRating,
+      body:        note || null
     })
     if (error && error.code !== '23505') {
       showToast('Error saving review', true); return
@@ -2683,11 +2682,10 @@ window.submitReview = async function() {
   if (!reviewRating) { showToast('Select a star rating first',true); return }
   const body = document.getElementById('review-text').value.trim()
   const { error } = await supabase.from('reviews').insert({
-    reviewer_id:           userId,
-    reviewed_requester_id: pendingReview.truckId,
-    request_id:            pendingReview.bookingId,
-    rating:                reviewRating,
-    body:                  body||null
+    reviewer_id: userId,
+    request_id:  pendingReview.bookingId,
+    rating:      reviewRating,
+    body:        body||null
   })
   if (error && error.code !== '23505') { showToast('Error submitting review',true); return }
   reviewedTruckIds.add(pendingReview.bookingId)

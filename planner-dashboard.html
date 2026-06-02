@@ -1258,7 +1258,7 @@
         reviewer_id: userId,
         truck_id:    truckId,
         rating:      completionRating,
-        content:     note || null
+        body:        note || null
       })
       if (!rErr) {
         reviewedTruckIds.add(truckId)
@@ -1306,7 +1306,7 @@
       reviewer_id: userId,
       truck_id:    pendingReview.truckId,
       rating:      reviewRating,
-      content:     text
+      body:        text
     })
     if (error && error.code !== '23505') {
       showToast('Error submitting review', true)
