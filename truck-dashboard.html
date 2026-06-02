@@ -97,6 +97,13 @@
       #section-inbox .table-container td { display: flex; align-items: flex-start; gap: 10px; padding: 4px 0; border: none !important; font-size: 12px; min-width: 0; overflow: hidden; }
       #section-inbox .table-container td[data-label]:not([data-label=""])::before { content: attr(data-label); font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); min-width: 62px; max-width: 62px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; padding-top: 2px; }
       #section-inbox .table-container .action-group { flex-wrap: wrap; }
+      /* Emergency Coverage listings — card layout on mobile */
+      #section-listings .table-container table { min-width: 0; display: block; }
+      #section-listings .table-container thead { display: none; }
+      #section-listings .table-container tbody { display: block; padding: 8px; }
+      #section-listings .table-container tr { display: block; border: 1px solid var(--dark-border); border-radius: 8px; margin-bottom: 8px; padding: 10px 12px; background: rgba(255,255,255,0.02); }
+      #section-listings .table-container td { display: flex; align-items: flex-start; gap: 10px; padding: 4px 0; border: none !important; font-size: 12px; min-width: 0; overflow: hidden; }
+      #section-listings .table-container td[data-label]:not([data-label=""])::before { content: attr(data-label); font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); min-width: 62px; max-width: 62px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; padding-top: 2px; }
     }
 
     .section-header { margin-bottom: 24px; }
@@ -1980,12 +1987,12 @@ async function loadListings() {
   if (!data || !data.length) { tbody.innerHTML=''; empty.style.display='block'; return }
   empty.style.display = 'none'
   tbody.innerHTML = data.map(l => `<tr>
-    <td><div class="td-name">${esc(l.title)}</div></td>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${l.board}</td>
-    <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(l.event_date)}</td>
-    <td>${esc(l.city||'—')}</td>
-    <td><span class="pill pill-${l.status}">${l.status}</span></td>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
+    <td data-label="Title"><div class="td-name">${esc(l.title)}</div></td>
+    <td data-label="Board" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${l.board}</td>
+    <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(l.event_date)}</td>
+    <td data-label="City">${esc(l.city||'—')}</td>
+    <td data-label="Status"><span class="pill pill-${l.status}">${l.status}</span></td>
+    <td data-label="Posted" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtDate(l.created_at)}</td>
   </tr>`).join('')
 }
 
