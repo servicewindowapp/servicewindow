@@ -1254,17 +1254,18 @@
 
     // Save review if rated
     if (completionRating > 0 && truckId) {
-      const { error: rErr } = await supabase.from('reviews').upsert({
-        reviewer_id: userId,
-        truck_id:    truckId,
-        rating:      completionRating,
-        body:        note || null
-      }, { ignoreDuplicates: true })
-      if (!rErr) {
-        reviewedTruckIds.add(truckId)
-      } else {
-        console.warn('[submitCompletion] review upsert:', rErr)
+      const { data: existingRev } = await supabase.from('reviews')
+        .select('id').eq('reviewer_id', userId).eq('truck_id', truckId).maybeSingle()
+      if (!existingRev) {
+        const { error: rErr } = await supabase.from('reviews').insert({
+          reviewer_id: userId,
+          truck_id:    truckId,
+          rating:      completionRating,
+          body:        note || null
+        })
+        if (rErr) console.warn('[submitCompletion] review insert:', rErr)
       }
+      reviewedTruckIds.add(truckId)
     }
 
     // Save spend amount
@@ -1302,15 +1303,16 @@
   window.submitReview = async function() {
     if (!reviewRating) { showToast('Please select a star rating', true); return }
     const text = document.getElementById('review-text').value.trim() || null
-    const { error } = await supabase.from('reviews').upsert({
-      reviewer_id: userId,
-      truck_id:    pendingReview.truckId,
-      rating:      reviewRating,
-      body:        text
-    }, { ignoreDuplicates: true })
-    if (error) {
-      showToast('Error submitting review', true)
-      return
+    const { data: existingRev } = await supabase.from('reviews')
+      .select('id').eq('reviewer_id', userId).eq('truck_id', pendingReview.truckId).maybeSingle()
+    if (!existingRev) {
+      const { error } = await supabase.from('reviews').insert({
+        reviewer_id: userId,
+        truck_id:    pendingReview.truckId,
+        rating:      reviewRating,
+        body:        text
+      })
+      if (error) { showToast('Error submitting review', true); return }
     }
     reviewedTruckIds.add(pendingReview.truckId)
     document.getElementById('review-modal-overlay').style.display = 'none'
