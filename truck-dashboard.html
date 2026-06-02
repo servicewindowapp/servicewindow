@@ -1950,7 +1950,7 @@ async function loadAcceptedBookings() {
     } else {
       action = '—'
     }
-    const rv = reviewedBookingsMap.get(b.id)
+    const rv = reviewedBookingsMap.get(b.requester_id)
     const starsHtml = rv ? '<span class="stat-stars">' + '★'.repeat(rv.rating) + '<span style="opacity:.3">' + '★'.repeat(5-rv.rating) + '</span></span>' : ''
     const countHtml = b.customer_count ? `<span class="td-sub">${b.customer_count} guests</span>` : ''
     const revCents  = b.truck_financials?.[0]?.revenue_cents
@@ -2636,8 +2636,8 @@ window.submitCompletion = async function() {
       })
       if (error) { console.error('COMPLETION REVIEW ERROR:', JSON.stringify(error)); showToast('Error saving review', true); return }
     }
-    reviewedTruckIds.add(bookingId)
-    reviewedBookingsMap.set(bookingId, { rating: completionRating })
+    reviewedTruckIds.add(requesterId)
+    reviewedBookingsMap.set(requesterId, { rating: completionRating })
   }
 
   // Save customer count
@@ -2696,8 +2696,8 @@ window.submitReview = async function() {
     })
     if (error) { console.error('REVIEW INSERT ERROR:', JSON.stringify(error)); showToast('Error submitting review',true); return }
   }
-  reviewedTruckIds.add(pendingReview.bookingId)
-  reviewedBookingsMap.set(pendingReview.bookingId, { rating: reviewRating })
+  reviewedTruckIds.add(pendingReview.truckId)
+  reviewedBookingsMap.set(pendingReview.truckId, { rating: reviewRating })
   document.getElementById('review-modal-overlay').style.display='none'
   showToast('Review submitted')
   await loadAcceptedBookings()
