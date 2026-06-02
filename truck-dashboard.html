@@ -1931,7 +1931,7 @@ async function loadAcceptedBookings() {
   tbody.innerHTML = data.map(b => {
     const isPast = b.event_date && b.event_date < todayStr
     const canComplete = b.status==='accepted' && (isPast || b.is_external)
-    const canReview   = b.status==='completed' && !b.is_external && !reviewedTruckIds.has(b.id)
+    const canReview   = b.status==='completed' && !b.is_external && !reviewedTruckIds.has(b.requester_id)
     const requesterName = esc(b.requester?.business_name||b.requester?.contact_name||'—')
     const msgBtn = b.requester_id && !b.is_external
       ? `<button class="btn-msg" onclick="startConversation('${b.requester_id}','${requesterName}')">Message</button>`
@@ -2546,12 +2546,12 @@ function initPhotos() {
 // ─── REVIEWS ──────────────────────────────────────────
 async function loadReviewedTruckIds() {
   const { data } = await supabase.from('reviews')
-    .select('request_id, rating')
+    .select('reviewed_requester_id, rating')
     .eq('reviewer_id', userId)
-    .not('request_id', 'is', null)
+    .not('reviewed_requester_id', 'is', null)
   if (data) {
-    reviewedTruckIds    = new Set(data.map(r => r.request_id))
-    reviewedBookingsMap = new Map(data.map(r => [r.request_id, { rating: r.rating }]))
+    reviewedTruckIds    = new Set(data.map(r => r.reviewed_requester_id))
+    reviewedBookingsMap = new Map(data.map(r => [r.reviewed_requester_id, { rating: r.rating }]))
   }
 }
 
@@ -2626,12 +2626,11 @@ window.submitCompletion = async function() {
   // Submit review only for platform bookings (not external) with a rating selected
   if (completionRating > 0 && requesterId && !completionState.isExternal) {
     const { data: existingRev } = await supabase.from('reviews')
-      .select('id').eq('reviewer_id', userId).eq('request_id', bookingId).maybeSingle()
+      .select('id').eq('reviewer_id', userId).eq('reviewed_requester_id', requesterId).maybeSingle()
     if (!existingRev) {
       const { error } = await supabase.from('reviews').insert({
         reviewer_id:           userId,
         reviewed_requester_id: requesterId,
-        request_id:            bookingId,
         rating:                completionRating,
         body:                  note || null
       })
@@ -2686,13 +2685,12 @@ window.submitReview = async function() {
   const body = document.getElementById('review-text').value.trim()
   // Check for existing review first — partial unique indexes block upsert conflict resolution
   const { data: existing } = await supabase.from('reviews')
-    .select('id').eq('reviewer_id', userId).eq('request_id', pendingReview.bookingId)
+    .select('id').eq('reviewer_id', userId).eq('reviewed_requester_id', pendingReview.truckId)
     .maybeSingle()
   if (!existing) {
     const { error } = await supabase.from('reviews').insert({
       reviewer_id:           userId,
       reviewed_requester_id: pendingReview.truckId,
-      request_id:            pendingReview.bookingId,
       rating:                reviewRating,
       body:                  body||null
     })
