@@ -1254,16 +1254,16 @@
 
     // Save review if rated
     if (completionRating > 0 && truckId) {
-      const { error: rErr } = await supabase.from('reviews').insert({
+      const { error: rErr } = await supabase.from('reviews').upsert({
         reviewer_id: userId,
         truck_id:    truckId,
         rating:      completionRating,
         body:        note || null
-      })
+      }, { ignoreDuplicates: true })
       if (!rErr) {
         reviewedTruckIds.add(truckId)
-      } else if (rErr.code !== '23505') {
-        console.warn('[submitCompletion] review insert:', rErr)
+      } else {
+        console.warn('[submitCompletion] review upsert:', rErr)
       }
     }
 
@@ -1302,13 +1302,13 @@
   window.submitReview = async function() {
     if (!reviewRating) { showToast('Please select a star rating', true); return }
     const text = document.getElementById('review-text').value.trim() || null
-    const { error } = await supabase.from('reviews').insert({
+    const { error } = await supabase.from('reviews').upsert({
       reviewer_id: userId,
       truck_id:    pendingReview.truckId,
       rating:      reviewRating,
       body:        text
-    })
-    if (error && error.code !== '23505') {
+    }, { ignoreDuplicates: true })
+    if (error) {
       showToast('Error submitting review', true)
       return
     }

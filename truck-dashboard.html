@@ -2625,13 +2625,13 @@ window.submitCompletion = async function() {
 
   // Submit review only for platform bookings (not external) with a rating selected
   if (completionRating > 0 && requesterId && !completionState.isExternal) {
-    const { error } = await supabase.from('reviews').insert({
+    const { error } = await supabase.from('reviews').upsert({
       reviewer_id: userId,
       request_id:  bookingId,
       rating:      completionRating,
       body:        note || null
-    })
-    if (error && error.code !== '23505') {
+    }, { ignoreDuplicates: true })
+    if (error) {
       showToast('Error saving review', true); return
     }
     reviewedTruckIds.add(bookingId)
@@ -2681,13 +2681,13 @@ document.querySelectorAll('.star-btn').forEach(btn=>{
 window.submitReview = async function() {
   if (!reviewRating) { showToast('Select a star rating first',true); return }
   const body = document.getElementById('review-text').value.trim()
-  const { error } = await supabase.from('reviews').insert({
+  const { error } = await supabase.from('reviews').upsert({
     reviewer_id: userId,
     request_id:  pendingReview.bookingId,
     rating:      reviewRating,
     body:        body||null
-  })
-  if (error && error.code !== '23505') { showToast('Error submitting review',true); return }
+  }, { ignoreDuplicates: true })
+  if (error) { showToast('Error submitting review',true); return }
   reviewedTruckIds.add(pendingReview.bookingId)
   reviewedBookingsMap.set(pendingReview.bookingId, { rating: reviewRating })
   document.getElementById('review-modal-overlay').style.display='none'
