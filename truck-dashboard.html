@@ -1853,7 +1853,7 @@ function renderCalUpcoming() {
 // ─── BOOKING INBOX ────────────────────────────────────
 async function loadInbox() {
   const { data } = await supabase.from('bookings')
-    .select('id, event_name, event_date, start_time, location, city, guest_count, budget_range, notes, status, requester:requester_id(business_name,contact_name,email)')
+    .select('id, event_name, event_date, start_time, location, city, guest_count, budget_range, notes, status, requester_id, requester:requester_id(business_name,contact_name,email)')
     .eq('truck_id', userId).eq('status','pending').order('event_date',{ascending:true})
 
   const tbody = document.getElementById('inbox-tbody')
@@ -1871,11 +1871,37 @@ async function loadInbox() {
     return
   }
   empty.style.display = 'none'
-  tbody.innerHTML = data.map(b => `
+
+  // Fetch requester ratings for all pending requests
+  const requesterIds = [...new Set(data.map(b => b.requester_id).filter(Boolean))]
+  let requesterRatings = {}
+  if (requesterIds.length) {
+    const { data: rvData } = await supabase.from('reviews')
+      .select('reviewed_requester_id, rating')
+      .in('reviewed_requester_id', requesterIds)
+    if (rvData) {
+      const grouped = {}
+      rvData.forEach(r => {
+        if (!grouped[r.reviewed_requester_id]) grouped[r.reviewed_requester_id] = []
+        grouped[r.reviewed_requester_id].push(r.rating)
+      })
+      Object.entries(grouped).forEach(([id, ratings]) => {
+        const avg = (ratings.reduce((s, r) => s + r, 0) / ratings.length).toFixed(1)
+        requesterRatings[id] = { avg, count: ratings.length }
+      })
+    }
+  }
+
+  tbody.innerHTML = data.map(b => {
+    const rv = requesterRatings[b.requester_id]
+    const rvHtml = rv
+      ? `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--fire)">★ ${rv.avg}</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)"> (${rv.count} review${rv.count!==1?'s':''})</span>`
+      : `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">New requester</span>`
+    return `
     <tr id="brow-${b.id}">
       <td data-label="Event">
         <div class="td-name">${esc(b.event_name||'Event Request')}</div>
-        <div class="td-sub">From: ${esc(b.requester?.business_name||b.requester?.contact_name||'—')}</div>
+        <div class="td-sub">From: ${esc(b.requester?.business_name||b.requester?.contact_name||'—')} · ${rvHtml}</div>
         ${b.notes?`<div class="td-sub" style="margin-top:4px;font-style:italic">${esc(b.notes.substring(0,80))}${b.notes.length>80?'…':''}</div>`:''}
       </td>
       <td data-label="Date" style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(b.event_date)}</td>
@@ -1888,7 +1914,8 @@ async function loadInbox() {
           <button class="btn-decline" onclick="respondBooking('${b.id}','declined')">Decline</button>
         </div>
       </td>
-    </tr>`).join('')
+    </tr>`
+  }).join('')
 }
 
 window.respondBooking = async function(id, status) {
