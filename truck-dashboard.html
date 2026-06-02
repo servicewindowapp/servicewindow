@@ -2629,12 +2629,13 @@ window.submitCompletion = async function() {
       .select('id').eq('reviewer_id', userId).eq('request_id', bookingId).maybeSingle()
     if (!existingRev) {
       const { error } = await supabase.from('reviews').insert({
-        reviewer_id: userId,
-        request_id:  bookingId,
-        rating:      completionRating,
-        body:        note || null
+        reviewer_id:           userId,
+        reviewed_requester_id: requesterId,
+        request_id:            bookingId,
+        rating:                completionRating,
+        body:                  note || null
       })
-      if (error) { showToast('Error saving review', true); return }
+      if (error) { console.error('COMPLETION REVIEW ERROR:', JSON.stringify(error)); showToast('Error saving review', true); return }
     }
     reviewedTruckIds.add(bookingId)
     reviewedBookingsMap.set(bookingId, { rating: completionRating })
@@ -2689,12 +2690,13 @@ window.submitReview = async function() {
     .maybeSingle()
   if (!existing) {
     const { error } = await supabase.from('reviews').insert({
-      reviewer_id: userId,
-      request_id:  pendingReview.bookingId,
-      rating:      reviewRating,
-      body:        body||null
+      reviewer_id:           userId,
+      reviewed_requester_id: pendingReview.truckId,
+      request_id:            pendingReview.bookingId,
+      rating:                reviewRating,
+      body:                  body||null
     })
-    if (error) { showToast('Error submitting review',true); return }
+    if (error) { console.error('REVIEW INSERT ERROR:', JSON.stringify(error)); showToast('Error submitting review',true); return }
   }
   reviewedTruckIds.add(pendingReview.bookingId)
   reviewedBookingsMap.set(pendingReview.bookingId, { rating: reviewRating })

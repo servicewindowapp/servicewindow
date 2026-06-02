@@ -1312,7 +1312,7 @@
         rating:      reviewRating,
         body:        text
       })
-      if (error) { showToast('Error submitting review', true); return }
+      if (error) { console.error('PLANNER REVIEW ERROR:', JSON.stringify(error)); showToast('Error submitting review', true); return }
     }
     reviewedTruckIds.add(pendingReview.truckId)
     document.getElementById('review-modal-overlay').style.display = 'none'
