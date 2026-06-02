@@ -2689,7 +2689,7 @@ window.submitReview = async function() {
     rating:                reviewRating,
     body:                  body||null
   })
-  if (error) { showToast('Error submitting review',true); return }
+  if (error && error.code !== '23505') { showToast('Error submitting review',true); return }
   reviewedTruckIds.add(pendingReview.bookingId)
   reviewedBookingsMap.set(pendingReview.bookingId, { rating: reviewRating })
   document.getElementById('review-modal-overlay').style.display='none'

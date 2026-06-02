@@ -1308,8 +1308,8 @@
       rating:      reviewRating,
       content:     text
     })
-    if (error) {
-      showToast(error.code === '23505' ? 'You already reviewed this truck' : 'Error submitting review', true)
+    if (error && error.code !== '23505') {
+      showToast('Error submitting review', true)
       return
     }
     reviewedTruckIds.add(pendingReview.truckId)
