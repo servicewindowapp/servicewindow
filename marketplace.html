@@ -1436,7 +1436,7 @@
       const boards = board === 'parking' ? ['parking', 'vendor_spot', 'storage'] : [board]
       let query = supabase
         .from('listings')
-        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at')
+        .select('id, title, description, location, city, event_date, start_time, guest_count_min, guest_count_max, budget_range, cuisine_type_needed, trucks_needed, is_urgent, board, created_at, poster_id, profiles:poster_id(business_name, contact_name)')
         .in('board', boards)
         .eq('status', 'active')
 
@@ -1531,7 +1531,7 @@
       if (listing.guest_count_max) tags.push(`~${listing.guest_count_min || ''}${listing.guest_count_max ? '–' + listing.guest_count_max : ''} guests`)
       if (listing.trucks_needed > 1) tags.push(`${listing.trucks_needed} trucks needed`)
 
-      const postedBy = isMarketResearch ? 'ServiceWindow' : (listing.profiles?.business_name || 'Verified member')
+      const postedBy = isMarketResearch ? 'ServiceWindow' : (listing.profiles?.business_name || listing.profiles?.contact_name || 'Verified member')
       const dateStr = listing.event_date ? formatDate(listing.event_date) : ''
 
       let footerAction
