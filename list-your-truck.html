@@ -508,34 +508,44 @@
     .btn-view-directory:hover { background: #e55a2b; }
 
     /* ─── FOOTER ─── */
-    footer {
-      background: #07111a;
-      color: rgba(255,255,255,0.7);
-      padding: 40px 24px 28px;
+    footer { background: #07111a; color: rgba(255,255,255,0.7); padding: 48px 20px 24px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+    .footer-brand img { margin-bottom: 12px; }
+    .footer-brand p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+    .footer-links-group h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-
-    .footer-inner { max-width: 1200px; margin: 0 auto; }
-
+    .footer-links-group a {
+      display: block;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+    .footer-links-group a:hover { color: white; }
     .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      padding-top: 20px;
-    }
-
-    .footer-bottom p {
-      font-family: 'DM Mono', monospace;
       font-size: 12px;
       color: rgba(255,255,255,0.35);
-    }
-
-    .footer-cities {
       font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: rgba(255,255,255,0.3);
+    }
+    @media (max-width: 768px) {
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
     }
 
     /* ─── RESPONSIVE ─── */
@@ -564,7 +574,7 @@
       <li><a href="venues.html">Venues</a></li>
       <li><a href="pricing.html">Pricing</a></li>
       <li><a href="auth.html?mode=login">Log In</a></li>
-      <li><a href="auth.html" class="nav-cta">Get Started</a></li>
+      <li><a href="auth.html" class="nav-cta">Get Started Free</a></li>
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -607,7 +617,7 @@
       <div class="benefit-row">
         <div class="benefit-icon">🔍</div>
         <div class="benefit-copy">
-          <h3>Get found before we launch</h3>
+          <h3>Get found by planners searching now</h3>
           <p>Your listing is submitted to Google as soon as it's approved. People searching "food truck for hire Cape Coral" or "Naples event catering truck" find you here — not buried in a Facebook group.</p>
         </div>
       </div>
@@ -623,8 +633,8 @@
       <div class="benefit-row">
         <div class="benefit-icon">⚡</div>
         <div class="benefit-copy">
-          <h3>Claim it as a verified profile at launch</h3>
-          <p>When the full platform launches, your listing converts to a verified profile with booking requests, messaging, and dashboard access. You're already ahead of trucks that haven't listed yet.</p>
+          <h3>Upgrade to a verified profile anytime</h3>
+          <p>Your community listing is a starting point. Upgrade to a verified profile to unlock booking requests, direct messaging, and full dashboard access. Start your 30-day free trial when you're ready.</p>
         </div>
       </div>
 
@@ -718,7 +728,7 @@
         </div>
 
         <button type="submit" class="btn-submit" id="submitBtn">Get Listed →</button>
-        <p class="form-fine-print">Your listing will appear in the public directory immediately.<br>We review all submissions within 24 hours.</p>
+        <p class="form-fine-print">We review all submissions within 24 hours.<br>Your listing goes live on approval.</p>
         <p class="form-fine-print" style="margin-top:8px;">By submitting you agree to our <a href="terms.html" style="color:rgba(255,255,255,0.45);text-decoration:underline;">Terms of Service</a> and <a href="privacy.html" style="color:rgba(255,255,255,0.45);text-decoration:underline;">Privacy Policy</a>.</p>
       </form>
 
@@ -726,7 +736,7 @@
       <div class="success-state" id="successState">
         <div class="success-icon">🎉</div>
         <h3>You're listed.</h3>
-        <p>Your truck is now visible in the ServiceWindow directory. When the platform launches, you'll get an email to claim your verified profile and unlock booking requests.</p>
+        <p>Your submission is in the queue. We review all listings within 24 hours and will email you when it's approved. Ready for more? Create a verified account to unlock booking requests, messaging, and dashboard access.</p>
         <a href="find-trucks.html" class="btn-view-directory">View the Directory →</a>
       </div>
     </div>
@@ -738,10 +748,36 @@
 
   <footer>
     <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="logo.webp" alt="ServiceWindow" style="height:36px;width:auto;">
+          <p>The verified food truck marketplace for Southwest Florida. Where events find their truck.</p>
+        </div>
+        <div class="footer-links-group">
+          <h3>Platform</h3>
+          <a href="marketplace.html">Browse Trucks</a>
+          <a href="venues.html">Venues</a>
+          <a href="property.html">Parking &amp; Storage</a>
+          <a href="vendor-services.html">Vendor Directory</a>
+          <a href="jobs.html">Jobs Board</a>
+        </div>
+        <div class="footer-links-group">
+          <h3>Operators</h3>
+          <a href="auth.html?role=truck">List Your Truck</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="auth.html?mode=login">Log In</a>
+        </div>
+        <div class="footer-links-group">
+          <h3>Company</h3>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+      </div>
       <div class="footer-bottom">
         <p>&copy; 2026 ServiceWindow. All rights reserved.</p>
-        <div class="footer-cities">Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
-        <div class="footer-cities" style="margin-top:8px;"><a href="privacy.html" style="color:rgba(255,255,255,0.35);text-decoration:none;">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html" style="color:rgba(255,255,255,0.35);text-decoration:none;">Terms of Service</a></div>
+        <div>Veteran-Owned · Fort Myers, FL &nbsp;·&nbsp; Fort Myers · Cape Coral · Naples · Sarasota and beyond.</div>
       </div>
     </div>
   </footer>
