@@ -1,6 +1,6 @@
 // ServiceWindow Service Worker
 // Cache version — bump this string to force cache refresh on next deploy
-const CACHE_VERSION = 'sw-v1';
+const CACHE_VERSION = 'sw-v2';
 
 // Public pages and static assets to precache on install
 // Dashboards are intentionally excluded — they load live authenticated data
