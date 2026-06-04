@@ -1910,34 +1910,6 @@
       });
     });
 
-    // ─── WAITLIST FORM ───
-    const waitlistForm = document.getElementById('waitlistForm');
-    const formSuccess = document.getElementById('formSuccess');
-
-    waitlistForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = waitlistForm.querySelector('button');
-      btn.textContent = 'Joining...';
-      btn.disabled = true;
-
-      try {
-        const res = await fetch(waitlistForm.action, {
-          method: 'POST',
-          body: new FormData(waitlistForm),
-          headers: { 'Accept': 'application/json' }
-        });
-        if (res.ok) {
-          waitlistForm.style.display = 'none';
-          formSuccess.classList.add('show');
-        } else {
-          btn.textContent = 'Try again';
-          btn.disabled = false;
-        }
-      } catch {
-        btn.textContent = 'Try again';
-        btn.disabled = false;
-      }
-    });
 
 
     // ─── FAQ ACCORDION ───
