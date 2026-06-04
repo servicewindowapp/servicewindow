@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="ServiceWindow Jobs Board — food truck industry jobs in Southwest Florida. Drivers, cooks, prep staff, event coordinators, and more.">
   <meta name="keywords" content="food truck jobs SWFL, food truck driver Fort Myers, food truck cook Naples, food service jobs Southwest Florida">
   <meta property="og:title" content="Jobs Board | ServiceWindow">
@@ -405,6 +407,13 @@
         mobileMenu.classList.remove('open');
       }
     });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
   </script>
 </body>
 </html>

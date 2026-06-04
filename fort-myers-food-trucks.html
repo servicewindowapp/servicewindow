@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Find and book verified food trucks in Fort Myers, FL. Browse by cuisine, availability, and event type. No Facebook groups, no scams — just verified operators on ServiceWindow.">
   <meta name="keywords" content="food trucks Fort Myers, food truck catering Fort Myers FL, book food truck Fort Myers, Fort Myers food truck event, HOA food truck Fort Myers">
   <meta property="og:title" content="Food Trucks in Fort Myers, FL — ServiceWindow">
@@ -309,5 +311,12 @@
     hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

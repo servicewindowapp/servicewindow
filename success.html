@@ -7,6 +7,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="You're in. ServiceWindow subscription confirmed.">
   <title>You're In — ServiceWindow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -242,5 +244,12 @@
     }
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

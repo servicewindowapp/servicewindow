@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Find and book verified food trucks in Punta Gorda and Port Charlotte, FL. Browse by cuisine and availability. Book direct for HOA events, private parties, and venue partnerships across Charlotte County.">
   <meta name="keywords" content="food trucks Punta Gorda, food truck catering Punta Gorda FL, food trucks Port Charlotte, food truck Charlotte County, book food truck Punta Gorda, Babcock Ranch food truck, HOA food truck Charlotte County">
   <meta property="og:title" content="Food Trucks in Punta Gorda &amp; Charlotte County, FL — ServiceWindow">
@@ -297,5 +299,12 @@
     hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

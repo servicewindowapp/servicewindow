@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="ServiceWindow pricing — food truck operators $39.99/mo with a 30-day free trial. Event planners, HOA managers, and venues always free.">
   <link rel="canonical" href="https://servicewindow.app/pricing.html">
   <script type="application/ld+json">
@@ -796,5 +798,12 @@
     }
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="ServiceWindow is the verified food truck marketplace for Southwest Florida. Stop posting in Facebook groups. Book verified trucks for your event, HOA, or venue.">
   <meta name="keywords" content="food truck SWFL, food truck Fort Myers, food truck Naples, food truck Cape Coral, food truck booking Southwest Florida">
   <meta property="og:title" content="Book Verified Food Trucks in Southwest Florida | ServiceWindow">
@@ -2047,6 +2049,13 @@
         track.addEventListener('touchmove',  e => { wrap.scrollLeft = scrollStart - (e.touches[0].pageX - startX); }, { passive: true });
       } catch (e) { /* silent — carousel non-critical */ }
     })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
   </script>
 </body>
 </html>

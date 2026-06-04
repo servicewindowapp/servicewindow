@@ -6,6 +6,8 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Find and book verified food trucks in Lely Resort, FL. Browse operators serving Collier County. Book direct for HOA events, private parties, and community gatherings.">
   <meta name="keywords" content="food trucks Lely Resort FL, food truck catering Lely Resort Naples, book food truck Lely Resort, Naples golf community food truck event">
   <meta property="og:title" content="Food Trucks in Lely Resort, FL — ServiceWindow">
@@ -282,5 +284,12 @@
     hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

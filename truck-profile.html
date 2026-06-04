@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <!-- Static fallbacks — overwritten by JS after profile loads -->
   <title>Food Truck Profile — ServiceWindow SWFL</title>
   <meta name="description" content="Verified food truck operator on ServiceWindow, the Southwest Florida food truck marketplace.">
@@ -840,5 +842,12 @@
     })
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

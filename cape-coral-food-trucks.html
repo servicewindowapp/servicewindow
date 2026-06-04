@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Find and book verified food trucks in Cape Coral, FL. Browse by cuisine and availability. Book direct for HOA events, private parties, and community gatherings — ServiceWindow SWFL.">
   <meta name="keywords" content="food trucks Cape Coral, food truck catering Cape Coral FL, book food truck Cape Coral, Cape Coral food truck event, HOA food truck Cape Coral">
   <meta property="og:title" content="Food Trucks in Cape Coral, FL — ServiceWindow">
@@ -281,5 +283,12 @@
     hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

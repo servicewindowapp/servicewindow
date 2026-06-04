@@ -5,6 +5,8 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Page not found — ServiceWindow, the verified food truck marketplace for Southwest Florida.">
   <meta name="robots" content="noindex">
   <title>Page Not Found | ServiceWindow</title>
@@ -476,6 +478,13 @@
         mobileMenu.classList.remove('open');
       }
     });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
   </script>
 </body>
 </html>

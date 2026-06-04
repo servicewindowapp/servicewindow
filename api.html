@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="ServiceWindow MCP API — connect AI agents to the Southwest Florida food truck marketplace. Search verified trucks, browse marketplace listings, and more.">
   <meta property="og:title" content="ServiceWindow MCP API — AI Agent Interface">
   <meta property="og:description" content="Connect your AI agent to the ServiceWindow food truck marketplace. Search verified SWFL trucks, browse events, venues, and listings via Model Context Protocol.">
@@ -637,5 +639,12 @@ curl -X POST https://api.servicewindow.app/functions/v1/mcp \
     }
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Get your SWFL food truck listed on ServiceWindow — the verified food truck directory for Southwest Florida. Free listing. Takes 2 minutes.">
   <meta name="keywords" content="list food truck SWFL, food truck directory Southwest Florida, add food truck listing, Cape Coral food truck, Fort Myers food truck, Naples food truck">
   <meta property="og:title" content="List Your Truck — ServiceWindow SWFL">
@@ -862,5 +864,12 @@
     })
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

@@ -6,6 +6,8 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Find and book verified BBQ food trucks in Fort Myers, FL. Browse available operators for HOA events, private parties, and corporate catering. No Facebook group chaos — just verified trucks on ServiceWindow.">
   <meta name="keywords" content="BBQ food truck, barbecue catering, smoked meats, brisket, ribs, pulled pork, Fort Myers, Fort Myers FL, Lee County, SWFL food truck">
   <meta property="og:title" content="BBQ Food Trucks in Fort Myers, FL — ServiceWindow">
@@ -308,5 +310,12 @@
     hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

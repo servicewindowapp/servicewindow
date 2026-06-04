@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Find and book verified food trucks in Naples, FL. Browse by cuisine and availability. Book direct for HOA events, private parties, and venue partnerships across Collier County.">
   <meta name="keywords" content="food trucks Naples FL, food truck catering Naples Florida, book food truck Naples, Naples food truck event, HOA food truck Naples, Collier County food truck">
   <meta property="og:title" content="Food Trucks in Naples, FL — ServiceWindow">
@@ -281,5 +283,12 @@
     hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'))
   </script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </body>
 </html>

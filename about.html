@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="About ServiceWindow — the verified food truck marketplace built specifically for Southwest Florida. Why we built it, who we serve, and where we're going.">
   <meta property="og:title" content="About ServiceWindow">
   <meta property="og:description" content="The verified food truck marketplace for Southwest Florida. Built to replace Facebook group chaos with a real, trusted platform.">
@@ -663,6 +665,13 @@
         mobileMenu.classList.remove('open');
       }
     });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
   </script>
 </body>
 </html>

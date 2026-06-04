@@ -6,6 +6,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B35">
   <meta name="description" content="Contact ServiceWindow — questions about the SWFL food truck marketplace, partnerships, or support.">
   <link rel="canonical" href="https://servicewindow.app/contact.html">
   <title>Contact | ServiceWindow — SWFL Food Truck Marketplace</title>
@@ -544,6 +546,13 @@
         submitBtn.disabled = false;
       }
     });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
   </script>
 </body>
 </html>
