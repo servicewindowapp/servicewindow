@@ -1,0 +1,96 @@
+# SEO Audit Report — ServiceWindow
+**Date:** 2026-06-10
+**Pages Audited:** 15
+**Total Issues Found:** 22 · 11 ❌ hard fails · 11 ⚠️ warnings
+
+---
+
+## Top 3 Priority Fixes
+
+| # | Priority | Fix |
+|---|----------|-----|
+| 1 | **High** | Add `<link rel="canonical">` to `privacy.html`, `terms.html`, and `auth.html` — three production pages with no canonical tag, leaving them open to duplicate-content dilution. |
+| 2 | **High** | Fix city count in `jobs.html` `og:description`: currently reads **"21 SWFL cities"** — project rule requires **22**. |
+| 3 | **Medium** | Expand short meta descriptions on `contact.html` (100c), `auth.html` (97c), and `terms.html` (94c) — all under the 120c floor; Google is likely rewriting them. |
+
+---
+
+## Audit Table
+
+| Page | Title | Description | OG Tags | Canonical | Schema | Robots | Issues |
+|------|-------|-------------|---------|-----------|--------|--------|--------|
+| `index.html` | ✅ | ⚠️ 160c | ✅ all 4 | ✅ | ✅ | ✅ | Description at 160c boundary — trim by 1–2c recommended |
+| `marketplace.html` | ✅ | ⚠️ 163c | ✅ all 4 | ✅ | ✅ | ✅ | Description 3c over 160c limit |
+| `find-trucks.html` | ✅ | ✅ 157c | ✅ all 4 | ✅ | ✅ | ✅ | — |
+| `auth.html` | ✅ | ⚠️ 97c | ✅ all 4 | ❌ missing | ❌ missing | ⚠️ noindex | Canonical missing; description under 120c; `noindex` set (intentional — verify) |
+| `pricing.html` | ✅ | ✅ 136c | ✅ all 4 | ✅ | ✅ | ✅ | — |
+| `about.html` | ✅ | ✅ 155c | ✅ all 4 | ✅ | ✅ | ✅ | — |
+| `contact.html` | ✅ | ⚠️ 100c | ✅ all 4 | ✅ | ❌ missing | ✅ | Description under 120c; no `ContactPage` / `LocalBusiness` schema |
+| `jobs.html` | ✅ | ✅ 133c | ⚠️ wrong city count | ✅ | ✅ | ✅ | `og:description` reads "21 SWFL cities" — must be 22 |
+| `venues.html` | ✅ | ✅ 147c | ✅ all 4 | ✅ | ✅ | ✅ | — |
+| `property.html` | ✅ | ✅ 156c | ✅ all 4 | ✅ | ✅ | ✅ | — |
+| `privacy.html` | ✅ | ⚠️ 118c | ✅ all 4 | ❌ missing | — | ✅ | Canonical missing; description 2c under 120c floor |
+| `terms.html` | ✅ | ⚠️ 94c | ✅ all 4 | ❌ missing | — | ✅ | Canonical missing; description under 120c |
+| `success.html` | ✅ | ⚠️ 48c | ❌ og:title/desc/url | ❌ missing | — | ⚠️ noindex | Post-Stripe page: `noindex` intentional; OG + canonical low priority but absent |
+| `cancel.html` | ✅ | ⚠️ 53c | ❌ og:title/desc/url | ❌ missing | — | ⚠️ noindex | Post-Stripe page: `noindex` intentional; OG + canonical low priority but absent |
+| `reset-password.html` | ✅ | ⚠️ 34c | ❌ og:title/desc/url | ❌ missing | — | ⚠️ noindex | Utility page: `noindex` intentional; OG + canonical low priority but absent |
+
+**Legend:** ✅ Pass · ❌ Fail · ⚠️ Present but needs improvement · — Not applicable for this page type
+
+> `og:image` is present on all 15 pages.  
+> All 15 `<title>` tags are present and descriptive.  
+> No production indexable page has an accidental `noindex` directive.
+
+---
+
+## Hard Fails (❌) — 11
+
+| File | Issue |
+|------|-------|
+| `auth.html` | No `<link rel="canonical">` |
+| `auth.html` | No schema markup |
+| `contact.html` | No schema markup (`ContactPage` or `LocalBusiness` recommended) |
+| `privacy.html` | No `<link rel="canonical">` |
+| `terms.html` | No `<link rel="canonical">` |
+| `success.html` | Missing `og:title`, `og:description`, `og:url` |
+| `success.html` | No `<link rel="canonical">` |
+| `cancel.html` | Missing `og:title`, `og:description`, `og:url` |
+| `cancel.html` | No `<link rel="canonical">` |
+| `reset-password.html` | Missing `og:title`, `og:description`, `og:url` |
+| `reset-password.html` | No `<link rel="canonical">` |
+
+## Warnings (⚠️) — 11
+
+| File | Issue |
+|------|-------|
+| `index.html` | Description exactly 160c — at the limit; trim 1–2c for safety |
+| `marketplace.html` | Description 163c — 3c over the 160c recommended ceiling |
+| `auth.html` | Description 97c — under 120c minimum; Google likely rewrites it |
+| `auth.html` | `robots: noindex, nofollow` — intentional for auth; confirm this is desired |
+| `contact.html` | Description 100c — under 120c minimum |
+| `jobs.html` | `og:description` cites "21 SWFL cities" — project standard is 22 |
+| `privacy.html` | Description 118c — 2c under 120c floor |
+| `terms.html` | Description 94c — under 120c minimum |
+| `success.html` | `robots: noindex, nofollow` — intentional; confirm |
+| `cancel.html` | `robots: noindex, nofollow` — intentional; confirm |
+| `reset-password.html` | `robots: noindex, nofollow` — intentional; confirm |
+
+---
+
+## Coverage Summary
+
+| Check | Pass | Warn | Fail |
+|-------|------|------|------|
+| `<title>` present & descriptive | 15/15 | 0 | 0 |
+| `<meta name="description">` (120–160c) | 7/15 | 8/15 | 0 |
+| `og:title` | 12/15 | 0 | 3 |
+| `og:description` | 11/15 | 1 | 3 |
+| `og:url` | 12/15 | 0 | 3 |
+| `og:image` | 15/15 | 0 | 0 |
+| `<link rel="canonical">` | 10/15 | 0 | 5 |
+| Schema markup | 9/15 | 0 | 6 (2 high-pri) |
+| `robots` not noindex | 11/15 | 4 (intentional) | 0 |
+
+---
+
+*Report only — no HTML files were modified. Generated by automated SEO audit.*
