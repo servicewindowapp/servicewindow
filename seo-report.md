@@ -2,11 +2,11 @@
 
 ## Summary
 - **Pages audited:** 15
-- **Total issues found:** 23 (✅ pass · ❌ fail · ⚠️ needs improvement)
+- **Total issues found:** 25 (✅ pass · ❌ fail · ⚠️ needs improvement)
 - **Top 3 priority fixes:**
   1. **Confirm the `noindex, nofollow` on `auth`, `success`, `cancel`, `reset-password` is intentional.** The audit rule says no production page should be noindex. These are transactional pages, so it is likely deliberate. If so, exempt them from this check.
   2. **Rewrite short meta descriptions (target 120–160 chars):** `reset-password` (34), `success` (48), `cancel` (53), `terms` (92), `auth` (95), `contact` (98), `privacy` (116). `marketplace` is 1 char over (161).
-  3. **Add the missing `<link rel="canonical">` and OG title/description/url on the utility pages.** `auth` has no canonical. `success`, `cancel` and `reset-password` have no canonical and only `og:image`.
+  3. **Add the missing `<link rel="canonical">` and OG title/description/url.** `auth`, `privacy` and `terms` have no canonical. `success`, `cancel` and `reset-password` have no canonical and only `og:image`.
 - Minor: `jobs` og:description says "21 SWFL cities" (project rule: 22). Titles over 60 chars may truncate in search results: `property` (67), `venues` (64), `index` (62).
 
 ## Results
@@ -30,7 +30,7 @@
 | reset-password.html | ✅ | ❌ (34) | ❌ | ❌ | n/a (noindex) | Description too short; missing og:title/description/url; no canonical; `noindex, nofollow` |
 
 Notes:
-- Correction to the table above: `privacy.html` and `terms.html` have **no** `<link rel="canonical">`. The earlier scan showed none, so both are ❌.
+- `privacy.html` and `terms.html` also lack `<link rel="canonical">`.
 - OG Tags covers og:title, og:description, og:url (servicewindow.app) and og:image. All pages have og:image.
 - Every present og:url and canonical uses the servicewindow.app domain.
 - Schema is required on `index.html` only (present). Absence elsewhere is advisory.
